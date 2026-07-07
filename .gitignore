@@ -1,0 +1,27 @@
+# Data files (too large for git)
+data/*.sqlite3
+*.db
+
+# Python
+__pycache__/
+*.pyc
+
+# Release archives
+releases/
+
+# Snapshots & reports (archived elsewhere)
+snapshots/
+reports/
+
+# Old pool files
+pool_*.json
+2026*.json
+
+# Sim results
+sim/
+
+# Logs
+logs/
+
+# Unified data
+unified/
