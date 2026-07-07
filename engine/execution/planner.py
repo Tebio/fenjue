@@ -17,6 +17,8 @@ from typing import Any
 
 import yaml
 
+from engine.regime.market import MarketRegime
+
 
 class ExecutionPlanner:
     """Generate staged position-building plans for a given stock code."""
@@ -31,14 +33,18 @@ class ExecutionPlanner:
         self._regimes: dict[str, dict[str, float]] = {}
         self._load_config()
 
-    def get_plan(self, code: str) -> list[dict[str, Any]]:
+    def get_plan(
+        self, code: str, regime: dict[str, Any] | None = None
+    ) -> list[dict[str, Any]]:
         """Return a multi-step position-building plan.
 
-        The plan splits the max position into staggered entries so execution
-        respects the current risk regime.
+        Position sizing is driven by the current market regime. Each regime
+        maps to a fixed three-tranche allocation (or an empty list for crisis).
 
         Args:
-            code: 6-digit stock code.
+            code:         6-digit stock code.
+            regime:       Optional pre-computed regime dict from MarketRegime.assess().
+                          If omitted, MarketRegime is called internally.
 
         Returns:
             List of step dicts, each with:
@@ -51,39 +57,45 @@ class ExecutionPlanner:
         TODO (hook):
             - Pull real-time price range from technical analysis (support/resistance)
             - Add volatility-based sizing (ATR)
-            - Integrate with MarketRegime for dynamic cap
         """
-        regime_name = "risk_neutral"  # ← hardcoded; hook for real regime later
-        regime = self._regimes.get(regime_name, {"max_position": 0.6})
-        max_pct = float(regime.get("max_position", 0.6))
+        if regime is None:
+            mr = MarketRegime(str(self._config_path))
+            regime = mr.assess()
 
-        if max_pct <= 0:
-            return []
+        regime_name: str = regime.get("regime", "risk_neutral")
 
-        # Default three-tranche plan: 40% / 35% / 25% of max position
-        plan = [
-            {
-                "step": 1,
-                "action": "initial",
-                "position_pct": round(max_pct * 0.40, 4),
-                "trigger": "entry_signal",
-                "price_range": "market_open ± 1%",
-            },
-            {
-                "step": 2,
-                "action": "add",
-                "position_pct": round(max_pct * 0.35, 4),
-                "trigger": "confirmation",
-                "price_range": "pullback_to_5ma",
-            },
-            {
-                "step": 3,
-                "action": "final",
-                "position_pct": round(max_pct * 0.25, 4),
-                "trigger": "breakout",
-                "price_range": "new_high_close",
-            },
-        ]
+        # ── per-regime tranche allocation ──────────────────────────────
+        # Each tuple is (step, action, position_pct, trigger, price_range)
+        _TRANCHES: dict[str, list[tuple[int, str, float, str, str]]] = {
+            "risk_on": [
+                (1, "initial", 0.40, "entry_signal", "market_open ± 1%"),
+                (2, "add", 0.30, "confirmation", "pullback_to_5ma"),
+                (3, "final", 0.30, "breakout", "new_high_close"),
+            ],
+            "risk_neutral": [
+                (1, "initial", 0.30, "entry_signal", "market_open ± 1%"),
+                (2, "add", 0.20, "confirmation", "pullback_to_5ma"),
+                (3, "final", 0.10, "breakout", "new_high_close"),
+            ],
+            "risk_off": [
+                (1, "initial", 0.15, "entry_signal", "market_open ± 1%"),
+                (2, "add", 0.10, "confirmation", "pullback_to_5ma"),
+                (3, "final", 0.05, "breakout", "new_high_close"),
+            ],
+            "crisis": [],
+        }
+
+        tranches = _TRANCHES.get(regime_name, _TRANCHES["risk_neutral"])
+
+        plan: list[dict[str, Any]] = []
+        for step, action, pct, trigger, price_range in tranches:
+            plan.append({
+                "step": step,
+                "action": action,
+                "position_pct": pct,
+                "trigger": trigger,
+                "price_range": price_range,
+            })
         return plan
 
     # ── internal ──────────────────────────────────────────────────────────

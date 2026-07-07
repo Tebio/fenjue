@@ -60,12 +60,34 @@ class ExplainEngine:
             })
 
         total = float(score_dict.get("total", 0))
+
+        # ── delta: score change vs previous run ──────────────────────
+        delta: dict[str, Any] | None = None
+        prev_total = score_dict.get("prev_total")
+        if prev_total is not None:
+            prev = float(prev_total)
+            diff = round(total - prev, 4)
+            direction = "up" if diff > 0 else "down" if diff < 0 else "flat"
+            delta = {"direction": direction, "amount": abs(diff)}
+
+        # ── evidence: data sources used for each dimension ───────────
+        evidence_sources: list[str] = []
+        if ind_ctx.get("name") and ind_ctx["name"] != "未匹配产业":
+            evidence_sources.append("产业链: fenjue.yaml industry_tree")
+        if "turnover" in quote:
+            evidence_sources.append("换手率: 东方财富实时数据")
+        if "pct_20d" in quote:
+            evidence_sources.append("20日涨幅: 东方财富实时数据")
+        evidence: dict[str, Any] = {"sources": evidence_sources}
+
         return {
             "total":      total,
             "tier":       score_dict.get("tier", "B"),
             "verdict":    score_dict.get("verdict", ""),
             "confidence": score_dict.get("confidence", 50),
             "breakdown":  breakdown,
+            "delta":      delta,
+            "evidence":   evidence,
             "_verified":  abs(sum(d["contribution"] for d in breakdown) - total) < 0.001,
         }
 

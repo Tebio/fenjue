@@ -33,12 +33,6 @@ import yaml
 
 from engine.mapping.industry import IndustryMapper
 
-# ── confidence overrides (hardcoded per spec) ────────────────────────────────
-_CONFIDENCE_MAP: dict[str, int] = {
-    "600141": 72,
-}
-
-
 class ScoringEngine:
     """Load config, instantiate industry mapper, and score stocks."""
 
@@ -103,7 +97,9 @@ class ScoringEngine:
         )
 
         tier = self._assign_tier(total)
-        confidence = self._confidence(code, total)
+        confidence = self._confidence(code, quote_data,
+                                       industry, flow, inst,
+                                       margin, quant, expect)
 
         return {
             "code": code,
@@ -237,12 +233,37 @@ class ScoringEngine:
         }
         return mapping.get(tier, mapping["B"])
 
-    @staticmethod
-    def _confidence(code: str, total: float) -> int:
-        """Confidence score (0-100).  Hardcoded overrides for known stocks."""
-        if code in _CONFIDENCE_MAP:
-            return _CONFIDENCE_MAP[code]
-        return 50
+    def _confidence(self, code: str, quote_data: dict[str, Any],
+                    industry: float, flow: float, inst: float,
+                    margin: float, quant: float, expect: float) -> int:
+        """Compute confidence score (0-100) from data completeness signals.
+
+        Base 50, plus bonuses for data availability.  Capped at [20, 95].
+        """
+        _ = code
+        conf = 50
+
+        # Data completeness
+        if "turnover" in quote_data:
+            conf += 10
+        if "pct_20d" in quote_data:
+            conf += 10
+
+        # Industry context
+        if industry > 0:
+            conf += 10
+
+        # All 6 dimensions have real (non-stub) scores
+        # Stub dimensions currently return exactly 5 — treat ≠ 5 as "real".
+        if (industry > 0
+                and "turnover" in quote_data
+                and "pct_20d" in quote_data
+                and inst != 5
+                and margin != 5
+                and quant != 5):
+            conf += 10
+
+        return max(20, min(95, conf))
 
     # ── internal ──────────────────────────────────────────────────────────
 

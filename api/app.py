@@ -23,6 +23,7 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from engine.database import get_db, create_tables
+from engine.regime.market import MarketRegime
 
 # ---------------------------------------------------------------------------
 # Config
@@ -172,11 +173,8 @@ async def get_watchlist():
 # ---------------------------------------------------------------------------
 @app.get("/regime")
 async def get_regime():
-    """Return current market regime from config + latest score distribution."""
-    regime_cfg = _config.get("regime", {})
-
+    """Return current market regime via MarketRegime (single source of truth)."""
     with get_db() as db:
-        # Simple heuristic: count tiers to infer regime
         tier_counts = db.execute(
             """SELECT tier, COUNT(*) AS cnt
                FROM daily_score
@@ -185,28 +183,15 @@ async def get_regime():
         ).fetchall()
 
     tiers = {r["tier"]: r["cnt"] for r in tier_counts}
-    s_count = tiers.get("S", 0)
-    a_count = tiers.get("A", 0)
-
-    # Basic regime inference
-    if s_count >= 3 or a_count >= 8:
-        current = "risk_on"
-    elif a_count >= 3 or s_count >= 1:
-        current = "risk_neutral"
-    elif any(tiers.values()):
-        current = "risk_off"
-    else:
-        current = "risk_neutral"  # default when no data
-
-    regime = regime_cfg.get(current, {})
+    result = MarketRegime(CONFIG_PATH).assess(tier_counts=tiers)
 
     return {
-        "current": current,
-        "max_position": regime.get("max_position", 0.6),
-        "sector_multiplier": regime.get("sector_multiplier", 1.0),
-        "sector_weights": {},  # populated from industry_tree later
-        "capital_style": "aggressive" if current == "risk_on" else "balanced" if current != "risk_off" else "defensive",
-        "tier_counts": {k: v for k, v in tiers.items()},
+        "current": result["regime"],
+        "max_position": result["max_position"],
+        "sector_multiplier": result["sector_multiplier"],
+        "sector_weights": {},
+        "capital_style": result["capital_style"],
+        "tier_counts": result["tier_counts"],
     }
 
 
