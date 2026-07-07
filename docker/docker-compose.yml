@@ -11,6 +11,7 @@ services:
     container_name: fenjue-engine
     ports:
       - "8001:8001"
+      - "8002:8002"
     volumes:
       # Score snapshots — persisted outside the container
       - /opt/data/fenjue/research/data/scores:/app/research/data/scores
@@ -18,6 +19,10 @@ services:
       - /opt/data/fenjue/config:/app/config:ro
     environment:
       - FENJUE_ENV=${FENJUE_ENV:-production}
+    command: >
+      sh -c "python -m uvicorn api.app:app --host 0.0.0.0 --port 8001 &
+             python -m uvicorn console.app:console_app --host 0.0.0.0 --port 8002 &
+             wait"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python3", "-c", "import httpx; httpx.get('http://localhost:8001/health').raise_for_status()"]

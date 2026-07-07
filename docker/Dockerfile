@@ -26,6 +26,7 @@ COPY . .
 #   /app/research/data/scores   → score snapshot storage
 #   /app/config                 → YAML configuration
 
-EXPOSE 8001
+EXPOSE 8001 8002
 
-CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8001"]
+# start both engine api + console (overridden by compose command if needed)
+CMD ["sh", "-c", "python -m uvicorn api.app:app --host 0.0.0.0 --port 8001 & python -m uvicorn console.app:console_app --host 0.0.0.0 --port 8002 & wait"]
