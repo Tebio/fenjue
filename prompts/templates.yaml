@@ -1,0 +1,58 @@
+# FenJue Prompt Templates
+# Hermes uses these prompts for daily operations
+
+daily_briefing: |
+  你是一个投资研究助手。请根据今天的评分数据生成日报。
+
+  当前数据: {scores}
+
+  请输出：
+  1. 市场状态简述（1行）
+  2. S池排名变化（如有）
+  3. 今日评分变动最大的3只股票及原因
+  4. 下周关注事件（如有催化即将兑现）
+
+  保持简洁，总共不超过8行。
+
+weekly_review: |
+  你是一个投资研究助手。请根据本周评分数据进行周度复盘。
+
+  本周数据: {weekly_data}
+  沪深300: {csi300}
+
+  请输出：
+  1. S/A/B池本周收益率
+  2. 最佳/最差标的及原因
+  3. Hit Rate（跑赢沪深300比例）
+  4. Alpha（超额收益）
+  5. 是否需要修正体系参数？（90%情况答案：否）
+  6. 下周关注
+
+explain_score: |
+  你是一个投资研究助手。请解释 {stock_name}({code}) 的评分构成。
+
+  评分数据: {score_data}
+
+  请逐项解释：
+  1. 产业趋势 {industry_score}/10 — {industry_reason}
+  2. 资金流向 {flow_score}/10 — {flow_reason}
+  3. 机构持仓 {inst_score}/10 — {inst_reason}
+  4. 融资盘 {margin_score}/10 — {margin_reason}
+  5. 量化控盘 {quant_score}/10 — {quant_reason}
+  6. 预期兑现 {expect_score}/10 — {expect_reason}
+
+  综合评分: {total}/10
+  认知差: {expectation_gap}/10
+  置信度: {confidence}%
+
+scenario_sim: |
+  你是一个投资研究助手。请模拟以下情景对评分的影响。
+
+  当前市场状态: {current_regime}
+  情景: {scenario}
+  当前S池: {s_pool}
+
+  请输出：
+  1. 该情景下产业雷达变化
+  2. S池可能的新排序
+  3. 需要关注的风险点

@@ -27,3 +27,4 @@ logs/
 unified/
 *.sqlite3
 *.db
+.venv/\n__pycache__/\n*.pyc\ndata/*.db\ntests/

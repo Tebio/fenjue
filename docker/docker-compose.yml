@@ -1,0 +1,43 @@
+# FenJue Engine — Docker Compose
+# ================================
+
+version: "3.8"
+
+services:
+  fenjue-engine:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: fenjue-engine
+    ports:
+      - "8001:8001"
+    volumes:
+      # Score snapshots — persisted outside the container
+      - /opt/data/fenjue/research/data/scores:/app/research/data/scores
+      # Config — hot-reloaded on restart
+      - /opt/data/fenjue/config:/app/config:ro
+    environment:
+      - FENJUE_ENV=${FENJUE_ENV:-production}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import httpx; httpx.get('http://localhost:8001/health').raise_for_status()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # Optional: PostgreSQL for future migration from SQLite
+  # fenjue-db:
+  #   image: postgres:16-alpine
+  #   container_name: fenjue-db
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_USER: ${FENJUE_DB_USER:-fenjue}
+  #     POSTGRES_PASSWORD: ${FENJUE_DB_PASSWORD:-fenjue}
+  #     POSTGRES_DB: ${FENJUE_DB_NAME:-fenjue}
+  #   volumes:
+  #     - fenjue_pgdata:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+# volumes:
+#   fenjue_pgdata:
