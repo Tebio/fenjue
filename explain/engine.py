@@ -1,83 +1,120 @@
 """
-ExplainEngine — traceable score attribution for FenJue's six-dimension scoring.
-
-Every dimension in a composite score is broken down into:
-    - raw score (0-10)
-    - weight in the formula
-    - weighted contribution (= raw × weight)
-    - source text explaining how the score was derived
-
-This makes every score auditable, debuggable, and human-readable.
-
-Usage:
-    explainer = ExplainEngine()
-    result = explainer.explain("600141", score_dict)
-    # → {"total": 6.85, "breakdown": [{...}, ...]}
+ExplainEngine V2 — 动态溯源评分解释。
+每个维度的 source 由真实数据生成，可追溯，可审计。
+Scorer 传入 industry_context + quote_data，Explain 产出人类可读解释。
 """
-
 from __future__ import annotations
-
 from typing import Any
 
 
 class ExplainEngine:
-    """Generate structured explanations for a stock's composite score."""
+    """生成六维评分的可追溯解释。"""
+
+    _WEIGHT_KEY: dict[str, str] = {
+        "industry": "industry_trend",
+        "flow":     "capital_flow",
+        "inst":     "institutional",
+        "margin":   "margin",
+        "quant":    "quantitative",
+        "expect":   "expectation",
+    }
+
+    _LABELS: dict[str, str] = {
+        "industry": "产业趋势",
+        "flow":     "资金流向",
+        "inst":     "机构持仓",
+        "margin":   "融资情绪",
+        "quant":    "量化信号",
+        "expect":   "预期兑现",
+    }
 
     def explain(self, code: str, score_dict: dict[str, Any]) -> dict[str, Any]:
-        """Build a traceable breakdown of the composite score.
+        """生成评分拆解，每维含动态 source。
 
-        Args:
-            code:       6-digit stock code.
-            score_dict: Output from ScoringEngine.score_stock(), expected keys:
-                        industry, flow, inst, margin, quant, expect, total,
-                        weights (dict of yaml_key→weight), tier, verdict, confidence.
-
-        Returns:
-            dict with keys:
-                total     — composite score (float)
-                breakdown — list of {dimension, score, weight, contribution, source}
+        score_dict 需包含:
+            industry/flow/inst/margin/quant/expect → 原始分
+            total / tier / verdict / confidence
+            weights → {yaml_key: float}
+            industry_context (可选) → {name, heat_stars, stage}
+            quote_data        (可选) → {turnover, pct_20d}
         """
-        weights: dict[str, float] = score_dict.get("weights", {})
-
-        # Map output dimension keys → YAML weight keys
-        _WEIGHT_KEY: dict[str, str] = {
-            "industry": "industry_trend",
-            "flow":     "capital_flow",
-            "inst":     "institutional",
-            "margin":   "margin",
-            "quant":    "quantitative",
-            "expect":   "expectation",
-        }
-
-        dimensions = [
-            ("industry", "产业趋势", "industry_tree YAML → heat × weight"),
-            ("flow",     "资金流向", "turnover rate bucket scoring"),
-            ("inst",     "机构动向", "default placeholder; real hook TBD"),
-            ("margin",   "融资情绪", "default placeholder; real hook TBD"),
-            ("quant",    "量化信号", "default placeholder; real hook TBD"),
-            ("expect",   "预期兑现", "20-day return percentile scoring"),
-        ]
+        weights = score_dict.get("weights", {})
+        quote   = score_dict.get("quote_data") or {}
+        ind_ctx = score_dict.get("industry_context") or {}
 
         breakdown: list[dict[str, Any]] = []
-        for key, label, source in dimensions:
-            raw = int(score_dict.get(key, 0))  # scores are integers 0-10
-            weight = float(weights.get(_WEIGHT_KEY.get(key, key), 0))
-            contribution = round(raw * weight, 4)
-            breakdown.append(
-                {
-                    "dimension": key,
-                    "label": label,
-                    "score": raw,
-                    "weight": weight,
-                    "contribution": contribution,
-                    "source": source,
-                }
-            )
+        for dim_key, label in self._LABELS.items():
+            raw = float(score_dict.get(dim_key, 0))
+            wk  = self._WEIGHT_KEY.get(dim_key, dim_key)
+            w   = float(weights.get(wk, 0))
+            c   = round(raw * w, 4)
+            src = self._source(dim_key, raw, w, c, ind_ctx, quote)
 
+            breakdown.append({
+                "dimension":    dim_key,
+                "label":        label,
+                "score":        raw,
+                "weight":       w,
+                "contribution": c,
+                "source":       src,
+            })
+
+        total = float(score_dict.get("total", 0))
         return {
-            "total": score_dict.get("total", 0),
-            "tier": score_dict.get("tier", "B"),
-            "verdict": score_dict.get("verdict", ""),
+            "total":      total,
+            "tier":       score_dict.get("tier", "B"),
+            "verdict":    score_dict.get("verdict", ""),
             "confidence": score_dict.get("confidence", 50),
-            "breakdown": breakdown,
+            "breakdown":  breakdown,
+            "_verified":  abs(sum(d["contribution"] for d in breakdown) - total) < 0.001,
         }
+
+    # ── per-dimension source builders ─────────────────────────
+
+    def _source(self, dim: str, raw: float, w: float, c: float,
+                ind: dict, quote: dict) -> str:
+        if dim == "industry":
+            return self._src_industry(raw, w, c, ind)
+        if dim == "flow":
+            return self._src_flow(raw, w, c, quote)
+        if dim == "expect":
+            return self._src_expect(raw, w, c, quote)
+        if dim in ("inst", "margin", "quant"):
+            return self._src_placeholder(dim, raw, w, c)
+        return f"raw={raw:.1f} × {w} = {c:.2f}"
+
+    def _src_industry(self, raw: float, w: float, c: float, ind: dict) -> str:
+        name  = ind.get("name", "未匹配产业")
+        stars = ind.get("heat_stars", "★★☆☆☆")
+        stage = ind.get("stage", "未知阶段")
+        if name == "未匹配产业":
+            return f"未匹配产业映射 → raw={raw:.1f} × {w} = {c:.2f}"
+        return f"{name} {stars} {stage} → raw={raw:.1f} × {w} = {c:.2f}"
+
+    def _src_flow(self, raw: float, w: float, c: float, quote: dict) -> str:
+        t = quote.get("turnover")
+        if t is None:
+            return f"换手率缺失 → raw={raw:.1f} × {w} = {c:.2f}"
+        bucket = (
+            "过热(>20%)" if t > 20 else
+            "活跃(10-20%)" if t >= 10 else
+            "正常(3-10%)" if t >= 3 else
+            "冷清(1-3%)" if t >= 1 else
+            "极冷(<1%)"
+        )
+        return f"换手率 {t:.1f}% → {bucket} → raw={raw:.1f} × {w} = {c:.2f}"
+
+    def _src_expect(self, raw: float, w: float, c: float, quote: dict) -> str:
+        pct = quote.get("pct_20d")
+        if pct is None:
+            return f"20日涨幅缺失 → raw={raw:.1f} × {w} = {c:.2f}"
+        zone = (
+            "涨幅>30%(兑现充分)" if pct > 30 else
+            "区间15-30%"           if pct >= 15 else
+            "区间5-15%"            if pct >= 5 else
+            "涨幅<5%(预期未兑现)"
+        )
+        return f"近20日涨幅 {pct:.1f}% → {zone} → raw={raw:.1f} × {w} = {c:.2f}"
+
+    def _src_placeholder(self, dim: str, raw: float, w: float, c: float) -> str:
+        return f"{self._LABELS.get(dim,dim)}: 暂用默认值(数据源待接入) → raw={raw:.1f} × {w} = {c:.2f}"
