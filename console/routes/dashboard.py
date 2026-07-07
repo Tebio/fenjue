@@ -100,7 +100,7 @@ _DEFAULT_INDUSTRIES: list[dict[str, Any]] = [
 
 _REGIME_LABELS: dict[str, str] = {
     "risk_on":      "Risk-On",
-    "risk_neutral": "Risk-Neutral",
+    "risk_neutral": "风险中性",
     "risk_off":     "Risk-Off",
     "crisis":       "Crisis",
 }
