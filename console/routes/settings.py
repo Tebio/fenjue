@@ -15,17 +15,26 @@ _CONFIG_PATH = _PROJECT_ROOT / "config" / "fenjue.yaml"
 WEIGHT_LABELS = {
     "industry_trend": "产业趋势",
     "capital_flow": "资金流向",
-    "institutional": "机构",
-    "margin": "融资",
-    "quantitative": "量化",
+    "institutional": "机构持仓",
+    "margin": "融资盘",
+    "quantitative": "量化控盘",
     "expectation": "预期兑现",
 }
 
+WEIGHT_HELP = {
+    "industry_trend": "代码自动查产业链映射树，匹配到AI材料/半导体等产业得分。不用你填数据。",
+    "capital_flow": "基于换手率：3-10%正常得8分，>20%过热得3分，<1%冷清得4分。自动算。",
+    "institutional": "暂用默认值5分，后续接东方财富机构持仓数据。调这个影响小。",
+    "margin": "暂用默认值5分，后续接融资融券数据。当前不依赖外部接口。",
+    "quantitative": "暂用默认值5分，后续接龙虎榜量化席位数据。权重小(×0.05)，影响微。",
+    "expectation": "基于近20日涨幅：<5%得9分，5-15%得7分，15-30%得5分，>30%得3分。自动算。",
+}
+
 REGIME_LABELS = {
-    "risk_on": "Risk-On",
-    "risk_neutral": "Risk-Neutral",
-    "risk_off": "Risk-Off",
-    "crisis": "Crisis",
+    "risk_on": "激进 (Risk-On)",
+    "risk_neutral": "中性 (Neutral)",
+    "risk_off": "防御 (Risk-Off)",
+    "crisis": "避险 (Crisis)",
 }
 
 # ── helpers ──────────────────────────────────────────────────
@@ -182,13 +191,17 @@ def _render_settings_html(
     for key, label in WEIGHT_LABELS.items():
         val = weights.get(key, 0)
         pct = int(val * 100)
+        help_text = WEIGHT_HELP.get(key, "")
         weight_rows += f"""
-        <div style="display:flex;align-items:center;margin:14px 0">
-          <div style="width:110px;font-size:12px;color:var(--text)">{label}</div>
-          <input type="range" name="weight_{key}" min="0" max="100" value="{pct}"
-            style="flex:1;margin:0 12px;accent-color:var(--accent)"
-            oninput="this.nextElementSibling.value=(this.value/100).toFixed(2)">
-          <output style="width:45px;text-align:right;font-size:12px;color:var(--accent)">{(pct/100):.2f}</output>
+        <div style="margin:14px 0">
+          <div style="display:flex;align-items:center">
+            <div style="width:110px;font-size:12px;color:var(--text)">{label}</div>
+            <input type="range" name="weight_{key}" min="0" max="100" value="{pct}"
+              style="flex:1;margin:0 12px;accent-color:var(--accent)"
+              oninput="this.nextElementSibling.value=(this.value/100).toFixed(2)">
+            <output style="width:45px;text-align:right;font-size:12px;color:var(--accent)">{(pct/100):.2f}</output>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin:2px 0 0 110px;line-height:1.4">💡 {help_text}</div>
         </div>"""
 
     # tier sliders
@@ -265,8 +278,14 @@ def _render_settings_html(
     return f"""
 <!-- Settings Page -->
 <div>
-  <h2 style="font-size:18px;margin-bottom:4px">⚙️ Settings</h2>
-  <p style="color:var(--muted);font-size:11px;margin-bottom:20px">配置评分权重、市场状态参数与产业雷达</p>
+  <h2 style="font-size:18px;margin-bottom:4px">⚙️ 参数配置</h2>
+  <p style="color:var(--muted);font-size:11px;margin-bottom:8px">调整评分权重、市场状态与产业雷达。拖动滑块后点底部「保存设置」即刻生效。</p>
+  <div style="background:rgba(0,212,170,0.06);border-left:2px solid var(--accent);padding:10px 14px;margin-bottom:20px;border-radius:0 6px 6px 0;font-size:11px;color:var(--muted);line-height:1.6">
+    <strong style="color:var(--accent)">💡 不知道怎么调？保持默认就行。</strong><br>
+    产业趋势和资金流向是自动算的（代码自动查产业链+换手率），你不用管。<br>
+    机构/融资/量化目前用默认值，后续接数据源后会自动更新。<br>
+    想微调的话，只动「产业趋势」和「预期兑现」的权重就好，其他影响很小。
+  </div>
 
   <form id="settings-form"
     hx-post="/console/api/settings/save"
@@ -276,17 +295,14 @@ def _render_settings_html(
 
     <!-- ── A. Scoring Weights ── -->
     <div class="card">
-      <div class="card-title">
-        评分权重 (Scoring Weights)
-        <span style="float:right;font-size:11px" id="weight-sum-display">合计: {weight_sum_pct}%</span>
-      </div>
+      <div class="card-title">评分权重</div>
       {weight_rows}
       {tier_rows}
     </div>
 
     <!-- ── B. Regime ── -->
     <div class="card">
-      <div class="card-title">市场状态 (Regime)</div>
+      <div class="card-title">市场状态</div>
       <div class="grid-2">
         {regime_rows}
       </div>
@@ -294,7 +310,7 @@ def _render_settings_html(
 
     <!-- ── C. Industry Weights ── -->
     <div class="card">
-      <div class="card-title">产业雷达权重 (Industry Weights)</div>
+      <div class="card-title">产业雷达</div>
       <table>
         <thead>
           <tr>
