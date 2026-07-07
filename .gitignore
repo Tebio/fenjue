@@ -25,3 +25,5 @@ logs/
 
 # Unified data
 unified/
+*.sqlite3
+*.db
