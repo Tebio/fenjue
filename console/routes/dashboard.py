@@ -354,6 +354,20 @@ async def dashboard(request: Request) -> HTMLResponse:
     except Exception:
         pass
 
+    # ── inject real prices from akShare ──────────────────────────────────
+    try:
+        from engine.market_data import MarketData
+        md = MarketData()
+        codes = [item.get("code") for item in watchlist if item.get("code")]
+        if codes:
+            quotes = md.get_batch(codes)
+            for item in watchlist:
+                code = item.get("code")
+                if code and quotes.get(code) and quotes[code].get("price"):
+                    item["price"] = quotes[code]["price"]
+    except Exception:
+        pass
+
     # ── assemble HTML ────────────────────────────────────────────────────
     regime_cards   = _build_regime_cards(regime)
     industry_radar = _build_industry_radar(regime.get("sector_multiplier", 1.05))
