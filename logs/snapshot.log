@@ -1,0 +1,201 @@
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260511_0925.json | quotes=34 | 大盘闸门：上证指数 -0.01%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260511_0940.json | quotes=274 | 大盘闸门：上证指数 +0.32%；深证成指 +0.90%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260512_0925.json | quotes=182 | 大盘闸门：上证指数 -0.00%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260512_0940.json | quotes=463 | 大盘闸门：上证指数 -0.21%；深证成指 -0.45%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260513_0925.json | quotes=0 | 大盘闸门：上证指数 -0.13%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260513_0940.json | quotes=473 | 大盘闸门：上证指数 -0.10%；深证成指 +0.05%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260514_0925.json | quotes=210 | 大盘闸门：上证指数 -0.00%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260514_0940.json | quotes=450 | 大盘闸门：上证指数 -0.13%；深证成指 +0.00%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260515_0925.json | quotes=203 | 大盘闸门：上证指数 -0.01%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260515_0940.json | quotes=407 | 大盘闸门：上证指数 -0.33%；深证成指 +0.05%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260601_0925.json | quotes=152 | 大盘闸门：上证指数 -0.01%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260601_0940.json | quotes=320 | 大盘闸门：上证指数 -0.19%；深证成指 -0.31%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260602_0925.json | quotes=78 | 大盘闸门：上证指数 -0.01%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260602_0940.json | quotes=297 | 大盘闸门：上证指数 +0.05%；深证成指 +0.50%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260603_0925.json | quotes=129 | 大盘闸门：上证指数 -0.01%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260603_0940.json | quotes=249 | 大盘闸门：上证指数 -0.24%；深证成指 +0.51%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260604_0925.json | quotes=27 | 大盘闸门：上证指数 -0.01%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260604_0940.json | quotes=249 | 大盘闸门：上证指数 -0.40%；深证成指 -0.68%；未红，观望。
+Traceback (most recent call last):
+  File "/opt/data/python-libs/urllib3/connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "/opt/data/python-libs/urllib3/util/connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno -3] Temporary failure in name resolution
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/data/python-libs/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "/opt/data/python-libs/urllib3/connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "/opt/data/python-libs/urllib3/connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/data/python-libs/urllib3/connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "/opt/data/python-libs/urllib3/connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "/opt/data/python-libs/urllib3/connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='hq.sinajs.cn', port=443): Failed to resolve 'hq.sinajs.cn' ([Errno -3] Temporary failure in name resolution)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/data/python-libs/requests/adapters.py", line 645, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "/opt/data/python-libs/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "/opt/data/python-libs/urllib3/util/retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='hq.sinajs.cn', port=443): Max retries exceeded with url: /list=sh601138,sh600487,sz000636,sz002436,sh601991,sh603296,sz000767,sz002484,sh600667,sh603773,sz002081,sz002851,sh600011,sh605376,sh600172,sh603011,sz000539,sh600726,sh605589,sh600900,sz002579,sh600869,sh600378,sz002421,sh603678,sh600188,sz002859,sh600110,sh601066,sh600795,sz002608,sh601918,sh603002,sh603267,sz002552,sz000510,sz002957,sh601988,sz002354,sh601699,sz002251,sh601101,sh600301,sh601001,sz000582,sz002806,sz000509,sz002995,sh603800,sh600459,sh600919,sh600546,sz000037,sh600367,sh603045,sh600121,sh603039,sh600575,sz002975,sh603990,sh600360,sh603633,sh603823,sz001301,sz002613,sz002527,sz002951,sh603344,sh603979,sz002568,sh600642,sh603311,sz000921,sh600727,sz002897,sz003004,sh601838,sh603608,sh603997,sz002962,sh600162,sh603324,sh600280,sh600503,sh603386,sh603439,sh603099,sh600857,sh600060,sz002700,sz001210,sz001269,sh603330,sz000090,sz002871,sh600971,sh603733,sz002718,sh603721,sz002404,sz000411,sz000055,sz000691,sh600403,sh601298,sh600377,sh600012,sh603890,sz000429,sh600183,sh600863,sz002353,sh600027,sh603031,sh605277,sz000887,sh605020,sz002422,sz003036,sz001286,sh600758,sh600985,sh603989,sh603466,sh603931,sh603032,sh600483,sh603681,sz000883,sh603533,sz000151,sh603637,sz000926,sz000716,sh603303,sz000608,sz001259,sh603075,sh605177,sz001308,sz001314,sz003033,sh600461,sz003013,sh603986,sh600584,sz000725,sz002185,sz002156,sz002384,sz000021,sz002241,sz002938,sz002049,sh600460,sh603601,sh603893,sz002273,sz002245,sz002364,sh600578,sh601208,sh600396,sh605111,sz002617,sh603256,sh603920,sh600707,sz002138,sh600246,sh605117,sh603063,sh600699,sz002432,sz002636,sz002585,sh600186,sz000338,sz002741,sz002896,sh603290,sh603936,sh600909,sz002079,sz002980,sz002886,sh600353,sz002733,sh600545,sh600520,sh605006,sz002119,sz000962,sh600888,sh600999,sz002745,sz000417,sh600226,sz002077,sh603115,sh603203,sz002388,sh601939,sz002782,sz002272,sh603663,sz002406,sh603316,sz002706,sz001257,sh600207,sz002669,sh600611,sz001331,sh600885,sh603779,sz000727,sz000518,sz002442,sz000759,sz003019,sh603353,sz002012,sh603919,sz002534,sh603730,sh600906,sh605580,sh603226,sz002771,sh605186,sz002927,sh600539,sh603124,sh603223,sh603001,sh603685,sz002983,sh600969,sh605055,sh605058,sz003025,sh600234,sz003028,sz001366,sz002072,sh603578,sh603213,sh603661,sh603255 (Caused by NameResolutionError("HTTPSConnection(host='hq.sinajs.cn', port=443): Failed to resolve 'hq.sinajs.cn' ([Errno -3] Temporary failure in name resolution)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/data/fenjue/fenjue_snapshot.py", line 51, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/opt/data/fenjue/fenjue_snapshot.py", line 30, in main
+    quotes = fetch_quotes(codes)
+  File "/opt/data/fenjue/fenjue_fast.py", line 116, in fetch_quotes
+    resp = session.get(url, headers=headers, timeout=10)
+  File "/opt/data/python-libs/requests/sessions.py", line 605, in get
+    return self.request("GET", url, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/data/python-libs/requests/sessions.py", line 592, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/opt/data/python-libs/requests/sessions.py", line 706, in send
+    r = adapter.send(request, **kwargs)
+  File "/opt/data/python-libs/requests/adapters.py", line 678, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='hq.sinajs.cn', port=443): Max retries exceeded with url: /list=sh601138,sh600487,sz000636,sz002436,sh601991,sh603296,sz000767,sz002484,sh600667,sh603773,sz002081,sz002851,sh600011,sh605376,sh600172,sh603011,sz000539,sh600726,sh605589,sh600900,sz002579,sh600869,sh600378,sz002421,sh603678,sh600188,sz002859,sh600110,sh601066,sh600795,sz002608,sh601918,sh603002,sh603267,sz002552,sz000510,sz002957,sh601988,sz002354,sh601699,sz002251,sh601101,sh600301,sh601001,sz000582,sz002806,sz000509,sz002995,sh603800,sh600459,sh600919,sh600546,sz000037,sh600367,sh603045,sh600121,sh603039,sh600575,sz002975,sh603990,sh600360,sh603633,sh603823,sz001301,sz002613,sz002527,sz002951,sh603344,sh603979,sz002568,sh600642,sh603311,sz000921,sh600727,sz002897,sz003004,sh601838,sh603608,sh603997,sz002962,sh600162,sh603324,sh600280,sh600503,sh603386,sh603439,sh603099,sh600857,sh600060,sz002700,sz001210,sz001269,sh603330,sz000090,sz002871,sh600971,sh603733,sz002718,sh603721,sz002404,sz000411,sz000055,sz000691,sh600403,sh601298,sh600377,sh600012,sh603890,sz000429,sh600183,sh600863,sz002353,sh600027,sh603031,sh605277,sz000887,sh605020,sz002422,sz003036,sz001286,sh600758,sh600985,sh603989,sh603466,sh603931,sh603032,sh600483,sh603681,sz000883,sh603533,sz000151,sh603637,sz000926,sz000716,sh603303,sz000608,sz001259,sh603075,sh605177,sz001308,sz001314,sz003033,sh600461,sz003013,sh603986,sh600584,sz000725,sz002185,sz002156,sz002384,sz000021,sz002241,sz002938,sz002049,sh600460,sh603601,sh603893,sz002273,sz002245,sz002364,sh600578,sh601208,sh600396,sh605111,sz002617,sh603256,sh603920,sh600707,sz002138,sh600246,sh605117,sh603063,sh600699,sz002432,sz002636,sz002585,sh600186,sz000338,sz002741,sz002896,sh603290,sh603936,sh600909,sz002079,sz002980,sz002886,sh600353,sz002733,sh600545,sh600520,sh605006,sz002119,sz000962,sh600888,sh600999,sz002745,sz000417,sh600226,sz002077,sh603115,sh603203,sz002388,sh601939,sz002782,sz002272,sh603663,sz002406,sh603316,sz002706,sz001257,sh600207,sz002669,sh600611,sz001331,sh600885,sh603779,sz000727,sz000518,sz002442,sz000759,sz003019,sh603353,sz002012,sh603919,sz002534,sh603730,sh600906,sh605580,sh603226,sz002771,sh605186,sz002927,sh600539,sh603124,sh603223,sh603001,sh603685,sz002983,sh600969,sh605055,sh605058,sz003025,sh600234,sz003028,sz001366,sz002072,sh603578,sh603213,sh603661,sh603255 (Caused by NameResolutionError("HTTPSConnection(host='hq.sinajs.cn', port=443): Failed to resolve 'hq.sinajs.cn' ([Errno -3] Temporary failure in name resolution)"))
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260608_0925.json | quotes=123 | 大盘闸门：上证指数 -0.01%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260608_0940.json | quotes=249 | 大盘闸门：上证指数 -1.07%；深证成指 -1.64%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260609_0925.json | quotes=130 | 大盘闸门：上证指数 -0.01%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260609_0940.json | quotes=249 | 大盘闸门：上证指数 +0.01%；深证成指 +0.87%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260610_0925.json | quotes=78 | 大盘闸门：上证指数 -0.07%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260610_0940.json | quotes=199 | 大盘闸门：上证指数 -0.29%；深证成指 -1.33%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260611_0925.json | quotes=105 | 大盘闸门：上证指数 -0.01%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260611_0940.json | quotes=207 | 大盘闸门：上证指数 -0.42%；深证成指 -0.18%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260612_0925.json | quotes=24 | 大盘闸门：上证指数 -0.03%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260612_0940.json | quotes=207 | 大盘闸门：上证指数 +0.93%；深证成指 +1.55%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260615_0940.json | quotes=177 | 大盘闸门：上证指数 +0.96%；深证成指 +1.33%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260616_0940.json | quotes=171 | 大盘闸门：上证指数 -0.11%；深证成指 +0.36%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260617_0940.json | quotes=171 | 大盘闸门：上证指数 -0.10%；深证成指 +0.08%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260618_0940.json | quotes=171 | 大盘闸门：上证指数 -0.25%；深证成指 +0.49%；红盘通过。
+Traceback (most recent call last):
+  File "/opt/data/python-libs/urllib3/connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "/opt/data/python-libs/urllib3/util/connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno -3] Temporary failure in name resolution
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/data/python-libs/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "/opt/data/python-libs/urllib3/connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "/opt/data/python-libs/urllib3/connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/data/python-libs/urllib3/connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "/opt/data/python-libs/urllib3/connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "/opt/data/python-libs/urllib3/connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='hq.sinajs.cn', port=443): Failed to resolve 'hq.sinajs.cn' ([Errno -3] Temporary failure in name resolution)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/data/python-libs/requests/adapters.py", line 645, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "/opt/data/python-libs/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "/opt/data/python-libs/urllib3/util/retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='hq.sinajs.cn', port=443): Max retries exceeded with url: /list=sh000001,sz399001 (Caused by NameResolutionError("HTTPSConnection(host='hq.sinajs.cn', port=443): Failed to resolve 'hq.sinajs.cn' ([Errno -3] Temporary failure in name resolution)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/data/fenjue/fenjue_snapshot.py", line 57, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/opt/data/fenjue/fenjue_snapshot.py", line 32, in main
+    gate_ok, gate_text = market_gate()
+                         ~~~~~~~~~~~^^
+  File "/opt/data/fenjue/fenjue_fast.py", line 168, in market_gate
+    indices = fetch_sina_symbols(["sh000001", "sz399001"])
+  File "/opt/data/fenjue/fenjue_fast.py", line 139, in fetch_sina_symbols
+    resp = session.get(url, headers=headers, timeout=10)
+  File "/opt/data/python-libs/requests/sessions.py", line 605, in get
+    return self.request("GET", url, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/data/python-libs/requests/sessions.py", line 592, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/opt/data/python-libs/requests/sessions.py", line 706, in send
+    r = adapter.send(request, **kwargs)
+  File "/opt/data/python-libs/requests/adapters.py", line 678, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='hq.sinajs.cn', port=443): Max retries exceeded with url: /list=sh000001,sz399001 (Caused by NameResolutionError("HTTPSConnection(host='hq.sinajs.cn', port=443): Failed to resolve 'hq.sinajs.cn' ([Errno -3] Temporary failure in name resolution)"))
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260622_0940.json | quotes=171 | 大盘闸门：上证指数 +0.08%；深证成指 +0.72%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260623_0940.json | quotes=171 | 大盘闸门：上证指数 -0.08%；深证成指 -0.76%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260624_0940.json | quotes=171 | 大盘闸门：上证指数 -0.13%；深证成指 -0.04%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260625_0940.json | quotes=171 | 大盘闸门：上证指数 -0.23%；深证成指 +0.92%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260626_0940.json | quotes=171 | 大盘闸门：上证指数 -0.55%；深证成指 -0.89%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260629_0940.json | quotes=171 | 大盘闸门：上证指数 -0.11%；深证成指 +0.45%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260630_0940.json | quotes=171 | 大盘闸门：上证指数 -0.34%；深证成指 +0.56%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260701_0940.json | quotes=171 | 大盘闸门：上证指数 +0.08%；深证成指 +0.08%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260702_0940.json | quotes=171 | 大盘闸门：上证指数 -0.86%；深证成指 -2.55%；未红，观望。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260703_0940.json | quotes=171 | 大盘闸门：上证指数 +0.50%；深证成指 +0.61%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260706_0940.json | quotes=171 | 大盘闸门：上证指数 +0.18%；深证成指 +0.13%；红盘通过。
+snapshot saved: /opt/data/fenjue/snapshots/snapshot_20260707_0940.json | quotes=171 | 大盘闸门：上证指数 -0.43%；深证成指 +0.12%；红盘通过。

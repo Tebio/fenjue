@@ -1,0 +1,127 @@
+{
+  "date": "20260508",
+  "count": 12,
+  "elapsed": 98,
+  "results": [
+    {
+      "code": "002317",
+      "name": "众生药业",
+      "prev_close": 20.49,
+      "open": 22.54,
+      "gap_pct": 10.0,
+      "vol_1st": 31194700,
+      "sector": "中药Ⅱ",
+      "amount_yi": 17.2
+    },
+    {
+      "code": "601991",
+      "name": "大唐发电",
+      "prev_close": 5.04,
+      "open": 5.54,
+      "gap_pct": 9.92,
+      "vol_1st": 110314584,
+      "sector": "电力",
+      "amount_yi": 16.7
+    },
+    {
+      "code": "600396",
+      "name": "华电辽能",
+      "prev_close": 12.0,
+      "open": 12.38,
+      "gap_pct": 3.17,
+      "vol_1st": 18668302,
+      "sector": "电力",
+      "amount_yi": 19.7
+    },
+    {
+      "code": "002217",
+      "name": "合力泰",
+      "prev_close": 3.5,
+      "open": 3.61,
+      "gap_pct": 3.14,
+      "vol_1st": 170243100,
+      "sector": "光学光电",
+      "amount_yi": 28.7
+    },
+    {
+      "code": "002008",
+      "name": "大族激光",
+      "prev_close": 112.41,
+      "open": 115.4,
+      "gap_pct": 2.66,
+      "vol_1st": 3815457,
+      "sector": "自动化设",
+      "amount_yi": 45.3
+    },
+    {
+      "code": "600726",
+      "name": "华电能源",
+      "prev_close": 7.61,
+      "open": 7.8,
+      "gap_pct": 2.5,
+      "vol_1st": 26678700,
+      "sector": "电力",
+      "amount_yi": 26.9
+    },
+    {
+      "code": "601208",
+      "name": "东材科技",
+      "prev_close": 45.16,
+      "open": 46.25,
+      "gap_pct": 2.41,
+      "vol_1st": 6974359,
+      "sector": "塑料",
+      "amount_yi": 38.7
+    },
+    {
+      "code": "603399",
+      "name": "永杉锂业",
+      "prev_close": 22.58,
+      "open": 22.97,
+      "gap_pct": 1.73,
+      "vol_1st": 15749016,
+      "sector": "能源金属",
+      "amount_yi": 37.3
+    },
+    {
+      "code": "002738",
+      "name": "中矿资源",
+      "prev_close": 88.0,
+      "open": 89.4,
+      "gap_pct": 1.59,
+      "vol_1st": 2552118,
+      "sector": "能源金属",
+      "amount_yi": 30.9
+    },
+    {
+      "code": "002757",
+      "name": "南兴股份",
+      "prev_close": 27.84,
+      "open": 28.28,
+      "gap_pct": 1.58,
+      "vol_1st": 4767700,
+      "sector": "专用设备",
+      "amount_yi": 13.7
+    },
+    {
+      "code": "600158",
+      "name": "中体产业",
+      "prev_close": 13.27,
+      "open": 13.43,
+      "gap_pct": 1.21,
+      "vol_1st": 14488400,
+      "sector": "体育Ⅱ",
+      "amount_yi": 24.3
+    },
+    {
+      "code": "002805",
+      "name": "丰元股份",
+      "prev_close": 24.52,
+      "open": 24.78,
+      "gap_pct": 1.06,
+      "vol_1st": 4257140,
+      "sector": "电池",
+      "amount_yi": 19.5
+    }
+  ]
+}

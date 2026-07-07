@@ -1,0 +1,72 @@
+{
+  "date": "20260508",
+  "verified": 1,
+  "failed": 4,
+  "results": [
+    {
+      "code": "600726",
+      "name": "华电能源",
+      "prev_close": 7.51,
+      "open": 7.8,
+      "latest": 8.05,
+      "gap_pct": 3.86,
+      "from_open": 3.21,
+      "total_vol": 2667870020120208213137801292130013900700950028013331151868160074439007486200,
+      "sector": "电力"
+    }
+  ],
+  "excluded": [
+    {
+      "code": "600673",
+      "name": "东阳光",
+      "prev_close": 39.9,
+      "open": 42.83,
+      "gap_pct": 7.34,
+      "vol_1st": 19907600,
+      "sector": "综合Ⅱ",
+      "amount_yi": 90.9,
+      "reason": "高开低走(-3.6%); 冲高回落(-3.6%)",
+      "from_open": -3.64,
+      "latest": 41.27
+    },
+    {
+      "code": "002217",
+      "name": "合力泰",
+      "prev_close": 3.43,
+      "open": 3.61,
+      "gap_pct": 5.25,
+      "vol_1st": 170243100,
+      "sector": "光学光电",
+      "amount_yi": 52.6,
+      "reason": "高开低走(-1.9%); 冲高回落(-3.0%)",
+      "from_open": -1.94,
+      "latest": 3.54
+    },
+    {
+      "code": "000066",
+      "name": "中国长城",
+      "prev_close": 23.09,
+      "open": 23.78,
+      "gap_pct": 2.99,
+      "vol_1st": 45597957,
+      "sector": "计算机设",
+      "amount_yi": 154.4,
+      "reason": "高开低走(-1.3%)",
+      "from_open": -1.35,
+      "latest": 23.46
+    },
+    {
+      "code": "000762",
+      "name": "西藏矿业",
+      "prev_close": 37.43,
+      "open": 38.41,
+      "gap_pct": 2.62,
+      "vol_1st": 2465900,
+      "sector": "能源金属",
+      "amount_yi": 24.4,
+      "reason": "冲高回落(-3.4%)",
+      "from_open": 4.14,
+      "latest": 40.0
+    }
+  ]
+}

@@ -1,0 +1,3089 @@
+{
+  "created_at": "2026-06-24T01:40:02",
+  "quote_date": "20260624",
+  "tag": "0940",
+  "pool": "pool_20260615.json",
+  "market_gate_ok": false,
+  "market_gate_text": "大盘闸门：上证指数 -0.13%；深证成指 -0.04%；未红，观望。",
+  "count": 171,
+  "quotes": {
+    "600183": {
+      "code": "600183",
+      "name": "生益科技",
+      "open": 167.9,
+      "prev_close": 167.87,
+      "price": 171.41,
+      "high": 172.0,
+      "low": 167.9,
+      "volume": 10458261.0,
+      "amount_yi": 17.78135059,
+      "pct": 2.1087746470483064,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000630": {
+      "code": "000630",
+      "name": "铜陵有色",
+      "open": 6.88,
+      "prev_close": 7.14,
+      "price": 6.8,
+      "high": 6.97,
+      "low": 6.77,
+      "volume": 152162183.0,
+      "amount_yi": 10.4316012586,
+      "pct": -4.76190476190476,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601958": {
+      "code": "601958",
+      "name": "金钼股份",
+      "open": 27.51,
+      "prev_close": 27.8,
+      "price": 27.28,
+      "high": 28.26,
+      "low": 27.1,
+      "volume": 25904494.0,
+      "amount_yi": 7.14321992,
+      "pct": -1.8705035971223007,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600176": {
+      "code": "600176",
+      "name": "中国巨石",
+      "open": 58.0,
+      "prev_close": 58.93,
+      "price": 62.88,
+      "high": 62.88,
+      "low": 57.75,
+      "volume": 45059126.0,
+      "amount_yi": 27.4174474,
+      "pct": 6.702867809265236,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "605589": {
+      "code": "605589",
+      "name": "圣泉集团",
+      "open": 64.5,
+      "prev_close": 66.17,
+      "price": 64.16,
+      "high": 65.55,
+      "low": 63.51,
+      "volume": 13236881.0,
+      "amount_yi": 8.48992188,
+      "pct": -3.037630346078291,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600378": {
+      "code": "600378",
+      "name": "昊华科技",
+      "open": 64.89,
+      "prev_close": 66.34,
+      "price": 65.37,
+      "high": 67.49,
+      "low": 64.5,
+      "volume": 13915144.0,
+      "amount_yi": 9.20119648,
+      "pct": -1.462164606572202,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002636": {
+      "code": "002636",
+      "name": "金安国纪",
+      "open": 108.65,
+      "prev_close": 108.64,
+      "price": 111.18,
+      "high": 113.77,
+      "low": 108.34,
+      "volume": 5143329.0,
+      "amount_yi": 5.75159093,
+      "pct": 2.3379970544919053,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600160": {
+      "code": "600160",
+      "name": "巨化股份",
+      "open": 46.08,
+      "prev_close": 46.85,
+      "price": 47.4,
+      "high": 48.35,
+      "low": 46.08,
+      "volume": 19050218.0,
+      "amount_yi": 9.041517,
+      "pct": 1.1739594450373472,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002203": {
+      "code": "002203",
+      "name": "海亮股份",
+      "open": 24.27,
+      "prev_close": 24.4,
+      "price": 24.05,
+      "high": 24.65,
+      "low": 24.01,
+      "volume": 7268497.0,
+      "amount_yi": 1.7657870569999998,
+      "pct": -1.434426229508188,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002409": {
+      "code": "002409",
+      "name": "雅克科技",
+      "open": 155.0,
+      "prev_close": 157.32,
+      "price": 159.94,
+      "high": 160.43,
+      "low": 155.0,
+      "volume": 4215712.0,
+      "amount_yi": 6.6497911072,
+      "pct": 1.6653953724891968,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600500": {
+      "code": "600500",
+      "name": "中化国际",
+      "open": 7.85,
+      "prev_close": 8.04,
+      "price": 7.75,
+      "high": 8.09,
+      "low": 7.72,
+      "volume": 36111120.0,
+      "amount_yi": 2.8420319,
+      "pct": -3.606965174129343,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002354": {
+      "code": "002354",
+      "name": "天娱数科",
+      "open": 8.21,
+      "prev_close": 8.11,
+      "price": 8.92,
+      "high": 8.92,
+      "low": 8.11,
+      "volume": 147192053.0,
+      "amount_yi": 12.6401663133,
+      "pct": 9.987669543773126,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "001696": {
+      "code": "001696",
+      "name": "宗申动力",
+      "open": 22.2,
+      "prev_close": 22.4,
+      "price": 21.32,
+      "high": 22.69,
+      "low": 21.0,
+      "volume": 36711737.0,
+      "amount_yi": 8.0027220152,
+      "pct": -4.821428571428564,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600999": {
+      "code": "600999",
+      "name": "招商证券",
+      "open": 19.93,
+      "prev_close": 20.1,
+      "price": 20.54,
+      "high": 20.55,
+      "low": 19.92,
+      "volume": 23419248.0,
+      "amount_yi": 4.74428972,
+      "pct": 2.1890547263681475,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002119": {
+      "code": "002119",
+      "name": "康强电子",
+      "open": 32.3,
+      "prev_close": 32.3,
+      "price": 32.22,
+      "high": 32.9,
+      "low": 31.61,
+      "volume": 6194860.0,
+      "amount_yi": 2.0036924,
+      "pct": -0.24767801857584612,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002971": {
+      "code": "002971",
+      "name": "和远气体",
+      "open": 72.86,
+      "prev_close": 73.0,
+      "price": 70.35,
+      "high": 75.72,
+      "low": 68.88,
+      "volume": 6126000.0,
+      "amount_yi": 4.434241885,
+      "pct": -3.6301369863013777,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600906": {
+      "code": "600906",
+      "name": "财达证券",
+      "open": 7.68,
+      "prev_close": 7.78,
+      "price": 7.88,
+      "high": 7.95,
+      "low": 7.6,
+      "volume": 28987704.0,
+      "amount_yi": 2.27165154,
+      "pct": 1.2853470437017949,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601233": {
+      "code": "601233",
+      "name": "桐昆股份",
+      "open": 22.94,
+      "prev_close": 22.97,
+      "price": 23.76,
+      "high": 23.82,
+      "low": 22.8,
+      "volume": 10860950.0,
+      "amount_yi": 2.5417898,
+      "pct": 3.439268611232054,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002585": {
+      "code": "002585",
+      "name": "双星新材",
+      "open": 13.31,
+      "prev_close": 13.65,
+      "price": 14.07,
+      "high": 14.17,
+      "low": 13.3,
+      "volume": 30173751.0,
+      "amount_yi": 4.1779721599,
+      "pct": 3.076923076923076,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002815": {
+      "code": "002815",
+      "name": "崇达技术",
+      "open": 17.44,
+      "prev_close": 17.78,
+      "price": 18.11,
+      "high": 18.12,
+      "low": 17.4,
+      "volume": 10573904.0,
+      "amount_yi": 1.8855424338,
+      "pct": 1.8560179977502713,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603186": {
+      "code": "603186",
+      "name": "华正新材",
+      "open": 236.0,
+      "prev_close": 231.6,
+      "price": 242.71,
+      "high": 244.0,
+      "low": 236.0,
+      "volume": 2383620.0,
+      "amount_yi": 5.71989551,
+      "pct": 4.797063903281526,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603678": {
+      "code": "603678",
+      "name": "火炬电子",
+      "open": 62.05,
+      "prev_close": 62.09,
+      "price": 68.3,
+      "high": 68.3,
+      "low": 62.05,
+      "volume": 11083501.0,
+      "amount_yi": 7.36956272,
+      "pct": 10.001610565308413,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002741": {
+      "code": "002741",
+      "name": "光华科技",
+      "open": 34.99,
+      "prev_close": 37.4,
+      "price": 35.1,
+      "high": 35.95,
+      "low": 34.5,
+      "volume": 15515457.0,
+      "amount_yi": 5.4260240367999995,
+      "pct": -6.149732620320848,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002733": {
+      "code": "002733",
+      "name": "雄韬股份",
+      "open": 32.9,
+      "prev_close": 33.06,
+      "price": 32.55,
+      "high": 33.81,
+      "low": 32.5,
+      "volume": 2697812.0,
+      "amount_yi": 0.8935556375,
+      "pct": -1.5426497277677105,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002171": {
+      "code": "002171",
+      "name": "楚江新材",
+      "open": 14.65,
+      "prev_close": 14.8,
+      "price": 15.01,
+      "high": 15.04,
+      "low": 14.46,
+      "volume": 31704339.0,
+      "amount_yi": 4.6649118655,
+      "pct": 1.4189189189189126,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600110": {
+      "code": "600110",
+      "name": "诺德股份",
+      "open": 14.45,
+      "prev_close": 15.44,
+      "price": 15.27,
+      "high": 15.44,
+      "low": 14.41,
+      "volume": 51154670.0,
+      "amount_yi": 7.66791942,
+      "pct": -1.1010362694300513,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603002": {
+      "code": "603002",
+      "name": "宏昌电子",
+      "open": 22.57,
+      "prev_close": 23.35,
+      "price": 23.07,
+      "high": 23.97,
+      "low": 22.57,
+      "volume": 25125600.0,
+      "amount_yi": 5.86869278,
+      "pct": -1.199143468950754,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600353": {
+      "code": "600353",
+      "name": "旭光电子",
+      "open": 48.87,
+      "prev_close": 48.8,
+      "price": 52.58,
+      "high": 52.88,
+      "low": 48.87,
+      "volume": 27206460.0,
+      "amount_yi": 13.81161138,
+      "pct": 7.745901639344265,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603379": {
+      "code": "603379",
+      "name": "三美股份",
+      "open": 64.95,
+      "prev_close": 65.57,
+      "price": 65.55,
+      "high": 66.92,
+      "low": 64.9,
+      "volume": 1643200.0,
+      "amount_yi": 1.0868347,
+      "pct": -0.03050175385084036,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002515": {
+      "code": "002515",
+      "name": "金字火腿",
+      "open": 10.44,
+      "prev_close": 10.34,
+      "price": 10.52,
+      "high": 10.7,
+      "low": 10.25,
+      "volume": 17138161.0,
+      "amount_yi": 1.79832996,
+      "pct": 1.7408123791102486,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603065": {
+      "code": "603065",
+      "name": "宿迁联盛",
+      "open": 17.88,
+      "prev_close": 17.9,
+      "price": 17.58,
+      "high": 19.33,
+      "low": 17.42,
+      "volume": 19550400.0,
+      "amount_yi": 3.62866701,
+      "pct": -1.7877094972067056,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603225": {
+      "code": "603225",
+      "name": "XD新凤鸣",
+      "open": 20.98,
+      "prev_close": 20.87,
+      "price": 21.41,
+      "high": 21.58,
+      "low": 20.59,
+      "volume": 3764400.0,
+      "amount_yi": 0.79378602,
+      "pct": 2.5874460948730196,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002254": {
+      "code": "002254",
+      "name": "泰和新材",
+      "open": 17.3,
+      "prev_close": 16.67,
+      "price": 18.34,
+      "high": 18.34,
+      "low": 16.83,
+      "volume": 26750348.0,
+      "amount_yi": 4.7863052578,
+      "pct": 10.017996400719843,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601137": {
+      "code": "601137",
+      "name": "博威合金",
+      "open": 24.05,
+      "prev_close": 24.7,
+      "price": 24.07,
+      "high": 24.52,
+      "low": 23.59,
+      "volume": 7490489.0,
+      "amount_yi": 1.79961227,
+      "pct": -2.550607287449389,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601328": {
+      "code": "601328",
+      "name": "交通银行",
+      "open": 6.84,
+      "prev_close": 6.83,
+      "price": 6.81,
+      "high": 6.86,
+      "low": 6.78,
+      "volume": 19349000.0,
+      "amount_yi": 1.3179454,
+      "pct": -0.29282576866764953,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "003036": {
+      "code": "003036",
+      "name": "泰坦股份",
+      "open": 89.0,
+      "prev_close": 91.2,
+      "price": 89.24,
+      "high": 90.99,
+      "low": 87.66,
+      "volume": 819147.0,
+      "amount_yi": 0.7317423940000001,
+      "pct": -2.1491228070175525,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603823": {
+      "code": "603823",
+      "name": "百合花",
+      "open": 51.52,
+      "prev_close": 52.2,
+      "price": 53.6,
+      "high": 54.79,
+      "low": 51.52,
+      "volume": 3629500.0,
+      "amount_yi": 1.945543,
+      "pct": 2.6819923371647483,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600458": {
+      "code": "600458",
+      "name": "时代新材",
+      "open": 15.63,
+      "prev_close": 15.93,
+      "price": 15.69,
+      "high": 15.79,
+      "low": 15.39,
+      "volume": 8645340.0,
+      "amount_yi": 1.34614572,
+      "pct": -1.506591337099813,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000048": {
+      "code": "000048",
+      "name": "京基智农",
+      "open": 20.76,
+      "prev_close": 20.66,
+      "price": 21.42,
+      "high": 21.5,
+      "low": 20.27,
+      "volume": 6014610.0,
+      "amount_yi": 1.2539481559999999,
+      "pct": 3.678606001936116,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600919": {
+      "code": "600919",
+      "name": "江苏银行",
+      "open": 11.33,
+      "prev_close": 11.36,
+      "price": 11.33,
+      "high": 11.36,
+      "low": 11.25,
+      "volume": 9402300.0,
+      "amount_yi": 1.06332618,
+      "pct": -0.2640845070422479,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "605198": {
+      "code": "605198",
+      "name": "安德利",
+      "open": 72.22,
+      "prev_close": 72.13,
+      "price": 69.22,
+      "high": 73.4,
+      "low": 68.19,
+      "volume": 1263500.0,
+      "amount_yi": 0.89475399,
+      "pct": -4.034382365173987,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002768": {
+      "code": "002768",
+      "name": "国恩股份",
+      "open": 55.8,
+      "prev_close": 55.65,
+      "price": 54.52,
+      "high": 55.99,
+      "low": 54.4,
+      "volume": 1590308.0,
+      "amount_yi": 0.8754521820000001,
+      "pct": -2.030548068283909,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002824": {
+      "code": "002824",
+      "name": "和胜股份",
+      "open": 38.48,
+      "prev_close": 38.74,
+      "price": 38.83,
+      "high": 39.19,
+      "low": 38.0,
+      "volume": 3795447.0,
+      "amount_yi": 1.4641522980000001,
+      "pct": 0.23231801755290732,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603039": {
+      "code": "603039",
+      "name": "泛微网络",
+      "open": 36.97,
+      "prev_close": 37.02,
+      "price": 36.35,
+      "high": 37.02,
+      "low": 36.3,
+      "volume": 1579298.0,
+      "amount_yi": 0.57805785,
+      "pct": -1.8098325229605663,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000510": {
+      "code": "000510",
+      "name": "新金路",
+      "open": 23.67,
+      "prev_close": 24.1,
+      "price": 23.77,
+      "high": 24.2,
+      "low": 23.4,
+      "volume": 13410346.0,
+      "amount_yi": 3.18332005,
+      "pct": -1.3692946058091362,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603120": {
+      "code": "603120",
+      "name": "肯特催化",
+      "open": 52.08,
+      "prev_close": 52.97,
+      "price": 53.51,
+      "high": 54.4,
+      "low": 51.85,
+      "volume": 1158215.0,
+      "amount_yi": 0.61851862,
+      "pct": 1.0194449688502911,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002913": {
+      "code": "002913",
+      "name": "奥士康",
+      "open": 67.0,
+      "prev_close": 67.19,
+      "price": 66.85,
+      "high": 67.66,
+      "low": 66.0,
+      "volume": 670943.0,
+      "amount_yi": 0.4476205481,
+      "pct": -0.5060276826908817,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603155": {
+      "code": "603155",
+      "name": "新亚强",
+      "open": 20.73,
+      "prev_close": 21.05,
+      "price": 20.8,
+      "high": 21.64,
+      "low": 20.63,
+      "volume": 3227310.0,
+      "amount_yi": 0.67906182,
+      "pct": -1.187648456057007,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000920": {
+      "code": "000920",
+      "name": "沃顿科技",
+      "open": 13.6,
+      "prev_close": 14.01,
+      "price": 13.85,
+      "high": 13.87,
+      "low": 13.58,
+      "volume": 2390158.0,
+      "amount_yi": 0.3275780982,
+      "pct": -1.1420413990007148,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002568": {
+      "code": "002568",
+      "name": "百润股份",
+      "open": 15.5,
+      "prev_close": 15.39,
+      "price": 15.09,
+      "high": 15.5,
+      "low": 14.92,
+      "volume": 3497265.0,
+      "amount_yi": 0.530168335,
+      "pct": -1.9493177387914273,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600403": {
+      "code": "600403",
+      "name": "大有能源",
+      "open": 6.23,
+      "prev_close": 6.23,
+      "price": 5.85,
+      "high": 6.23,
+      "low": 5.83,
+      "volume": 25357933.0,
+      "amount_yi": 1.52536431,
+      "pct": -6.099518459069033,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603020": {
+      "code": "603020",
+      "name": "爱普股份",
+      "open": 14.45,
+      "prev_close": 14.47,
+      "price": 14.29,
+      "high": 14.64,
+      "low": 14.24,
+      "volume": 1797700.0,
+      "amount_yi": 0.25964704,
+      "pct": -1.2439530062197752,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603976": {
+      "code": "603976",
+      "name": "正川股份",
+      "open": 27.9,
+      "prev_close": 28.0,
+      "price": 28.92,
+      "high": 29.08,
+      "low": 27.9,
+      "volume": 2352506.0,
+      "amount_yi": 0.67282124,
+      "pct": 3.285714285714292,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600228": {
+      "code": "600228",
+      "name": "返利科技",
+      "open": 0.0,
+      "prev_close": 8.92,
+      "price": 8.92,
+      "high": 0.0,
+      "low": 0.0,
+      "volume": 0.0,
+      "amount_yi": 0.0,
+      "pct": 0.0,
+      "date": "2026-06-24",
+      "time": "09:39:38",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601187": {
+      "code": "601187",
+      "name": "厦门银行",
+      "open": 7.66,
+      "prev_close": 7.57,
+      "price": 7.52,
+      "high": 7.67,
+      "low": 7.47,
+      "volume": 3309600.0,
+      "amount_yi": 0.24937523,
+      "pct": -0.660501981505954,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600665": {
+      "code": "600665",
+      "name": "天地源",
+      "open": 3.6,
+      "prev_close": 3.63,
+      "price": 3.43,
+      "high": 3.62,
+      "low": 3.41,
+      "volume": 6339300.0,
+      "amount_yi": 0.22236169,
+      "pct": -5.5096418732782295,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002830": {
+      "code": "002830",
+      "name": "名雕股份",
+      "open": 17.52,
+      "prev_close": 17.77,
+      "price": 17.94,
+      "high": 18.18,
+      "low": 17.31,
+      "volume": 5055780.0,
+      "amount_yi": 0.89948119,
+      "pct": 0.9566685424873479,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002718": {
+      "code": "002718",
+      "name": "友邦吊顶",
+      "open": 116.92,
+      "prev_close": 117.02,
+      "price": 112.67,
+      "high": 117.34,
+      "low": 111.1,
+      "volume": 373400.0,
+      "amount_yi": 0.42356808,
+      "pct": -3.717313279781229,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603257": {
+      "code": "603257",
+      "name": "中国瑞林",
+      "open": 68.97,
+      "prev_close": 69.01,
+      "price": 68.87,
+      "high": 70.2,
+      "low": 68.0,
+      "volume": 189000.0,
+      "amount_yi": 0.1310923,
+      "pct": -0.2028691493986387,
+      "date": "2026-06-24",
+      "time": "09:40:01",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603335": {
+      "code": "603335",
+      "name": "迪生力",
+      "open": 8.8,
+      "prev_close": 9.02,
+      "price": 8.37,
+      "high": 8.82,
+      "low": 8.3,
+      "volume": 19648469.0,
+      "amount_yi": 1.68658124,
+      "pct": -7.206208425720625,
+      "date": "2026-06-24",
+      "time": "09:40:01",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600498": {
+      "code": "600498",
+      "name": "烽火通信",
+      "open": 81.0,
+      "prev_close": 82.75,
+      "price": 83.03,
+      "high": 84.71,
+      "low": 81.0,
+      "volume": 15952931.0,
+      "amount_yi": 13.27250301,
+      "pct": 0.33836858006042436,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000636": {
+      "code": "000636",
+      "name": "风华高科",
+      "open": 69.51,
+      "prev_close": 70.21,
+      "price": 70.86,
+      "high": 71.63,
+      "low": 69.27,
+      "volume": 17561465.0,
+      "amount_yi": 12.4061048965,
+      "pct": 0.9257940464321404,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000657": {
+      "code": "000657",
+      "name": "中钨高新",
+      "open": 99.86,
+      "prev_close": 102.5,
+      "price": 97.95,
+      "high": 101.96,
+      "low": 96.89,
+      "volume": 28603921.0,
+      "amount_yi": 28.2171991306,
+      "pct": -4.439024390243899,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600549": {
+      "code": "600549",
+      "name": "厦门钨业",
+      "open": 84.53,
+      "prev_close": 85.43,
+      "price": 83.6,
+      "high": 85.97,
+      "low": 83.0,
+      "volume": 21794715.0,
+      "amount_yi": 18.36286972,
+      "pct": -2.1421046470794947,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601208": {
+      "code": "601208",
+      "name": "东材科技",
+      "open": 71.74,
+      "prev_close": 71.85,
+      "price": 71.0,
+      "high": 73.11,
+      "low": 70.2,
+      "volume": 14846165.0,
+      "amount_yi": 10.61014912,
+      "pct": -1.1830201809324905,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "605358": {
+      "code": "605358",
+      "name": "立昂微",
+      "open": 65.99,
+      "prev_close": 66.5,
+      "price": 65.82,
+      "high": 66.66,
+      "low": 65.03,
+      "volume": 5635593.0,
+      "amount_yi": 3.71142408,
+      "pct": -1.0225563909774538,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600667": {
+      "code": "600667",
+      "name": "太极实业",
+      "open": 20.49,
+      "prev_close": 20.92,
+      "price": 23.01,
+      "high": 23.01,
+      "low": 20.49,
+      "volume": 111356212.0,
+      "amount_yi": 24.67932411,
+      "pct": 9.990439770554492,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600206": {
+      "code": "600206",
+      "name": "有研新材",
+      "open": 47.0,
+      "prev_close": 48.35,
+      "price": 47.89,
+      "high": 49.79,
+      "low": 47.0,
+      "volume": 29233551.0,
+      "amount_yi": 14.18453108,
+      "pct": -0.9513960703205808,
+      "date": "2026-06-24",
+      "time": "09:40:01",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002129": {
+      "code": "002129",
+      "name": "TCL中环",
+      "open": 9.67,
+      "prev_close": 9.84,
+      "price": 9.56,
+      "high": 9.75,
+      "low": 9.5,
+      "volume": 29612908.0,
+      "amount_yi": 2.8353123573000003,
+      "pct": -2.8455284552845463,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000831": {
+      "code": "000831",
+      "name": "中国稀土",
+      "open": 59.16,
+      "prev_close": 59.67,
+      "price": 57.91,
+      "high": 59.88,
+      "low": 57.5,
+      "volume": 13328647.0,
+      "amount_yi": 7.804845009199999,
+      "pct": -2.94955589073237,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002842": {
+      "code": "002842",
+      "name": "翔鹭钨业",
+      "open": 47.22,
+      "prev_close": 48.38,
+      "price": 46.6,
+      "high": 48.8,
+      "low": 46.16,
+      "volume": 10191676.0,
+      "amount_yi": 4.8092978324,
+      "pct": -3.679206283588262,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603688": {
+      "code": "603688",
+      "name": "石英股份",
+      "open": 79.53,
+      "prev_close": 80.64,
+      "price": 77.67,
+      "high": 80.33,
+      "low": 77.0,
+      "volume": 6991219.0,
+      "amount_yi": 5.49458458,
+      "pct": -3.683035714285713,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600900": {
+      "code": "600900",
+      "name": "长江电力",
+      "open": 26.87,
+      "prev_close": 26.87,
+      "price": 26.79,
+      "high": 27.0,
+      "low": 26.73,
+      "volume": 11380130.0,
+      "amount_yi": 3.05362866,
+      "pct": -0.29772981019725286,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603256": {
+      "code": "603256",
+      "name": "宏和科技",
+      "open": 243.01,
+      "prev_close": 247.9,
+      "price": 256.8,
+      "high": 256.8,
+      "low": 243.01,
+      "volume": 1787100.0,
+      "amount_yi": 4.47559665,
+      "pct": 3.5901573215006075,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603650": {
+      "code": "603650",
+      "name": "彤程新材",
+      "open": 69.92,
+      "prev_close": 70.2,
+      "price": 72.82,
+      "high": 73.38,
+      "low": 69.3,
+      "volume": 7401325.0,
+      "amount_yi": 5.34665742,
+      "pct": 3.7321937321937186,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601398": {
+      "code": "601398",
+      "name": "工商银行",
+      "open": 7.4,
+      "prev_close": 7.38,
+      "price": 7.37,
+      "high": 7.41,
+      "low": 7.31,
+      "volume": 39275100.0,
+      "amount_yi": 2.89266015,
+      "pct": -0.13550135501354726,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601166": {
+      "code": "601166",
+      "name": "兴业银行",
+      "open": 17.72,
+      "prev_close": 17.65,
+      "price": 17.66,
+      "high": 17.78,
+      "low": 17.55,
+      "volume": 8306100.0,
+      "amount_yi": 1.46696658,
+      "pct": 0.056657223796042856,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603929": {
+      "code": "603929",
+      "name": "亚翔集成",
+      "open": 209.0,
+      "prev_close": 210.8,
+      "price": 219.2,
+      "high": 222.0,
+      "low": 208.58,
+      "volume": 1336100.0,
+      "amount_yi": 2.89998717,
+      "pct": 3.98481973434534,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603283": {
+      "code": "603283",
+      "name": "赛腾股份",
+      "open": 64.0,
+      "prev_close": 65.29,
+      "price": 66.66,
+      "high": 66.68,
+      "low": 63.74,
+      "volume": 4082141.0,
+      "amount_yi": 2.66904628,
+      "pct": 2.0983305253484303,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600459": {
+      "code": "600459",
+      "name": "贵研铂业",
+      "open": 25.69,
+      "prev_close": 26.13,
+      "price": 25.78,
+      "high": 26.45,
+      "low": 25.68,
+      "volume": 7367633.0,
+      "amount_yi": 1.91601963,
+      "pct": -1.3394565633371522,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000823": {
+      "code": "000823",
+      "name": "超声电子",
+      "open": 20.54,
+      "prev_close": 21.38,
+      "price": 21.86,
+      "high": 21.93,
+      "low": 20.54,
+      "volume": 19988033.0,
+      "amount_yi": 4.2367757306,
+      "pct": 2.245088868101031,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601988": {
+      "code": "601988",
+      "name": "中国银行",
+      "open": 6.15,
+      "prev_close": 6.14,
+      "price": 6.14,
+      "high": 6.16,
+      "low": 6.1,
+      "volume": 33210976.0,
+      "amount_yi": 2.03784897,
+      "pct": 0.0,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603663": {
+      "code": "603663",
+      "name": "三祥新材",
+      "open": 102.0,
+      "prev_close": 101.07,
+      "price": 100.9,
+      "high": 104.0,
+      "low": 98.5,
+      "volume": 5828354.0,
+      "amount_yi": 5.91326578,
+      "pct": -0.1682002572474399,
+      "date": "2026-06-24",
+      "time": "09:40:01",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000032": {
+      "code": "000032",
+      "name": "深桑达Ａ",
+      "open": 23.39,
+      "prev_close": 23.04,
+      "price": 24.61,
+      "high": 24.9,
+      "low": 22.98,
+      "volume": 22947404.0,
+      "amount_yi": 5.520581543,
+      "pct": 6.814236111111113,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "605006": {
+      "code": "605006",
+      "name": "山东玻纤",
+      "open": 20.54,
+      "prev_close": 21.0,
+      "price": 21.16,
+      "high": 21.45,
+      "low": 20.53,
+      "volume": 11364334.0,
+      "amount_yi": 2.37762422,
+      "pct": 0.7619047619047626,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600345": {
+      "code": "600345",
+      "name": "长江通信",
+      "open": 70.21,
+      "prev_close": 73.0,
+      "price": 71.91,
+      "high": 73.89,
+      "low": 69.97,
+      "volume": 3960312.0,
+      "amount_yi": 2.84889762,
+      "pct": -1.4931506849315115,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603203": {
+      "code": "603203",
+      "name": "快克智能",
+      "open": 62.01,
+      "prev_close": 63.76,
+      "price": 62.17,
+      "high": 62.95,
+      "low": 61.01,
+      "volume": 2065413.0,
+      "amount_yi": 1.2777068,
+      "pct": -2.4937264742785388,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000921": {
+      "code": "000921",
+      "name": "海信家电",
+      "open": 27.0,
+      "prev_close": 26.91,
+      "price": 26.38,
+      "high": 27.0,
+      "low": 26.35,
+      "volume": 1358000.0,
+      "amount_yi": 0.36090455,
+      "pct": -1.9695280564845825,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002965": {
+      "code": "002965",
+      "name": "祥鑫科技",
+      "open": 42.45,
+      "prev_close": 42.86,
+      "price": 42.88,
+      "high": 43.16,
+      "low": 42.2,
+      "volume": 1935210.0,
+      "amount_yi": 0.8240703979999999,
+      "pct": 0.04666355576295644,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002165": {
+      "code": "002165",
+      "name": "红 宝 丽",
+      "open": 7.37,
+      "prev_close": 7.49,
+      "price": 7.38,
+      "high": 7.54,
+      "low": 7.26,
+      "volume": 16297400.0,
+      "amount_yi": 1.20426639,
+      "pct": -1.4686248331108187,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601939": {
+      "code": "601939",
+      "name": "建设银行",
+      "open": 10.09,
+      "prev_close": 10.07,
+      "price": 10.04,
+      "high": 10.1,
+      "low": 10.0,
+      "volume": 14961521.0,
+      "amount_yi": 1.50325651,
+      "pct": -0.2979145978153042,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603608": {
+      "code": "603608",
+      "name": "天创时尚",
+      "open": 24.02,
+      "prev_close": 23.9,
+      "price": 23.65,
+      "high": 24.36,
+      "low": 23.65,
+      "volume": 2650636.0,
+      "amount_yi": 0.63780246,
+      "pct": -1.0460251046025106,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "003026": {
+      "code": "003026",
+      "name": "中晶科技",
+      "open": 35.93,
+      "prev_close": 36.55,
+      "price": 36.0,
+      "high": 36.68,
+      "low": 35.83,
+      "volume": 1949133.0,
+      "amount_yi": 0.7046369796999999,
+      "pct": -1.5047879616962987,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603124": {
+      "code": "603124",
+      "name": "江南新材",
+      "open": 183.42,
+      "prev_close": 183.3,
+      "price": 182.72,
+      "high": 189.9,
+      "low": 181.6,
+      "volume": 1130559.0,
+      "amount_yi": 2.10981986,
+      "pct": -0.31642116748500404,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "605318": {
+      "code": "605318",
+      "name": "法狮龙",
+      "open": 120.81,
+      "prev_close": 123.0,
+      "price": 123.11,
+      "high": 123.53,
+      "low": 120.79,
+      "volume": 325300.0,
+      "amount_yi": 0.39781664,
+      "pct": 0.08943089430894262,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002057": {
+      "code": "002057",
+      "name": "中钢天源",
+      "open": 12.36,
+      "prev_close": 12.38,
+      "price": 12.43,
+      "high": 12.75,
+      "low": 12.28,
+      "volume": 8342660.0,
+      "amount_yi": 1.038915532,
+      "pct": 0.4038772213247086,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603733": {
+      "code": "603733",
+      "name": "仙鹤股份",
+      "open": 25.5,
+      "prev_close": 25.04,
+      "price": 25.02,
+      "high": 26.08,
+      "low": 24.97,
+      "volume": 2396395.0,
+      "amount_yi": 0.61069124,
+      "pct": -0.07987220447284175,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002937": {
+      "code": "002937",
+      "name": "兴瑞科技",
+      "open": 41.55,
+      "prev_close": 41.8,
+      "price": 41.42,
+      "high": 42.4,
+      "low": 41.16,
+      "volume": 1272232.0,
+      "amount_yi": 0.5297210032,
+      "pct": -0.9090909090908983,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "003043": {
+      "code": "003043",
+      "name": "华亚智能",
+      "open": 79.88,
+      "prev_close": 79.36,
+      "price": 85.7,
+      "high": 87.3,
+      "low": 79.88,
+      "volume": 5876603.0,
+      "amount_yi": 5.0335406277,
+      "pct": 7.988911290322585,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601838": {
+      "code": "601838",
+      "name": "成都银行",
+      "open": 18.68,
+      "prev_close": 18.73,
+      "price": 18.52,
+      "high": 18.68,
+      "low": 18.42,
+      "volume": 2001600.0,
+      "amount_yi": 0.37064684,
+      "pct": -1.121195942338499,
+      "date": "2026-06-24",
+      "time": "09:40:01",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "605186": {
+      "code": "605186",
+      "name": "健麾信息",
+      "open": 34.45,
+      "prev_close": 34.45,
+      "price": 34.6,
+      "high": 35.17,
+      "low": 34.27,
+      "volume": 900700.0,
+      "amount_yi": 0.31335039,
+      "pct": 0.4354136429608086,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603324": {
+      "code": "603324",
+      "name": "盛剑科技",
+      "open": 39.77,
+      "prev_close": 41.18,
+      "price": 39.2,
+      "high": 40.65,
+      "low": 38.98,
+      "volume": 1823200.0,
+      "amount_yi": 0.7226175,
+      "pct": -4.808159300631367,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000759": {
+      "code": "000759",
+      "name": "中百集团",
+      "open": 6.35,
+      "prev_close": 6.48,
+      "price": 6.33,
+      "high": 6.47,
+      "low": 6.26,
+      "volume": 21629125.0,
+      "amount_yi": 1.371716855,
+      "pct": -2.31481481481482,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002955": {
+      "code": "002955",
+      "name": "鸿合科技",
+      "open": 33.9,
+      "prev_close": 34.15,
+      "price": 33.64,
+      "high": 34.07,
+      "low": 33.51,
+      "volume": 715560.0,
+      "amount_yi": 0.241607713,
+      "pct": -1.4934114202049722,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603303": {
+      "code": "603303",
+      "name": "得邦照明",
+      "open": 28.54,
+      "prev_close": 29.4,
+      "price": 28.37,
+      "high": 29.59,
+      "low": 28.0,
+      "volume": 1433100.0,
+      "amount_yi": 0.40872606,
+      "pct": -3.5034013605442094,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600593": {
+      "code": "600593",
+      "name": "大连圣亚",
+      "open": 39.27,
+      "prev_close": 40.16,
+      "price": 39.06,
+      "high": 40.03,
+      "low": 38.7,
+      "volume": 1397600.0,
+      "amount_yi": 0.5490452,
+      "pct": -2.7390438247011812,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "605566": {
+      "code": "605566",
+      "name": "福莱蒽特",
+      "open": 47.52,
+      "prev_close": 48.68,
+      "price": 45.46,
+      "high": 47.92,
+      "low": 44.44,
+      "volume": 2251800.0,
+      "amount_yi": 1.0380713,
+      "pct": -6.614626129827442,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603330": {
+      "code": "603330",
+      "name": "天洋新材",
+      "open": 8.12,
+      "prev_close": 8.3,
+      "price": 7.88,
+      "high": 8.14,
+      "low": 7.85,
+      "volume": 10692100.0,
+      "amount_yi": 0.85422922,
+      "pct": -5.06024096385543,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002832": {
+      "code": "002832",
+      "name": "比音勒芬",
+      "open": 20.31,
+      "prev_close": 20.28,
+      "price": 20.66,
+      "high": 20.74,
+      "low": 20.28,
+      "volume": 1433800.0,
+      "amount_yi": 0.29394251,
+      "pct": 1.873767258382638,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "001257": {
+      "code": "001257",
+      "name": "盛龙股份",
+      "open": 29.02,
+      "prev_close": 30.43,
+      "price": 29.19,
+      "high": 30.29,
+      "low": 29.02,
+      "volume": 10113115.0,
+      "amount_yi": 2.9707259351,
+      "pct": -4.0749260598093935,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600178": {
+      "code": "600178",
+      "name": "东安动力",
+      "open": 9.62,
+      "prev_close": 9.6,
+      "price": 9.42,
+      "high": 9.63,
+      "low": 9.39,
+      "volume": 1466100.0,
+      "amount_yi": 0.13885525,
+      "pct": -1.8749999999999971,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600067": {
+      "code": "600067",
+      "name": "冠城新材",
+      "open": 3.34,
+      "prev_close": 3.35,
+      "price": 3.24,
+      "high": 3.36,
+      "low": 3.2,
+      "volume": 5832100.0,
+      "amount_yi": 0.19046453,
+      "pct": -3.2835820895522354,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603060": {
+      "code": "603060",
+      "name": "国检集团",
+      "open": 6.76,
+      "prev_close": 6.8,
+      "price": 6.38,
+      "high": 6.76,
+      "low": 6.36,
+      "volume": 6209200.0,
+      "amount_yi": 0.40300394,
+      "pct": -6.176470588235293,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "003009": {
+      "code": "003009",
+      "name": "中天火箭",
+      "open": 57.01,
+      "prev_close": 57.7,
+      "price": 56.79,
+      "high": 57.55,
+      "low": 56.2,
+      "volume": 680700.0,
+      "amount_yi": 0.3857957,
+      "pct": -1.5771230502599716,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603014": {
+      "code": "603014",
+      "name": "威高血净",
+      "open": 35.82,
+      "prev_close": 35.8,
+      "price": 35.52,
+      "high": 35.89,
+      "low": 35.2,
+      "volume": 370300.0,
+      "amount_yi": 0.13132402,
+      "pct": -0.7821229050279164,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603150": {
+      "code": "603150",
+      "name": "万朗磁塑",
+      "open": 76.44,
+      "prev_close": 77.07,
+      "price": 75.12,
+      "high": 77.0,
+      "low": 74.83,
+      "volume": 271800.0,
+      "amount_yi": 0.20568845,
+      "pct": -2.5301673803036056,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000029": {
+      "code": "000029",
+      "name": "深深房Ａ",
+      "open": 27.48,
+      "prev_close": 29.05,
+      "price": 26.15,
+      "high": 27.66,
+      "low": 26.15,
+      "volume": 2419200.0,
+      "amount_yi": 0.6398563589,
+      "pct": -9.982788296041315,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600229": {
+      "code": "600229",
+      "name": "城市传媒",
+      "open": 5.13,
+      "prev_close": 5.09,
+      "price": 5.02,
+      "high": 5.13,
+      "low": 5.0,
+      "volume": 1027600.0,
+      "amount_yi": 0.05199931,
+      "pct": -1.3752455795677856,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000691": {
+      "code": "000691",
+      "name": "亚太实业",
+      "open": 12.77,
+      "prev_close": 12.77,
+      "price": 13.35,
+      "high": 13.55,
+      "low": 12.77,
+      "volume": 11261500.0,
+      "amount_yi": 1.49102568,
+      "pct": 4.5418950665622555,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002976": {
+      "code": "002976",
+      "name": "瑞玛精密",
+      "open": 31.57,
+      "prev_close": 31.9,
+      "price": 33.83,
+      "high": 34.13,
+      "low": 31.12,
+      "volume": 5261651.0,
+      "amount_yi": 1.7556895494,
+      "pct": 6.050156739811912,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600487": {
+      "code": "600487",
+      "name": "亨通光电",
+      "open": 114.96,
+      "prev_close": 117.31,
+      "price": 119.74,
+      "high": 120.55,
+      "low": 114.96,
+      "volume": 28321407.0,
+      "amount_yi": 33.46943965,
+      "pct": 2.071434660301758,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601869": {
+      "code": "601869",
+      "name": "长飞光纤",
+      "open": 558.2,
+      "prev_close": 570.58,
+      "price": 570.58,
+      "high": 594.0,
+      "low": 558.0,
+      "volume": 4525604.0,
+      "amount_yi": 26.12975753,
+      "pct": 0.0,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002747": {
+      "code": "002747",
+      "name": "埃斯顿",
+      "open": 37.2,
+      "prev_close": 38.25,
+      "price": 37.62,
+      "high": 38.5,
+      "low": 37.16,
+      "volume": 17021758.0,
+      "amount_yi": 6.442567437999999,
+      "pct": -1.6470588235294186,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002361": {
+      "code": "002361",
+      "name": "神剑股份",
+      "open": 14.05,
+      "prev_close": 14.02,
+      "price": 13.65,
+      "high": 14.07,
+      "low": 13.63,
+      "volume": 11607198.0,
+      "amount_yi": 1.5970411968,
+      "pct": -2.63908701854493,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "001896": {
+      "code": "001896",
+      "name": "豫能控股",
+      "open": 19.53,
+      "prev_close": 19.72,
+      "price": 20.21,
+      "high": 20.28,
+      "low": 19.35,
+      "volume": 18149300.0,
+      "amount_yi": 3.6170517263999997,
+      "pct": 2.4847870182555885,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603773": {
+      "code": "603773",
+      "name": "沃格光电",
+      "open": 168.88,
+      "prev_close": 172.15,
+      "price": 165.27,
+      "high": 169.68,
+      "low": 163.88,
+      "volume": 4136400.0,
+      "amount_yi": 6.87144511,
+      "pct": -3.9965146674411827,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002138": {
+      "code": "002138",
+      "name": "顺络电子",
+      "open": 65.1,
+      "prev_close": 66.1,
+      "price": 66.16,
+      "high": 67.3,
+      "low": 64.21,
+      "volume": 8548071.0,
+      "amount_yi": 5.6013685971000005,
+      "pct": 0.09077155824508665,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600869": {
+      "code": "600869",
+      "name": "远东股份",
+      "open": 35.73,
+      "prev_close": 36.08,
+      "price": 37.27,
+      "high": 37.69,
+      "low": 35.73,
+      "volume": 17981628.0,
+      "amount_yi": 6.66031174,
+      "pct": 3.2982261640798365,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002421": {
+      "code": "002421",
+      "name": "达实智能",
+      "open": 4.03,
+      "prev_close": 4.02,
+      "price": 4.07,
+      "high": 4.12,
+      "low": 3.96,
+      "volume": 100517900.0,
+      "amount_yi": 4.0730841656,
+      "pct": 1.2437810945273808,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000333": {
+      "code": "000333",
+      "name": "美的集团",
+      "open": 78.5,
+      "prev_close": 78.07,
+      "price": 77.18,
+      "high": 78.7,
+      "low": 76.22,
+      "volume": 6203590.0,
+      "amount_yi": 4.7750797132,
+      "pct": -1.1400025618034924,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600367": {
+      "code": "600367",
+      "name": "红星发展",
+      "open": 53.0,
+      "prev_close": 56.0,
+      "price": 52.2,
+      "high": 53.98,
+      "low": 51.06,
+      "volume": 11711568.0,
+      "amount_yi": 6.13077709,
+      "pct": -6.785714285714281,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000681": {
+      "code": "000681",
+      "name": "视觉中国",
+      "open": 22.21,
+      "prev_close": 22.36,
+      "price": 22.16,
+      "high": 22.5,
+      "low": 21.77,
+      "volume": 7374089.0,
+      "amount_yi": 1.6413462003000001,
+      "pct": -0.8944543828264727,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603859": {
+      "code": "603859",
+      "name": "能科科技",
+      "open": 48.86,
+      "prev_close": 49.65,
+      "price": 49.63,
+      "high": 50.39,
+      "low": 48.5,
+      "volume": 2706100.0,
+      "amount_yi": 1.33149111,
+      "pct": -0.040281973816709005,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000970": {
+      "code": "000970",
+      "name": "中科三环",
+      "open": 14.16,
+      "prev_close": 14.29,
+      "price": 14.15,
+      "high": 14.33,
+      "low": 14.04,
+      "volume": 9615494.0,
+      "amount_yi": 1.3634170399,
+      "pct": -0.9797060881735394,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600226": {
+      "code": "600226",
+      "name": "亨通股份",
+      "open": 10.18,
+      "prev_close": 10.37,
+      "price": 11.12,
+      "high": 11.2,
+      "low": 10.18,
+      "volume": 80555418.0,
+      "amount_yi": 8.72163069,
+      "pct": 7.232401157184186,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603938": {
+      "code": "603938",
+      "name": "三孚股份",
+      "open": 66.2,
+      "prev_close": 65.12,
+      "price": 65.88,
+      "high": 69.98,
+      "low": 65.3,
+      "volume": 17451198.0,
+      "amount_yi": 11.76333312,
+      "pct": 1.167076167076153,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600063": {
+      "code": "600063",
+      "name": "皖维高新",
+      "open": 8.1,
+      "prev_close": 8.22,
+      "price": 8.1,
+      "high": 8.27,
+      "low": 8.07,
+      "volume": 16670900.0,
+      "amount_yi": 1.35642443,
+      "pct": -1.4598540145985521,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600596": {
+      "code": "600596",
+      "name": "新安股份",
+      "open": 15.72,
+      "prev_close": 15.72,
+      "price": 16.42,
+      "high": 16.5,
+      "low": 15.65,
+      "volume": 22554353.0,
+      "amount_yi": 3.66026861,
+      "pct": 4.452926208651406,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603078": {
+      "code": "603078",
+      "name": "江化微",
+      "open": 43.55,
+      "prev_close": 44.3,
+      "price": 42.42,
+      "high": 44.69,
+      "low": 42.2,
+      "volume": 6431620.0,
+      "amount_yi": 2.78292969,
+      "pct": -4.243792325056424,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600114": {
+      "code": "600114",
+      "name": "东睦股份",
+      "open": 42.09,
+      "prev_close": 42.51,
+      "price": 42.12,
+      "high": 42.88,
+      "low": 41.2,
+      "volume": 4240853.0,
+      "amount_yi": 1.77636305,
+      "pct": -0.9174311926605518,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002735": {
+      "code": "002735",
+      "name": "王子新材",
+      "open": 18.14,
+      "prev_close": 18.18,
+      "price": 17.49,
+      "high": 18.32,
+      "low": 17.42,
+      "volume": 8154700.0,
+      "amount_yi": 1.45764459,
+      "pct": -3.7953795379538025,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002125": {
+      "code": "002125",
+      "name": "湘潭电化",
+      "open": 16.21,
+      "prev_close": 16.61,
+      "price": 15.9,
+      "high": 16.41,
+      "low": 15.9,
+      "volume": 12086441.0,
+      "amount_yi": 1.9486410554,
+      "pct": -4.274533413606256,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000859": {
+      "code": "000859",
+      "name": "国风新材",
+      "open": 11.81,
+      "prev_close": 12.01,
+      "price": 11.68,
+      "high": 11.94,
+      "low": 11.59,
+      "volume": 17399647.0,
+      "amount_yi": 2.0412526169,
+      "pct": -2.747710241465446,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002137": {
+      "code": "002137",
+      "name": "实益达",
+      "open": 10.2,
+      "prev_close": 10.4,
+      "price": 10.21,
+      "high": 10.39,
+      "low": 10.1,
+      "volume": 8229100.0,
+      "amount_yi": 0.84312117,
+      "pct": -1.8269230769230722,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000670": {
+      "code": "000670",
+      "name": "盈方微",
+      "open": 7.89,
+      "prev_close": 8.01,
+      "price": 7.63,
+      "high": 7.96,
+      "low": 7.63,
+      "volume": 14492800.0,
+      "amount_yi": 1.121986489,
+      "pct": -4.744069912609238,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002669": {
+      "code": "002669",
+      "name": "康达新材",
+      "open": 17.51,
+      "prev_close": 17.85,
+      "price": 17.59,
+      "high": 17.9,
+      "low": 17.46,
+      "volume": 5289800.0,
+      "amount_yi": 0.936279093,
+      "pct": -1.4565826330532299,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600366": {
+      "code": "600366",
+      "name": "宁波韵升",
+      "open": 14.9,
+      "prev_close": 15.04,
+      "price": 14.9,
+      "high": 15.1,
+      "low": 14.72,
+      "volume": 9597753.0,
+      "amount_yi": 1.42972446,
+      "pct": -0.9308510638297792,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603800": {
+      "code": "603800",
+      "name": "洪田股份",
+      "open": 74.52,
+      "prev_close": 74.41,
+      "price": 74.0,
+      "high": 76.12,
+      "low": 73.51,
+      "volume": 1004600.0,
+      "amount_yi": 0.75098901,
+      "pct": -0.5510012095148455,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603616": {
+      "code": "603616",
+      "name": "韩建河山",
+      "open": 6.5,
+      "prev_close": 6.61,
+      "price": 6.37,
+      "high": 6.61,
+      "low": 6.36,
+      "volume": 9302000.0,
+      "amount_yi": 0.60256309,
+      "pct": -3.6308623298033313,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002613": {
+      "code": "002613",
+      "name": "北玻股份",
+      "open": 4.81,
+      "prev_close": 4.89,
+      "price": 4.64,
+      "high": 4.82,
+      "low": 4.57,
+      "volume": 27767080.0,
+      "amount_yi": 1.299580206,
+      "pct": -5.112474437627812,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000608": {
+      "code": "000608",
+      "name": "阳光股份",
+      "open": 7.54,
+      "prev_close": 7.82,
+      "price": 7.98,
+      "high": 8.08,
+      "low": 7.48,
+      "volume": 12159949.0,
+      "amount_yi": 0.9606453822,
+      "pct": 2.0460358056266004,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002362": {
+      "code": "002362",
+      "name": "汉王科技",
+      "open": 16.73,
+      "prev_close": 16.85,
+      "price": 16.41,
+      "high": 16.8,
+      "low": 16.37,
+      "volume": 1249000.0,
+      "amount_yi": 0.20763582,
+      "pct": -2.611275964391699,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "001269": {
+      "code": "001269",
+      "name": "欧晶科技",
+      "open": 22.5,
+      "prev_close": 22.65,
+      "price": 21.93,
+      "high": 22.5,
+      "low": 21.85,
+      "volume": 857980.0,
+      "amount_yi": 0.18953365600000002,
+      "pct": -3.1788079470198625,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603500": {
+      "code": "603500",
+      "name": "祥和实业",
+      "open": 12.03,
+      "prev_close": 12.33,
+      "price": 11.66,
+      "high": 12.28,
+      "low": 11.65,
+      "volume": 4117700.0,
+      "amount_yi": 0.49177176,
+      "pct": -5.433901054339009,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002960": {
+      "code": "002960",
+      "name": "青鸟智控",
+      "open": 8.57,
+      "prev_close": 8.62,
+      "price": 8.52,
+      "high": 8.66,
+      "low": 8.47,
+      "volume": 2961585.0,
+      "amount_yi": 0.2528405793,
+      "pct": -1.16009280742459,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603386": {
+      "code": "603386",
+      "name": "骏亚科技",
+      "open": 18.1,
+      "prev_close": 18.41,
+      "price": 19.05,
+      "high": 19.56,
+      "low": 18.1,
+      "volume": 8487640.0,
+      "amount_yi": 1.60290275,
+      "pct": 3.4763715372080424,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "605018": {
+      "code": "605018",
+      "name": "长华集团",
+      "open": 14.1,
+      "prev_close": 14.09,
+      "price": 13.75,
+      "high": 14.19,
+      "low": 13.72,
+      "volume": 1204900.0,
+      "amount_yi": 0.16839211,
+      "pct": -2.413058907026259,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603135": {
+      "code": "603135",
+      "name": "中重科技",
+      "open": 12.65,
+      "prev_close": 12.9,
+      "price": 12.3,
+      "high": 12.78,
+      "low": 12.29,
+      "volume": 4646207.0,
+      "amount_yi": 0.58272801,
+      "pct": -4.651162790697672,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600483": {
+      "code": "600483",
+      "name": "福能股份",
+      "open": 11.96,
+      "prev_close": 11.98,
+      "price": 11.85,
+      "high": 12.03,
+      "low": 11.66,
+      "volume": 7617682.0,
+      "amount_yi": 0.90392258,
+      "pct": -1.0851419031719596,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "003025": {
+      "code": "003025",
+      "name": "思进智能",
+      "open": 15.82,
+      "prev_close": 15.82,
+      "price": 15.43,
+      "high": 15.92,
+      "low": 15.38,
+      "volume": 1413854.0,
+      "amount_yi": 0.2200786362,
+      "pct": -2.4652338811630883,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002871": {
+      "code": "002871",
+      "name": "伟隆股份",
+      "open": 21.46,
+      "prev_close": 21.46,
+      "price": 20.46,
+      "high": 21.69,
+      "low": 20.4,
+      "volume": 3481500.0,
+      "amount_yi": 0.72552327,
+      "pct": -4.659832246039143,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600881": {
+      "code": "600881",
+      "name": "亚泰集团",
+      "open": 1.66,
+      "prev_close": 1.66,
+      "price": 1.72,
+      "high": 1.74,
+      "low": 1.6,
+      "volume": 43999567.0,
+      "amount_yi": 0.73141282,
+      "pct": 3.6144578313253044,
+      "date": "2026-06-24",
+      "time": "09:39:59",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603679": {
+      "code": "603679",
+      "name": "华体科技",
+      "open": 20.34,
+      "prev_close": 21.09,
+      "price": 20.51,
+      "high": 21.27,
+      "low": 20.33,
+      "volume": 1694800.0,
+      "amount_yi": 0.34996429,
+      "pct": -2.750118539592216,
+      "date": "2026-06-24",
+      "time": "09:40:01",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000517": {
+      "code": "000517",
+      "name": "荣安地产",
+      "open": 1.8,
+      "prev_close": 1.81,
+      "price": 1.8,
+      "high": 1.81,
+      "low": 1.77,
+      "volume": 6817200.0,
+      "amount_yi": 0.12177532,
+      "pct": -0.5524861878453043,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "605128": {
+      "code": "605128",
+      "name": "上海沿浦",
+      "open": 26.02,
+      "prev_close": 26.17,
+      "price": 25.78,
+      "high": 26.2,
+      "low": 25.78,
+      "volume": 474624.0,
+      "amount_yi": 0.1233952,
+      "pct": -1.4902560183416145,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603194": {
+      "code": "603194",
+      "name": "中力股份",
+      "open": 36.7,
+      "prev_close": 36.54,
+      "price": 36.2,
+      "high": 36.8,
+      "low": 36.19,
+      "volume": 191400.0,
+      "amount_yi": 0.06988138,
+      "pct": -0.930487137383679,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "601963": {
+      "code": "601963",
+      "name": "重庆银行",
+      "open": 11.18,
+      "prev_close": 11.12,
+      "price": 11.01,
+      "high": 11.18,
+      "low": 10.92,
+      "volume": 1681900.0,
+      "amount_yi": 0.18563868,
+      "pct": -0.98920863309352,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "002641": {
+      "code": "002641",
+      "name": "公元股份",
+      "open": 4.08,
+      "prev_close": 4.08,
+      "price": 4.07,
+      "high": 4.11,
+      "low": 4.04,
+      "volume": 1449722.0,
+      "amount_yi": 0.058904823200000005,
+      "pct": -0.24509803921568107,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "000429": {
+      "code": "000429",
+      "name": "粤高速Ａ",
+      "open": 13.79,
+      "prev_close": 13.78,
+      "price": 13.7,
+      "high": 13.86,
+      "low": 13.67,
+      "volume": 548800.0,
+      "amount_yi": 0.075384128,
+      "pct": -0.5805515239477509,
+      "date": "2026-06-24",
+      "time": "09:39:57",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "603201": {
+      "code": "603201",
+      "name": "常润股份",
+      "open": 20.51,
+      "prev_close": 21.35,
+      "price": 19.22,
+      "high": 20.63,
+      "low": 19.22,
+      "volume": 2989000.0,
+      "amount_yi": 0.58341052,
+      "pct": -9.97658079625294,
+      "date": "2026-06-24",
+      "time": "09:40:00",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    },
+    "600007": {
+      "code": "600007",
+      "name": "中国国贸",
+      "open": 19.08,
+      "prev_close": 19.22,
+      "price": 19.26,
+      "high": 19.35,
+      "low": 19.08,
+      "volume": 246100.0,
+      "amount_yi": 0.04723638,
+      "pct": 0.20811654526536266,
+      "date": "2026-06-24",
+      "time": "09:39:58",
+      "data_quality": "ok",
+      "verified_by": [
+        "tencent"
+      ]
+    }
+  }
+}
