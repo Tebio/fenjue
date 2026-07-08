@@ -26,6 +26,7 @@ class ExplainEngine:
         "margin":   "融资情绪",
         "quant":    "量化信号",
         "expect":   "预期兑现",
+        "macro":    "宏观事件",
     }
 
     def explain(self, code: str, score_dict: dict[str, Any]) -> dict[str, Any]:
@@ -37,29 +38,47 @@ class ExplainEngine:
             weights → {yaml_key: float}
             industry_context (可选) → {name, heat_stars, stage}
             quote_data        (可选) → {turnover, pct_20d}
+            macro_context     (可选) → {net_score, events: [label, ...], impact_summary}
         """
         weights = score_dict.get("weights", {})
         quote   = score_dict.get("quote_data") or {}
         ind_ctx = score_dict.get("industry_context") or {}
+        macro   = score_dict.get("macro_context") or {}
+        total   = float(score_dict.get("total", 0))
 
         breakdown: list[dict[str, Any]] = []
         for dim_key, label in self._LABELS.items():
-            raw = float(score_dict.get(dim_key, 0))
-            wk  = self._WEIGHT_KEY.get(dim_key, dim_key)
-            w   = float(weights.get(wk, 0))
-            c   = round(raw * w, 4)
-            src = self._source(dim_key, raw, w, c, ind_ctx, quote)
-
-            breakdown.append({
-                "dimension":    dim_key,
-                "label":        label,
-                "score":        raw,
-                "weight":       w,
-                "contribution": c,
-                "source":       src,
-            })
-
-        total = float(score_dict.get("total", 0))
+            if dim_key == "macro":
+                if not macro:
+                    continue
+                # Macro is a modifier, not a scored dimension
+                net = macro.get("net_score", 0)
+                contrib = round(net * 0.1, 4)  # macro 占总分 ~10%
+                events = macro.get("events", [])
+                summary = macro.get("impact_summary", "")
+                src = self._src_macro(net, events, summary)
+                breakdown.append({
+                    "dimension":    "macro",
+                    "label":        label,
+                    "score":        round(abs(net), 1),
+                    "weight":       0.1,
+                    "contribution": contrib,
+                    "source":       src,
+                })
+            else:
+                raw = float(score_dict.get(dim_key, 0))
+                wk  = self._WEIGHT_KEY.get(dim_key, dim_key)
+                w   = float(weights.get(wk, 0))
+                c   = round(raw * w, 4)
+                src = self._source(dim_key, raw, w, c, ind_ctx, quote)
+                breakdown.append({
+                    "dimension":    dim_key,
+                    "label":        label,
+                    "score":        raw,
+                    "weight":       w,
+                    "contribution": c,
+                    "source":       src,
+                })
 
         # ── delta: score change vs previous run ──────────────────────
         delta: dict[str, Any] | None = None
@@ -140,3 +159,9 @@ class ExplainEngine:
 
     def _src_placeholder(self, dim: str, raw: float, w: float, c: float) -> str:
         return f"{self._LABELS.get(dim,dim)}: 暂用默认值(数据源待接入) → raw={raw:.1f} × {w} = {c:.2f}"
+
+    def _src_macro(self, net: float, events: list[str], summary: str) -> str:
+        direction = "利空" if net < -0.3 else "利好" if net > 0.3 else "中性"
+        top_events = events[:3] if events else []
+        evt_str = "、".join(top_events) if top_events else summary
+        return f"宏观{abs(net):.1f}分({direction}): {evt_str}"
