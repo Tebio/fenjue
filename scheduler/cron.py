@@ -20,6 +20,10 @@ from apscheduler.triggers.cron import CronTrigger
 from apscheduler.jobstores.memory import MemoryJobStore
 from apscheduler.executors.pool import ThreadPoolExecutor
 
+from engine.event_registry import EventRegistry, todays_registry
+from engine.macro_industry import MacroIndustryMapper
+from engine.feedback import FeedbackEngine
+
 # ---------------------------------------------------------------------------
 # SQLite job store
 # ---------------------------------------------------------------------------
@@ -288,10 +292,26 @@ class CronScheduler:
     def run_score_snapshot(self) -> None:
         """每日评分快照：调用 ScoringEngine 对观察列表评分，保存 JSON。
 
+        接入宏观管线（EventRegistry + MacroIndustryMapper）和反馈引擎
+        （FeedbackEngine）。
+
         输出路径: research/data/scores/{YYYY-MM-DD}.json
         """
         engine = self._get_scorer()
         today = date.today().isoformat()
+
+        # ── 宏观管线 ──────────────────────────────────────────────────
+        registry = todays_registry()
+        registry.tick()                          # 衰减到期事件
+        macro_impact = registry.regime_impact()  # → position_cap_adj, regime_override
+
+        mapper = MacroIndustryMapper()
+        mapper.load_events(registry.breakdown())
+        industry_weights = mapper.map()
+        sector_effect = mapper.sector_multiplier_effect()
+
+        # ── 反馈引擎 ──────────────────────────────────────────────────
+        fe = FeedbackEngine(self._config_path)
 
         # 1. 获取观察列表（watchlist JOIN stocks）
         watchlist = self._get_watchlist()
@@ -303,11 +323,20 @@ class CronScheduler:
             name = item["name"]
             quote = self._get_quote_data(code)
             try:
+                # Macro context stored in snapshot, NOT multiplied into raw score
+                # (position caps belong in ExecutionPlanner)
                 score = engine.score_stock(code, quote)
             except Exception as exc:
                 score = {"code": code, "error": str(exc)}
             score["name"] = name
             results.append(score)
+
+            # 写入反馈日志（无异常时）
+            if "error" not in score:
+                try:
+                    fe.log_prediction(code, score)
+                except Exception:
+                    pass  # 反馈写入失败不影响主流程
 
         # 3. 构建快照
         snapshot = {
@@ -315,6 +344,14 @@ class CronScheduler:
             "generated_at": datetime.now().isoformat(),
             "engine": "ScoringEngine",
             "count": len(results),
+            "macro": {
+                "active_events": len(registry.events),
+                "net_score": macro_impact["net_score"],
+                "regime_note": macro_impact["note"],
+                "position_cap_adj": macro_impact["position_cap_adj"],
+                "sector_multiplier_effect": sector_effect,
+                "industry_weights": industry_weights,
+            },
             "scores": results,
         }
 
@@ -427,6 +464,58 @@ class CronScheduler:
         with open(out_path, "w", encoding="utf-8") as fh:
             fh.write(content)
 
+    def verify_30d_predictions(self) -> None:
+        """每日验证 30 天前的预测：调用 FeedbackEngine.verify() 逐条对照当天价格验证。
+
+        遍历 ``30`` 天前的反馈记录，对每条未验证的预测获取当前价格，
+        调用 ``FeedbackEngine.verify()`` 计算实际收益并标记命中/未命中，
+        最后统计并打印整体命中率。
+        """
+        from engine.feedback import FeedbackEngine
+
+        feedback = self._get_feedback()
+        today = date.today()
+        date_30d_ago = (today - timedelta(days=30)).isoformat()
+
+        # Load records from exactly 30 days ago
+        records = feedback._load_records(date_30d_ago)
+        unverified = [
+            r for r in records
+            if r.hit is None and r.predicted_tier in ("S", "A")
+        ]
+
+        if not unverified:
+            print(f"[verify_30d] {date_30d_ago}: 无待验证预测 (共 {len(records)} 条记录)")
+            return
+
+        verified_count = 0
+        hit_count = 0
+        for rec in unverified:
+            quote = self._get_quote_data(rec.code)
+            price = quote.get("price")
+            if price is None or price <= 0:
+                continue
+
+            try:
+                result = feedback.verify(
+                    rec.code,
+                    current_price=float(price),
+                    date_30d_ago=date_30d_ago,
+                )
+                if result and result.hit is not None:
+                    verified_count += 1
+                    if result.hit:
+                        hit_count += 1
+            except Exception as exc:
+                print(f"[verify_30d] 验证 {rec.code} 失败: {exc}")
+
+        hit_rate = round(hit_count / verified_count * 100, 1) if verified_count else 0.0
+        print(
+            f"[verify_30d] {date_30d_ago}: "
+            f"验证 {verified_count}/{len(unverified)} 条, "
+            f"命中 {hit_count}, 命中率 {hit_rate}%"
+        )
+
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
@@ -438,6 +527,12 @@ class CronScheduler:
 
             self._scorer = ScoringEngine(self._config_path)
         return self._scorer
+
+    def _get_feedback(self):
+        """Lazy-load the FeedbackEngine singleton."""
+        from engine.feedback import FeedbackEngine
+
+        return FeedbackEngine(self._config_path)
 
     def _get_watchlist(self) -> list[dict[str, str]]:
         """Return all stocks in the watchlist (code + name)."""
@@ -571,6 +666,7 @@ class CronScheduler:
         mapping: dict[str, Callable[..., Any]] = {
             "daily_score": self.run_score_snapshot,
             "weekly_review": self.run_weekly_review,
+            "verify_30d_predictions": self.verify_30d_predictions,
         }
         return mapping.get(name)
 

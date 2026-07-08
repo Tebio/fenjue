@@ -52,7 +52,12 @@ class ScoringEngine:
 
     # ── public API ────────────────────────────────────────────────────────
 
-    def score_stock(self, code: str, quote_data: dict[str, Any]) -> dict[str, Any]:
+    def score_stock(
+        self,
+        code: str,
+        quote_data: dict[str, Any],
+        macro_adjustment: float | None = None,
+    ) -> dict[str, Any]:
         """Compute the six-dimension composite score for a stock.
 
         Args:
@@ -63,6 +68,11 @@ class ScoringEngine:
                 price      — (optional) current price; used if pct_20d absent
                               and close_20d_ago is provided.
                 close_20d_ago — (optional) closing price 20 days ago.
+            macro_adjustment: optional multiplier applied to the final
+                              composite total (e.g. from EventRegistry +
+                              MacroIndustryMapper).  Does NOT alter
+                              per-dimension scores — only the total, tier,
+                              and verdict are affected.
 
         Returns:
             dict:
@@ -78,7 +88,7 @@ class ScoringEngine:
                 verdict     — human-readable verdict string
                 confidence  — 0-100 confidence score
                 weights     — dict of dimension→weight used
-                evidence    — dict of dimension→{source, confidence}
+                evidence    — dict (currently empty; maintained by ExplainEngine)
         """
         industry = self._score_industry(code)
         flow = self._score_flow(quote_data)
@@ -97,19 +107,20 @@ class ScoringEngine:
             4,
         )
 
+        # ── macro context is informational only — does NOT alter raw score ──
+        # (position caps belong in ExecutionPlanner, not in ScoringEngine)
+        macro_meta: dict[str, Any] | None = None
+        if macro_adjustment is not None:
+            macro_meta = {"position_cap_adj": macro_adjustment}
+
         tier = self._assign_tier(total)
         confidence = self._confidence(code, quote_data,
                                        industry, flow, inst,
                                        margin, quant, expect)
 
-        evidence = {
-            "industry": {"source": "fenjue.yaml industry_tree", "confidence": "high"},
-            "flow":     {"source": "腾讯API qt.gtimg.cn", "confidence": "high"},
-            "inst":     {"source": "默认占位(待接东方财富机构)", "confidence": "low"},
-            "margin":   {"source": "默认占位(待接融资融券)", "confidence": "low"},
-            "quant":    {"source": "默认占位(待接龙虎榜)", "confidence": "low"},
-            "expect":   {"source": "20日涨幅计算", "confidence": "medium"},
-        }
+        # Evidence is now maintained by ExplainEngine — scorer no longer
+        # hard-codes data sources.
+        evidence: dict[str, Any] = {}
 
         return {
             "code": code,
@@ -125,6 +136,7 @@ class ScoringEngine:
             "confidence": confidence,
             "weights": dict(self._weights),
             "evidence": evidence,
+            "macro_meta": macro_meta,
         }
 
     # ── dimension scorers ─────────────────────────────────────────────────

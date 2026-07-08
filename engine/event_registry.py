@@ -10,8 +10,8 @@ Macro Event Registry V2.5 — 事件自动衰减，不再人工打分。
 """
 from __future__ import annotations
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-from typing import Any
+from datetime import datetime
+from typing import Any, ClassVar
 
 
 # ── category config ──────────────────────────────────────────
@@ -19,6 +19,25 @@ from typing import Any
 @dataclass
 class Event:
     """单个宏观事件。"""
+
+    # 类别方向映射：-1=利空, +1=利好, 0=双向/自动判断
+    CATEGORY_DIRECTION: ClassVar[dict[str, int]] = {
+        "tech_breakthrough": 1,
+        "policy_domestic": 1,
+        "seasonal": 1,
+        "geopolitics": -1,
+        "inflation": -1,
+        "rate_hike": -1,
+        "supply_shock": -1,
+        "demand_shock": -1,
+        "ai_capex": 0,
+        "rate": 0,
+        "fx": 0,
+        "supply_chain": 0,
+        "policy_foreign": 0,
+        "commodity": 0,
+    }
+
     label: str
     category: str
     severity: int          # 1=低 2=中 3=高
@@ -45,8 +64,7 @@ class Event:
         if self.direction != 0:
             d = self.direction
         else:
-            from engine.event_registry import CATEGORY_DIRECTION
-            d = CATEGORY_DIRECTION.get(self.category, 0)
+            d = self.CATEGORY_DIRECTION.get(self.category, 0)
         w = category_weights.get(self.category, 0.5)
         return d * w * (self.severity / 3.0) * self.decay * 3
 
@@ -63,26 +81,6 @@ CATEGORY_WEIGHTS = {
     "tech_breakthrough": 1.0,  # 技术突破
     "seasonal":         0.3,   # 季节性因素
     "commodity":        0.8,   # 大宗商品
-}
-
-CATEGORY_DIRECTION = {
-    # 正面事件类别
-    "tech_breakthrough": 1,
-    "policy_domestic": 1,
-    "seasonal": 1,
-    # 负面事件类别
-    "geopolitics": -1,
-    "inflation": -1,
-    "rate_hike": -1,
-    "supply_shock": -1,
-    "demand_shock": -1,
-    # 中性/双向
-    "ai_capex": 0,       # 双向：上涨=利好材料，下跌=利空
-    "rate": 0,
-    "fx": 0,
-    "supply_chain": 0,
-    "policy_foreign": 0,
-    "commodity": 0,
 }
 
 
@@ -130,22 +128,14 @@ class EventRegistry:
             override = "risk_on"
             cap_adj = 1.0
             note = "宏观显著利好"
-        elif net > 0.2:
-            override = None
-            cap_adj = 1.0
-            note = "宏观偏暖"
         elif net > -0.5:
             override = None
-            cap_adj = 0.95
-            note = "宏观中性偏冷"
-        elif net > -1.5:
-            override = "risk_neutral"
-            cap_adj = 0.85
-            note = "宏观偏冷，适度防御"
-        elif net > -3.0:
+            cap_adj = 1.0
+            note = "宏观中性"
+        elif net > -2.0:
             override = "risk_off"
             cap_adj = 0.65
-            note = "宏观显著利空，收紧仓位"
+            note = "宏观偏冷，收紧仓位"
         else:
             override = "crisis"
             cap_adj = 0.35
