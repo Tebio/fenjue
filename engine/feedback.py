@@ -42,6 +42,10 @@ class FeedbackRecord:
     predicted_score: float
     predicted_tier: str                    # S | A | B
     predicted_verdict: str
+    version: str = "v3.0-alpha"            # model version hash
+    weights_hash: str = ""                 # sha1 of weights config
+    industry_hash: str = ""                # sha1 of industry mapping
+    macro_hash: str = ""                   # sha1 of macro events
     entry_price: float | None = None       # price at prediction time
     actual_return_30d: float | None = None  # filled 30d later (pct)
     actual_return_90d: float | None = None
@@ -80,6 +84,7 @@ class FeedbackEngine:
         Returns:
             The ``FeedbackRecord`` that was persisted.
         """
+        from hashlib import sha1
         today = date.today().isoformat()
         record = FeedbackRecord(
             code=code,
@@ -92,9 +97,21 @@ class FeedbackEngine:
                 if score_dict.get("price") is not None
                 else None
             ),
+            weights_hash=self._hash_file("config/fenjue.yaml"),
+            industry_hash=self._hash_file("config/fenjue.yaml"),
+            macro_hash=self._hash_file("engine/event_registry.py"),
         )
         self._append_record(record)
         return record
+
+    @staticmethod
+    def _hash_file(rel_path: str) -> str:
+        from hashlib import sha1
+        from pathlib import Path
+        fp = Path(__file__).resolve().parent.parent / rel_path
+        if not fp.exists():
+            return "unknown"
+        return sha1(fp.read_bytes()).hexdigest()[:8]
 
     def verify(
         self,
@@ -260,21 +277,17 @@ class FeedbackEngine:
     def adjust_weight(
         self, dimension: str, correction: float,
     ) -> dict[str, float]:
-        """Nudge one dimension's weight by a small delta, re-normalise others.
+        """Calculate a suggested weight adjustment. DOES NOT write to file.
 
-        Reads current weights from ``fenjue.yaml``, applies *correction*
-        (typically ±0.02), scales remaining dimensions proportionally so the
-        sum stays at 1.0, then writes back.
+        Principle: machine discovers patterns, human decides whether to apply.
 
         Args:
             dimension:  one of the six dimension keys.
-            correction: adjustment in ``[-0.05, 0.05]``.
+            correction: adjustment in [-0.05, 0.05].
 
         Returns:
-            New weights dict.
-
-        Raises:
-            ValueError: unknown dimension or correction out of bounds.
+            Suggestion dict: {current, suggested, correction, status}.
+            Caller must review before applying.
         """
         if dimension not in self.SIX_DIMS:
             raise ValueError(
@@ -285,18 +298,24 @@ class FeedbackEngine:
             raise ValueError("correction must be in [-0.05, 0.05]")
 
         current = self._read_weights()
-        current[dimension] = round(current[dimension] + correction, 4)
+        suggested = dict(current)
+        suggested[dimension] = round(suggested[dimension] + correction, 4)
 
         # Re-normalise so sum == 1.0
         other_dims = [d for d in self.SIX_DIMS if d != dimension]
-        other_sum = sum(current[d] for d in other_dims)
+        other_sum = sum(suggested[d] for d in other_dims)
         if other_sum > 0:
-            scale = (1.0 - current[dimension]) / other_sum
+            scale = (1.0 - suggested[dimension]) / other_sum
             for d in other_dims:
-                current[d] = round(current[d] * scale, 4)
+                suggested[d] = round(suggested[d] * scale, 4)
 
-        self._write_weights(current)
-        return current
+        return {
+            "dimension": dimension,
+            "correction": correction,
+            "current_weights": current,
+            "suggested_weights": suggested,
+            "status": "PENDING_REVIEW — manually apply with apply_weights(suggested)",
+        }
 
     # ── internal ──────────────────────────────────────────────────────────
 
