@@ -78,6 +78,7 @@ class ScoringEngine:
                 verdict     — human-readable verdict string
                 confidence  — 0-100 confidence score
                 weights     — dict of dimension→weight used
+                evidence    — dict of dimension→{source, confidence}
         """
         industry = self._score_industry(code)
         flow = self._score_flow(quote_data)
@@ -101,6 +102,15 @@ class ScoringEngine:
                                        industry, flow, inst,
                                        margin, quant, expect)
 
+        evidence = {
+            "industry": {"source": "fenjue.yaml industry_tree", "confidence": "high"},
+            "flow":     {"source": "腾讯API qt.gtimg.cn", "confidence": "high"},
+            "inst":     {"source": "默认占位(待接东方财富机构)", "confidence": "low"},
+            "margin":   {"source": "默认占位(待接融资融券)", "confidence": "low"},
+            "quant":    {"source": "默认占位(待接龙虎榜)", "confidence": "low"},
+            "expect":   {"source": "20日涨幅计算", "confidence": "medium"},
+        }
+
         return {
             "code": code,
             "industry": industry,
@@ -114,6 +124,7 @@ class ScoringEngine:
             "verdict": self._verdict(tier, total),
             "confidence": confidence,
             "weights": dict(self._weights),
+            "evidence": evidence,
         }
 
     # ── dimension scorers ─────────────────────────────────────────────────

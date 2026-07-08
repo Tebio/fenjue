@@ -1,23 +1,18 @@
-# FenJue Engine V1 Configuration
-# 所有权重、映射、策略集中管理，禁止硬编码
-
 database:
-  path: "data/fenjue.db"
+  path: data/fenjue.db
   backup: true
-
 scoring:
   weights:
     industry_trend: 0.35
     capital_flow: 0.25
-    institutional: 0.10
-    margin: 0.10
+    institutional: 0.1
+    margin: 0.1
     quantitative: 0.05
     expectation: 0.15
   tiers:
     s_pool: 7.5
     a_pool: 6.5
     b_pool: 5.0
-
 regime:
   risk_on:
     max_position: 1.0
@@ -31,7 +26,6 @@ regime:
   crisis:
     max_position: 0.0
     sector_multiplier: 0.7
-
 industry_tree:
   AI材料:
     weight: 1.05
@@ -39,58 +33,68 @@ industry_tree:
     stage: 主升初期
     chains:
       磷化铟衬底:
-        高纯磷: [600141]
-        锗: [002428]
+        高纯磷:
+        - 600141
+        锗:
+        - 002428
       靶材溅射:
-        高纯金属: [600206]
-        ITO: [600206]
+        高纯金属:
+        - 600206
+        ITO:
+        - 600206
       封装材料:
-        HBM填料: [002409]
-        底部填充胶: [002409]
+        HBM填料:
+        - 002409
+        底部填充胶:
+        - 002409
       光学材料:
-        COC_COP: [603722]
+        COC_COP:
+        - 603722
   半导体:
     weight: 1.0
     heat: ★★★★☆
     stage: 发酵期
     chains:
       先进封装:
-        封测: [600584]
-        基板: [002384]
+        封测:
+        - 600584
+        基板:
+        - 002384
       HBM:
-        TSV: [600584]
+        TSV:
+        - 600584
   机器人:
     weight: 0.85
     heat: ★★★☆☆
     stage: 调整蓄势
     chains:
       PEEK材料:
-        改性塑料: [688716]
+        改性塑料:
+        - 688716
   军工电子:
     weight: 1.0
     heat: ★★★☆☆
     stage: 蓄势期
     chains:
       相控阵雷达:
-        T_R组件: [600072]
-
+        T_R组件:
+        - 600072
 explain:
   enabled: true
-  detail_level: full  # full | summary
+  detail_level: full
   trace_sources: true
-
 scheduler:
   daily_score:
-    cron: "0 15 * * 1-5"
+    cron: 0 15 * * 1-5
     enabled: true
   weekly_review:
-    cron: "0 17 * * 5"
+    cron: 0 17 * * 5
     enabled: true
   snapshot:
-    path: "research/data/scores/"
-
+    path: research/data/scores/
 api:
-  host: "0.0.0.0"
+  host: 0.0.0.0
   port: 8001
-  cors_origins: ["*"]
+  cors_origins:
+  - '*'
   rate_limit: 60
