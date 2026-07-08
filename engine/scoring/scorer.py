@@ -190,6 +190,9 @@ class ScoringEngine:
         change_pct  = float(quote_data.get("change_pct", 0) or 0)
 
         # 融资强平信号: 换手>8% 且跌幅>5%
+        # 跌停板极端事件 — 明天大概率继续踩踏
+        if change_pct <= -9.5:
+            return 1        # 跌停封板 → 融资明天集中强平
         if turnover_pct > 8 and change_pct < -5:
             return 2        # 高换手暴跌 → 融资强平高风险
         if turnover_pct > 8 and change_pct < -3:
