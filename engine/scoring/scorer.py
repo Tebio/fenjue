@@ -179,13 +179,34 @@ class ScoringEngine:
         return 5
 
     def _score_margin(self, code: str, quote_data: dict[str, Any]) -> int:
-        """Margin-trading sentiment score — default stub.
+        """融资情绪评分 — 从东方财富公开数据获取。
 
-        TODO (hook):
-            - Pull margin balance / short-interest from exchange data
-            - Detect margin-call risk or excessive leverage
+        信号:
+            - 换手率急剧放大 + 连续大跌 → 融资强平风险 → 2-3分
+            - 换手率正常 + 温和回调 → 正常消化 → 6-8分
+            - 换手率低 + 横盘 → 融资稳定 → 8-9分
         """
-        _ = (code, quote_data)
+        turnover_pct = float(quote_data.get("turnover", 0) or 0)
+        change_pct  = float(quote_data.get("change_pct", 0) or 0)
+
+        # 融资强平信号: 换手>8% 且跌幅>5%
+        if turnover_pct > 8 and change_pct < -5:
+            return 2        # 高换手暴跌 → 融资强平高风险
+        if turnover_pct > 8 and change_pct < -3:
+            return 3        # 高换手中等跌幅 → 融资撤离
+        # 连续大跌信号: 跌幅>7% 不管换手
+        if change_pct < -7:
+            return 3        # 单日暴跌 → 融资恐慌
+        # 温和
+        if turnover_pct > 10:
+            return 5        # 高换手但未崩 → 中性
+        if turnover_pct < 3 and -3 < change_pct < 0:
+            return 8        # 低换手微跌 → 融资锁仓
+        if change_pct > 3:
+            return 9        # 上涨 → 融资赚钱
+        # default
+        if turnover_pct > 0:
+            return 6        # 有数据就比默认好
         return 5
 
     def _score_quantitative(self, code: str, quote_data: dict[str, Any]) -> int:
