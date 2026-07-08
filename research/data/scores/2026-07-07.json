@@ -1,0 +1,96 @@
+{
+  "date": "2026-07-07",
+  "generated_at": "2026-07-07T17:34:09.630014",
+  "engine": "ScoringEngine",
+  "count": 4,
+  "scores": [
+    {
+      "code": "600141",
+      "industry": 10,
+      "flow": 8,
+      "inst": 5,
+      "margin": 5,
+      "quant": 5,
+      "expect": 9,
+      "total": 8.1,
+      "tier": "S",
+      "verdict": "高置信度信号 (总分 8.10) — 核心池候选",
+      "confidence": 80,
+      "weights": {
+        "industry_trend": 0.35,
+        "capital_flow": 0.25,
+        "institutional": 0.1,
+        "margin": 0.1,
+        "quantitative": 0.05,
+        "expectation": 0.15
+      },
+      "name": "兴发集团"
+    },
+    {
+      "code": "000858",
+      "industry": 0,
+      "flow": 8,
+      "inst": 5,
+      "margin": 5,
+      "quant": 5,
+      "expect": 9,
+      "total": 4.6,
+      "tier": "B",
+      "verdict": "低置信度 (总分 4.60) — 观察池，暂不建仓",
+      "confidence": 70,
+      "weights": {
+        "industry_trend": 0.35,
+        "capital_flow": 0.25,
+        "institutional": 0.1,
+        "margin": 0.1,
+        "quantitative": 0.05,
+        "expectation": 0.15
+      },
+      "name": "五粮液"
+    },
+    {
+      "code": "600519",
+      "industry": 0,
+      "flow": 8,
+      "inst": 5,
+      "margin": 5,
+      "quant": 5,
+      "expect": 9,
+      "total": 4.6,
+      "tier": "B",
+      "verdict": "低置信度 (总分 4.60) — 观察池，暂不建仓",
+      "confidence": 70,
+      "weights": {
+        "industry_trend": 0.35,
+        "capital_flow": 0.25,
+        "institutional": 0.1,
+        "margin": 0.1,
+        "quantitative": 0.05,
+        "expectation": 0.15
+      },
+      "name": "贵州茅台"
+    },
+    {
+      "code": "300750",
+      "industry": 0,
+      "flow": 8,
+      "inst": 5,
+      "margin": 5,
+      "quant": 5,
+      "expect": 9,
+      "total": 4.6,
+      "tier": "B",
+      "verdict": "低置信度 (总分 4.60) — 观察池，暂不建仓",
+      "confidence": 70,
+      "weights": {
+        "industry_trend": 0.35,
+        "capital_flow": 0.25,
+        "institutional": 0.1,
+        "margin": 0.1,
+        "quantitative": 0.05,
+        "expectation": 0.15
+      },
+      "name": "宁德时代"
+    }
+  ]
+}
