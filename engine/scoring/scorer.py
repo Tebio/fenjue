@@ -298,30 +298,39 @@ class ScoringEngine:
                     margin: float, quant: float, expect: float) -> int:
         """Compute confidence score (0-100) from data completeness signals.
 
-        Base 50, plus bonuses for data availability.  Capped at [20, 95].
+        Base 40, plus bonuses.  Capped at [15, 95].
         """
         _ = code
-        conf = 50
+        conf = 40
 
-        # Data completeness
-        if "turnover" in quote_data:
+        # Core data
+        if quote_data.get("turnover"):
             conf += 10
-        if "pct_20d" in quote_data:
+        if quote_data.get("pct_20d"):
             conf += 10
 
-        # Industry context
+        # Industry mapping
         if industry > 0:
             conf += 10
 
-        # All 6 dimensions have real (non-stub) scores
-        # Stub dimensions currently return exactly 5 — treat ≠ 5 as "real".
-        if (industry > 0
-                and "turnover" in quote_data
-                and "pct_20d" in quote_data
-                and inst != 5
-                and margin != 5
-                and quant != 5):
-            conf += 10
+        # Real (non-stub) dimension scores
+        real_dims = sum(1 for v in (industry, flow, inst, margin, quant, expect) if v != 5)
+        if real_dims >= 3:
+            conf += 5
+        if real_dims >= 5:
+            conf += 5
+
+        # MoneyFlow data freshness (new)
+        try:
+            mf = self.money_flow.assess(code, quote_data)
+            ms = mf.get("margin_score", 5)
+            ds = mf.get("dragon_score", 5)
+            if ms != 5:   # margin data is real (not default)
+                conf += 5
+            if ds != 5:   # dragon data is real
+                conf += 5
+        except Exception:
+            pass
 
         return max(20, min(95, conf))
 
