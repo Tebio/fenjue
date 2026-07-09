@@ -32,6 +32,7 @@ from typing import Any
 import yaml
 
 from engine.mapping.industry import IndustryMapper
+from engine.moneyflow import MoneyFlowEngine
 
 class ScoringEngine:
     """Load config, instantiate industry mapper, and score stocks."""
@@ -49,6 +50,7 @@ class ScoringEngine:
 
         self._load_config()
         self._industry_mapper = IndustryMapper(str(self._config_path))
+        self.money_flow = MoneyFlowEngine()
 
     # ── public API ────────────────────────────────────────────────────────
 
@@ -122,6 +124,9 @@ class ScoringEngine:
         # hard-codes data sources.
         evidence: dict[str, Any] = {}
 
+        # ── money flow (separate axis — NOT part of composite) ─────────
+        mf = self.money_flow.assess(code, quote_data)
+
         return {
             "code": code,
             "industry": industry,
@@ -137,6 +142,14 @@ class ScoringEngine:
             "weights": dict(self._weights),
             "evidence": evidence,
             "macro_meta": macro_meta,
+            "capital_health": mf["capital_health"],
+            "capital_health_stars": mf["capital_health_stars"],
+            "capital_health_details": mf.get("details", []),
+            "moneyflow_scores": {
+                "margin": mf["margin_score"],
+                "dragon": mf["dragon_score"],
+                "institution": mf["institution_score"],
+            },
         }
 
     # ── dimension scorers ─────────────────────────────────────────────────

@@ -331,6 +331,12 @@ class CronScheduler:
             score["name"] = name
             results.append(score)
 
+            # ── money flow axis (separate from Research score) ──────────
+            mf_health = score.get("capital_health", "unknown")
+            mf_stars = score.get("capital_health_stars", 0)
+            print(f"  [{code} {name}] Research={score.get('total',0):.2f}  "
+                  f"CapitalHealth={'★'*mf_stars} {mf_health}")
+
             # 写入反馈日志（无异常时）
             if "error" not in score:
                 try:
@@ -339,6 +345,22 @@ class CronScheduler:
                     pass  # 反馈写入失败不影响主流程
 
         # 3. 构建快照
+        # Aggregate capital health distribution for the snapshot summary
+        health_counts: dict[str, int] = {}
+        avg_stars = 0.0
+        star_total = 0
+        star_count = 0
+        for r in results:
+            if "error" not in r:
+                h = r.get("capital_health", "unknown")
+                health_counts[h] = health_counts.get(h, 0) + 1
+                s = r.get("capital_health_stars", 0)
+                if s:
+                    star_total += s
+                    star_count += 1
+        if star_count:
+            avg_stars = round(star_total / star_count, 2)
+
         snapshot = {
             "date": today,
             "generated_at": datetime.now().isoformat(),
@@ -351,6 +373,10 @@ class CronScheduler:
                 "position_cap_adj": macro_impact["position_cap_adj"],
                 "sector_multiplier_effect": sector_effect,
                 "industry_weights": industry_weights,
+            },
+            "capital_flow_health": {
+                "average_stars": avg_stars,
+                "distribution": health_counts,
             },
             "scores": results,
         }
