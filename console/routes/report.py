@@ -83,6 +83,44 @@ async def report(request: Request) -> HTMLResponse:
     </div>
     """
 
+    # ── Today's Alert ─────────────────────────────────────────
+    today_alert = """
+    <h3 style="font-size:14px;margin:20px 0 10px;color:var(--muted)">🚨 今日警报</h3>
+    <div class="card" style="padding:0;overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th>信号</th><th>代码</th><th>名称</th><th>关键指标</th><th>建议</th>
+        </tr></thead>
+        <tbody>
+          <tr style="background:rgba(255,107,107,0.08)">
+            <td><span style="color:#ff6b6b;font-size:16px">⚠</span></td>
+            <td style="color:var(--accent)">002428</td>
+            <td>云南锗业</td>
+            <td>放量14% 融资切换中</td>
+            <td>暂停加仓,等融资数据</td>
+          </tr>
+          <tr style="background:rgba(0,212,170,0.06)">
+            <td><span style="color:var(--accent);font-size:16px">✓</span></td>
+            <td style="color:var(--accent)">600141</td>
+            <td>兴发集团</td>
+            <td>换手稳定3.7%</td>
+            <td>可持有,仓位限30%</td>
+          </tr>
+          <tr style="background:rgba(0,212,170,0.06)">
+            <td><span style="color:var(--accent);font-size:16px">✓</span></td>
+            <td style="color:var(--accent)">002409</td>
+            <td>雅克科技</td>
+            <td>涨停+融资得分9 锁仓</td>
+            <td>可加仓至20%</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="padding:8px 16px;font-size:11px;color:var(--muted)">
+        规则：⚠高风险（换手>12%/跌幅<-5%/资金危险/融资≤3）| ✓低风险（换手<5%+资金健康+融资≥8）| 中等标·
+      </div>
+    </div>
+    """
+
     # ── Upcoming Catalysts ───────────────────────────────────
     catalysts = """
     <h3 style="font-size:14px;margin:20px 0 10px;color:var(--muted)">📅 下周催化</h3>
@@ -102,6 +140,7 @@ async def report(request: Request) -> HTMLResponse:
       {market_cards}
       {sector_moves}
       {s_pool}
+      {today_alert}
       {catalysts}
     </div>
     """

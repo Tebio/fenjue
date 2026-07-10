@@ -34,8 +34,14 @@ class MoneyFlowEngine:
                 margin_score       — int 1-10
                 dragon_score       — int 1-10
                 institution_score  — int 1-10
-                capital_health     — str label (crisis/danger/neutral/healthy/optimal)
-                capital_health_stars — int 1-5
+                capital_health     — str label
+                    unknown   (0★): 数据未完整 (≥2 模块无实时数据)
+                    danger    (1★): 风险高
+                    warning   (2★): 警惕
+                    neutral   (3★): 中性
+                    healthy   (4★): 健康
+                    optimal   (5★): 极佳
+                capital_health_stars — int 0-5 (0 when unknown)
                 details            — list[str] 解释文本
         """
         qd = quote_data or {}
@@ -43,27 +49,42 @@ class MoneyFlowEngine:
         ds = self.dragon.score(code)
         ins = self.institution.score(code)
 
-        avg = (ms + ds + ins) / 3.0
-        if avg >= 9:
-            stars, label = 5, "optimal"
-        elif avg >= 7:
-            stars, label = 4, "healthy"
-        elif avg >= 6:
-            stars, label = 3, "neutral"
-        elif avg >= 4:
-            stars, label = 2, "danger"
+        # ── Capital Health 评级 ──────────────────────────────────
+        # ≥2 个模块返回默认值 (score=5)  → unknown
+        # 0-1 个默认 → 正常计算
+        DEFAULT_SCORE = 5
+        default_count = sum(1 for s in (ms, ds, ins) if s == DEFAULT_SCORE)
+
+        if default_count >= 2:
+            label = "unknown"  # 数据未完整
+            stars = 0
         else:
-            stars, label = 1, "crisis"
+            avg = (ms + ds + ins) / 3.0
+            if avg >= 9:
+                stars, label = 5, "optimal"   # 极佳
+            elif avg >= 8:
+                stars, label = 4, "healthy"   # 健康
+            elif avg >= 6:
+                stars, label = 3, "neutral"   # 中性
+            elif avg >= 4:
+                stars, label = 2, "warning"   # 警惕
+            else:
+                stars, label = 1, "danger"    # 风险高
 
         details = []
-        if ms <= 3:
-            details.append(f"融资强平风险(融{ms})")
-        elif ms >= 8:
-            details.append(f"融资资金稳定(融{ms})")
-        if ds >= 8:
-            details.append(f"龙虎榜净买入(龙{ds})")
-        elif ds <= 3:
-            details.append(f"龙虎榜净卖出(龙{ds})")
+        if default_count >= 2:
+            details.append("⛔ 数据未完整: ≥2 模块无实时数据 (融资/龙虎榜/机构)")
+        else:
+            if default_count == 1:
+                details.append("⚠ 数据部分缺省 (1个模块无实时数据)")
+            if ms <= 3:
+                details.append(f"融资强平风险(融{ms})")
+            elif ms >= 8:
+                details.append(f"融资资金稳定(融{ms})")
+            if ds >= 8:
+                details.append(f"龙虎榜净买入(龙{ds})")
+            elif ds <= 3:
+                details.append(f"龙虎榜净卖出(龙{ds})")
 
         return {
             "margin_score": ms,
