@@ -35,41 +35,35 @@ class MoneyFlowEngine:
                 dragon_score       — int 1-10
                 institution_score  — int 1-10
                 capital_health     — str label
-                    unknown   (0★): 数据未完整 (≥2 模块无实时数据)
-                    danger    (1★): 风险高
-                    warning   (2★): 警惕
-                    neutral   (3★): 中性
-                    healthy   (4★): 健康
-                    optimal   (5★): 极佳
                 capital_health_stars — int 0-5 (0 when unknown)
-                details            — list[str] 解释文本
+                details            — list[str]
         """
         qd = quote_data or {}
-        ms = self.margin.score(code, qd)
+        # Use update_and_score to pull real margin data + compute score
+        ms, _margin_raw = self.margin.update_and_score(code, qd)
         ds = self.dragon.score(code)
         ins = self.institution.score(code)
 
         # ── Capital Health 评级 ──────────────────────────────────
         # ≥2 个模块返回默认值 (score=5)  → unknown
-        # 0-1 个默认 → 正常计算
         DEFAULT_SCORE = 5
         default_count = sum(1 for s in (ms, ds, ins) if s == DEFAULT_SCORE)
 
         if default_count >= 2:
-            label = "unknown"  # 数据未完整
+            label = "unknown"
             stars = 0
         else:
             avg = (ms + ds + ins) / 3.0
             if avg >= 9:
-                stars, label = 5, "optimal"   # 极佳
+                stars, label = 5, "optimal"
             elif avg >= 8:
-                stars, label = 4, "healthy"   # 健康
+                stars, label = 4, "healthy"
             elif avg >= 6:
-                stars, label = 3, "neutral"   # 中性
+                stars, label = 3, "neutral"
             elif avg >= 4:
-                stars, label = 2, "warning"   # 警惕
+                stars, label = 2, "warning"
             else:
-                stars, label = 1, "danger"    # 风险高
+                stars, label = 1, "danger"
 
         details = []
         if default_count >= 2:

@@ -182,8 +182,16 @@ class MarginTracker:
         recent = history[:3]  # 最近 3 个交易日 (已按日期降序排列)
 
         if len(recent) < 2:
-            # 只有 1 天数据，无法判断趋势
-            return 6
+            # 只有 1 天数据 — 用单日净买卖方向
+            day = recent[0]
+            zdf = day.get("zdf") or 0
+            rzjme = day.get("rzjme") or 0
+            if zdf <= -9:        return 2  # 跌停+融资卖
+            if rzjme < -5e7:      return 3  # 净卖出>5000万
+            if rzjme < 0:         return 4  # 净卖出
+            if rzjme > 5e7:       return 7  # 净买入>5000万
+            if rzjme > 0:         return 6  # 净买入小
+            return 6                        # 无方向
 
         # ── 计算 3 日融资余额变化 ──
         balances = [d.get("rzye") for d in recent if d.get("rzye") is not None]
@@ -276,6 +284,23 @@ class MarginTracker:
         raw = self.fetch_today(code)
         if raw:
             self._save_to_cache(code, raw)
+            # 立即更新内存缓存,让 score() 能读到新数据
+            entry = {
+                "date": raw.get("date", date.today().isoformat()),
+                "rzye": raw.get("rzye"),
+                "rzmre": raw.get("rzmre"),
+                "rzche": raw.get("rzche"),
+                "rzjme": raw.get("rzjme"),
+                "balance_change": raw.get("balance_change"),
+                "balance_change_pct": raw.get("balance_change_pct"),
+                "spj": raw.get("spj"),
+                "zdf": raw.get("zdf"),
+            }
+            # 避免重复追加同一天的数据
+            existing = self._history.get(code, [])
+            existing_dates = {e.get("date") for e in existing}
+            if entry["date"] not in existing_dates:
+                self._history.setdefault(code, []).insert(0, entry)
         return self.score(code, quote_data), raw
 
     # ── internal: cache ───────────────────────────────────────────────────
