@@ -91,7 +91,7 @@ def main() -> None:
         return sec
     timeline = []
     for d in sorted(day_boards):
-        if d < "2026-01-01":
+        if d < "2019-01-01":
             continue
         boards = day_boards[d]
         n = len(boards)
