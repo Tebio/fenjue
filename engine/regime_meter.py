@@ -132,8 +132,14 @@ def scan() -> dict:
 if __name__ == "__main__":
     r = scan()
     log = ROOT / "data" / "regime_log.jsonl"
-    with log.open("a") as f:
-        f.write(json.dumps({k: r[k] for k in ("date", "regime", "stats")}, ensure_ascii=False) + "\n")
+    entry = json.dumps({"date": r["date"], "regime": r["regime"], "stats": r["stats"],
+                        "boards": r["boards"]}, ensure_ascii=False)
+    lines = [l for l in log.read_text().splitlines() if l.strip()] if log.exists() else []
+    if lines and json.loads(lines[-1])["date"] == r["date"]:
+        lines[-1] = entry  # 同日重跑=覆盖，不堆重复行（打板接力按行序读，重复行会算出假昨日）
+    else:
+        lines.append(entry)
+    log.write_text("\n".join(lines) + "\n")
     s = r["stats"]
     print(f"情绪周期仪 {r['date']}: 【{r['regime']}】")
     print(f"  涨停 {s['limit_ups']} 家 | 小市值(<100亿)占比 {s['small_cap_board_ratio']:.0%} | "
