@@ -53,12 +53,18 @@ def load_pool(
     pool_dir: Path,
     pool_date: str | None = None,
     pool_lookback: int | None = None,
+    as_of: str | None = None,
 ) -> tuple[Path, list[dict]]:
     if pool_date:
         path = pool_dir / f"pool_{pool_date.replace('-', '')}.json"
         files = [path]
     else:
         files = sorted(pool_dir.glob("pool_2026*.json"), reverse=True)
+        if as_of:
+            # 2026-09-06 未来函数修复：回放/影子回测时，池文件日期必须严格早于回放日
+            # （pool_X 含 X 日收盘数据，回放日 D 只能用 <D 的池；原实现无视回放日拿全盘最新=未来数据）。
+            cutoff = as_of.replace("-", "")
+            files = [f for f in files if f.stem.replace("pool_", "") < cutoff]
         if not files:
             raise SystemExit("No pool_*.json found. Run build_pool.py after close first.")
         lookback = pool_lookback if pool_lookback is not None else int(os.environ.get("FENJUE_POOL_LOOKBACK", "3"))
@@ -381,7 +387,12 @@ def main() -> int:
         print(gate_text)
         print("[SILENT] 大盘未红，焚诀不开仓。")
         return 0
-    pool_path, pool = load_pool(Path(args.pool_dir), args.pool_date or None, args.pool_lookback)
+    pool_path, pool = load_pool(
+        Path(args.pool_dir),
+        args.pool_date or None,
+        args.pool_lookback,
+        as_of=args.snapshot_date or None if args.quote_tag else None,  # 回放模式防未来函数
+    )
     quote_path = None
     if args.quote_tag:
         quote_path, quotes = load_snapshot(Path(args.snapshot_dir), args.quote_tag, args.snapshot_date or None)
