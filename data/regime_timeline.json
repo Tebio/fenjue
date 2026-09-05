@@ -1,0 +1,1478 @@
+[
+  {
+    "date": "2026-01-05",
+    "regime": "平淡期",
+    "boards": 78,
+    "downs": 12,
+    "small%": 0.64,
+    "conc": 0.19,
+    "idx": 0.79
+  },
+  {
+    "date": "2026-01-06",
+    "regime": "平淡期",
+    "boards": 101,
+    "downs": 1,
+    "small%": 0.61,
+    "conc": 0.18,
+    "idx": 1.48
+  },
+  {
+    "date": "2026-01-07",
+    "regime": "平淡期",
+    "boards": 65,
+    "downs": 2,
+    "small%": 0.65,
+    "conc": 0.17,
+    "idx": -0.26
+  },
+  {
+    "date": "2026-01-08",
+    "regime": "妖股期",
+    "boards": 80,
+    "downs": 4,
+    "small%": 0.68,
+    "conc": 0.11,
+    "idx": -1.12
+  },
+  {
+    "date": "2026-01-09",
+    "regime": "平淡期",
+    "boards": 83,
+    "downs": 1,
+    "small%": 0.6,
+    "conc": 0.13,
+    "idx": -0.43
+  },
+  {
+    "date": "2026-01-12",
+    "regime": "平淡期",
+    "boards": 131,
+    "downs": 3,
+    "small%": 0.55,
+    "conc": 0.21,
+    "idx": 0.17
+  },
+  {
+    "date": "2026-01-13",
+    "regime": "妖股期",
+    "boards": 53,
+    "downs": 51,
+    "small%": 0.72,
+    "conc": 0.13,
+    "idx": -0.09
+  },
+  {
+    "date": "2026-01-14",
+    "regime": "平淡期",
+    "boards": 83,
+    "downs": 19,
+    "small%": 0.63,
+    "conc": 0.19,
+    "idx": -0.96
+  },
+  {
+    "date": "2026-01-15",
+    "regime": "妖股期",
+    "boards": 51,
+    "downs": 55,
+    "small%": 0.71,
+    "conc": 0.2,
+    "idx": -0.44
+  },
+  {
+    "date": "2026-01-16",
+    "regime": "恐慌期",
+    "boards": 48,
+    "downs": 51,
+    "small%": 0.65,
+    "conc": 0.19,
+    "idx": -1.06
+  },
+  {
+    "date": "2026-01-19",
+    "regime": "恐慌期",
+    "boards": 82,
+    "downs": 27,
+    "small%": 0.59,
+    "conc": 0.18,
+    "idx": -0.63
+  },
+  {
+    "date": "2026-01-20",
+    "regime": "平淡期",
+    "boards": 51,
+    "downs": 15,
+    "small%": 0.65,
+    "conc": 0.16,
+    "idx": 0.36
+  },
+  {
+    "date": "2026-01-21",
+    "regime": "平淡期",
+    "boards": 75,
+    "downs": 5,
+    "small%": 0.61,
+    "conc": 0.21,
+    "idx": -0.81
+  },
+  {
+    "date": "2026-01-22",
+    "regime": "主线期",
+    "boards": 67,
+    "downs": 3,
+    "small%": 0.6,
+    "conc": 0.22,
+    "idx": 0.0
+  },
+  {
+    "date": "2026-01-23",
+    "regime": "平淡期",
+    "boards": 84,
+    "downs": 1,
+    "small%": 0.61,
+    "conc": 0.13,
+    "idx": -0.72
+  },
+  {
+    "date": "2026-01-26",
+    "regime": "恐慌期",
+    "boards": 64,
+    "downs": 42,
+    "small%": 0.52,
+    "conc": 0.17,
+    "idx": -0.27
+  },
+  {
+    "date": "2026-01-27",
+    "regime": "平淡期",
+    "boards": 48,
+    "downs": 2,
+    "small%": 0.54,
+    "conc": 0.21,
+    "idx": -0.18
+  },
+  {
+    "date": "2026-01-28",
+    "regime": "主线期",
+    "boards": 77,
+    "downs": 8,
+    "small%": 0.39,
+    "conc": 0.22,
+    "idx": -0.91
+  },
+  {
+    "date": "2026-01-29",
+    "regime": "主线期",
+    "boards": 82,
+    "downs": 13,
+    "small%": 0.45,
+    "conc": 0.24,
+    "idx": 1.11
+  },
+  {
+    "date": "2026-01-30",
+    "regime": "恐慌期",
+    "boards": 42,
+    "downs": 52,
+    "small%": 0.67,
+    "conc": 0.24,
+    "idx": -1.19
+  },
+  {
+    "date": "2026-02-02",
+    "regime": "恐慌期",
+    "boards": 32,
+    "downs": 109,
+    "small%": 0.78,
+    "conc": 0.25,
+    "idx": 0.28
+  },
+  {
+    "date": "2026-02-03",
+    "regime": "平淡期",
+    "boards": 62,
+    "downs": 11,
+    "small%": 0.58,
+    "conc": 0.1,
+    "idx": -0.18
+  },
+  {
+    "date": "2026-02-04",
+    "regime": "平淡期",
+    "boards": 59,
+    "downs": 8,
+    "small%": 0.64,
+    "conc": 0.12,
+    "idx": 1.2
+  },
+  {
+    "date": "2026-02-05",
+    "regime": "妖股期",
+    "boards": 40,
+    "downs": 16,
+    "small%": 0.75,
+    "conc": 0.07,
+    "idx": 1.09
+  },
+  {
+    "date": "2026-02-06",
+    "regime": "妖股期",
+    "boards": 56,
+    "downs": 6,
+    "small%": 0.66,
+    "conc": 0.12,
+    "idx": -0.36
+  },
+  {
+    "date": "2026-02-09",
+    "regime": "平淡期",
+    "boards": 74,
+    "downs": 3,
+    "small%": 0.62,
+    "conc": 0.12,
+    "idx": 0.18
+  },
+  {
+    "date": "2026-02-10",
+    "regime": "平淡期",
+    "boards": 52,
+    "downs": 5,
+    "small%": 0.58,
+    "conc": 0.17,
+    "idx": -0.09
+  },
+  {
+    "date": "2026-02-11",
+    "regime": "平淡期",
+    "boards": 49,
+    "downs": 8,
+    "small%": 0.57,
+    "conc": 0.14,
+    "idx": 0.09
+  },
+  {
+    "date": "2026-02-12",
+    "regime": "平淡期",
+    "boards": 56,
+    "downs": 14,
+    "small%": 0.48,
+    "conc": 0.11,
+    "idx": -0.99
+  },
+  {
+    "date": "2026-02-13",
+    "regime": "平淡期",
+    "boards": 29,
+    "downs": 13,
+    "small%": 0.62,
+    "conc": 0.1,
+    "idx": -0.46
+  },
+  {
+    "date": "2026-02-24",
+    "regime": "平淡期",
+    "boards": 87,
+    "downs": 16,
+    "small%": 0.52,
+    "conc": 0.17,
+    "idx": 0.0
+  },
+  {
+    "date": "2026-02-25",
+    "regime": "平淡期",
+    "boards": 68,
+    "downs": 3,
+    "small%": 0.51,
+    "conc": 0.12,
+    "idx": -0.46
+  },
+  {
+    "date": "2026-02-26",
+    "regime": "平淡期",
+    "boards": 54,
+    "downs": 4,
+    "small%": 0.59,
+    "conc": 0.24,
+    "idx": 0.09
+  },
+  {
+    "date": "2026-02-27",
+    "regime": "平淡期",
+    "boards": 70,
+    "downs": 0,
+    "small%": 0.47,
+    "conc": 0.11,
+    "idx": 0.28
+  },
+  {
+    "date": "2026-03-02",
+    "regime": "平淡期",
+    "boards": 82,
+    "downs": 8,
+    "small%": 0.38,
+    "conc": 0.11,
+    "idx": -0.46
+  },
+  {
+    "date": "2026-03-03",
+    "regime": "主线期",
+    "boards": 70,
+    "downs": 66,
+    "small%": 0.54,
+    "conc": 0.24,
+    "idx": 0.28
+  },
+  {
+    "date": "2026-03-04",
+    "regime": "平淡期",
+    "boards": 37,
+    "downs": 18,
+    "small%": 0.7,
+    "conc": 0.11,
+    "idx": -1.56
+  },
+  {
+    "date": "2026-03-05",
+    "regime": "平淡期",
+    "boards": 55,
+    "downs": 2,
+    "small%": 0.62,
+    "conc": 0.29,
+    "idx": 0.93
+  },
+  {
+    "date": "2026-03-06",
+    "regime": "妖股期",
+    "boards": 68,
+    "downs": 0,
+    "small%": 0.71,
+    "conc": 0.16,
+    "idx": 0.09
+  },
+  {
+    "date": "2026-03-09",
+    "regime": "平淡期",
+    "boards": 35,
+    "downs": 5,
+    "small%": 0.57,
+    "conc": 0.14,
+    "idx": -0.55
+  },
+  {
+    "date": "2026-03-10",
+    "regime": "平淡期",
+    "boards": 49,
+    "downs": 4,
+    "small%": 0.53,
+    "conc": 0.31,
+    "idx": 0.46
+  },
+  {
+    "date": "2026-03-11",
+    "regime": "平淡期",
+    "boards": 50,
+    "downs": 3,
+    "small%": 0.56,
+    "conc": 0.2,
+    "idx": 0.74
+  },
+  {
+    "date": "2026-03-12",
+    "regime": "平淡期",
+    "boards": 47,
+    "downs": 3,
+    "small%": 0.57,
+    "conc": 0.15,
+    "idx": 0.46
+  },
+  {
+    "date": "2026-03-13",
+    "regime": "妖股期",
+    "boards": 57,
+    "downs": 13,
+    "small%": 0.79,
+    "conc": 0.16,
+    "idx": -0.09
+  },
+  {
+    "date": "2026-03-16",
+    "regime": "妖股期",
+    "boards": 42,
+    "downs": 8,
+    "small%": 0.67,
+    "conc": 0.21,
+    "idx": -0.09
+  },
+  {
+    "date": "2026-03-17",
+    "regime": "平淡期",
+    "boards": 35,
+    "downs": 11,
+    "small%": 0.86,
+    "conc": 0.14,
+    "idx": 1.01
+  },
+  {
+    "date": "2026-03-18",
+    "regime": "平淡期",
+    "boards": 49,
+    "downs": 5,
+    "small%": 0.65,
+    "conc": 0.24,
+    "idx": -0.63
+  },
+  {
+    "date": "2026-03-19",
+    "regime": "平淡期",
+    "boards": 26,
+    "downs": 7,
+    "small%": 0.58,
+    "conc": 0.15,
+    "idx": -0.73
+  },
+  {
+    "date": "2026-03-20",
+    "regime": "恐慌期",
+    "boards": 28,
+    "downs": 19,
+    "small%": 0.75,
+    "conc": 0.18,
+    "idx": -1.01
+  },
+  {
+    "date": "2026-03-23",
+    "regime": "恐慌期",
+    "boards": 25,
+    "downs": 92,
+    "small%": 0.68,
+    "conc": 0.2,
+    "idx": -2.97
+  },
+  {
+    "date": "2026-03-24",
+    "regime": "平淡期",
+    "boards": 80,
+    "downs": 2,
+    "small%": 0.59,
+    "conc": 0.1,
+    "idx": 4.11
+  },
+  {
+    "date": "2026-03-25",
+    "regime": "妖股期",
+    "boards": 79,
+    "downs": 1,
+    "small%": 0.66,
+    "conc": 0.18,
+    "idx": 0.55
+  },
+  {
+    "date": "2026-03-26",
+    "regime": "平淡期",
+    "boards": 39,
+    "downs": 12,
+    "small%": 0.79,
+    "conc": 0.13,
+    "idx": 0.0
+  },
+  {
+    "date": "2026-03-27",
+    "regime": "妖股期",
+    "boards": 74,
+    "downs": 2,
+    "small%": 0.66,
+    "conc": 0.16,
+    "idx": 0.73
+  },
+  {
+    "date": "2026-03-30",
+    "regime": "妖股期",
+    "boards": 58,
+    "downs": 11,
+    "small%": 0.66,
+    "conc": 0.1,
+    "idx": -0.27
+  },
+  {
+    "date": "2026-03-31",
+    "regime": "妖股期",
+    "boards": 47,
+    "downs": 4,
+    "small%": 0.77,
+    "conc": 0.09,
+    "idx": 0.82
+  },
+  {
+    "date": "2026-04-01",
+    "regime": "妖股期",
+    "boards": 51,
+    "downs": 8,
+    "small%": 0.73,
+    "conc": 0.12,
+    "idx": 0.63
+  },
+  {
+    "date": "2026-04-02",
+    "regime": "平淡期",
+    "boards": 25,
+    "downs": 10,
+    "small%": 0.84,
+    "conc": 0.12,
+    "idx": 1.08
+  },
+  {
+    "date": "2026-04-03",
+    "regime": "恐慌期",
+    "boards": 28,
+    "downs": 30,
+    "small%": 0.64,
+    "conc": 0.29,
+    "idx": -1.33
+  },
+  {
+    "date": "2026-04-07",
+    "regime": "主线期",
+    "boards": 86,
+    "downs": 6,
+    "small%": 0.7,
+    "conc": 0.27,
+    "idx": -0.81
+  },
+  {
+    "date": "2026-04-08",
+    "regime": "主线期",
+    "boards": 112,
+    "downs": 7,
+    "small%": 0.49,
+    "conc": 0.25,
+    "idx": 1.72
+  },
+  {
+    "date": "2026-04-09",
+    "regime": "平淡期",
+    "boards": 52,
+    "downs": 3,
+    "small%": 0.56,
+    "conc": 0.29,
+    "idx": -1.07
+  },
+  {
+    "date": "2026-04-10",
+    "regime": "妖股期",
+    "boards": 56,
+    "downs": 7,
+    "small%": 0.73,
+    "conc": 0.16,
+    "idx": -0.09
+  },
+  {
+    "date": "2026-04-13",
+    "regime": "平淡期",
+    "boards": 55,
+    "downs": 6,
+    "small%": 0.55,
+    "conc": 0.15,
+    "idx": -0.18
+  },
+  {
+    "date": "2026-04-14",
+    "regime": "平淡期",
+    "boards": 49,
+    "downs": 4,
+    "small%": 0.57,
+    "conc": 0.18,
+    "idx": 0.9
+  },
+  {
+    "date": "2026-04-15",
+    "regime": "妖股期",
+    "boards": 55,
+    "downs": 10,
+    "small%": 0.65,
+    "conc": 0.13,
+    "idx": 0.36
+  },
+  {
+    "date": "2026-04-16",
+    "regime": "妖股期",
+    "boards": 70,
+    "downs": 3,
+    "small%": 0.66,
+    "conc": 0.17,
+    "idx": -1.07
+  },
+  {
+    "date": "2026-04-17",
+    "regime": "主线期",
+    "boards": 60,
+    "downs": 2,
+    "small%": 0.48,
+    "conc": 0.3,
+    "idx": -0.72
+  },
+  {
+    "date": "2026-04-20",
+    "regime": "平淡期",
+    "boards": 73,
+    "downs": 6,
+    "small%": 0.62,
+    "conc": 0.18,
+    "idx": 0.45
+  },
+  {
+    "date": "2026-04-21",
+    "regime": "妖股期",
+    "boards": 46,
+    "downs": 10,
+    "small%": 0.78,
+    "conc": 0.09,
+    "idx": 0.18
+  },
+  {
+    "date": "2026-04-22",
+    "regime": "平淡期",
+    "boards": 50,
+    "downs": 5,
+    "small%": 0.44,
+    "conc": 0.32,
+    "idx": -0.9
+  },
+  {
+    "date": "2026-04-23",
+    "regime": "平淡期",
+    "boards": 45,
+    "downs": 16,
+    "small%": 0.62,
+    "conc": 0.07,
+    "idx": 0.18
+  },
+  {
+    "date": "2026-04-24",
+    "regime": "妖股期",
+    "boards": 53,
+    "downs": 26,
+    "small%": 0.66,
+    "conc": 0.08,
+    "idx": 0.0
+  },
+  {
+    "date": "2026-04-27",
+    "regime": "恐慌期",
+    "boards": 57,
+    "downs": 36,
+    "small%": 0.65,
+    "conc": 0.21,
+    "idx": 3.45
+  },
+  {
+    "date": "2026-04-28",
+    "regime": "妖股期",
+    "boards": 54,
+    "downs": 31,
+    "small%": 0.67,
+    "conc": 0.13,
+    "idx": 0.7
+  },
+  {
+    "date": "2026-04-29",
+    "regime": "平淡期",
+    "boards": 90,
+    "downs": 13,
+    "small%": 0.52,
+    "conc": 0.11,
+    "idx": 0.52
+  },
+  {
+    "date": "2026-04-30",
+    "regime": "妖股期",
+    "boards": 71,
+    "downs": 11,
+    "small%": 0.69,
+    "conc": 0.07,
+    "idx": -0.26
+  },
+  {
+    "date": "2026-05-06",
+    "regime": "平淡期",
+    "boards": 89,
+    "downs": 2,
+    "small%": 0.51,
+    "conc": 0.17,
+    "idx": -1.13
+  },
+  {
+    "date": "2026-05-07",
+    "regime": "主线期",
+    "boards": 92,
+    "downs": 5,
+    "small%": 0.53,
+    "conc": 0.28,
+    "idx": 0.09
+  },
+  {
+    "date": "2026-05-08",
+    "regime": "妖股期",
+    "boards": 90,
+    "downs": 2,
+    "small%": 0.67,
+    "conc": 0.21,
+    "idx": -0.62
+  },
+  {
+    "date": "2026-05-11",
+    "regime": "平淡期",
+    "boards": 80,
+    "downs": 9,
+    "small%": 0.5,
+    "conc": 0.21,
+    "idx": -0.18
+  },
+  {
+    "date": "2026-05-12",
+    "regime": "平淡期",
+    "boards": 51,
+    "downs": 8,
+    "small%": 0.59,
+    "conc": 0.1,
+    "idx": -0.27
+  },
+  {
+    "date": "2026-05-13",
+    "regime": "平淡期",
+    "boards": 102,
+    "downs": 3,
+    "small%": 0.6,
+    "conc": 0.22,
+    "idx": -0.98
+  },
+  {
+    "date": "2026-05-14",
+    "regime": "妖股期",
+    "boards": 50,
+    "downs": 20,
+    "small%": 0.72,
+    "conc": 0.12,
+    "idx": -0.81
+  },
+  {
+    "date": "2026-05-15",
+    "regime": "妖股期",
+    "boards": 46,
+    "downs": 16,
+    "small%": 0.74,
+    "conc": 0.07,
+    "idx": -0.54
+  },
+  {
+    "date": "2026-05-18",
+    "regime": "恐慌期",
+    "boards": 72,
+    "downs": 21,
+    "small%": 0.57,
+    "conc": 0.17,
+    "idx": -1.18
+  },
+  {
+    "date": "2026-05-19",
+    "regime": "主线期",
+    "boards": 76,
+    "downs": 10,
+    "small%": 0.64,
+    "conc": 0.22,
+    "idx": 0.0
+  },
+  {
+    "date": "2026-05-20",
+    "regime": "妖股期",
+    "boards": 54,
+    "downs": 25,
+    "small%": 0.7,
+    "conc": 0.2,
+    "idx": -0.83
+  },
+  {
+    "date": "2026-05-21",
+    "regime": "恐慌期",
+    "boards": 34,
+    "downs": 36,
+    "small%": 0.76,
+    "conc": 0.32,
+    "idx": -0.65
+  },
+  {
+    "date": "2026-05-22",
+    "regime": "主线期",
+    "boards": 101,
+    "downs": 9,
+    "small%": 0.53,
+    "conc": 0.29,
+    "idx": -0.19
+  },
+  {
+    "date": "2026-05-25",
+    "regime": "主线期",
+    "boards": 91,
+    "downs": 21,
+    "small%": 0.48,
+    "conc": 0.23,
+    "idx": 0.0
+  },
+  {
+    "date": "2026-05-26",
+    "regime": "恐慌期",
+    "boards": 45,
+    "downs": 26,
+    "small%": 0.49,
+    "conc": 0.22,
+    "idx": 1.03
+  },
+  {
+    "date": "2026-05-27",
+    "regime": "恐慌期",
+    "boards": 45,
+    "downs": 27,
+    "small%": 0.64,
+    "conc": 0.18,
+    "idx": -0.28
+  },
+  {
+    "date": "2026-05-28",
+    "regime": "平淡期",
+    "boards": 91,
+    "downs": 9,
+    "small%": 0.53,
+    "conc": 0.19,
+    "idx": -0.93
+  },
+  {
+    "date": "2026-05-29",
+    "regime": "妖股期",
+    "boards": 47,
+    "downs": 63,
+    "small%": 0.68,
+    "conc": 0.15,
+    "idx": 2.53
+  },
+  {
+    "date": "2026-06-01",
+    "regime": "妖股期",
+    "boards": 109,
+    "downs": 26,
+    "small%": 0.7,
+    "conc": 0.2,
+    "idx": 0.55
+  },
+  {
+    "date": "2026-06-02",
+    "regime": "平淡期",
+    "boards": 59,
+    "downs": 18,
+    "small%": 0.51,
+    "conc": 0.24,
+    "idx": 0.82
+  },
+  {
+    "date": "2026-06-03",
+    "regime": "妖股期",
+    "boards": 61,
+    "downs": 12,
+    "small%": 0.7,
+    "conc": 0.11,
+    "idx": -0.81
+  },
+  {
+    "date": "2026-06-04",
+    "regime": "主线期",
+    "boards": 67,
+    "downs": 9,
+    "small%": 0.6,
+    "conc": 0.3,
+    "idx": -1.55
+  },
+  {
+    "date": "2026-06-05",
+    "regime": "妖股期",
+    "boards": 64,
+    "downs": 15,
+    "small%": 0.77,
+    "conc": 0.12,
+    "idx": 1.48
+  },
+  {
+    "date": "2026-06-08",
+    "regime": "妖股期",
+    "boards": 46,
+    "downs": 38,
+    "small%": 0.7,
+    "conc": 0.11,
+    "idx": 0.46
+  },
+  {
+    "date": "2026-06-09",
+    "regime": "主线期",
+    "boards": 108,
+    "downs": 8,
+    "small%": 0.51,
+    "conc": 0.27,
+    "idx": 0.91
+  },
+  {
+    "date": "2026-06-10",
+    "regime": "恐慌期",
+    "boards": 63,
+    "downs": 27,
+    "small%": 0.63,
+    "conc": 0.19,
+    "idx": 1.71
+  },
+  {
+    "date": "2026-06-11",
+    "regime": "恐慌期",
+    "boards": 57,
+    "downs": 33,
+    "small%": 0.51,
+    "conc": 0.14,
+    "idx": -0.18
+  },
+  {
+    "date": "2026-06-12",
+    "regime": "平淡期",
+    "boards": 86,
+    "downs": 18,
+    "small%": 0.59,
+    "conc": 0.08,
+    "idx": 2.74
+  },
+  {
+    "date": "2026-06-15",
+    "regime": "主线期",
+    "boards": 129,
+    "downs": 4,
+    "small%": 0.43,
+    "conc": 0.3,
+    "idx": -1.6
+  },
+  {
+    "date": "2026-06-16",
+    "regime": "主线期",
+    "boards": 109,
+    "downs": 8,
+    "small%": 0.58,
+    "conc": 0.27,
+    "idx": -1.08
+  },
+  {
+    "date": "2026-06-17",
+    "regime": "主线期",
+    "boards": 69,
+    "downs": 5,
+    "small%": 0.48,
+    "conc": 0.33,
+    "idx": -1.46
+  },
+  {
+    "date": "2026-06-18",
+    "regime": "恐慌期",
+    "boards": 77,
+    "downs": 20,
+    "small%": 0.55,
+    "conc": 0.21,
+    "idx": -2.41
+  },
+  {
+    "date": "2026-06-22",
+    "regime": "平淡期",
+    "boards": 122,
+    "downs": 8,
+    "small%": 0.43,
+    "conc": 0.17,
+    "idx": 1.24
+  },
+  {
+    "date": "2026-06-23",
+    "regime": "妖股期",
+    "boards": 88,
+    "downs": 51,
+    "small%": 0.81,
+    "conc": 0.1,
+    "idx": 0.56
+  },
+  {
+    "date": "2026-06-24",
+    "regime": "主线期",
+    "boards": 88,
+    "downs": 11,
+    "small%": 0.36,
+    "conc": 0.28,
+    "idx": -1.87
+  },
+  {
+    "date": "2026-06-25",
+    "regime": "主线期",
+    "boards": 81,
+    "downs": 24,
+    "small%": 0.46,
+    "conc": 0.26,
+    "idx": -0.86
+  },
+  {
+    "date": "2026-06-26",
+    "regime": "妖股期",
+    "boards": 51,
+    "downs": 39,
+    "small%": 0.67,
+    "conc": 0.18,
+    "idx": -1.82
+  },
+  {
+    "date": "2026-06-29",
+    "regime": "妖股期",
+    "boards": 92,
+    "downs": 44,
+    "small%": 0.65,
+    "conc": 0.16,
+    "idx": 0.1
+  },
+  {
+    "date": "2026-06-30",
+    "regime": "主线期",
+    "boards": 115,
+    "downs": 9,
+    "small%": 0.52,
+    "conc": 0.31,
+    "idx": -1.86
+  },
+  {
+    "date": "2026-07-01",
+    "regime": "妖股期",
+    "boards": 133,
+    "downs": 10,
+    "small%": 0.68,
+    "conc": 0.15,
+    "idx": 1.09
+  },
+  {
+    "date": "2026-07-02",
+    "regime": "妖股期",
+    "boards": 83,
+    "downs": 45,
+    "small%": 0.77,
+    "conc": 0.06,
+    "idx": 1.18
+  },
+  {
+    "date": "2026-07-03",
+    "regime": "妖股期",
+    "boards": 93,
+    "downs": 26,
+    "small%": 0.69,
+    "conc": 0.11,
+    "idx": 0.1
+  },
+  {
+    "date": "2026-07-06",
+    "regime": "妖股期",
+    "boards": 66,
+    "downs": 52,
+    "small%": 0.67,
+    "conc": 0.14,
+    "idx": 2.04
+  },
+  {
+    "date": "2026-07-07",
+    "regime": "恐慌期",
+    "boards": 30,
+    "downs": 48,
+    "small%": 0.67,
+    "conc": 0.3,
+    "idx": -0.29
+  },
+  {
+    "date": "2026-07-08",
+    "regime": "恐慌期",
+    "boards": 51,
+    "downs": 52,
+    "small%": 0.8,
+    "conc": 0.27,
+    "idx": 1.24
+  },
+  {
+    "date": "2026-07-09",
+    "regime": "主线期",
+    "boards": 63,
+    "downs": 16,
+    "small%": 0.44,
+    "conc": 0.4,
+    "idx": -1.04
+  },
+  {
+    "date": "2026-07-10",
+    "regime": "平淡期",
+    "boards": 85,
+    "downs": 11,
+    "small%": 0.64,
+    "conc": 0.11,
+    "idx": -0.38
+  },
+  {
+    "date": "2026-07-13",
+    "regime": "恐慌期",
+    "boards": 29,
+    "downs": 187,
+    "small%": 0.76,
+    "conc": 0.24,
+    "idx": 0.86
+  },
+  {
+    "date": "2026-07-14",
+    "regime": "恐慌期",
+    "boards": 74,
+    "downs": 29,
+    "small%": 0.57,
+    "conc": 0.16,
+    "idx": 1.42
+  },
+  {
+    "date": "2026-07-15",
+    "regime": "妖股期",
+    "boards": 67,
+    "downs": 46,
+    "small%": 0.76,
+    "conc": 0.09,
+    "idx": 1.4
+  },
+  {
+    "date": "2026-07-16",
+    "regime": "妖股期",
+    "boards": 43,
+    "downs": 42,
+    "small%": 0.86,
+    "conc": 0.14,
+    "idx": -0.65
+  },
+  {
+    "date": "2026-07-17",
+    "regime": "恐慌期",
+    "boards": 31,
+    "downs": 211,
+    "small%": 0.71,
+    "conc": 0.16,
+    "idx": 0.09
+  },
+  {
+    "date": "2026-07-20",
+    "regime": "恐慌期",
+    "boards": 51,
+    "downs": 256,
+    "small%": 0.47,
+    "conc": 0.18,
+    "idx": 1.86
+  },
+  {
+    "date": "2026-07-21",
+    "regime": "主线期",
+    "boards": 83,
+    "downs": 29,
+    "small%": 0.34,
+    "conc": 0.48,
+    "idx": -1.28
+  },
+  {
+    "date": "2026-07-22",
+    "regime": "平淡期",
+    "boards": 44,
+    "downs": 12,
+    "small%": 0.57,
+    "conc": 0.18,
+    "idx": 1.29
+  },
+  {
+    "date": "2026-07-23",
+    "regime": "妖股期",
+    "boards": 116,
+    "downs": 4,
+    "small%": 0.77,
+    "conc": 0.16,
+    "idx": 0.91
+  },
+  {
+    "date": "2026-07-24",
+    "regime": "恐慌期",
+    "boards": 37,
+    "downs": 28,
+    "small%": 0.89,
+    "conc": 0.16,
+    "idx": 0.18
+  },
+  {
+    "date": "2026-07-27",
+    "regime": "妖股期",
+    "boards": 110,
+    "downs": 5,
+    "small%": 0.71,
+    "conc": 0.16,
+    "idx": 0.09
+  },
+  {
+    "date": "2026-07-28",
+    "regime": "妖股期",
+    "boards": 61,
+    "downs": 53,
+    "small%": 0.8,
+    "conc": 0.21,
+    "idx": 0.81
+  },
+  {
+    "date": "2026-07-29",
+    "regime": "妖股期",
+    "boards": 77,
+    "downs": 13,
+    "small%": 0.74,
+    "conc": 0.1,
+    "idx": 0.71
+  },
+  {
+    "date": "2026-07-30",
+    "regime": "妖股期",
+    "boards": 50,
+    "downs": 94,
+    "small%": 0.66,
+    "conc": 0.1,
+    "idx": 2.93
+  },
+  {
+    "date": "2026-07-31",
+    "regime": "平淡期",
+    "boards": 91,
+    "downs": 0,
+    "small%": 0.55,
+    "conc": 0.15,
+    "idx": 0.17
+  },
+  {
+    "date": "2026-08-03",
+    "regime": "妖股期",
+    "boards": 75,
+    "downs": 9,
+    "small%": 0.75,
+    "conc": 0.09,
+    "idx": -0.09
+  },
+  {
+    "date": "2026-08-04",
+    "regime": "主线期",
+    "boards": 125,
+    "downs": 1,
+    "small%": 0.5,
+    "conc": 0.32,
+    "idx": -1.55
+  },
+  {
+    "date": "2026-08-05",
+    "regime": "主线期",
+    "boards": 97,
+    "downs": 1,
+    "small%": 0.49,
+    "conc": 0.32,
+    "idx": -1.66
+  },
+  {
+    "date": "2026-08-06",
+    "regime": "主线期",
+    "boards": 74,
+    "downs": 2,
+    "small%": 0.61,
+    "conc": 0.34,
+    "idx": 0.18
+  },
+  {
+    "date": "2026-08-07",
+    "regime": "平淡期",
+    "boards": 59,
+    "downs": 4,
+    "small%": 0.44,
+    "conc": 0.31,
+    "idx": -0.71
+  },
+  {
+    "date": "2026-08-10",
+    "regime": "妖股期",
+    "boards": 98,
+    "downs": 7,
+    "small%": 0.73,
+    "conc": 0.09,
+    "idx": 0.89
+  },
+  {
+    "date": "2026-08-11",
+    "regime": "妖股期",
+    "boards": 54,
+    "downs": 4,
+    "small%": 0.7,
+    "conc": 0.09,
+    "idx": -0.27
+  },
+  {
+    "date": "2026-08-12",
+    "regime": "妖股期",
+    "boards": 89,
+    "downs": 0,
+    "small%": 0.71,
+    "conc": 0.12,
+    "idx": -0.09
+  },
+  {
+    "date": "2026-08-13",
+    "regime": "妖股期",
+    "boards": 54,
+    "downs": 4,
+    "small%": 0.76,
+    "conc": 0.11,
+    "idx": 0.0
+  },
+  {
+    "date": "2026-08-14",
+    "regime": "平淡期",
+    "boards": 52,
+    "downs": 16,
+    "small%": 0.65,
+    "conc": 0.27,
+    "idx": -1.24
+  },
+  {
+    "date": "2026-08-17",
+    "regime": "妖股期",
+    "boards": 96,
+    "downs": 1,
+    "small%": 0.68,
+    "conc": 0.15,
+    "idx": -0.09
+  },
+  {
+    "date": "2026-08-18",
+    "regime": "妖股期",
+    "boards": 71,
+    "downs": 6,
+    "small%": 0.75,
+    "conc": 0.11,
+    "idx": -0.45
+  },
+  {
+    "date": "2026-08-19",
+    "regime": "恐慌期",
+    "boards": 33,
+    "downs": 144,
+    "small%": 0.85,
+    "conc": 0.12,
+    "idx": 1.99
+  },
+  {
+    "date": "2026-08-20",
+    "regime": "妖股期",
+    "boards": 63,
+    "downs": 13,
+    "small%": 0.86,
+    "conc": 0.21,
+    "idx": 1.15
+  },
+  {
+    "date": "2026-08-21",
+    "regime": "平淡期",
+    "boards": 50,
+    "downs": 16,
+    "small%": 0.66,
+    "conc": 0.26,
+    "idx": 0.09
+  },
+  {
+    "date": "2026-08-24",
+    "regime": "妖股期",
+    "boards": 47,
+    "downs": 19,
+    "small%": 0.68,
+    "conc": 0.09,
+    "idx": 1.31
+  },
+  {
+    "date": "2026-08-25",
+    "regime": "妖股期",
+    "boards": 65,
+    "downs": 3,
+    "small%": 0.83,
+    "conc": 0.09,
+    "idx": 0.26
+  },
+  {
+    "date": "2026-08-26",
+    "regime": "妖股期",
+    "boards": 53,
+    "downs": 1,
+    "small%": 0.74,
+    "conc": 0.15,
+    "idx": 1.21
+  },
+  {
+    "date": "2026-08-27",
+    "regime": "平淡期",
+    "boards": 69,
+    "downs": 3,
+    "small%": 0.61,
+    "conc": 0.22,
+    "idx": -1.19
+  },
+  {
+    "date": "2026-08-28",
+    "regime": "妖股期",
+    "boards": 79,
+    "downs": 3,
+    "small%": 0.85,
+    "conc": 0.1,
+    "idx": 0.52
+  },
+  {
+    "date": "2026-08-31",
+    "regime": "妖股期",
+    "boards": 80,
+    "downs": 13,
+    "small%": 0.72,
+    "conc": 0.17,
+    "idx": 0.6
+  },
+  {
+    "date": "2026-09-01",
+    "regime": "妖股期",
+    "boards": 79,
+    "downs": 0,
+    "small%": 0.84,
+    "conc": 0.13,
+    "idx": 1.71
+  },
+  {
+    "date": "2026-09-02",
+    "regime": "妖股期",
+    "boards": 52,
+    "downs": 9,
+    "small%": 0.79,
+    "conc": 0.1,
+    "idx": -0.08
+  },
+  {
+    "date": "2026-09-03",
+    "regime": "妖股期",
+    "boards": 43,
+    "downs": 17,
+    "small%": 0.77,
+    "conc": 0.09,
+    "idx": -0.25
+  },
+  {
+    "date": "2026-09-04",
+    "regime": "妖股期",
+    "boards": 41,
+    "downs": 12,
+    "small%": 0.88,
+    "conc": 0.1,
+    "idx": 0.08
+  }
+]

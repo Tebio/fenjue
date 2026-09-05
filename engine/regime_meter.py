@@ -70,15 +70,16 @@ def main_board_pool() -> list[dict]:
 def classify(stats: dict) -> tuple[str, str]:
     n_board = stats["limit_ups"]
     small_ratio = stats["small_cap_board_ratio"]
-    top_sector_conc = stats["top_sector_concentration"]
+    chain_conc = stats["top_sector_concentration"]
     idx_pct = stats["index_pct"]
-    if n_board >= 50 and top_sector_conc >= 0.35 and idx_pct > -0.5:
-        return "主线期", "涨停集中在主线板块且指数不弱——用板块操作台/焚诀主线打法"
-    if n_board >= 40 and small_ratio >= 0.6 and top_sector_conc < 0.25:
-        return "妖股期", "涨停高度分散在无关联小票=无主线接力情绪票——个股不可预测，只认纪律不认研究"
-    if n_board < 25 and idx_pct < -0.5:
-        return "恐慌期", "涨停稀少+指数弱——空仓或高股息防御"
-    return "平淡期", "无量能无主线——观望，等信号"
+    # 2026-09-05 标定（回验数据）：6月主线=链集中27-30%+涨停86-129；8底妖股=小市值61-88%+链分散<22%
+    if n_board >= 60 and chain_conc >= 0.22:
+        return "主线期", "涨停集中在主线产业链——用板块操作台/焚诀主线打法（反转开盘买、追高只允许尾盘买）"
+    if n_board >= 40 and small_ratio >= 0.65 and chain_conc < 0.22:
+        return "妖股期", "涨停全是小市值散票无主线——默认不参与；个股不可预测"
+    if stats.get("limit_downs", 0) >= 20 or (n_board < 30 and idx_pct < -1.0):
+        return "恐慌期", "跌停潮或涨停枯竭+指数大跌——空仓或高股息防御"
+    return "平淡期", "无量能无主线——观望，红利宇宙建仓窗口"
 
 
 def scan() -> dict:
@@ -89,6 +90,7 @@ def scan() -> dict:
         # MCP 全市场实时：直接统计涨停；市值只对涨停票补拉腾讯（几十只，快）
         boards = [{"code": str(s["code"]).zfill(6), "name": s.get("name", ""),
                    "pct": s["change_percent"]} for s in live if s["change_percent"] >= 9.8]
+        limit_downs = sum(1 for s in live if s["change_percent"] <= -9.8)
         caps = tencent_quotes([b["code"] for b in boards]) if boards else {}
         for b in boards:
             b["cap"] = (caps.get(b["code"]) or {}).get("mktcap_yi") or 0
@@ -104,15 +106,26 @@ def scan() -> dict:
         quotes = tencent_quotes(codes)
         boards = [{"code": c, "name": q["name"], "cap": q.get("mktcap_yi") or 0}
                   for c, q in quotes.items() if q["pct"] >= 9.8]
+        limit_downs = sum(1 for q in quotes.values() if q["pct"] <= -9.8)
         idx_pct = 0.0
     small = sum(1 for b in boards if b["cap"] < 100)
-    # 板块集中度需要行业标签——池内票有 sector，池外归为「其他」
+    # 行业标签：baostock 全市场映射（5546 只，去代码前缀）+ 池内 sector 补充；链级归并（AI电子链）
+    import re as _re
     sector_of = {}
+    imap = ROOT / "data" / "industry_map.json"
+    if imap.exists():
+        for c, v in json.loads(imap.read_text()).items():
+            sector_of[c] = _re.sub(r"^[A-Z]\d+", "", v.get("industry", ""))
     for f in sorted(ROOT.glob("pool_2026*.json")):
         for r in json.loads(f.read_text()).get("results", []):
-            sector_of[str(r["code"]).zfill(6)] = r.get("sector", "")
-    sec_counter = Counter(sector_of.get(b["code"], "其他") for b in boards)
-    # 「其他」= 池外无行业标签的散票，不参与集中度——妖股期的特征恰恰是涨停全在「其他」
+            c = str(r["code"]).zfill(6)
+            if r.get("sector"):
+                sector_of[c] = r["sector"]
+    def _chain(sec):
+        if any(k in sec for k in ("计算机", "通信", "电子", "光学", "元件", "半导体", "消费电子", "软件")):
+            return "AI电子链"
+        return sec
+    sec_counter = Counter(_chain(sector_of.get(b["code"], "其他")) for b in boards)
     known = {k: v for k, v in sec_counter.items() if k != "其他"}
     top_conc = (max(known.values()) / len(boards)) if known and boards else 0
     idx_pct = 0.0
@@ -121,7 +134,8 @@ def scan() -> dict:
         idx_pct = round((float(idx[-1]["close"]) / float(idx[-2]["close"]) - 1) * 100, 2)
     except Exception:
         pass
-    stats = {"limit_ups": len(boards), "small_cap_board_ratio": round(small / len(boards), 2) if boards else 0,
+    stats = {"limit_ups": len(boards), "limit_downs": limit_downs,
+             "small_cap_board_ratio": round(small / len(boards), 2) if boards else 0,
              "top_sector_concentration": round(top_conc, 2), "index_pct": idx_pct,
              "top_sectors": sec_counter.most_common(5)}
     regime, advice = classify(stats)
