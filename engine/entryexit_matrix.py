@@ -110,11 +110,13 @@ def main() -> None:
                     stats_total[(sig, buy_mode, sell_mode)].append(pct(sell, buy))
 
     # 汇总打印：先总矩阵（全市态），再按市态、票型拆
+    COST = 0.15  # 双边印花税+佣金（2026-09-06 欠账#2：全改净口径）
     def agg(rows):
         if len(rows) < 30:
             return None
+        gross = sum(rows) / len(rows)
         return {"n": len(rows), "win%": round(sum(1 for x in rows if x > 0) / len(rows) * 100, 1),
-                "avg%": round(sum(rows) / len(rows), 3)}
+                "avg%": round(gross, 3), "net_avg%": round(gross - COST, 3)}
 
     out = {"matrix": {}, "by_regime": {}, "by_group": {}}
     for (sig, b, s), rows in sorted(stats_total.items()):
@@ -134,7 +136,7 @@ def main() -> None:
             for s in ("次日开盘", "次日尾盘", "次日止盈2%"):
                 a = out["matrix"].get(sig, {}).get(b, {}).get(s)
                 if a:
-                    print(f"  {b}买→{s}卖: n={a['n']} 胜率{a['win%']}% 均值{a['avg%']:+.3f}%")
+                    print(f"  {b}买→{s}卖: n={a['n']} 胜率{a['win%']}% 毛{a['avg%']:+.3f}% 净{a['net_avg%']:+.3f}%")
 
 
 if __name__ == "__main__":
