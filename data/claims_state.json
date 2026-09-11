@@ -1,0 +1,101 @@
+{
+ "CANDLE_UPPER_LOW": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-11",
+    "verdicts": {
+     "5": [
+      -0.86,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.26,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "CANDLE_LOWER_LOW": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-11",
+    "verdicts": {
+     "5": [
+      -0.65,
+      0.0,
+      false
+     ],
+     "20": [
+      0.16,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "TD9_BUY": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-11",
+    "verdicts": {
+     "5": [
+      -0.41,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.04,
+      0.0,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "HIGH_UPPER_DISTRIBUTION": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-11",
+    "verdicts": {
+     "20": [
+      -2.14,
+      0.2,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "REVERSAL_OPEN_T1": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": []
+ },
+ "LIMITDOWN_NEXT_DAY": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": []
+ },
+ "MONDAY_EFFECT": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": []
+ },
+ "TURNOVER_MAX_BLACKLIST": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": []
+ }
+}

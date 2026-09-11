@@ -1,0 +1,90 @@
+claims:
+- id: CANDLE_UPPER_LOW
+  statement: 低位避雷针(MA60下+长上影)相对位置匹配对照有正边际贡献
+  detector: 避雷针_低位
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 0.67
+    20: 1.55
+  kill_line_pp:
+    5: 0.0
+    20: 0.5
+  grade: 候选L2L3（日历时间口径已证伪为独立策略，仅作确认指标）
+  created: 2026-09-11
+  audit_every_days: 7
+- id: CANDLE_LOWER_LOW
+  statement: 低位大长腿(MA60下+长下影)相对位置匹配对照有正边际贡献
+  detector: 大长腿_低位
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 0.35
+    20: 1.07
+  kill_line_pp:
+    5: 0.0
+    20: 0.5
+  grade: 候选L2L3（平淡期regime闸门必须挂）
+  created: 2026-09-11
+  audit_every_days: 7
+- id: TD9_BUY
+  statement: TD9买入结构后T+3起有正edge（T+1为负）
+  detector: TD9买入
+  control: random_entry
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 0.23
+    20: 0.7
+  kill_line_pp:
+    5: 0.0
+    20: 0.0
+  grade: 降级观察（2023-26段edge≈0.05，疑似已死）
+  created: 2026-09-11
+  audit_every_days: 7
+- id: HIGH_UPPER_DISTRIBUTION
+  statement: 高位避雷针=出货形态（T+1正→T+20负的递减签名）
+  detector: 避雷针_高位
+  control: random_entry
+  horizon:
+  - 20
+  baseline_pp:
+    20: -0.48
+  kill_line_pp:
+    20: 0.2
+  grade: 黑名单候选（作否决信号用）
+  direction: negative
+  created: 2026-09-11
+  audit_every_days: 7
+- id: REVERSAL_OPEN_T1
+  statement: 反转族：T-1大跌后次日开盘买→当日尾盘，净+0.16%/50.1%（n=46万）
+  detector: external:engine/entryexit_matrix.py
+  grade: 候选L2（双段复验过）
+  created: 2026-09-06
+  audit_every_days: 30
+  note: 复审用 entryexit_matrix 增量重跑，勿手搓
+- id: LIMITDOWN_NEXT_DAY
+  statement: 跌停次日接 T+5 +2.38%/57%（双段一致）
+  detector: external:engine/strategy_zoo.py
+  grade: 候选L2（成交假设乐观，一字剔除复核未完成）
+  created: 2026-09-11
+  audit_every_days: 30
+  note: S10 一字剔除重跑是前置欠账，销账前不得升 LAW
+- id: MONDAY_EFFECT
+  statement: 周一效应：周一日均+0.183%/61.4%，强度2-4倍于其他交易日
+  detector: external:engine/factor_research.py
+  grade: 候选L2
+  created: 2026-09-11
+  audit_every_days: 30
+- id: TURNOVER_MAX_BLACKLIST
+  statement: 高换手20%与彩票型20%组 91个月累计跑输-52~-55%（回避即相对收益）
+  detector: external:engine/factor_research.py
+  grade: 候选L2L3（黑名单层，方向为负）
+  direction: negative
+  created: 2026-09-11
+  audit_every_days: 90
