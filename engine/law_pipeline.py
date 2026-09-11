@@ -23,6 +23,8 @@ KC, CAP = ROOT / "data/big_kcache", ROOT / "data/cap_hist"
 TIMELINE = ROOT / "data/regime_timeline_hcap.json"
 FEES = [0.0015, 0.003, 0.005]
 HORIZON = 5
+HORIZONS = [1, 3, 5, 10, 20]  # IC 衰减曲线（alphalens/qlib 惯例）
+NW_MIN_T = 3.0                # Harvey & Liu 2015 多重检验门槛（本项目累计已测>20个信号）
 START = 65
 
 
@@ -87,17 +89,34 @@ def S(rs):
             "t": round(m / (st.stdev(rs) / math.sqrt(n)), 1)}
 
 
+def nw_t(rs, lag):
+    """Newey-West HAC t 值（重叠窗口收益的标准误修正，lag=持有期）。
+    重叠 h 日的收益自相关到 h-1 阶，朴素 t 值虚高 ~sqrt(h) 倍。"""
+    n = len(rs)
+    if n < lag + 30:
+        return None
+    m = st.mean(rs)
+    g0 = sum((r - m) ** 2 for r in rs) / n
+    lrv = g0
+    for k in range(1, lag + 1):
+        gk = sum((rs[t_] - m) * (rs[t_ - k] - m) for t_ in range(k, n)) / n
+        lrv += 2 * (1 - k / (lag + 1)) * gk
+    return round(m / math.sqrt(lrv / n), 1) if lrv > 0 else None
+
+
 def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, fee=0.0015):
     full, ctrl = [], []
+    events = []  # (code, i) 供多期衰减曲线复用
     seg_t, seg_r, seg_c = {"2019-2022": [], "2023-2026": []}, {}, {i: [] for i in range(5)}
     random.seed(42)
     for code, d in stocks.items():
         c, o, n = d["c"], d["o"], d["n"]
-        hi = n - horizon - 1
+        hi = n - max(HORIZONS) - 1
         sc = stock_cap.get(code, {})
         for i in range(START, hi):
             if o[i + 1] <= 0 or not detect(d, i):
                 continue
+            events.append((code, i))
             r = c[i + horizon] / o[i + 1] - 1 - fee
             full.append(r)
             dt = d["date"][i]
@@ -108,8 +127,18 @@ def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, f
             if cap is not None and b:
                 seg_c[sum(cap > x for x in b)].append(r)
         for _ in range(3):
-            i = random.randint(START + 1, n - horizon - 2)
+            i = random.randint(START + 1, n - max(HORIZONS) - 2)
             ctrl.append(c[i + horizon] / o[i + 1] - 1 - fee)
+
+    # IC 衰减曲线：同一批事件在 T+1/3/5/10/20 的表现 + NW 修正 t
+    decay = {}
+    for h in HORIZONS:
+        rs = [stocks[code]["c"][i + h] / stocks[code]["o"][i + 1] - 1 - fee for code, i in events]
+        s = S(rs)
+        if s:
+            s["t_NW"] = nw_t(rs, h)
+            s["过Harvey门槛"] = "✅" if (s["t_NW"] is not None and abs(s["t_NW"]) >= NW_MIN_T) else "❌"
+            decay[f"T+{h}"] = s
 
     cost = {f"{f*100:.2f}%": S([r + fee - f for r in full]) for f in FEES}
     years = 1862 / 244
@@ -127,6 +156,7 @@ def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, f
                "L4_成本容量": "✅" if (full and st.mean(full) > 3 * fee and trig_yr * edge_pp / 100 > 0.02) else "❌",
                "L1_机制": "人工", "L5_影子前向": "待20交易日"}
     return {"信号": name, "全样本": S(full), "随机对照": S(ctrl),
+            "衰减曲线": decay,
             "时间分段": seg_t_stats, "regime分段": seg_r_stats, "市值五分位": seg_c_stats,
             "成本压力": cost, "每票每年触发": round(trig_yr, 2),
             "超额pp/笔": round(edge_pp, 2), "判决": verdict}
