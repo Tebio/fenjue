@@ -104,6 +104,83 @@ def nw_t(rs, lag):
     return round(m / math.sqrt(lrv / n), 1) if lrv > 0 else None
 
 
+def calendar_time(events, stocks, horizon, fee):
+    """日历时间组合法（Fama-French 标准）：事件按入场日聚合成日度组合，
+    每日收益 - 当日全宇宙均值 = 日度超额序列，对序列做 NW t。
+    治的是事件在恐慌日扎堆导致的横截面相关——朴素 t 把同一天 100 只票当 100 个独立样本。"""
+    from collections import defaultdict
+    by_date = defaultdict(list)
+    for code, i in events:
+        d = stocks[code]
+        by_date[d["date"][min(i + 1, d["n"] - 1)]].append(d["c"][i + horizon] / d["o"][i + 1] - 1 - fee)
+    # 全宇宙日度均值（同窗口口径）
+    uni = defaultdict(list)
+    for code, d in stocks.items():
+        c, o, n = d["c"], d["o"], d["n"]
+        for i in range(START, n - horizon - 1):
+            if o[i + 1] > 0:
+                uni[d["date"][i + 1]].append(c[i + horizon] / o[i + 1] - 1 - fee)
+    uni_m = {dt: st.mean(v) for dt, v in uni.items()}
+    dates = sorted(by_date)
+    series = [st.mean(by_date[dt]) - uni_m[dt] for dt in dates if dt in uni_m]
+    if len(series) < 30:
+        return None
+    m, sd = st.mean(series), st.stdev(series)
+    sr = m / sd * math.sqrt(244) if sd > 0 else 0
+    return {"天数": len(series), "日均超额%": round(100 * m, 3),
+            "年化Sharpe": round(sr, 2), "t_NW": nw_t(series, horizon),
+            "skew": round(_skew(series), 2), "kurt": round(_kurt(series), 2)}
+
+
+def _skew(x):
+    m = st.mean(x)
+    s = st.stdev(x)
+    return sum((v - m) ** 3 for v in x) / len(x) / s ** 3 if s > 0 else 0
+
+
+def _kurt(x):
+    m = st.mean(x)
+    s = st.stdev(x)
+    return sum((v - m) ** 4 for v in x) / len(x) / s ** 4 if s > 0 else 3
+
+
+def deflated_sharpe(sr_daily, T, skew, kurt, trials=25):
+    """Deflated Sharpe Ratio（Bailey & López de Prado 2014）：
+    在试过 trials 个策略的选择偏差下，观测 Sharpe 仍显著为正的概率。
+    sr_daily 必须是日频 Sharpe（年化值/√244），T=日度观测数。
+    返回 P(SR>0 | 选择偏差修正后)，>0.95 才算硬。"""
+    from math import erf, sqrt
+    if T < 10:
+        return None
+    em = 0.5772156649
+    Phi = lambda z: 0.5 * (1 + erf(z / sqrt(2)))
+    V = max(1e-12, (1 - skew * sr_daily + (kurt - 1) / 4 * sr_daily ** 2) / (T - 1))
+    sd = sqrt(V)
+    sr_star = sd * ((1 - em) * _norm_ppf(1 - 1 / trials) + em * _norm_ppf(1 - 1 / (trials * 2.718281828)))
+    return round(Phi((sr_daily - sr_star) / sd), 3)
+
+
+def _norm_ppf(p):
+    """Acklam 近似逆正态"""
+    a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02,
+         1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00]
+    b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02,
+         6.680131188771972e+01, -1.328068155288572e+01]
+    c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00,
+         -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00]
+    d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00]
+    plow, phigh = 0.02425, 1 - 0.02425
+    if p < plow:
+        q = math.sqrt(-2 * math.log(p))
+        return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1)
+    if p > phigh:
+        q = math.sqrt(-2 * math.log(1 - p))
+        return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1)
+    q = p - 0.5
+    r = q * q
+    return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1)
+
+
 def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, fee=0.0015):
     full, ctrl = [], []
     events = []  # (code, i) 供多期衰减曲线复用
@@ -141,6 +218,8 @@ def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, f
             decay[f"T+{h}"] = s
 
     cost = {f"{f*100:.2f}%": S([r + fee - f for r in full]) for f in FEES}
+    ct = calendar_time(events, stocks, horizon, fee)
+    dsr = deflated_sharpe(ct["年化Sharpe"] / math.sqrt(244), ct["天数"], ct["skew"], ct["kurt"]) if ct else None
     years = 1862 / 244
     trig_yr = len(full) / len(stocks) / years
     edge_pp = (st.mean(full) - st.mean(ctrl)) * 100 if full and ctrl else 0
@@ -156,7 +235,7 @@ def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, f
                "L4_成本容量": "✅" if (full and st.mean(full) > 3 * fee and trig_yr * edge_pp / 100 > 0.02) else "❌",
                "L1_机制": "人工", "L5_影子前向": "待20交易日"}
     return {"信号": name, "全样本": S(full), "随机对照": S(ctrl),
-            "衰减曲线": decay,
+            "衰减曲线": decay, "日历时间组合": ct, "DSR概率": dsr,
             "时间分段": seg_t_stats, "regime分段": seg_r_stats, "市值五分位": seg_c_stats,
             "成本压力": cost, "每票每年触发": round(trig_yr, 2),
             "超额pp/笔": round(edge_pp, 2), "判决": verdict}
