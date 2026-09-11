@@ -58,7 +58,9 @@ def clear_proxy() -> None:
 
 # ── 数据层 ──────────────────────────────────────────────
 def tencent_quotes(codes: list[str]) -> dict[str, dict]:
-    """腾讯批量行情。字段(1基): 3价 33涨幅% 47 PE(动) 46 PB 45 总市值亿 47? — 实测校准如下。"""
+    """腾讯批量行情。字段(0基切片): f[3]价 f[32]涨幅% f[38]换手 f[39]PE f[44]流通市值亿 f[45]总市值亿。
+    注：f[44] 是【流通】市值（2026-09-06 用 601728 实测校准：4952.78≈cap_hist 流通 4953.9，
+    f[45]=5838.16 才是总市值）——regime_meter 小市值判定与 cap_hist 历史回验口径一致，都用流通。"""
     out = {}
     for i in range(0, len(codes), 60):
         batch = [("sh" if c.startswith("6") else "sz") + c for c in codes[i:i + 60]]
@@ -75,7 +77,7 @@ def tencent_quotes(codes: list[str]) -> dict[str, dict]:
                 out[code] = {
                     "name": f[1], "price": float(f[3]), "pct": float(f[32]),
                     "pe": float(f[39]) if f[39] else None,      # 实测 line48=7.84=PE
-                    "pb": float(f[45]) if f[45] else None,      # 实测 line47=0.85=PB
+                    "pb": float(f[46]) if len(f) > 46 and f[46] else None,  # 2026-09-11 校准：601838 f[46]=0.92≈真实PB；f[45]是总市值（此前错映射）
                     "mktcap_yi": float(f[44]) if f[44] else None,
                     "turnover": float(f[38]) if f[38] else None,
                 }
@@ -97,10 +99,20 @@ def dividend_ttm(code: str) -> float | None:
         df = ak.stock_history_dividend_detail(symbol=code, indicator="分红")
         df = df[df["进度"] == "实施"].copy()
         df["除权除息日"] = __import__("pandas").to_datetime(df["除权除息日"])
-        cutoff = __import__("pandas").Timestamp.now() - __import__("pandas").Timedelta(days=365)
+        now = __import__("pandas").Timestamp.now()
+        cutoff = now - __import__("pandas").Timedelta(days=365)
+        cutoff2 = now - __import__("pandas").Timedelta(days=730)
         recent = df[df["除权除息日"] >= cutoff]
+        prev_win = df[(df["除权除息日"] >= cutoff2) & (df["除权除息日"] < cutoff)]
         dps = round(float(recent["派息"].sum()) / 10, 4) if len(recent) else None
-        cache[code] = {"dps": dps, "ts": time.time()}
+        # 2026-09-11 实测：akshare 东财分红明细对部分股票缺年度大行（601168 缺 2025 年度），
+        # 纯 365 天滚动 TTM 会把西部矿业算成 0.1 元/股。防御：TTM 不足前一年窗口一半 → 标 suspect。
+        suspect = False
+        if dps is not None and len(prev_win):
+            prev_dps = float(prev_win["派息"].sum()) / 10
+            if prev_dps > 0 and dps < prev_dps * 0.5:
+                suspect = True
+        cache[code] = {"dps": dps, "ts": time.time(), "suspect": suspect}
         DIV_CACHE.write_text(json.dumps(cache))
         return dps
     except Exception:
@@ -115,7 +127,10 @@ def kline_sina(symbol: str, n: int = 90) -> list[dict]:
 
 # ── 锚定数学 ──────────────────────────────────────────────
 def bands_from_dividend(dps: float) -> dict:
+    # 2026-09-11 升级（对齐大佬看板 #16）：加 5% 加仓线（更深的买入档）。
+    # 注意：回测验证的是 4.5% 买入线方向（+1.1pp），5% 深档未单独回测，语义=同方向更深处。
     return {"buy": round(dps / (YIELD_ANCHORS["buy"] / 100), 2),
+            "add50": round(dps / 0.05, 2),
             "sell": round(dps / (YIELD_ANCHORS["sell"] / 100), 2),
             "clear": round(dps / (YIELD_ANCHORS["clear"] / 100), 2)}
 
@@ -131,10 +146,33 @@ def zone_of(price: float, bands: dict) -> tuple[str, str]:
 
 
 def ladder(bands: dict) -> dict:
-    return {"买入线": bands["buy"],
+    return {"买入线": bands["buy"], "5%加仓线": bands["add50"],
             "加仓-4%": round(bands["buy"] * (1 + LADDER[0]), 2),
             "加仓-8%": round(bands["buy"] * (1 + LADDER[1]), 2),
             "卖出线": bands["sell"], "清仓线": bands["clear"]}
+
+
+_MA_CACHE: dict[str, tuple[float, float] | None] = {}
+
+
+def ma20_tag(code: str, price: float) -> tuple[float, float, bool] | None:
+    """MA20 贴线判定（对齐大佬看板「距20日线/贴线」列，#16②）：
+    MA20 = 近19根日收 + 当前价 的均值（含当日口径，与大佬 85.61 反推值对账一致）。
+    返回 (ma20, 距ma20%, 是否贴线±1%)。新浪K线失败返回 None。"""
+    if code not in _MA_CACHE:
+        sym = ("sh" if code.startswith("6") else "sz") + code
+        try:
+            ks = kline_sina(sym, 25)
+            closes = [float(k["close"]) for k in ks[-19:]]
+            _MA_CACHE[code] = (sum(closes), len(closes)) if len(closes) >= 15 else None
+        except Exception:
+            _MA_CACHE[code] = None
+    ent = _MA_CACHE[code]
+    if not ent:
+        return None
+    ma20 = round((ent[0] + price) / (ent[1] + 1), 2)
+    dist = round((price / ma20 - 1) * 100, 2)
+    return ma20, dist, abs(dist) <= 1.0
 
 
 # ── 板块强度灯 ──────────────────────────────────────────────
@@ -185,6 +223,11 @@ def build_console() -> dict:
             row["ladder"] = ladder(bands)
             row["dist_to_clear%"] = round((bands["clear"] / q["price"] - 1) * 100, 1)
             row["dist_to_buy%"] = round((bands["buy"] / q["price"] - 1) * 100, 1)
+            m = ma20_tag(code, q["price"])
+            if m:
+                row["ma20"], row["ma20_dist%"] = m[0], m[1]
+                if m[2] and zone == "买入区":
+                    row["tie"] = True  # 买入区内+贴20日线 = 大佬「次核心买点」近似（技术腿未回测，标注用）
         f = funds.get(code)
         if f:
             row["fundamentals"] = f
@@ -206,10 +249,11 @@ def render_text(console: dict) -> str:
             lines.append(f"{r['name']}({r['code']}) {r['price']} 无分红数据")
             continue
         b, l = r["bands"], r["ladder"]
+        ma = f" MA20 {r.get('ma20')}({r.get('ma20_dist%'):+.1f}%){'📌贴线' if r.get('tie') else ''}" if r.get("ma20") else ""
         lines.append(
-            f"{r['name']}({r['code']}) {r['price']} ({r['pct']:+.1f}%) 息率{r['yield']}% | "
-            f"{r['zone']}·{r['action']} | 买≤{b['buy']} 卖{b['sell']} 清≥{b['clear']} | "
-            f"距清仓{r['dist_to_clear%']:+.1f}% 距买入{r['dist_to_buy%']:+.1f}%")
+            f"{r['name']}({r['code']}) {r['price']} ({r['pct']:+.1f}%) 息率{r['yield']}% PB{r.get('pb')} | "
+            f"{r['zone']}·{r['action']} | 买≤{b['buy']} 加≤{b['add50']} 卖{b['sell']} 清≥{b['clear']} | "
+            f"距买入{r['dist_to_buy%']:+.1f}%{ma}")
     lines.append("")
     lines.append("── 明日委托单（价格线不随日内波动，分红/财报更新后调整）──")
     for r in console["rows"]:
@@ -217,7 +261,8 @@ def render_text(console: dict) -> str:
             continue
         l = r["ladder"]
         op = {"买入区": "加仓", "持有区": "持有", "卖出区": "减仓"}[r["zone"]]
-        lines.append(f"{r['name']} [{op}] 买{l['买入线']}/加{l['加仓-4%']}/{l['加仓-8%']} 卖{l['卖出线']} 清{l['清仓线']}")
+        tie = " 📌贴线" if r.get("tie") else ""
+        lines.append(f"{r['name']} [{op}]{tie} 买{l['买入线']}/加{l['加仓-4%']}/{l['加仓-8%']}/5%线{l['5%加仓线']} 卖{l['卖出线']} 清{l['清仓线']}")
     return "\n".join(lines)
 
 
@@ -231,11 +276,16 @@ if __name__ == "__main__":
 
 # ── 通用板块扩展（v1：价格分位锚，影子假设待验证） ──────────────
 def bands_from_price_pct(code: str, band_cfg: dict, years: int = 5) -> dict | None:
-    """价格分位锚（BVPS 缓变的 v1 近似）：5 年日K价格分位 → 买/卖/清线。"""
-    try:
-        ks = kline_sina(("sh" if code.startswith("6") else "sz") + code, n=years * 250)
-    except Exception:
+    """价格分位锚（BVPS 缓变的 v1 近似）：5 年日K价格分位 → 买/卖/清线。
+
+    2026-09-06 R3 修复：改用 big_kcache 前复权价算分位——新浪不复权价在
+    送转/分红除权日永久下移，5 年跨度的分位数被拉偏（有送转历史的票被
+    系统性误判「更便宜」）。
+    """
+    kf = ROOT / "data" / "big_kcache" / f"{code}.json"
+    if not kf.exists():
         return None
+    ks = json.loads(kf.read_text())[-years * 250:]
     if len(ks) < 250:
         return None
     prices = sorted(float(k["close"]) for k in ks)
