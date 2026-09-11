@@ -47,12 +47,15 @@ def run() -> dict:
             today_open = float(today["open"])
             today_low = float(today["low"])
             nxt_close = float(nxt["close"])
+            # 一字跌停当日限价单必"触及"但实盘排不到（2026-09-06 R2 审查修复，
+            # 与 B-open 的一字开剔除对齐）：开盘≈跌停且全天振幅<1% → 低吸腿全部跳过
+            sealed_down = pct(today_open, pc) <= -9.5 and (float(today["high"]) - today_low) / pc * 100 < 1.0
             # ── 反转族（T-1 收跌≥3%，收收口径）──
             if prev_cc <= -3.0:
                 stats["R-open"].append(pct(nxt_close, today_open))
                 for tag, mul in (("R-dip1", 0.99), ("R-dip2", 0.98)):
                     limit = pc * mul
-                    if today_low <= limit:
+                    if today_low <= limit and not sealed_down:
                         stats[tag].append(pct(nxt_close, limit))
                     # 未成交=放弃（不计）
             # ── 首板族（T-1 涨停）──
@@ -61,7 +64,7 @@ def run() -> dict:
                     stats["B-open"].append(pct(nxt_close, today_open))
                 for tag, mul in (("B-dip2", 0.98), ("B-dip5", 0.95)):
                     limit = pc * mul
-                    if today_low <= limit:
+                    if today_low <= limit and not sealed_down:
                         stats[tag].append(pct(nxt_close, limit))
     return {k: {"n": len(v), "win%": round(sum(1 for x in v if x > 0) / len(v) * 100, 1),
                 "avg%": round(sum(v) / len(v), 3)} for k, v in sorted(stats.items())}

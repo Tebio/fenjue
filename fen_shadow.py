@@ -18,6 +18,7 @@ import ssl
 import subprocess
 import sys
 import urllib.request
+from datetime import date
 from pathlib import Path
 
 ROOT = Path("/opt/data/fenjue")
@@ -37,10 +38,26 @@ def sina_of(code: str) -> str:
 
 
 def daily_kline(symbol: str) -> list[dict]:
-    """新浪日K（带磁盘缓存）。返回 [{day, open, close, high, low}] 升序。"""
+    """新浪日K（带磁盘缓存）。返回 [{day, open, close, high, low}] 升序。
+
+    缓存新鲜度（2026-09-06 外部审查发现#1修复 + R2效率优化）：
+    以 big_kcache 指数最新交易日为基准——缓存最后交易日 ≥ 基准即视为新鲜，
+    周末/节假日不会空转请求（R2 发现：自然日 today 基准会每天每票空刷新浪）。
+    已过期且今天没试过 → 重拉（每股每天最多1次）。
+    """
     cache = KCACHE / f"{symbol}.json"
+    today = date.today().isoformat()
     if cache.exists():
-        return json.loads(cache.read_text())
+        data = json.loads(cache.read_text())
+        try:
+            idx = json.loads((ROOT / "data" / "big_kcache" / "000001.json").read_text())
+            bench = idx[-1]["date"]  # 最新交易日（周末/长假=上周五）
+        except Exception:
+            bench = today
+        mtime = date.fromtimestamp(cache.stat().st_mtime).isoformat()
+        if (data and data[-1].get("day", "") >= bench) or mtime >= today:
+            return data
+        # 缓存过期：继续往下重拉
     url = ("http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/"
            f"CN_MarketData.getKLineData?symbol={symbol}&scale=240&ma=no&datalen=260")
     req = urllib.request.Request(url, headers={"Referer": "https://finance.sina.com.cn"})
@@ -50,7 +67,11 @@ def daily_kline(symbol: str) -> list[dict]:
 
 
 def forward_returns(code: str, date_d: str, buy_price: float) -> dict:
-    """D=YYYYMMDD。返回 T0/T1/T2 收盘收益%（相对买入价）及 D 日最高（最佳卖点参考）。"""
+    """D=YYYYMMDD。返回 T0/T1/T2 收盘收益%（相对买入价）及 D 日最高（最佳卖点参考）。
+
+    注意：kcache 是新浪不复权价，未做窗口内分红/送转加回——T1/T2 两天持有期
+    撞上除权日的概率很低，影响微小（2026-09-06 外部审查低优先级项，有意保留）。
+    """
     ks = daily_kline(sina_of(code))
     days = [k["day"] for k in ks]
     d_iso = f"{date_d[:4]}-{date_d[4:6]}-{date_d[6:]}"
@@ -74,6 +95,11 @@ def replay_one(date_d: str, top: int = 3) -> dict:
     ]
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
     text = r.stdout
+    # 2026-09-06 R3 审查修复：子进程非零退出（如池文件缺失等基础设施故障）
+    # 不能记成「非静默、零候选」的正常交易日，单独标记 pipeline_error
+    if r.returncode != 0:
+        return {"date": date_d, "silent": True, "pipeline_error": True,
+                "reason": f"rc={r.returncode}: {(r.stderr or '').strip()[:80]}"}
     if "[SILENT]" in text:
         return {"date": date_d, "silent": True, "reason": text.strip().splitlines()[-1][:80]}
     in_section = False

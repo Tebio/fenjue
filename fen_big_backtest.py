@@ -30,7 +30,7 @@ START, END = "2019-01-01", "2026-09-04"
 
 def load_universe() -> list[dict]:
     codes: dict[str, dict] = {}
-    for f in sorted(ROOT.glob("pool_2026*.json")):
+    for f in sorted(ROOT.glob("pool_20*.json")):
         for r in json.loads(f.read_text()).get("results", []):
             c = str(r["code"]).zfill(6)
             if c.startswith(("600", "601", "603", "605", "000", "001", "002", "003")):

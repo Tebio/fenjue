@@ -23,7 +23,7 @@ def is_main_board(code: str) -> bool:
 
 
 def pool_files(root: Path) -> list[Path]:
-    return sorted(root.glob("pool_2026*.json"))
+    return sorted(root.glob("pool_20*.json"))
 
 
 def pick_pair(root: Path, old: str = "", new: str = "", lookback: int = 1) -> tuple[Path, Path]:

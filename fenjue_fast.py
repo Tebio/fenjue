@@ -59,14 +59,18 @@ def load_pool(
         path = pool_dir / f"pool_{pool_date.replace('-', '')}.json"
         files = [path]
     else:
-        files = sorted(pool_dir.glob("pool_2026*.json"), reverse=True)
+        files = sorted(pool_dir.glob("pool_20*.json"), reverse=True)
         if as_of:
             # 2026-09-06 未来函数修复：回放/影子回测时，池文件日期必须严格早于回放日
             # （pool_X 含 X 日收盘数据，回放日 D 只能用 <D 的池；原实现无视回放日拿全盘最新=未来数据）。
             cutoff = as_of.replace("-", "")
             files = [f for f in files if f.stem.replace("pool_", "") < cutoff]
         if not files:
-            raise SystemExit("No pool_*.json found. Run build_pool.py after close first.")
+            # 2026-09-06 R3 审查高危修复：池文件缺失是基础设施故障（build_pool 没跑），
+            # 不是「今天平淡无候选」。打 [SILENT] 标记让下游 replay/shadow 能区分，
+            # exit 0 避免被记成「非静默、零候选」的正常交易日。
+            print("[SILENT] 找不到池文件，可能 build_pool.py 未跑（基础设施故障，非市场平淡）。")
+            raise SystemExit(0)
         lookback = pool_lookback if pool_lookback is not None else int(os.environ.get("FENJUE_POOL_LOOKBACK", "3"))
         files = files[: max(1, lookback)]
     merged: dict[str, dict] = {}
@@ -233,6 +237,7 @@ def rank_candidates(
                 "name": stock.get("name") or q["name"],
                 "sector": stock.get("sector", ""),
                 "price": price,
+                "prev_close": float(q.get("prev_close") or 0),
                 "pct": pct,
                 "early_pct": early_pct,
                 "pct_accel": pct_accel,
@@ -296,12 +301,16 @@ def rank_candidates(
     return rows
 
 
-def limit_up_price(prev_close: float, code: str) -> float:
-    """Approximate A-share main-board limit-up price."""
+def limit_up_price(prev_close: float, code: str, name: str = "") -> float:
+    """Approximate A-share main-board limit-up price.
+
+    2026-09-06 R3 审查修复：ST/*ST 主板票涨跌幅上限 5%，按名字识别
+    （旧版注释声称做了名字识别但函数体根本没实现，永远按 10% 算）。
+    """
     if prev_close <= 0:
         return 0.0
-    # ST shares are normally 5%, but name-based detection is enough here.
-    return round(prev_close * 1.10 + 1e-8, 2)
+    mult = 1.05 if "ST" in (name or "").upper() else 1.10
+    return round(prev_close * mult + 1e-8, 2)
 
 
 def rank_attack_candidates(rows: list[dict], limit: int = 12) -> list[dict]:
@@ -312,8 +321,10 @@ def rank_attack_candidates(rows: list[dict], limit: int = 12) -> list[dict]:
     max_amt = max((r["amount_yi"] for r in rows), default=1) or 1
     max_after = max((r["amount_after_early_yi"] for r in rows), default=1) or 1
     for r in rows:
-        prev_close = r["price"] / (1 + r["pct"] / 100) if r["pct"] > -99 else 0
-        limit_price = limit_up_price(prev_close, r["code"])
+        # 优先用行情自带的 prev_close（2026-09-06 R3 修复：旧版从四舍五入过的 pct
+        # 反推，误差直接传导到权重最高的「距涨停%」）；快照缺字段时才退回反推
+        prev_close = r.get("prev_close") or (r["price"] / (1 + r["pct"] / 100) if r["pct"] > -99 else 0)
+        limit_price = limit_up_price(prev_close, r["code"], r.get("name", ""))
         to_limit_pct = (limit_price - r["price"]) / r["price"] * 100 if limit_price and r["price"] else 99
         open_pct = (r["open"] - prev_close) / prev_close * 100 if prev_close and r["open"] else r["early_pct"]
         high_pct = (r["high"] - prev_close) / prev_close * 100 if prev_close and r["high"] else r["pct"]
@@ -399,7 +410,14 @@ def main() -> int:
         if not quotes:
             raise SystemExit(f"Quote snapshot not found or empty: {args.quote_tag}")
         quote_payload = json.loads(quote_path.read_text(encoding="utf-8"))
-        gate_ok = bool(quote_payload.get("market_gate_ok", True))
+        # 2026-09-06 R3 审查高危修复：快照缺 market_gate_ok 字段（加字段前的旧快照）
+        # 不能默认放行——那天大盘闸门是涨是跌根本不知道，必须判「数据不全不可回放」。
+        gate_val = quote_payload.get("market_gate_ok")
+        if gate_val is None and not args.ignore_market_gate:
+            print("焚诀快筛 replay")
+            print("[SILENT] 历史快照未记录大盘闸门结果，数据不全不可回放。")
+            return 0
+        gate_ok = bool(gate_val)
         gate_text = str(quote_payload.get("market_gate_text") or "历史快照未记录大盘闸门。")
         if not gate_ok and not args.ignore_market_gate:
             print("焚诀快筛 replay")

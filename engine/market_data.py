@@ -12,7 +12,7 @@ class MarketData:
 
     _instance: MarketData | None = None
     _cache: dict[str, dict[str, Any] | None] = {}
-    _cache_ts: float = 0
+    _cache_ts: dict[str, float] = {}  # 2026-09-07 R4补充审查修复：按 code 独立记时，不再全局共享新鲜度
     _TTL: float = 60.0
 
     def __new__(cls) -> MarketData:
@@ -34,12 +34,13 @@ class MarketData:
 
     def get_quote(self, code: str) -> dict[str, Any] | None:
         """返回单只股票实时行情。
-        腾讯 API 数据位:
-          [0]名称 [1]代码 [3]最新价 [5]昨收 [31]涨跌幅 [32]最高 [33]最低
-          [37]成交量 [38]换手率 [39]PE [43]今开 [44]振幅
+        腾讯 API 数据位(0基切片，2026-09-06 用 601728 实测校准，与 fenjue_core.parse_tencent_quotes 一致):
+          f[1]名称 f[3]最新价 f[4]昨收 f[5]今开 f[6]成交量(手，=f[36]，报文中重复出现)
+          f[32]涨跌幅% f[33]最高 f[34]最低 f[38]换手率 f[39]PE f[44]流通市值亿 f[45]总市值亿
+        （旧注释 1 基且多处错位——R4 审查发现，实测后重写）
         """
         now = time.time()
-        if code in self._cache and self._cache[code] is not None and (now - self._cache_ts) < self._TTL:
+        if code in self._cache and self._cache[code] is not None and (now - self._cache_ts.get(code, 0)) < self._TTL:
             return self._cache[code]
 
         prefix = "sh" if code.startswith("6") else "sz"
@@ -68,7 +69,7 @@ class MarketData:
                 "timestamp":  now,
             }
             self._cache[code] = quote
-            self._cache_ts = now
+            self._cache_ts[code] = now
             return quote
         except (ValueError, IndexError) as e:
             print(f"[MarketData] parse {code} failed: {e}")
@@ -78,7 +79,7 @@ class MarketData:
     def get_batch(self, codes: list[str]) -> dict[str, dict[str, Any] | None]:
         """批量获取：拼接多个 code 一次请求。"""
         now = time.time()
-        if all(c in self._cache for c in codes) and (now - self._cache_ts) < self._TTL:
+        if all(c in self._cache and (now - self._cache_ts.get(c, 0)) < self._TTL for c in codes):
             return {c: self._cache.get(c) for c in codes}
 
         # 腾讯支持逗号分隔的多股票查询
@@ -116,13 +117,14 @@ class MarketData:
                 }
                 result[code] = quote
                 self._cache[code] = quote
+                self._cache_ts[code] = now
             except (ValueError, IndexError):
                 result[code] = None
                 self._cache[code] = None
+                self._cache_ts[code] = now
 
-        self._cache_ts = now
         return result
 
     def invalidate(self):
         self._cache.clear()
-        self._cache_ts = 0
+        self._cache_ts.clear()

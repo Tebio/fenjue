@@ -31,7 +31,7 @@ def load_sectors() -> dict[str, str]:
         for c, v in json.loads(imap.read_text()).items():
             ind = _re.sub(r"^[A-Z]\d+", "", v.get("industry", ""))  # C39xxx→xxx
             out[c] = ind
-    for f in sorted(ROOT.glob("pool_2026*.json")):
+    for f in sorted(ROOT.glob("pool_20*.json")):
         for r in json.loads(f.read_text()).get("results", []):
             c = str(r["code"]).zfill(6)
             if r.get("sector"):

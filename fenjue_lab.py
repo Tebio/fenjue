@@ -258,7 +258,9 @@ def cmd_backtest_pool(args: argparse.Namespace) -> int:
             for horizon in (1, 3, 5):
                 exit_index = base_index + 1 + horizon
                 if exit_index < len(bars):
-                    item[f"ret_{horizon}d"] = (bars[exit_index]["close"] - entry) / entry * 100
+                    # 2026-09-06 R3 修复：统一扣 0.15% 双边费用（旧版纯毛收益，
+                    # 与全仓库其他回测口径不一致）
+                    item[f"ret_{horizon}d"] = (bars[exit_index]["close"] - entry) / entry * 100 - getattr(args, "cost_pct", 0.15)
             signals.append(item)
 
     print("焚诀历史池回测 | 每个历史 pool 只预测下一交易日，避免使用最新池回看过去")

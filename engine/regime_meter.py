@@ -49,7 +49,7 @@ def main_board_pool() -> list[dict]:
             return json.loads(raw)
         rpc("initialize", {"protocolVersion": "2024-11-05", "capabilities": {},
                            "clientInfo": {"name": "fenjue", "version": "1"}}, 1)
-        r = rpc("tools/call", {"name": "get_main_board_pool", "arguments": {}}, 2)
+        r = rpc("tools/call", {"name": "get_main_board_pool", "arguments": {"refresh": True, "limit": 5000}}, 2)
         d = json.loads(r["result"]["content"][0]["text"])
         stocks = d.get("stocks", [])
     except Exception:
@@ -59,7 +59,7 @@ def main_board_pool() -> list[dict]:
         return stocks
     # 回退：历史池并集（无实时价，meter 走腾讯报价）
     codes = set()
-    for f in sorted(ROOT.glob("pool_2026*.json")):
+    for f in sorted(ROOT.glob("pool_20*.json")):
         for r in json.loads(f.read_text()).get("results", []):
             c = str(r["code"]).zfill(6)
             if c.startswith(("600", "601", "603", "605", "000", "001", "002", "003")):
@@ -116,7 +116,7 @@ def scan() -> dict:
     if imap.exists():
         for c, v in json.loads(imap.read_text()).items():
             sector_of[c] = _re.sub(r"^[A-Z]\d+", "", v.get("industry", ""))
-    for f in sorted(ROOT.glob("pool_2026*.json")):
+    for f in sorted(ROOT.glob("pool_20*.json")):
         for r in json.loads(f.read_text()).get("results", []):
             c = str(r["code"]).zfill(6)
             if r.get("sector"):
@@ -140,7 +140,7 @@ def scan() -> dict:
              "top_sectors": sec_counter.most_common(5)}
     regime, advice = classify(stats)
     return {"date": date.today().isoformat(), "regime": regime, "advice": advice,
-            "stats": stats, "boards": boards[:40]}
+            "stats": stats, "boards": boards}  # 2026-09-07: 不再截断40只——截断导致连板梯队漏票（中国出版2板被切掉）
 
 
 if __name__ == "__main__":

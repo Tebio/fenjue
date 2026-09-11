@@ -69,9 +69,10 @@ claims:
   audit_every_days: 30
   note: 复审用 entryexit_matrix 增量重跑，勿手搓
 - id: LIMITDOWN_NEXT_DAY
-  statement: 跌停次日接 T+5 +2.38%/57%（双段一致）
+  statement: 跌停次日接 T+5 +2.72%/57.9%（一字剔除口径，双段一致）
   detector: external:engine/strategy_zoo.py
-  grade: 候选L2（成交假设乐观，一字剔除复核未完成）
+  grade: 候选L2+（2026-09-12 一字剔除复核通过：剔除买不进/锁死事件后 T+5 +2.72%/57.9%（n=29258），双段一致 2.74/2.70，edge
+    不降反升）
   created: 2026-09-11
   audit_every_days: 30
   note: S10 一字剔除重跑是前置欠账，销账前不得升 LAW

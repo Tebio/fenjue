@@ -112,21 +112,27 @@ for i, stock in enumerate(test_stocks):
             anti_rates.append(rate)
         
         # 找转变点：前10日逆涨率<0.3 → 后10日逆涨率>0.5
+        # 注意下标（2026-09-06 R2 审查高危修复）：anti_rates[k] 对应 common_dates[k:k+10]，
+        # curr 窗口确认完毕要等到 common_dates[j+window-1]，shift_date 必须取该日——
+        # 旧版取 common_dates[j]，整整早9天，前向收益与检测窗口重叠（隐性未来函数）。
         regime_shifts = []
         for j in range(window, len(anti_rates)):
             prev_rate = anti_rates[j-window]
             curr_rate = anti_rates[j]
-            prev_dates = common_dates[j-window:j+1]
-            
+            prev_dates = common_dates[j-window:j]
+            curr_dates = common_dates[j:j+window]
+            if len(curr_dates) < window:
+                break
+
             # 需要大盘在这段时间有足够的跌日来验证
             down_days_prev = sum(1 for d in prev_dates if sh_ret.get(d, 0) < -0.1)
-            down_days_curr = sum(1 for d in common_dates[j-window+1:j+window+1] if sh_ret.get(d, 0) < -0.1)
-            
+            down_days_curr = sum(1 for d in curr_dates if sh_ret.get(d, 0) < -0.1)
+
             if down_days_prev < 3 or down_days_curr < 3:
                 continue  # 大盘跌日太少，逆涨率不可靠
-            
+
             if prev_rate <= 0.3 and curr_rate >= 0.5:
-                shift_date = common_dates[j]
+                shift_date = common_dates[j + window - 1]
                 
                 # 计算转变后 5、10、20日的表现
                 shift_idx = common_dates.index(shift_date)

@@ -26,7 +26,8 @@ TECH_SEC = {"半导体", "光学光电", "通信设备", "元件", "消费电子
 
 def load_sectors() -> dict[str, str]:
     out = {}
-    for f in sorted(ROOT.glob("pool_2026*.json")):
+    # 池文件按年份命名，通配别锁死年份（外部审查低优先级：pool_20* 跨年静默失效）
+    for f in sorted(ROOT.glob("pool_*.json")):
         for r in json.loads(f.read_text()).get("results", []):
             out[str(r["code"]).zfill(6)] = r.get("sector", "")
     return out
@@ -51,7 +52,11 @@ def main() -> None:
     idx_c = [float(k["close"]) for k in idx]
     idx_strong = {}
     for i, k in enumerate(idx):
-        idx_strong[k["date"]] = idx_c[i] > (sum(idx_c[max(0, i - 60):i]) / max(1, len(idx_c[max(0, i - 60):i]))) if i >= 20 else True
+        # 2026-09-06 外部审查发现#5修复：开盘买决策不能用当日收盘 vs MA60 打标签
+        # （9:30 时不知道今天收盘在哪）。改用「昨日收盘 vs 截至昨日的 MA60」，
+        # 即整体后错一天——这才是开盘那一刻真正可得的市场状态。
+        j = i - 1
+        idx_strong[k["date"]] = idx_c[j] > (sum(idx_c[max(0, j - 59):j + 1]) / max(1, len(idx_c[max(0, j - 59):j + 1]))) if j >= 20 else True
 
     # stats[信号][买][卖][市态][票型] = [returns]
     stats = defaultdict(list)

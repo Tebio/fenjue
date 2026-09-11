@@ -22,7 +22,7 @@ def is_main_board(code: str) -> bool:
 
 
 def latest_pool(root: Path) -> Path:
-    files = sorted(root.glob("pool_2026*.json"))
+    files = sorted(root.glob("pool_20*.json"))
     if not files:
         raise SystemExit("No pool_YYYYMMDD.json found.")
     return files[-1]

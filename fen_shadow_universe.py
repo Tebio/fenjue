@@ -9,7 +9,7 @@
     - MA20 乖离 ≤ 35%
   排序：流动性(T-1成交额) + 开盘涨幅甜点(≈4.8%) + 板块共振(同板块当日开盘强度/只数)
   买入：D 日开盘价 → T1/T2 收盘收益
-  对照：全样本等权 / 每日随机3票(10种子均值) / 上证指数
+  对照：过闸候选等权 / 每日随机3票(10种子均值) / 上证指数
 """
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ TRADING_DATES = sorted(
 
 def load_universe() -> dict[str, dict]:
     codes: dict[str, dict] = {}
-    for f in sorted(ROOT.glob("pool_2026*.json")):
+    for f in sorted(ROOT.glob("pool_20*.json")):
         for r in json.loads(f.read_text()).get("results", []):
             c = str(r["code"]).zfill(6)
             if c.startswith(("600", "601", "603", "605", "000", "001", "002", "003")):
@@ -62,7 +62,8 @@ def build_features(universe: dict[str, dict]) -> dict:
     return feats
 
 
-def gate_and_rank(feats: dict, d: str, top: int = 3) -> list[dict]:
+def gate_and_rank(feats: dict, d: str, top: int | None = 3) -> list[dict]:
+    """top=None 返回全部过闸候选（供「过闸等权」基线用，2026-09-06 外部审查发现#4）。"""
     d_iso = iso(d)
     rows = []
     for code, f in feats.items():
@@ -106,7 +107,7 @@ def gate_and_rank(feats: dict, d: str, top: int = 3) -> list[dict]:
                       + (max(sec_mean[r["sector"]], 0) / max_sec) * 30
                       + (sec_cnt[r["sector"]] / max_cnt) * 10)
     rows.sort(key=lambda x: x["score"], reverse=True)
-    return rows[:top]
+    return rows if top is None else rows[:top]
 
 
 def fwd(feats: dict, code: str, j: int, buy: float, horizon: int) -> float | None:
@@ -125,19 +126,27 @@ def main() -> int:
     idx_ks = daily_kline("sh000001")
     idx_by_day = {k["day"]: k for k in idx_ks}
 
-    rng = random.Random(42)
     per_day = []
     for d in TRADING_DATES:
-        picks = gate_and_rank(feats, d, top)
-        if not picks:
+        gate_all = gate_and_rank(feats, d, top=None)
+        if not gate_all:
             continue
-        # 对照组：当日随机 3 票（过零门）
+        picks = gate_all[:top]
+        # 对照组A：当日全宇宙随机3票 × 10种子（2026-09-06 外部审查发现#4修复：
+        # 旧版单种子 Random(42) 一次抽样，跟 docstring 承诺的 10 种子均值不符）
         all_codes = [c for c, f in feats.items() if iso(d) in f["idx"] and f["idx"][iso(d)] >= 21]
-        rand_picks = rng.sample(all_codes, min(3, len(all_codes)))
-        day = {"date": d, "picks": [], "rand": [], "index": {}}
+        rand_picks = []
+        for seed in range(10):
+            rng = random.Random(seed)
+            rand_picks.extend(rng.sample(all_codes, min(3, len(all_codes))))
+        day = {"date": d, "picks": [], "rand": [], "gate": [], "index": {}}
         for p in picks:
             t1, t2 = fwd(feats, p["code"], p["j"], p["buy"], 1), fwd(feats, p["code"], p["j"], p["buy"], 2)
             day["picks"].append({**{k: p[k] for k in ("code", "name", "sector", "open_pct", "score")}, "T1": t1, "T2": t2})
+        # 对照组B：当日全部过闸候选等权（测「闸门之后打分排序有没有加分」，发现#4 补充）
+        for p in gate_all:
+            t1, t2 = fwd(feats, p["code"], p["j"], p["buy"], 1), fwd(feats, p["code"], p["j"], p["buy"], 2)
+            day["gate"].append({"code": p["code"], "T1": t1, "T2": t2})
         for c in rand_picks:
             j = feats[c]["idx"][iso(d)]
             buy = float(feats[c]["ks"][j]["open"])
@@ -162,15 +171,19 @@ def main() -> int:
 
     all_picks = [p for d in per_day for p in d["picks"]]
     all_rand = [p for d in per_day for p in d["rand"]]
+    all_gate = [p for d in per_day for p in d["gate"]]
     idx_rows = [d["index"] for d in per_day if d["index"]]
     out = {
         "universe": len(feats), "days": len(per_day),
         "fenjue": {"T1": agg(all_picks, "T1"), "T2": agg(all_picks, "T2")},
-        "random3": {"T1": agg(all_rand, "T1"), "T2": agg(all_rand, "T2")},
+        "gate_equal_weight": {"T1": agg(all_gate, "T1"), "T2": agg(all_gate, "T2")},
+        "random3_10seed": {"T1": agg(all_rand, "T1"), "T2": agg(all_rand, "T2")},
         "index": {"T1": agg(idx_rows, "T1"), "T2": agg(idx_rows, "T2")},
         "by_month": {},
     }
-    for m in ("202605", "202606", "202607"):
+    # 动态月份（发现#4附带修复：旧版硬编码 202605-202607，之后的月份静默丢失）
+    months = sorted({d["date"][:6] for d in per_day})
+    for m in months:
         mp = [p for d in per_day if d["date"].startswith(m) for p in d["picks"]]
         mr = [p for d in per_day if d["date"].startswith(m) for p in d["rand"]]
         if mp:

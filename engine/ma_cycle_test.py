@@ -49,14 +49,18 @@ def to_monthly(ks: list[dict]) -> list[dict]:
 
 
 def ma_cross_events(bars: list[dict], fwd: int) -> list[float]:
-    """收盘上穿 MA5 → 前向 fwd 根 bar 收益%"""
+    """收盘上穿 MA5 → 下一根 bar 开盘价入场，前向 fwd 根 bar 收益%
+    （2026-09-06 R2 审查修复：旧版用信号 bar 收盘价同时当确认点和买入价，
+    与 dividend_anchor_oos 发现#7同类，统一为下一根 bar 开盘价口径）"""
     closes = [b["close"] for b in bars]
     out = []
     for j in range(6, len(closes) - fwd):
         ma_now = sum(closes[j - 4:j + 1]) / 5
         ma_prev = sum(closes[j - 5:j]) / 5
         if closes[j] > ma_now and closes[j - 1] <= ma_prev:
-            out.append((closes[j + fwd] - closes[j]) / closes[j] * 100)
+            entry = float(bars[j + 1]["open"]) if j + 1 < len(bars) else 0.0
+            if entry > 0:
+                out.append((closes[j + fwd] - entry) / entry * 100)
     return out
 
 

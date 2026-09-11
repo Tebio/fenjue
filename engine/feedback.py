@@ -98,11 +98,35 @@ class FeedbackEngine:
                 else None
             ),
             weights_hash=self._hash_file("config/fenjue.yaml"),
-            industry_hash=self._hash_file("config/fenjue.yaml"),
+            industry_hash=self._hash_file("engine/mapping/industry.py"),  # 2026-09-06 R4 修复：旧版错哈希了 weights 同一文件，权重/映射变化永远无法区分
             macro_hash=self._hash_file("engine/event_registry.py"),
         )
         self._append_record(record)
         return record
+
+    @staticmethod
+    def _std_return(code: str, pred_date: str, horizon: int = 30) -> float | None:
+        """仓库标准收益口径（2026-09-07 R4 补充审查修复，与回测族统一）：
+        big_kcache 前复权、信号次日开盘入场、前向 horizon 交易日收盘离场、扣 0.15%。
+        旧口径（调用方报两个现价直接算）与回测不是同一统计量，分红/除权/费用全丢。"""
+        import json as _json
+        from pathlib import Path as _P
+        kf = _P(__file__).resolve().parent.parent / "data" / "big_kcache" / f"{code}.json"
+        if not kf.exists():
+            return None
+        ks = _json.loads(kf.read_text())
+        dates = [k["date"] for k in ks]
+        try:
+            i = dates.index(pred_date)
+        except ValueError:
+            return None
+        if i + 1 + horizon > len(ks) - 1:
+            return None
+        entry = float(ks[i + 1]["open"])
+        exitp = float(ks[i + 1 + horizon]["close"])
+        if entry <= 0:
+            return None
+        return round((exitp - entry) / entry * 100 - 0.15, 2)
 
     @staticmethod
     def _hash_file(rel_path: str) -> str:
@@ -150,11 +174,17 @@ class FeedbackEngine:
             if rec.actual_return_30d is not None:
                 continue  # already verified
 
-            price = entry_price or rec.entry_price
-            if price and price > 0:
-                rec.actual_return_30d = round(
-                    (current_price - price) / price * 100, 2
-                )
+            # 2026-09-07 R4 补充审查修复：优先仓库标准口径（与回测同一统计量），
+            # big_kcache 不可用时才退回调用方报价旧口径
+            std = self._std_return(code, date_30d_ago)
+            if std is not None:
+                rec.actual_return_30d = std
+            else:
+                price = entry_price or rec.entry_price
+                if price and price > 0:
+                    rec.actual_return_30d = round(
+                        (current_price - price) / price * 100, 2
+                    )
 
             # ── hit determination ──────────────────────────────────
             if rec.actual_return_30d is not None:
@@ -300,6 +330,13 @@ class FeedbackEngine:
         current = self._read_weights()
         suggested = dict(current)
         suggested[dimension] = round(suggested[dimension] + correction, 4)
+        # 2026-09-06 R4 修复：调整后权重不得为负（归一化只保总和=1，不保非负），
+        # 防止建议里混入负权重被人手动 apply 后维度被反向计分
+        if suggested[dimension] < 0:
+            raise ValueError(
+                f"correction {correction:+.2f} would make '{dimension}' weight "
+                f"negative ({suggested[dimension]}); clamp or reduce correction"
+            )
 
         # Re-normalise so sum == 1.0
         other_dims = [d for d in self.SIX_DIMS if d != dimension]
