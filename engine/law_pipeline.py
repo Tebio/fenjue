@@ -241,6 +241,65 @@ def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, f
             "超额pp/笔": round(edge_pp, 2), "判决": verdict}
 
 
+def matched_marginal(detect, stocks, horizons, fee=0.0015, seed=7):
+    """位置匹配对照的边际贡献（剥离 MA60 位置因子）：
+    对照组 = 同一只票、同在 MA60 下方的随机日（数量与信号相同）。
+    返回 {h: 边际pp}。这是形态的终审口径——日历时间过不了没关系，
+    过不了位置匹配对照就说明形态只是位置的代理变量。"""
+    import random as _rnd
+    rnd = _rnd.Random(seed)
+    out = {}
+    for h in horizons:
+        sig, ctl = [], []
+        for code, d in stocks.items():
+            c, o, n, ma = d["c"], d["o"], d["n"], d["ma60"]
+            days, lows = [], []
+            for i in range(START, n - h - 1):
+                if o[i + 1] <= 0 or ma[i] is None:
+                    continue
+                if c[i] <= ma[i]:
+                    lows.append(i)
+                    if detect(d, i):
+                        days.append(i)
+            for i in days:
+                sig.append(c[i + h] / o[i + 1] - 1 - fee)
+            for i in rnd.sample(lows, min(len(days), len(lows))):
+                ctl.append(c[i + h] / o[i + 1] - 1 - fee)
+        if len(sig) >= 30 and len(ctl) >= 30:
+            out[h] = round(100 * (st.mean(sig) - st.mean(ctl)), 2)
+    return out
+
+
+def submit_gate(name, detect, stocks, regime, stock_cap, qs):
+    """WorldQuant BRAIN 式提交闸门：新信号入库前的确定性全检。
+    硬闸门（任一不过即拒收，exit 1）：
+      G1 衰减曲线 T+5 的 t_NW ≥ 3.0（Harvey 多重检验门槛）
+      G2 时间分段两段同号为正
+      G3 regime 分段 ≥3/4 为正
+      G4 市值五分位 ≥4/5 为正
+      G5 位置匹配对照 T+5 与 T+20 边际贡献均为正
+      G6 成本压力 0.30% 下全样本仍为正
+    参考项（不卡但报告）：日历时间组合 DSR、L4 容量账。
+    """
+    r = run_pipeline(name, detect, stocks, regime, stock_cap, qs)
+    marg = matched_marginal(detect, stocks, [5, 20])
+    d5 = r["衰减曲线"].get("T+5", {})
+    gates = {
+        "G1_tNW≥3": abs(d5.get("t_NW") or 0) >= NW_MIN_T,
+        "G2_时间分段": all(v and v["mean%"] > 0 for v in r["时间分段"].values()),
+        "G3_regime≥3/4": sum(1 for v in r["regime分段"].values() if v and v["mean%"] > 0) >= max(3, len(r["regime分段"]) - 1),
+        "G4_市值≥4/5": sum(1 for v in r["市值五分位"].values() if v and v["mean%"] > 0) >= len(r["市值五分位"]) - 1,
+        "G5_位置匹配边际>0": bool(marg) and all(v > 0 for v in marg.values()),
+        "G6_0.30%成本仍正": (r["成本压力"].get("0.30%") or {}).get("mean%", -9) > 0,
+    }
+    passed = all(gates.values())
+    verdict = {"信号": name, "闸门": {k: "✅" if v else "❌" for k, v in gates.items()},
+               "判决": "PASS 可入注册表" if passed else "REJECT",
+               "位置匹配边际pp": marg, "日历时间DSR": r["DSR概率"],
+               "每票每年触发": r["每票每年触发"], "全样本": r["全样本"], "随机对照": r["随机对照"]}
+    return passed, verdict
+
+
 # ---------- 信号注册表（新增信号往这里加，不许再写一次性脚本） ----------
 
 def _td9buy(d, i):
@@ -275,19 +334,31 @@ REGISTRY = {
 
 def main():
     only = sys.argv[1:] or None
+    submit_mode = only and only[0] == "submit"
+    if submit_mode:
+        only = only[1:] or None
     stocks = load_universe()
     print("stocks:", len(stocks), flush=True)
     regime = load_regime()
     stock_cap, qs = load_cap_quintiles()
     out = {}
+    rc = 0
     for name, fn in REGISTRY.items():
         if only and name not in only:
             continue
-        out[name] = run_pipeline(name, fn, stocks, regime, stock_cap, qs)
-        print(f"{name}: 全样本{out[name]['全样本']} 判决{out[name]['判决']}", flush=True)
-    dst = ROOT / "data/law_pipeline_candle_20260911.json"
+        if submit_mode:
+            passed, v = submit_gate(name, fn, stocks, regime, stock_cap, qs)
+            out[name] = v
+            print(json.dumps(v, ensure_ascii=False), flush=True)
+            rc |= 0 if passed else 1
+        else:
+            out[name] = run_pipeline(name, fn, stocks, regime, stock_cap, qs)
+            print(f"{name}: 全样本{out[name]['全样本']} 判决{out[name]['判决']}", flush=True)
+    tag = "submit" if submit_mode else "candle"
+    dst = ROOT / f"data/law_pipeline_{tag}_20260911.json"
     dst.write_text(json.dumps(out, ensure_ascii=False, indent=1))
     print("saved", dst)
+    sys.exit(rc)
 
 
 if __name__ == "__main__":
