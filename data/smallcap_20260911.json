@@ -1,0 +1,574 @@
+{
+ "全段": {
+  "months": 84,
+  "月均小市值%": 2.18,
+  "月均全市场%": 1.14,
+  "月胜率(跑赢全市场)%": 57.1,
+  "累计小市值%": 386.0,
+  "累计全市场%": 116.8
+ },
+ "2019-2022": {
+  "months": 36,
+  "月均小市值%": 3.01,
+  "月均全市场%": 1.47,
+  "月胜率(跑赢全市场)%": 52.8,
+  "累计小市值%": 161.5,
+  "累计全市场%": 57.8
+ },
+ "2023-2026": {
+  "months": 36,
+  "月均小市值%": 1.83,
+  "月均全市场%": 0.93,
+  "月胜率(跑赢全市场)%": 63.9,
+  "累计小市值%": 75.0,
+  "累计全市场%": 29.1
+ },
+ "逐月明细": [
+  {
+   "month": "2019-01",
+   "smallcap": 21.28,
+   "universe": 20.77,
+   "win": true
+  },
+  {
+   "month": "2019-02",
+   "smallcap": 11.85,
+   "universe": 10.45,
+   "win": true
+  },
+  {
+   "month": "2019-03",
+   "smallcap": -5.68,
+   "universe": -7.41,
+   "win": true
+  },
+  {
+   "month": "2019-04",
+   "smallcap": 2.58,
+   "universe": -1.79,
+   "win": true
+  },
+  {
+   "month": "2019-05",
+   "smallcap": 3.23,
+   "universe": 1.78,
+   "win": true
+  },
+  {
+   "month": "2019-06",
+   "smallcap": -2.91,
+   "universe": -4.05,
+   "win": true
+  },
+  {
+   "month": "2019-07",
+   "smallcap": -1.34,
+   "universe": -1.29,
+   "win": false
+  },
+  {
+   "month": "2019-08",
+   "smallcap": 10.0,
+   "universe": 1.32,
+   "win": true
+  },
+  {
+   "month": "2019-09",
+   "smallcap": -1.1,
+   "universe": -1.28,
+   "win": true
+  },
+  {
+   "month": "2019-10",
+   "smallcap": -3.42,
+   "universe": -2.13,
+   "win": false
+  },
+  {
+   "month": "2019-11",
+   "smallcap": 11.64,
+   "universe": 8.32,
+   "win": true
+  },
+  {
+   "month": "2019-12",
+   "smallcap": -12.23,
+   "universe": -10.17,
+   "win": false
+  },
+  {
+   "month": "2020-01",
+   "smallcap": 7.7,
+   "universe": 9.37,
+   "win": false
+  },
+  {
+   "month": "2020-02",
+   "smallcap": 2.95,
+   "universe": -3.98,
+   "win": true
+  },
+  {
+   "month": "2020-03",
+   "smallcap": 1.08,
+   "universe": 1.4,
+   "win": false
+  },
+  {
+   "month": "2020-04",
+   "smallcap": 18.57,
+   "universe": 4.06,
+   "win": true
+  },
+  {
+   "month": "2020-05",
+   "smallcap": 4.24,
+   "universe": 5.57,
+   "win": false
+  },
+  {
+   "month": "2020-06",
+   "smallcap": 13.79,
+   "universe": 14.15,
+   "win": false
+  },
+  {
+   "month": "2020-07",
+   "smallcap": 9.13,
+   "universe": 1.72,
+   "win": true
+  },
+  {
+   "month": "2020-08",
+   "smallcap": -8.07,
+   "universe": -7.14,
+   "win": false
+  },
+  {
+   "month": "2020-09",
+   "smallcap": 1.5,
+   "universe": -2.51,
+   "win": true
+  },
+  {
+   "month": "2020-10",
+   "smallcap": 7.82,
+   "universe": 4.38,
+   "win": true
+  },
+  {
+   "month": "2020-11",
+   "smallcap": -9.12,
+   "universe": -2.19,
+   "win": false
+  },
+  {
+   "month": "2020-12",
+   "smallcap": -7.14,
+   "universe": -6.78,
+   "win": false
+  },
+  {
+   "month": "2021-01",
+   "smallcap": 5.6,
+   "universe": 3.99,
+   "win": true
+  },
+  {
+   "month": "2021-02",
+   "smallcap": 10.69,
+   "universe": 2.17,
+   "win": true
+  },
+  {
+   "month": "2021-03",
+   "smallcap": -2.91,
+   "universe": 0.41,
+   "win": false
+  },
+  {
+   "month": "2021-04",
+   "smallcap": 5.04,
+   "universe": 5.52,
+   "win": false
+  },
+  {
+   "month": "2021-05",
+   "smallcap": -0.71,
+   "universe": 1.36,
+   "win": false
+  },
+  {
+   "month": "2021-06",
+   "smallcap": -3.06,
+   "universe": -2.27,
+   "win": false
+  },
+  {
+   "month": "2021-07",
+   "smallcap": 3.26,
+   "universe": 7.96,
+   "win": false
+  },
+  {
+   "month": "2021-08",
+   "smallcap": -4.36,
+   "universe": -0.33,
+   "win": false
+  },
+  {
+   "month": "2021-09",
+   "smallcap": -4.91,
+   "universe": -3.48,
+   "win": false
+  },
+  {
+   "month": "2021-10",
+   "smallcap": 13.66,
+   "universe": 8.08,
+   "win": true
+  },
+  {
+   "month": "2021-11",
+   "smallcap": 11.12,
+   "universe": 4.89,
+   "win": true
+  },
+  {
+   "month": "2021-12",
+   "smallcap": -1.53,
+   "universe": -7.77,
+   "win": true
+  },
+  {
+   "month": "2022-01",
+   "smallcap": 4.53,
+   "universe": 3.67,
+   "win": true
+  },
+  {
+   "month": "2022-02",
+   "smallcap": -6.19,
+   "universe": -4.71,
+   "win": false
+  },
+  {
+   "month": "2022-03",
+   "smallcap": -12.67,
+   "universe": -12.91,
+   "win": true
+  },
+  {
+   "month": "2022-04",
+   "smallcap": 9.26,
+   "universe": 10.48,
+   "win": false
+  },
+  {
+   "month": "2022-05",
+   "smallcap": 6.8,
+   "universe": 6.91,
+   "win": false
+  },
+  {
+   "month": "2022-06",
+   "smallcap": 2.78,
+   "universe": 2.25,
+   "win": true
+  },
+  {
+   "month": "2022-07",
+   "smallcap": -3.33,
+   "universe": -2.43,
+   "win": false
+  },
+  {
+   "month": "2022-08",
+   "smallcap": -4.87,
+   "universe": -8.04,
+   "win": true
+  },
+  {
+   "month": "2022-09",
+   "smallcap": 3.8,
+   "universe": 1.49,
+   "win": true
+  },
+  {
+   "month": "2022-10",
+   "smallcap": 7.42,
+   "universe": 10.05,
+   "win": false
+  },
+  {
+   "month": "2022-11",
+   "smallcap": -5.91,
+   "universe": -4.28,
+   "win": false
+  },
+  {
+   "month": "2022-12",
+   "smallcap": 7.18,
+   "universe": 6.8,
+   "win": true
+  },
+  {
+   "month": "2023-01",
+   "smallcap": 5.2,
+   "universe": 2.68,
+   "win": true
+  },
+  {
+   "month": "2023-02",
+   "smallcap": -5.04,
+   "universe": -2.93,
+   "win": false
+  },
+  {
+   "month": "2023-03",
+   "smallcap": -5.97,
+   "universe": -2.88,
+   "win": false
+  },
+  {
+   "month": "2023-04",
+   "smallcap": 6.29,
+   "universe": -0.96,
+   "win": true
+  },
+  {
+   "month": "2023-05",
+   "smallcap": 2.41,
+   "universe": 3.08,
+   "win": false
+  },
+  {
+   "month": "2023-06",
+   "smallcap": 4.52,
+   "universe": 2.2,
+   "win": true
+  },
+  {
+   "month": "2023-07",
+   "smallcap": -0.03,
+   "universe": -5.12,
+   "win": true
+  },
+  {
+   "month": "2023-08",
+   "smallcap": -0.1,
+   "universe": -0.33,
+   "win": true
+  },
+  {
+   "month": "2023-09",
+   "smallcap": -0.8,
+   "universe": -1.16,
+   "win": true
+  },
+  {
+   "month": "2023-10",
+   "smallcap": 5.62,
+   "universe": 3.1,
+   "win": true
+  },
+  {
+   "month": "2023-11",
+   "smallcap": 0.09,
+   "universe": -1.77,
+   "win": true
+  },
+  {
+   "month": "2023-12",
+   "smallcap": -21.19,
+   "universe": -16.27,
+   "win": false
+  },
+  {
+   "month": "2024-01",
+   "smallcap": -4.21,
+   "universe": 5.42,
+   "win": false
+  },
+  {
+   "month": "2024-02",
+   "smallcap": 11.34,
+   "universe": 4.48,
+   "win": true
+  },
+  {
+   "month": "2024-03",
+   "smallcap": -1.42,
+   "universe": -0.7,
+   "win": false
+  },
+  {
+   "month": "2024-04",
+   "smallcap": -2.02,
+   "universe": -2.75,
+   "win": true
+  },
+  {
+   "month": "2024-05",
+   "smallcap": -10.25,
+   "universe": -9.06,
+   "win": false
+  },
+  {
+   "month": "2024-06",
+   "smallcap": 2.8,
+   "universe": 0.52,
+   "win": true
+  },
+  {
+   "month": "2024-07",
+   "smallcap": -1.55,
+   "universe": -4.12,
+   "win": true
+  },
+  {
+   "month": "2024-08",
+   "smallcap": 26.53,
+   "universe": 31.63,
+   "win": false
+  },
+  {
+   "month": "2024-09",
+   "smallcap": -4.77,
+   "universe": -3.77,
+   "win": false
+  },
+  {
+   "month": "2024-10",
+   "smallcap": 5.98,
+   "universe": 4.65,
+   "win": true
+  },
+  {
+   "month": "2024-11",
+   "smallcap": -6.62,
+   "universe": -4.11,
+   "win": false
+  },
+  {
+   "month": "2024-12",
+   "smallcap": 2.96,
+   "universe": -1.44,
+   "win": true
+  },
+  {
+   "month": "2025-01",
+   "smallcap": 4.04,
+   "universe": 4.76,
+   "win": false
+  },
+  {
+   "month": "2025-02",
+   "smallcap": 3.5,
+   "universe": 0.39,
+   "win": true
+  },
+  {
+   "month": "2025-03",
+   "smallcap": 1.07,
+   "universe": -1.75,
+   "win": true
+  },
+  {
+   "month": "2025-04",
+   "smallcap": 7.79,
+   "universe": 3.67,
+   "win": true
+  },
+  {
+   "month": "2025-05",
+   "smallcap": 4.75,
+   "universe": 4.99,
+   "win": false
+  },
+  {
+   "month": "2025-06",
+   "smallcap": 6.93,
+   "universe": 3.97,
+   "win": true
+  },
+  {
+   "month": "2025-07",
+   "smallcap": 6.24,
+   "universe": 7.33,
+   "win": false
+  },
+  {
+   "month": "2025-08",
+   "smallcap": 3.21,
+   "universe": 1.0,
+   "win": true
+  },
+  {
+   "month": "2025-09",
+   "smallcap": 5.31,
+   "universe": 1.89,
+   "win": true
+  },
+  {
+   "month": "2025-10",
+   "smallcap": 3.11,
+   "universe": -0.09,
+   "win": true
+  },
+  {
+   "month": "2025-11",
+   "smallcap": 2.03,
+   "universe": 1.57,
+   "win": true
+  },
+  {
+   "month": "2025-12",
+   "smallcap": 8.19,
+   "universe": 5.33,
+   "win": true
+  },
+  {
+   "month": "2026-01",
+   "smallcap": 3.0,
+   "universe": 3.42,
+   "win": false
+  },
+  {
+   "month": "2026-02",
+   "smallcap": -7.02,
+   "universe": -6.23,
+   "win": false
+  },
+  {
+   "month": "2026-03",
+   "smallcap": 3.66,
+   "universe": 3.28,
+   "win": true
+  },
+  {
+   "month": "2026-04",
+   "smallcap": -6.1,
+   "universe": -4.91,
+   "win": false
+  },
+  {
+   "month": "2026-05",
+   "smallcap": -11.49,
+   "universe": -6.87,
+   "win": false
+  },
+  {
+   "month": "2026-06",
+   "smallcap": -0.25,
+   "universe": -2.57,
+   "win": true
+  },
+  {
+   "month": "2026-07",
+   "smallcap": 11.24,
+   "universe": 7.71,
+   "win": true
+  }
+ ]
+}
