@@ -77,9 +77,9 @@ claims:
   audit_every_days: 30
   note: 一字剔除✅+含退市股✅，已达 external 背书下最高级；升 LAW 需影子前向20交易日
 - id: MONDAY_EFFECT
-  statement: 周一效应：周一日均+0.169%/60.8%（含退市股口径）
+  statement: 周一效应：周一日均+0.169%/60.8%（含退市股口径）；⚠分年不稳：2024 -0.142%/45.5%负、2022/2026近零，edge集中强趋势年——不作独立交易依据，仅组合层微弱先验（docs/external-reviews-20260912.md）
   detector: external:engine/factor_research.py
-  grade: 候选L2+（2026-09-12 含退市股复审：+0.169%/60.8%，微降仍成立）
+  grade: 候选L2（降级：2026-09-12 Perez挑战复验后）
   created: 2026-09-11
   audit_every_days: 30
 - id: TURNOVER_MAX_BLACKLIST
