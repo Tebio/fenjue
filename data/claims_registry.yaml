@@ -115,3 +115,20 @@ claims:
   created: 2026-09-12
   audit_every_days: 7
   note: 审计端 detector 接线（claims_audit REGISTRY 加 frontrun_v2）待做；影子前向已接入 claims_shadow（CLOSE_ENTRY_CLAIMS）
+- id: WATCHPOOL_GRAD
+  statement: 放量异动观察池毕业（入池后首板当日收盘上车），T+1/T+5相对位置匹配对照有正边际
+  detector: watchpool_grad
+  control: position_matched
+  horizon:
+  - 1
+  - 5
+  baseline_pp:
+    1: 1.18
+    5: null
+  kill_line_pp:
+    1: 0.0
+    5: 0.0
+  grade: 候选（2026-09-12：8年池信号n=20487，5日毕业率13.42% vs 基率6.25%（2.15x），毕业后T+1 +1.18%/53.7%；close-entry打板口径，fill率同FRONTRUN黑盒；启动窗口中位2日/71.6%≤3日）
+  created: 2026-09-12
+  audit_every_days: 7
+  note: 影子前向已接入 claims_shadow（CLOSE_ENTRY_CLAIMS）；审计端 detector 接线待做

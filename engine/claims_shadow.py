@@ -21,7 +21,7 @@ FEE = 0.0015
 # FRONTRUN_V2（2026-09-12 注册）：首板+板块梯队≥3+市值20-400亿。
 # 入场口径=信号日收盘（打板成交假设，fill 率由影子前向中的封板时间另行定量），
 # 与框架默认的次日开盘不同——次日追是该主张内部已证伪的变体（-0.52%）。
-CLOSE_ENTRY_CLAIMS = {"FRONTRUN_FIRSTBOARD_V2"}
+CLOSE_ENTRY_CLAIMS = {"FRONTRUN_FIRSTBOARD_V2", "WATCHPOOL_GRAD"}
 _industry = None
 _stock_cap = None
 
@@ -89,6 +89,30 @@ def detect(code, ks, i, ladder=None):
                     cap = stock_caps().get(code, {}).get(ks[i]["date"][:7])
                     if cap is not None and 20 <= cap <= 400:
                         hits.append(("FRONTRUN_FIRSTBOARD_V2", None))
+    # WATCHPOOL_GRAD（G8，2026-09-12）：观察池毕业=今日首板 + 前15日内曾触发 B 变体池信号
+    # （量比≥3、涨幅1~7.5%、未板、复牌守卫、额≥2亿）。入场=信号日收盘（打板口径同 FRONTRUN）。
+    if chg >= 0.098 and i >= 6:
+        import datetime as _dt
+        for j in range(max(6, i - 15), i):
+            if ks[j - 1]["close"] <= 0:
+                continue
+            try:
+                d0 = _dt.date.fromisoformat(ks[j - 5]["date"]); d1 = _dt.date.fromisoformat(ks[j]["date"])
+            except Exception:
+                continue
+            if (d1 - d0).days > 12 or any(ks[k]["volume"] <= 0 for k in range(j - 5, j)):
+                continue
+            pj = (ks[j]["close"] / ks[j - 1]["close"] - 1) * 100
+            if not (1.0 <= pj <= 7.5):
+                continue
+            base = [ks[k]["volume"] for k in range(j - 5, j)]
+            mb = sum(base) / len(base)
+            if mb <= 0 or ks[j]["volume"] / mb < 3.0:
+                continue
+            if ks[j]["volume"] * ks[j]["close"] < 2e8:
+                continue
+            hits.append(("WATCHPOOL_GRAD", None))
+            break
     return hits
 
 
