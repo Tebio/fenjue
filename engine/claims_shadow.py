@@ -18,6 +18,33 @@ KC = ROOT / "data/big_kcache"
 SHADOW = ROOT / "data/claims_shadow.jsonl"
 SUMMARY = ROOT / "data/claims_shadow_summary.json"
 FEE = 0.0015
+# FRONTRUN_V2（2026-09-12 注册）：首板+板块梯队≥3+市值20-400亿。
+# 入场口径=信号日收盘（打板成交假设，fill 率由影子前向中的封板时间另行定量），
+# 与框架默认的次日开盘不同——次日追是该主张内部已证伪的变体（-0.52%）。
+CLOSE_ENTRY_CLAIMS = {"FRONTRUN_FIRSTBOARD_V2"}
+_industry = None
+_stock_cap = None
+
+
+def industry_map():
+    global _industry
+    if _industry is None:
+        _industry = json.loads((ROOT / "data/industry_map.json").read_text())
+    return _industry
+
+
+def stock_caps():
+    global _stock_cap
+    if _stock_cap is None:
+        import glob
+        cap = {}
+        for fp in glob.glob(str(ROOT / "data/cap_hist/*.json")):
+            d = {}
+            for dt, _px, c in json.loads(open(fp).read()):
+                d[dt[:7]] = c
+            cap[Path(fp).stem] = d
+        _stock_cap = cap
+    return _stock_cap
 
 
 def load_stocks():
@@ -29,10 +56,12 @@ def load_stocks():
     return out
 
 
-def detect(code, ks, i):
+def detect(code, ks, i, ladder=None):
     """返回第 i 根（信号日）触发的 (claim, tier) 列表。
     自查修正（2026-09-12）：①不再假设信号日=最后一根（SHADOW_DATE 回填历史时错位）；
-    ②LIMITDOWN 不在信号日剔一字——可成交性只能在入场日（i+1）判，注册时全量登记。"""
+    ②LIMITDOWN 不在信号日剔一字——可成交性只能在入场日（i+1）判，注册时全量登记。
+    ③FRONTRUN_FIRSTBOARD_V2：首板（≥9.8% 且前60日无板）+可买（开盘<+9.5%）
+      +梯队（ladder 同行业当日≥3）+市值带20-400亿（cap_hist 月度，缺数据=不触发）。"""
     if i < 65:
         return []
     c, pc = ks[i]["close"], ks[i - 1]["close"]
@@ -47,6 +76,19 @@ def detect(code, ks, i):
         hits.append(("PANIC_DEPTH_DOSE", tier))
     if chg <= -0.095:
         hits.append(("LIMITDOWN_NEXT_DAY", None))
+    if ladder is not None and chg >= 0.098:
+        o = ks[i]["open"]
+        if o > 0 and (o / pc - 1) < 0.095:  # 一字板买不进
+            first = all(
+                ks[j]["close"] <= 0 or ks[j - 1]["close"] <= 0
+                or (ks[j]["close"] / ks[j - 1]["close"] - 1) < 0.098
+                for j in range(max(1, i - 60), i))
+            if first:
+                industry = industry_map().get(code, {}).get("industry") or "?"
+                if ladder.get(industry, 0) >= 3:
+                    cap = stock_caps().get(code, {}).get(ks[i]["date"][:7])
+                    if cap is not None and 20 <= cap <= 400:
+                        hits.append(("FRONTRUN_FIRSTBOARD_V2", None))
     return hits
 
 
@@ -59,7 +101,15 @@ def main():
         print(f"[SILENT] kcache 最新 {max(last_dates)}，今日 {today} 无数据（非交易日或未刷新）")
         return
 
-    # 1. 登记今日信号
+    # 1. 登记今日信号（先算今日行业梯队，供 FRONTRUN 检测）
+    ladder = {}
+    for code, ks in stocks.items():
+        j = len(ks) - 1
+        if ks[j]["date"] != today or j < 1 or ks[j - 1]["close"] <= 0:
+            continue
+        if ks[j]["close"] / ks[j - 1]["close"] - 1 >= 0.098:
+            ind = industry_map().get(code, {}).get("industry") or "?"
+            ladder[ind] = ladder.get(ind, 0) + 1
     existing = set()
     if SHADOW.exists():
         for line in SHADOW.read_text().splitlines():
@@ -71,7 +121,7 @@ def main():
             idx = next((j for j in range(len(ks) - 1, -1, -1) if ks[j]["date"] == today), None)
             if idx is None:
                 continue
-            for claim, tier in detect(code, ks, idx):
+            for claim, tier in detect(code, ks, idx, ladder):
                 key = (today, claim, code)
                 if key not in existing:
                     f.write(json.dumps({"signal_date": today, "claim": claim, "code": code,
@@ -91,21 +141,32 @@ def main():
         if si is None or si + 1 >= len(ks):
             continue
         if r["entry"] is None:
-            e = ks[si + 1]["open"]
-            if e <= 0:
-                continue
-            # 入场日可成交性（自查修正：一字剔除在入场日判，与 s10_retest 口径一致）
-            pc0 = ks[si]["close"]
-            gap = e / pc0 - 1 if pc0 > 0 else 0
-            amp = (ks[si + 1]["high"] - ks[si + 1]["low"]) / pc0 if pc0 > 0 else 1
-            if gap >= 0.095:
-                r["untradeable"] = "一字涨停买不进"
-                continue
-            if gap <= -0.095 and amp < 0.01:
-                r["untradeable"] = "一字跌停锁死"
-                continue
-            r["entry"] = e
-            filled += 1
+            if r["claim"] in CLOSE_ENTRY_CLAIMS:
+                # 信号日收盘入场（打板成交假设）；信号日一字全天（high==low）判不可成交
+                if ks[si]["high"] <= ks[si]["low"]:
+                    r["untradeable"] = "信号日一字板买不进"
+                    continue
+                e = ks[si]["close"]
+                if e <= 0:
+                    continue
+                r["entry"] = e
+                filled += 1
+            else:
+                e = ks[si + 1]["open"]
+                if e <= 0:
+                    continue
+                # 入场日可成交性（自查修正：一字剔除在入场日判，与 s10_retest 口径一致）
+                pc0 = ks[si]["close"]
+                gap = e / pc0 - 1 if pc0 > 0 else 0
+                amp = (ks[si + 1]["high"] - ks[si + 1]["low"]) / pc0 if pc0 > 0 else 1
+                if gap >= 0.095:
+                    r["untradeable"] = "一字涨停买不进"
+                    continue
+                if gap <= -0.095 and amp < 0.01:
+                    r["untradeable"] = "一字跌停锁死"
+                    continue
+                r["entry"] = e
+                filled += 1
         if r["entry"]:
             e = r["entry"]
             for tag, off in [("r1", 1), ("r5", 5), ("r20", 20)]:

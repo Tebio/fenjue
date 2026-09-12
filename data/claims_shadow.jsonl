@@ -1683,3 +1683,8 @@
 {"signal_date": "2026-09-11", "claim": "PANIC_DEPTH_DOSE", "code": "605580", "tier": "-3~-5%", "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "REVERSAL_OPEN_T1", "code": "605599", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "PANIC_DEPTH_DOSE", "code": "605599", "tier": "-3~-5%", "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-11", "claim": "FRONTRUN_FIRSTBOARD_V2", "code": "002519", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-11", "claim": "FRONTRUN_FIRSTBOARD_V2", "code": "002848", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-11", "claim": "FRONTRUN_FIRSTBOARD_V2", "code": "600207", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-11", "claim": "FRONTRUN_FIRSTBOARD_V2", "code": "603693", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-11", "claim": "FRONTRUN_FIRSTBOARD_V2", "code": "605058", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}

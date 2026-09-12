@@ -1,43 +1,65 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>焚诀 · 定律工程</title>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>焚诀操作台</title>
 <style>
-:root{--bg:#0a0e14;--card:#131820;--border:#1e2733;--accent:#00d4aa;--text:#c5cdd8;--muted:#5c6b7a;--danger:#e0556a}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6;padding:24px;max-width:860px;margin:0 auto}
-h1{font-size:22px;color:var(--accent);margin-bottom:4px}
-.sub{font-size:12px;color:var(--muted);margin-bottom:24px}
-h2{font-size:15px;color:var(--text);margin:22px 0 8px}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px}
-.card .t{font-size:14px;margin-bottom:2px}
-.card .d{font-size:12px;color:var(--muted)}
-.tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:3px;border:1px solid var(--border);color:var(--muted);margin-left:6px}
-.tag.dead{color:var(--danger);border-color:var(--danger)}
-.tag.live{color:var(--accent);border-color:var(--accent)}
-.old{opacity:.55}
-</style>
-</head>
-<body>
-<h1>焚诀 · 定律工程</h1>
-<div class="sub">A股短线统计规律研究 — 一切以可复跑数据为准 ｜ 更新: 2026-09-12</div>
+:root{--text:#37352f;--muted:#9b9a97;--bg:#fff;--divider:#ededeb;--soft:#f7f6f3}
+*{margin:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font:15px/1.65 ui-sans-serif,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-variant-numeric:tabular-nums}
+.wrap{max-width:760px;margin:0 auto;padding:56px 22px 80px}
+h1{font-size:26px;font-weight:700;letter-spacing:.5px}
+.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.card{margin-top:34px}
+h2{font-size:15px;font-weight:600;padding-bottom:8px;border-bottom:1px solid var(--divider);margin-bottom:12px}
+.hint{float:right;font-size:11px;font-weight:400;color:var(--muted);margin-top:3px}
+.statrow{display:flex;gap:36px;align-items:flex-start;flex-wrap:wrap}
+.big{font-size:17px}
+.num{font-size:22px;font-weight:600}
+.muted{color:var(--muted);font-size:12.5px}
+.badge{display:inline-block;padding:2px 10px;border-radius:4px;font-size:13px;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-weight:500;font-size:12px;padding:4px 8px 4px 0;border-bottom:1px solid var(--divider)}
+td{padding:6px 8px 6px 0;border-bottom:1px solid var(--divider)}
+tr:last-child td{border-bottom:none}
+.up{color:#0f7b3d}.dn{color:#c0392b}.ok{color:#0f7b3d;font-size:12px}
+.pre{background:var(--soft);border-radius:6px;padding:14px 16px;font:12.5px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-all}
+.foot{margin-top:48px;padding-top:16px;border-top:1px solid var(--divider);color:var(--muted);font-size:12px}
+</style></head><body><div class="wrap">
+<h1>焚诀操作台</h1>
+<div class="sub">2026-09-12 · 研究辅助，不是买卖指令 · 数据构建于 2026-09-12 15:12</div>
+<section class="card"><h2>市场状态<span class="hint">每日 15:40 盘后扫描</span></h2>
+<div class="statrow"><div><div class="big"><span class="badge" style="color:#6b6b66;background:#f1f1ef">平淡期</span></div>
+<div class="muted">周期仪 · 2026-09-11</div></div>
+<div class="stat"><div class="num">38<span class="muted"> / 14</span></div><div class="muted">涨停 / 跌停</div></div>
+<div class="stat"><div class="num"><span class="dn">-1.18%</span></div><div class="muted">指数</div></div></div>
+<div class="muted" style="margin-top:10px">主线板块：电力、热力生产和供应业(5)、AI电子链(4)、电气机械和器材制造业(3)、石油、煤炭及其他燃料加工业(2)</div></section>
+<section class="card"><h2>银行股 · 明日委托单<span class="hint">股息率锚 · 样本外 60.1% 胜率 · 价格线仅分红/财报后调整</span></h2><pre class="pre">── 明日委托单（价格线不随日内波动，分红/财报更新后调整）──
+齐鲁银行 [减仓] 买5.54/加5.32/5.1/5%线4.98 卖6.23 清8.31
+宁波银行 [减仓] 买26.67/加25.6/24.54/5%线24.0 卖30.0 清40.0
+成都银行 [加仓] 买20.47/加19.65/18.83/5%线18.42 卖23.03 清30.7
+重庆银行 [减仓] 买9.96/加9.56/9.16/5%线8.96 卖11.2 清14.94
+建设银行 [减仓] 买8.64/加8.29/7.95/5%线7.77 卖9.72 清12.96
+杭州银行 [减仓] 买14.67/加14.08/13.5/5%线13.2 卖16.5 清22.0
+上海银行 [加仓] 📌贴线 买11.56/加11.1/10.64/5%线10.4 卖13.0 清17.33
+工商银行 [减仓] 买6.9/加6.62/6.35/5%线6.21 卖7.76 清10.34
+农业银行 [减仓] 买5.54/加5.32/5.1/5%线4.99 卖6.24 清8.32
+中国银行 [减仓] 买5.03/加4.83/4.63/5%线4.53 卖5.66 清7.54
+交通银行 [持有] 买7.22/加6.93/6.64/5%线6.49 卖8.12 清10.82
+渝农商行 [加仓] 买7.13/加6.84/6.56/5%线6.42 卖8.02 清10.7
+江苏银行 [持有] 买12.54/加12.04/11.54/5%线11.28 卖14.1 清18.8
+南京银行 [持有] 买11.76/加11.29/10.82/5%线10.58 卖13.23 清17.64
 
-<h2>当前有效</h2>
-<div class="card"><div class="t"><a href="research-charter-20260912.md">研究任务书</a><span class="tag live">对外调研用</span></div><div class="d">8 个开放问题 + 证伪契约，发给外部 AI 做框架调研</div></div>
-<div class="card"><div class="t"><a href="research-pack-20260912.md">研究包（任务书+全部代码+数据）</a></div><div class="d">管线/审计/影子盘源码与全部结果 JSON，53KB</div></div>
-<div class="card"><div class="t"><a href="law-program-20260911.md">定律工程纲领</a></div><div class="d">毕业五条、四层架构、冲刺队列、Token 经济学</div></div>
-<div class="card"><div class="t"><a href="complete-system-blueprint-20260911.md">完整体系蓝图</a><span class="tag dead">§十形态族已 DEAD</span></div><div class="d">收益来源全景 + 因子实测 + 日历效应 + 文献总账（状态以 claims_state 为准）</div></div>
-
-<h2>冲刺报告</h2>
-<div class="card"><div class="t"><a href="sprint-s1-pipeline-20260911.md">S1 证伪管线固化</a> ／ <a href="sprint-s2-data-foundation-20260912.md">S2 数据底座</a> ／ <a href="sprint-s3-combo-20260912.md">S3 组合层</a></div><div class="d">恐慌深度剂量反应单调曲线 = 本轮最重要发现</div></div>
-<div class="card"><div class="t"><a href="self-audit-20260912.md">自查报告</a></div><div class="d">11 项嫌疑判决：实证排除 3 / 实锤修复 5 / 口径记录 3</div></div>
-<div class="card"><div class="t"><a href="hithink-api-evaluation-20260912.md">HiThink（同花顺官方）API 实测</a></div><div class="d">端点深度、参数坑、迁移清单</div></div>
-
-<h2>归档（不再更新）</h2>
-<div class="card old"><div class="t"><a href="archive/v2-console-20260707.html">焚诀 Console V2（长线版）</a><span class="tag dead">数据止于 2026-07-07</span></div><div class="d">V2 长线选股看板快照，已被定律工程取代，仅存档</div></div>
-<div class="card old"><div class="t"><a href="焚诀_V2.3.md">焚诀 V2.3 封版文档</a> ／ <a href="strategy-zoo-20260911.md">策略族联赛</a> ／ <a href="holding-decision-research-20260911.md">持仓处置研究</a></div><div class="d">历史研究文档</div></div>
-</body>
-</html>
+写入 /opt/data/fenjue/data/console_banks.json</pre></section>
+<section class="card"><h2>首板抢跑 · 影子名单<span class="hint">首板+板块梯队≥3+市值20-400亿 · 测量级通过 影子验证中</span></h2><table><thead><tr><th>信号日</th><th>代码</th><th>T+1</th><th>T+5</th><th>状态</th></tr></thead><tbody><tr><td><span class="muted">2026-09-11</span></td><td>002519</td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td><span class="muted">待回填</span></td></tr><tr><td><span class="muted">2026-09-11</span></td><td>002848</td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td><span class="muted">待回填</span></td></tr><tr><td><span class="muted">2026-09-11</span></td><td>600207</td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td><span class="muted">待回填</span></td></tr><tr><td><span class="muted">2026-09-11</span></td><td>603693</td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td><span class="muted">待回填</span></td></tr><tr><td><span class="muted">2026-09-11</span></td><td>605058</td><td><span class="muted">—</span></td><td><span class="muted">—</span></td><td><span class="muted">待回填</span></td></tr></tbody></table></section>
+<section class="card"><h2>反转族 · 明日观察名单<span class="hint">2026-09-11 收盘扫描 · 9:32 竞价确认后生效</span></h2><table><thead><tr><th>代码</th><th>名称</th><th>今日跌幅</th><th>成交额</th></tr></thead><tbody><tr><td>601899</td><td>紫金矿业</td><td><span class="dn">-5.42%</span></td><td>122亿</td></tr><tr><td>603083</td><td>剑桥科技</td><td><span class="dn">-4.25%</span></td><td>76亿</td></tr><tr><td>001309</td><td>德明利</td><td><span class="dn">-3.7%</span></td><td>55亿</td></tr><tr><td>603993</td><td>洛阳钼业</td><td><span class="dn">-4.52%</span></td><td>53亿</td></tr><tr><td>600362</td><td>江西铜业</td><td><span class="dn">-7.78%</span></td><td>52亿</td></tr><tr><td>601168</td><td>西部矿业</td><td><span class="dn">-7.12%</span></td><td>42亿</td></tr><tr><td>600396</td><td>华电辽能</td><td><span class="dn">-5.87%</span></td><td>37亿</td></tr><tr><td>600127</td><td>金健米业</td><td><span class="dn">-3.21%</span></td><td>34亿</td></tr></tbody></table></section>
+<section class="card"><h2>主张影子表现<span class="hint">L5 前向验证</span></h2><div class="muted">影子期积累中（2026-09-11 起，20 交易日见分晓）</div></section>
+<section class="card"><h2>游资口味 · 滚动 90 天<span class="hint">2026-06-13..2026-09-11 · 口味半年换血，此表每周六更新</span></h2><table><thead><tr><th>席位</th><th>近 90 天偏好</th><th>买向 T+5</th></tr></thead><tbody><tr><td>T王 <span class="badge" style="color:#c0392b;background:#fdecea">收割型·反向</span></td><td>ST板块、仿制药一致性评价、CRO概念</td><td><span class="dn">-4.43%</span></td></tr><tr><td>温州帮 <span class="badge" style="color:#c0392b;background:#fdecea">收割型·反向</span></td><td>专精特新、ST板块、人民币贬值受益</td><td><span class="dn">-3.07%</span></td></tr><tr><td>低位挖掘</td><td>仿制药一致性评价、CRO概念、创新药</td><td><span class="up">+0.81%</span></td></tr><tr><td>成都系</td><td>共封装光学(CPO)、PCB概念、仿制药一致性评价</td><td><span class="up">+0.14%</span></td></tr><tr><td>中山东路</td><td>共封装光学(CPO)、第三代半导体、PCB概念</td><td><span class="dn">-0.94%</span></td></tr><tr><td>炒股养家</td><td>乡村振兴、国企改革、数据中心(AIDC)</td><td><span class="up">+0.86%</span></td></tr><tr><td>深南东路</td><td>共封装光学(CPO)、PCB概念、医药电商</td><td><span class="dn">-2.54%</span></td></tr><tr><td>佛山系</td><td>AI视频、AI语料、虚拟数字人</td><td><span class="up">+4.65%</span></td></tr></tbody></table></section>
+<section class="card"><h2>北向资金 · 季报画像<span class="hint">季度慢变量 · 截至 2026-09-08</span></h2>
+<div class="statrow"><div class="stat"><div class="num">1120</div><div class="muted">增持+新进</div></div>
+<div class="stat"><div class="num">954</div><div class="muted">减持</div></div>
+<div class="stat"><div class="num">2080</div><div class="muted">覆盖个股</div></div></div>
+<div class="muted" style="margin-top:10px">增持行业：39计算机(123)、38电气机械和器材制造业(97)、26化学原料和化学制品制造业(76)、36汽车制造业(61)、44电力(54)</div></section>
+<section class="card"><h2>今日涨停全景 · 市值前 10<span class="hint">周期仪全量扫描</span></h2><table><thead><tr><th>代码</th><th>名称</th><th>涨幅</th><th>市值</th></tr></thead><tbody><tr><td>601231</td><td>环旭电子</td><td><span class="up">+10.01%</span></td><td>644亿</td></tr><tr><td>002636</td><td>金安国纪</td><td><span class="up">+10.0%</span></td><td>598亿</td></tr><tr><td>600667</td><td>太极实业</td><td><span class="up">+10.02%</span></td><td>408亿</td></tr><tr><td>600744</td><td>华银电力</td><td><span class="up">+10.06%</span></td><td>143亿</td></tr><tr><td>002174</td><td>游族网络</td><td><span class="up">+10.0%</span></td><td>133亿</td></tr><tr><td>002531</td><td>天顺风能</td><td><span class="up">+10.03%</span></td><td>129亿</td></tr><tr><td>603601</td><td>再升科技</td><td><span class="up">+10.05%</span></td><td>123亿</td></tr><tr><td>000823</td><td>超声电子</td><td><span class="up">+10.0%</span></td><td>122亿</td></tr><tr><td>000048</td><td>京基智农</td><td><span class="up">+10.01%</span></td><td>115亿</td></tr><tr><td>002204</td><td>大连重工</td><td><span class="up">+10.09%</span></td><td>110亿</td></tr></tbody></table></section>
+<div class="foot">焚诀 Research Engine · 各版块数据由盘后 cron 自动落盘，本页静态快照每交易日更新<br>
+所有策略结论均带作废条件与 kill 线；胜率均值均为净口径（扣 0.15% 费用）</div>
+</div></body></html>

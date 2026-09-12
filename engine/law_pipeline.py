@@ -372,6 +372,8 @@ REGISTRY = {
     "大长腿_高位": lambda d, i: d["c"][i] > d["ma60"][i] and _biglower(d, i),
     "避雷针_低位": lambda d, i: d["c"][i] <= d["ma60"][i] and _bigupper(d, i),
     "避雷针_高位": lambda d, i: d["c"][i] > d["ma60"][i] and _bigupper(d, i),
+    # ---- 2026-09-12 hot_regime_scan 幸存：跨regime唯一双段一致（定义对齐 s3_combo/hot_regime_scan） ----
+    "强势回调_MA60上": lambda d, i: d["c"][i] > d["ma60"][i] and d["c"][i] / d["c"][i - 1] - 1 <= -0.03,
     # ---- Sequoia-X 移植候选（2026-09-12，定义逐行对齐原项目源码） ----
     "高窄旗形HTF": _htf,
     "涨停洗盘Shakeout": _shakeout,

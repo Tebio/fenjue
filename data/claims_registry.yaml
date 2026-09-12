@@ -67,12 +67,14 @@ claims:
   grade: 候选L2（2026-09-12 含退市股复审通过，edge从+0.16%微降至+0.139%仍为正，唯一为正的反转腿）
   created: 2026-09-06
   audit_every_days: 30
-  note: edge微降方向与幸存者偏差一致；下周审计起纳入滚动监控
+  note: edge微降方向与幸存者偏差一致；下周审计起纳入滚动监控。2026-09-12 m60执行时点：开盘买=最优执行
+    （延迟入场单调烧钱，edge集中开盘1小时）；回踩限价全事件期望显著为负；晚段(2025-07→)T+1 edge≈0需审计重点盯
 - id: LIMITDOWN_NEXT_DAY
   statement: 跌停次日接 T+5 +2.65%/57.6%（一字剔除+含退市股口径，双段一致）
   detector: external:engine/strategy_zoo.py
   grade: 候选L2+（一字剔除✅ +2.72→幸存者修正后 +2.65%/57.6%（n=30684 含186退市股），双段 2.58/2.71 一致。幸存者偏差实测仅
-    -0.07pp，方向如预测但幅度小）
+    -0.07pp，方向如预测但幅度小）⚠2026-09-12 m60执行时点研究：T+5腿晚段(2025-07→)已死(-0.97%)，
+    T+1腿仍活(+0.26%)；T+5长持禁用至审计恢复，见 docs/sprint-exec-timing-20260912.md
   created: 2026-09-11
   audit_every_days: 30
   note: 一字剔除✅+含退市股✅，已达 external 背书下最高级；升 LAW 需影子前向20交易日
@@ -96,3 +98,20 @@ claims:
   note: 分档仓位规则v1见sprint-s3报告；regime调制妖股期最佳，不用位置/星期闸门
   created: '2026-09-12'
   audit_every_days: 30
+- id: FRONTRUN_FIRSTBOARD_V2
+  statement: 首板+板块梯队>=3+市值20-400亿，首板当日收盘上车（打板成交口径），T+1/T+5相对位置匹配对照有正边际
+  detector: frontrun_v2
+  control: position_matched
+  horizon:
+  - 1
+  - 5
+  baseline_pp:
+    1: 1.88
+    5: 2.07
+  kill_line_pp:
+    1: 0.0
+    5: 0.0
+  grade: 候选（2026-09-12 测量级全闸门通过：双段+1.88/+2.14、四regime全正、t_NW 33.7/16.4；close-entry=打板成交口径乐观，fill率影子期定量；次日追变体-0.52%已证伪）
+  created: 2026-09-12
+  audit_every_days: 7
+  note: 审计端 detector 接线（claims_audit REGISTRY 加 frontrun_v2）待做；影子前向已接入 claims_shadow（CLOSE_ENTRY_CLAIMS）
