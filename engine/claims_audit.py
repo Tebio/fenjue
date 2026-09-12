@@ -59,8 +59,10 @@ def marginals(det, stocks, control, horizons):
             for h in horizons:
                 ctl[h].append(c[i + h] / o[i + 1] - 1 - FEE)
     out = {}
-    dates_all = sorted({dt for h in horizons for dt in sig[h][0]})
-    cutoff = dates_all[-ROLL_N] if len(dates_all) > ROLL_N else None
+    # 修正（2026-09-12 自查）：滚动窗口必须按交易日历切，不是按信号日切——
+    # 稀疏信号（年触发30次）按信号日切会把窗口拉到数年，丧失"近期存活"语义。
+    all_days = sorted({dt for d in stocks.values() for dt in d["date"]})
+    cutoff = all_days[-ROLL_N] if len(all_days) > ROLL_N else None
     for h in horizons:
         ds, rs = sig[h]
         if len(rs) < 30 or len(ctl[h]) < 30:

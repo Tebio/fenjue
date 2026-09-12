@@ -75,7 +75,7 @@ claims:
     -0.07pp，方向如预测但幅度小）
   created: 2026-09-11
   audit_every_days: 30
-  note: S10 一字剔除重跑是前置欠账，销账前不得升 LAW
+  note: 一字剔除✅+含退市股✅，已达 external 背书下最高级；升 LAW 需影子前向20交易日
 - id: MONDAY_EFFECT
   statement: 周一效应：周一日均+0.183%/61.4%，强度2-4倍于其他交易日
   detector: external:engine/factor_research.py

@@ -36,7 +36,7 @@ def fetch(sym, n, retries=4):
 
 def main():
     full = len(sys.argv) > 1 and sys.argv[1] == "full"
-    n_bars = 1970 if full else 16
+    n_bars = 1970 if full else 32  # delta 32根≈8天，容忍cron偶发漏跑（原16根只盖4天）
     codes = sorted(p.stem for p in KC.glob("*.json"))
     done = err = 0
     t0 = time.time()

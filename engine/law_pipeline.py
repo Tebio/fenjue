@@ -40,6 +40,7 @@ def load_universe():
             pre.append(pre[-1] + x)
         ma60 = [None] * 60 + [(pre[i + 1] - pre[i - 59]) / 60 for i in range(59, len(c) - 1)]
         ma60.append((pre[len(c)] - pre[len(c) - 60]) / 60)
+        ma60 = ma60[:len(c)]  # 自查修正：原构造多出一个尾部元素（无害但脏）
         stocks[Path(fp).stem] = {
             "c": c, "o": [k["open"] for k in ks], "h": [k["high"] for k in ks],
             "l": [k["low"] for k in ks], "ma60": ma60,
