@@ -77,15 +77,15 @@ claims:
   audit_every_days: 30
   note: 一字剔除✅+含退市股✅，已达 external 背书下最高级；升 LAW 需影子前向20交易日
 - id: MONDAY_EFFECT
-  statement: 周一效应：周一日均+0.183%/61.4%，强度2-4倍于其他交易日
+  statement: 周一效应：周一日均+0.169%/60.8%（含退市股口径）
   detector: external:engine/factor_research.py
-  grade: 候选L2
+  grade: 候选L2+（2026-09-12 含退市股复审：+0.169%/60.8%，微降仍成立）
   created: 2026-09-11
   audit_every_days: 30
 - id: TURNOVER_MAX_BLACKLIST
-  statement: 高换手20%与彩票型20%组 91个月累计跑输-52~-55%（回避即相对收益）
+  statement: 高换手20%与彩票型20%组 91个月累计跑输-54.0%/-56.1%（含退市股，回避即相对收益）
   detector: external:engine/factor_research.py
-  grade: 候选L2L3（黑名单层，方向为负）
+  grade: 候选L2+（2026-09-12 含退市股复审：-54.0%/-56.1%，绞肉机结论强化）
   direction: negative
   created: 2026-09-11
   audit_every_days: 90
