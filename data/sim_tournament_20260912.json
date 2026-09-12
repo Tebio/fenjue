@@ -1,0 +1,74 @@
+{
+ "window": [
+  "2024-08-26",
+  "2026-09-11"
+ ],
+ "days": 497,
+ "capital": 100000.0,
+ "bench%": 24.4,
+ "basket": [
+  "601717",
+  "601216",
+  "000408",
+  "600153",
+  "002563"
+ ],
+ "strategies": {
+  "dividend_hold": {
+   "final": 152457,
+   "return%": 52.5,
+   "maxDD%": -22.2,
+   "trades": 0,
+   "win%": 0,
+   "avg%": 0
+  },
+  "dividend_t": {
+   "final": 150511,
+   "return%": 50.5,
+   "maxDD%": -22.5,
+   "trades": 0,
+   "win%": 0,
+   "avg%": 0
+  },
+  "long_trend": {
+   "final": 129176,
+   "return%": 29.2,
+   "maxDD%": -25.2,
+   "trades": 66,
+   "win%": 36.4,
+   "avg%": 2.85
+  },
+  "short_t1": {
+   "final": 166253,
+   "return%": 66.3,
+   "maxDD%": -17.8,
+   "trades": 379,
+   "win%": 48.0,
+   "avg%": 0.49
+  },
+  "swing_t5": {
+   "final": 127674,
+   "return%": 27.7,
+   "maxDD%": -34.0,
+   "trades": 222,
+   "win%": 41.4,
+   "avg%": 0.85
+  },
+  "scalp_overnight": {
+   "final": 242320,
+   "return%": 142.3,
+   "maxDD%": -6.1,
+   "trades": 379,
+   "win%": 51.2,
+   "avg%": 0.83
+  },
+  "reversal": {
+   "final": 571754,
+   "return%": 471.8,
+   "maxDD%": -35.0,
+   "trades": 1488,
+   "win%": 46.7,
+   "avg%": 0.56
+  }
+ }
+}
