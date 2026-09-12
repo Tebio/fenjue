@@ -89,3 +89,10 @@ claims:
   direction: negative
   created: 2026-09-11
   audit_every_days: 90
+- id: PANIC_DEPTH_DOSE
+  statement: 反转族/跌停接=恐慌深度单因子连续谱：T+1净额与同日超额随跌幅单调放大（-3~-5:+0.03 → ≤-9.5:+1.10，超额0.067→0.411）
+  detector: external:engine/s3_combo.py
+  grade: 候选L2（S3首测，含退市股+regime重建后数据）
+  note: 分档仓位规则v1见sprint-s3报告；regime调制妖股期最佳，不用位置/星期闸门
+  created: '2026-09-12'
+  audit_every_days: 30
