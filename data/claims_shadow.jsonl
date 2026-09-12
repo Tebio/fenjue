@@ -88,9 +88,6 @@
 {"signal_date": "2026-09-11", "claim": "PANIC_DEPTH_DOSE", "code": "000612", "tier": "-5~-7%", "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "REVERSAL_OPEN_T1", "code": "000617", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "PANIC_DEPTH_DOSE", "code": "000617", "tier": "-3~-5%", "entry": null, "r1": null, "r5": null, "r20": null}
-{"signal_date": "2026-09-11", "claim": "REVERSAL_OPEN_T1", "code": "000622", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
-{"signal_date": "2026-09-11", "claim": "PANIC_DEPTH_DOSE", "code": "000622", "tier": "≤-9.5%", "entry": null, "r1": null, "r5": null, "r20": null}
-{"signal_date": "2026-09-11", "claim": "LIMITDOWN_NEXT_DAY", "code": "000622", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "REVERSAL_OPEN_T1", "code": "000623", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "PANIC_DEPTH_DOSE", "code": "000623", "tier": "-3~-5%", "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "REVERSAL_OPEN_T1", "code": "000630", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
@@ -464,6 +461,7 @@
 {"signal_date": "2026-09-11", "claim": "PANIC_DEPTH_DOSE", "code": "002294", "tier": "-3~-5%", "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "REVERSAL_OPEN_T1", "code": "002295", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "PANIC_DEPTH_DOSE", "code": "002295", "tier": "≤-9.5%", "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-11", "claim": "LIMITDOWN_NEXT_DAY", "code": "002295", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "REVERSAL_OPEN_T1", "code": "002301", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "PANIC_DEPTH_DOSE", "code": "002301", "tier": "-3~-5%", "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-11", "claim": "REVERSAL_OPEN_T1", "code": "002312", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}

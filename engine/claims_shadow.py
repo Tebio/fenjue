@@ -29,13 +29,13 @@ def load_stocks():
     return out
 
 
-def detect(code, ks):
-    """返回今日触发的 (claim, tier) 列表。ks 最后一根=今日。"""
-    if len(ks) < 66:
+def detect(code, ks, i):
+    """返回第 i 根（信号日）触发的 (claim, tier) 列表。
+    自查修正（2026-09-12）：①不再假设信号日=最后一根（SHADOW_DATE 回填历史时错位）；
+    ②LIMITDOWN 不在信号日剔一字——可成交性只能在入场日（i+1）判，注册时全量登记。"""
+    if i < 65:
         return []
-    i = len(ks) - 1
-    c, o, h, l = ks[i]["close"], ks[i]["open"], ks[i]["high"], ks[i]["low"]
-    pc = ks[i - 1]["close"]
+    c, pc = ks[i]["close"], ks[i - 1]["close"]
     if pc <= 0:
         return []
     chg = c / pc - 1
@@ -46,10 +46,7 @@ def detect(code, ks):
                 else "-7~-9.5%" if chg > -0.095 else "≤-9.5%")
         hits.append(("PANIC_DEPTH_DOSE", tier))
     if chg <= -0.095:
-        # 一字跌停锁死剔除（与 s10_retest 口径一致）
-        locked = (h - l) / pc < 0.01
-        if not locked:
-            hits.append(("LIMITDOWN_NEXT_DAY", None))
+        hits.append(("LIMITDOWN_NEXT_DAY", None))
     return hits
 
 
@@ -71,7 +68,10 @@ def main():
     new = 0
     with SHADOW.open("a") as f:
         for code, ks in stocks.items():
-            for claim, tier in detect(code, ks):
+            idx = next((j for j in range(len(ks) - 1, -1, -1) if ks[j]["date"] == today), None)
+            if idx is None:
+                continue
+            for claim, tier in detect(code, ks, idx):
                 key = (today, claim, code)
                 if key not in existing:
                     f.write(json.dumps({"signal_date": today, "claim": claim, "code": code,
@@ -92,9 +92,20 @@ def main():
             continue
         if r["entry"] is None:
             e = ks[si + 1]["open"]
-            if e > 0:
-                r["entry"] = e
-                filled += 1
+            if e <= 0:
+                continue
+            # 入场日可成交性（自查修正：一字剔除在入场日判，与 s10_retest 口径一致）
+            pc0 = ks[si]["close"]
+            gap = e / pc0 - 1 if pc0 > 0 else 0
+            amp = (ks[si + 1]["high"] - ks[si + 1]["low"]) / pc0 if pc0 > 0 else 1
+            if gap >= 0.095:
+                r["untradeable"] = "一字涨停买不进"
+                continue
+            if gap <= -0.095 and amp < 0.01:
+                r["untradeable"] = "一字跌停锁死"
+                continue
+            r["entry"] = e
+            filled += 1
         if r["entry"]:
             e = r["entry"]
             for tag, off in [("r1", 1), ("r5", 5), ("r20", 20)]:
