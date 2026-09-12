@@ -267,6 +267,29 @@ def main():
                      table(["主张", "档", "T+1 均值/胜率", "T+5 均值/胜率", "n"], rows) if rows
                      else '<div class="muted">影子期积累中（2026-09-11 起，20 交易日见分晓）</div>',
                      "L5 前向验证 · kill 线滚动审计，不达标自动降级"))
+    # ── 模拟盘锦标赛（G11）──
+    tour = jload(D / "sim_tournament_20260912.json", {})
+    audit = jload(D / "sim_audit_20260912.json", {})
+    if tour and tour.get("strategies"):
+        NAMES = {"reversal": "🔄 反转/跌停接（每日最深3只当日开→收）", "scalp_overnight": "⚡ 短差（打板吃隔夜缺口）",
+                 "short_t1": "📅 短线（打板次日尾盘）", "dividend_hold": "💰 股息躺平",
+                 "dividend_t": "🔁 股息做T", "long_trend": "📈 长线（金叉/破年线）",
+                 "swing_t5": "🌊 波段（打板拿5天）"}
+        rows = []
+        for k, v in sorted(tour["strategies"].items(), key=lambda x: -x[1]["return%"]):
+            rows.append([NAMES.get(k, k), pct(v["return%"]), f'{v["maxDD%"]}%',
+                         f'{v["trades"]}笔/{v["win%"]}%' if v["trades"] else "拿死不动",
+                         pct(v["avg%"]) if v["trades"] else '<span class="muted">—</span>'])
+        slip = ""
+        if audit:
+            tiers = audit.get("B_tiers", {})
+            deep = tiers.get("≤-9.5", {})
+            slip = (f'审计：收益引擎=跌停接子集（{deep.get("n")}笔 均{deep.get("avg%")}%），-5~-9.5%中间档为负期望。'
+                    f'滑点：入场贵0.3%→权益{audit.get("D_slip0.003_equity")}x、贵0.5%→{audit.get("D_slip0.005_equity")}x（命门）。'
+                    f'赔率{audit.get("E_payoff_ratio")}（均赢{audit.get("E_avg_win%")}%/均亏{audit.get("E_avg_loss%")}%）')
+        secs.append(card("模拟盘锦标赛 · 两年各10万", table(["玩法", "收益", "最大回撤", "笔数/胜率", "均笔"], rows),
+                         f'{tour["window"][0]} ~ {tour["window"][1]} · 基准(上证) +{tour["bench%"]}% · 净口径 m60成交验证',
+                         f'历史重放≠未来。{slip}'))
     # ── 席位口味 ──
     taste = jload(D / "seat_gene_rolling.json", {})
     if taste and taste.get("seats"):

@@ -248,7 +248,8 @@ def main():
             for c, opx, _ in rev_sigs[:3 - len(bk.open)]:
                 cash = bk.eq / 3
                 bk.eq -= cash
-                bk.open.append({"code": c, "entry": opx, "cash": cash, "entry_date": d, "entry_di": di + 1})
+                bk.open.append({"code": c, "entry": opx, "cash": cash,
+                                "entry_date": dates[di + 1], "entry_di": di + 1})  # 真入场日（信号日志错位已修）
 
         # 日记账（权益=现金+持仓市值）
         for name, bk in books.items():
@@ -281,6 +282,12 @@ def main():
             "avg%": round(sum(t[3] for t in bk.trades) / len(bk.trades) * 100, 2) if bk.trades else 0,
         }
     json.dump(out, open(f"{D}/sim_tournament_20260912.json", "w"), ensure_ascii=False, indent=1)
+    # 交易明细落盘（G10 审计用）：name, entry_date, exit_date, code, ret
+    with open(f"{D}/sim_trades_20260912.jsonl", "w") as f:
+        for name, bk in books.items():
+            for t in bk.trades:
+                f.write(json.dumps({"s": name, "in": t[0], "out": t[1], "code": t[2], "ret": round(t[3], 6)},
+                                   ensure_ascii=False) + "\n")
     print(json.dumps(out, ensure_ascii=False, indent=1))
 
 
