@@ -43,7 +43,7 @@ def load_universe():
         ma60 = ma60[:len(c)]  # 自查修正：原构造多出一个尾部元素（无害但脏）
         stocks[Path(fp).stem] = {
             "c": c, "o": [k["open"] for k in ks], "h": [k["high"] for k in ks],
-            "l": [k["low"] for k in ks], "ma60": ma60,
+            "l": [k["low"] for k in ks], "v": [k.get("volume", 0) for k in ks], "ma60": ma60,
             "date": [k["date"] for k in ks], "n": len(ks),
         }
     return stocks
@@ -244,9 +244,9 @@ def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, f
 
 def matched_marginal(detect, stocks, horizons, fee=0.0015, seed=7):
     """位置匹配对照的边际贡献（剥离 MA60 位置因子）：
-    对照组 = 同一只票、同在 MA60 下方的随机日（数量与信号相同）。
-    返回 {h: 边际pp}。这是形态的终审口径——日历时间过不了没关系，
-    过不了位置匹配对照就说明形态只是位置的代理变量。"""
+    对照组 = 同一只票、**同位置**（信号日在MA60上→对照也取MA60上的随机日）的随机日。
+    返回 {h: 边际pp}。2026-09-12 修正：旧版对照组只取 MA60 下方日，
+    对高位信号（如涨停洗盘）构成错配对照，边际值虚高。"""
     import random as _rnd
     rnd = _rnd.Random(seed)
     out = {}
@@ -254,18 +254,22 @@ def matched_marginal(detect, stocks, horizons, fee=0.0015, seed=7):
         sig, ctl = [], []
         for code, d in stocks.items():
             c, o, n, ma = d["c"], d["o"], d["n"], d["ma60"]
-            days, lows = [], []
+            days, lows, highs = [], [], []
             for i in range(START, n - h - 1):
                 if o[i + 1] <= 0 or ma[i] is None:
                     continue
-                if c[i] <= ma[i]:
-                    lows.append(i)
-                    if detect(d, i):
-                        days.append(i)
+                (lows if c[i] <= ma[i] else highs).append(i)
+                if detect(d, i):
+                    days.append(i)
             for i in days:
                 sig.append(c[i + h] / o[i + 1] - 1 - fee)
-            for i in rnd.sample(lows, min(len(days), len(lows))):
-                ctl.append(c[i + h] / o[i + 1] - 1 - fee)
+            # 按信号日自身位置分组匹配
+            lo_n = sum(1 for i in days if c[i] <= ma[i])
+            hi_n = len(days) - lo_n
+            for pool, k in ((lows, lo_n), (highs, hi_n)):
+                if pool and k:
+                    for i in rnd.sample(pool, min(k, len(pool))):
+                        ctl.append(c[i + h] / o[i + 1] - 1 - fee)
         if len(sig) >= 30 and len(ctl) >= 30:
             out[h] = round(100 * (st.mean(sig) - st.mean(ctl)), 2)
     return out
@@ -323,6 +327,44 @@ def _bigupper(d, i):
     b, _lo, up = _shadows(d, i)
     return up >= max(2 * b, 0.03 * d["c"][i])
 
+
+# ---- Sequoia-X 移植（逐行对齐 sngyai/Sequoia-X 源码，泛化到任意信号日 i） ----
+
+def _htf(d, i):
+    """高窄旗形：40日高低比>1.6 且 近10日振幅<15% 且 近10日低点≥40日高点80% 且 量<前20日均量0.6"""
+    if i < 41:
+        return False
+    h, l, v = d["h"], d["l"], d["v"]
+    h40, l40 = max(h[i - 39:i + 1]), min(l[i - 39:i + 1])
+    if l40 <= 0 or h40 / l40 <= 1.6:
+        return False
+    h10, l10 = max(h[i - 9:i + 1]), min(l[i - 9:i + 1])
+    if l10 <= 0 or h10 / l10 >= 1.15 or l10 < h40 * 0.8:
+        return False
+    return v[i] < (sum(v[i - 20:i]) / 20) * 0.6
+
+
+def _shakeout(d, i):
+    """涨停洗盘：昨日涨停(≥+9.5%) 且 今日收阴 且 今日量>昨日2倍 且 今日低点≥昨收"""
+    if i < 2:
+        return False
+    c, o, l, v = d["c"], d["o"], d["l"], d["v"]
+    return (c[i - 2] > 0 and c[i - 1] >= c[i - 2] * 1.095 and c[i] < o[i]
+            and v[i - 1] > 0 and v[i] > v[i - 1] * 2.0 and l[i] >= c[i - 1])
+
+
+def _uptrend_ld(d, i):
+    """上升趋势跌停：昨日 MA20>MA60 且 今日收盘≤昨收×0.905 且 量>20日均量2倍"""
+    if i < 61:
+        return False
+    c, v = d["c"], d["v"]
+    ma20 = sum(c[i - 20:i]) / 20
+    ma60v = sum(c[i - 60:i]) / 60
+    if ma20 <= ma60v or c[i - 1] <= 0 or c[i] > c[i - 1] * 0.905:
+        return False
+    vma = sum(v[i - 19:i + 1]) / 20
+    return vma > 0 and v[i] > vma * 2.0
+
 REGISTRY = {
     "TD9买入": _td9buy,
     "TD9卖出": _td9sell,
@@ -330,6 +372,10 @@ REGISTRY = {
     "大长腿_高位": lambda d, i: d["c"][i] > d["ma60"][i] and _biglower(d, i),
     "避雷针_低位": lambda d, i: d["c"][i] <= d["ma60"][i] and _bigupper(d, i),
     "避雷针_高位": lambda d, i: d["c"][i] > d["ma60"][i] and _bigupper(d, i),
+    # ---- Sequoia-X 移植候选（2026-09-12，定义逐行对齐原项目源码） ----
+    "高窄旗形HTF": _htf,
+    "涨停洗盘Shakeout": _shakeout,
+    "上升趋势跌停ULD": _uptrend_ld,
 }
 
 
