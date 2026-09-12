@@ -1,7 +1,7 @@
 {
  "CANDLE_UPPER_LOW": {
   "status": "DEAD",
-  "consecutive_fails": 2,
+  "consecutive_fails": 3,
   "history": [
    {
     "date": "2026-09-11",
@@ -32,12 +32,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-09-11",
+    "verdicts": {
+     "5": [
+      -0.92,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.51,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CANDLE_LOWER_LOW": {
   "status": "DEAD",
-  "consecutive_fails": 2,
+  "consecutive_fails": 3,
   "history": [
    {
     "date": "2026-09-11",
@@ -68,12 +83,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-09-11",
+    "verdicts": {
+     "5": [
+      -0.69,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.22,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "TD9_BUY": {
   "status": "DEAD",
-  "consecutive_fails": 2,
+  "consecutive_fails": 3,
   "history": [
    {
     "date": "2026-09-11",
@@ -85,6 +115,21 @@
      ],
      "20": [
       -1.04,
+      0.0,
+      false
+     ]
+    }
+   },
+   {
+    "date": "2026-09-11",
+    "verdicts": {
+     "5": [
+      -0.44,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.2,
       0.0,
       false
      ]
@@ -116,6 +161,16 @@
     "verdicts": {
      "20": [
       -2.14,
+      0.2,
+      true
+     ]
+    }
+   },
+   {
+    "date": "2026-09-11",
+    "verdicts": {
+     "20": [
+      -2.71,
       0.2,
       true
      ]
