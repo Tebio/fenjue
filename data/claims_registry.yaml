@@ -63,21 +63,35 @@ claims:
   audit_every_days: 7
 - id: REVERSAL_OPEN_T1
   statement: 反转族：T-1大跌后次日开盘买→次日尾盘，净+0.139%/49.8%（n=48.9万，含退市股+数据至9/11复审通过）
-  detector: external:engine/entryexit_matrix.py
+  detector: 反转族_T-1大跌
+  control: random_entry
+  horizon:
+  - 1
+  baseline_pp:
+    1: 0.2
+  kill_line_pp:
+    1: 0.0
   grade: 候选L2（2026-09-12 含退市股复审通过，edge从+0.16%微降至+0.139%仍为正，唯一为正的反转腿）
   created: 2026-09-06
   audit_every_days: 30
-  note: edge微降方向与幸存者偏差一致；下周审计起纳入滚动监控。2026-09-12 m60执行时点：开盘买=最优执行
-    （延迟入场单调烧钱，edge集中开盘1小时）；回踩限价全事件期望显著为负；晚段(2025-07→)T+1 edge≈0需审计重点盯
+  note: edge微降方向与幸存者偏差一致；2026-09-13 已接滚动审计（日K detector 反转族_T-1大跌，next_open口径与主张一致；基线为首跑自填的随机对照边际pp，非+0.139%净值口径）。2026-09-12
+    m60执行时点：开盘买=最优执行（延迟入场单调烧钱，edge集中开盘1小时）；回踩限价全事件期望显著为负；晚段(2025-07→)T+1 edge≈0需审计重点盯
 - id: LIMITDOWN_NEXT_DAY
-  statement: 跌停次日接 T+5 +2.65%/57.6%（一字剔除+含退市股口径，双段一致）
-  detector: external:engine/strategy_zoo.py
+  statement: 跌停次日接 T+1腿 +0.26%仍活（T+5腿 2026-09-12 m60研究判死禁用至审计恢复；历史T+5 +2.65%/57.6%仅存档）
+  detector: 跌停次日接_剔一字
+  control: random_entry
+  horizon:
+  - 1
+  baseline_pp:
+    1: 0.76
+  kill_line_pp:
+    1: 0.0
   grade: 候选L2+（一字剔除✅ +2.72→幸存者修正后 +2.65%/57.6%（n=30684 含186退市股），双段 2.58/2.71 一致。幸存者偏差实测仅
-    -0.07pp，方向如预测但幅度小）⚠2026-09-12 m60执行时点研究：T+5腿晚段(2025-07→)已死(-0.97%)，
-    T+1腿仍活(+0.26%)；T+5长持禁用至审计恢复，见 docs/sprint-exec-timing-20260912.md
+    -0.07pp，方向如预测但幅度小）⚠2026-09-12 m60执行时点研究：T+5腿晚段(2025-07→)已死(-0.97%)， T+1腿仍活(+0.26%)；T+5长持禁用至审计恢复，见
+    docs/sprint-exec-timing-20260912.md
   created: 2026-09-11
   audit_every_days: 30
-  note: 一字剔除✅+含退市股✅，已达 external 背书下最高级；升 LAW 需影子前向20交易日
+  note: 一字剔除✅+含退市股✅；升 LAW 需影子前向20交易日。2026-09-13 接滚动审计（只监T+1腿，detector含一字剔除）
 - id: MONDAY_EFFECT
   statement: 周一效应：周一日均+0.169%/60.8%（含退市股口径）；⚠分年不稳：2024 -0.142%/45.5%负、2022/2026近零，edge集中强趋势年——不作独立交易依据，仅组合层微弱先验（docs/external-reviews-20260912.md）
   detector: external:engine/factor_research.py
@@ -93,56 +107,71 @@ claims:
   audit_every_days: 90
 - id: PANIC_DEPTH_DOSE
   statement: 反转族/跌停接=恐慌深度单因子连续谱：T+1净额与同日超额随跌幅单调放大（-3~-5:+0.03 → ≤-9.5:+1.10，超额0.067→0.411）
-  detector: external:engine/s3_combo.py
+  detector: 恐慌深度_≤-9.5
+  control: random_entry
+  horizon:
+  - 1
+  baseline_pp:
+    1: 1.14
+  kill_line_pp:
+    1: 0.0
   grade: 候选L2（S3首测，含退市股+regime重建后数据）
-  note: 分档仓位规则v1见sprint-s3报告；regime调制妖股期最佳，不用位置/星期闸门
+  note: 分档仓位规则v1见sprint-s3报告；regime调制妖股期最佳，不用位置/星期闸门。2026-09-13 接滚动审计：监最深档(≤-9.5%)作整条剂量曲线的金丝雀，深档死=全曲线降级复审
   created: '2026-09-12'
   audit_every_days: 30
 - id: FRONTRUN_FIRSTBOARD_V2
   statement: 首板+板块梯队>=3+市值20-400亿，首板当日收盘上车（打板成交口径），T+1/T+5相对位置匹配对照有正边际
   detector: frontrun_v2
-  control: position_matched
+  control: random_entry
+  entry: signal_close
   horizon:
   - 1
   - 5
   baseline_pp:
-    1: 1.88
-    5: 2.07
+    1: 2.06
+    5: 2.21
   kill_line_pp:
     1: 0.0
     5: 0.0
   grade: 候选（2026-09-12 测量级全闸门通过：双段+1.88/+2.14、四regime全正、t_NW 33.7/16.4；close-entry=打板成交口径乐观，fill率影子期定量；次日追变体-0.52%已证伪）
   created: 2026-09-12
   audit_every_days: 7
-  note: 审计端 detector 接线（claims_audit REGISTRY 加 frontrun_v2）待做；影子前向已接入 claims_shadow（CLOSE_ENTRY_CLAIMS）
+  note: 影子前向已接入 claims_shadow（CLOSE_ENTRY_CLAIMS）。2026-09-13 审计端接线完成：entry=signal_close
+    对齐close-entry主张（框架默认next_open测的是已证伪的次日追变体，会误杀）；对照改random_entry——position_matched只取MA60下日，打板信号几乎全在MA60上，会无样本空转；审计基线为首跑自填的日K代理口径，非注册时位置匹配口径1.88/2.07pp
 - id: WATCHPOOL_GRAD
   statement: 放量异动观察池毕业（入池后首板当日收盘上车），T+1/T+5相对位置匹配对照有正边际
   detector: watchpool_grad
-  control: position_matched
+  control: random_entry
+  entry: signal_close
   horizon:
   - 1
   - 5
   baseline_pp:
-    1: 1.18
-    5: null
+    1: 1.73
+    5: 0.97
   kill_line_pp:
     1: 0.0
     5: 0.0
   grade: 候选（2026-09-12：8年池信号n=20487，5日毕业率13.42% vs 基率6.25%（2.15x），毕业后T+1 +1.18%/53.7%；close-entry打板口径，fill率同FRONTRUN黑盒；启动窗口中位2日/71.6%≤3日）
   created: 2026-09-12
   audit_every_days: 7
-  note: 影子前向已接入 claims_shadow（CLOSE_ENTRY_CLAIMS）；审计端 detector 接线待做
+  note: 影子前向已接入 claims_shadow（CLOSE_ENTRY_CLAIMS）；2026-09-13 审计端接线完成（entry/control
+    口径同 FRONTRUN_FIRSTBOARD_V2 注记）
 - id: BANLU_B5
   statement: 半路板（+6%市价触发）+量比≥2+梯队≥2+60日首板+市值20-400亿+平淡/恐慌期 → T+1断板即跑，有可执行正期望
   detector: banlu_b5
-  control: position_matched
+  control: random_entry
+  entry: trigger6
   horizon:
   - 1
   baseline_pp:
-    1: 3.52
+    1: 7.44
   kill_line_pp:
     1: 0.0
-  grade: 候选（2026-09-13：2年m60回测 +3.52%/59.9%/n=4122，组合级9.57x/回撤-17.8%；分年 2024+9.39/2025+0.78/2026+1.04；市价触发无排队问题=fill死后的活路；滑点0.2-0.5%仍正；待submit闸门+影子前向）
+  grade: 候选L2（2026-09-13 submit闸门6/6全过——8年日K代理trigger6口径：T+1 +1.76%/56.9%/t_NW34.6，双段同正（19-22
+    +1.9→23-26 +0.74 衰减但仍正），DSR=1.0，位置匹配边际T+5 +6.63/T+20 +7.51pp；原2年m60口径
+    +3.52%/59.9%/n=4122。剩L5影子前向20交易日毕业）
   created: 2026-09-13
   audit_every_days: 7
-  note: 影子走 banlu_daily 日更信号（cron 4ce84d817a97 19:10BJT）+ banlu_signals.jsonl；trigger价与kcache前复权存在口径差（分红跨度），影子期接受
+  note: 影子走 banlu_daily 日更信号（cron 4ce84d817a97 19:10BJT）+ banlu_signals.jsonl；trigger价与kcache前复权存在口径差（分红跨度），影子期接受。2026-09-13
+    接滚动审计：日K代理（h≥前收×1.06=触发，entry=trigger6 前收×1.06，T+1收盘出）——真实断板即跑出场日K测不了，代理只作kill线监视，数值不与m60口径3.52%直接可比

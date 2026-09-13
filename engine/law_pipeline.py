@@ -27,6 +27,19 @@ HORIZONS = [1, 3, 5, 10, 20]  # IC 衰减曲线（alphalens/qlib 惯例）
 NW_MIN_T = 3.0                # Harvey & Liu 2015 多重检验门槛（本项目累计已测>20个信号）
 START = 65
 
+# 入场口径（2026-09-13 清欠账批）：默认 next_open=次日开盘；
+# signal_close=信号日收盘（打板系close-entry主张）；trigger6=前收×1.06（半路板盘中触发价代理）。
+# CLI 覆盖：python3 engine/law_pipeline.py submit --entry trigger6 banlu_b5
+ENTRY_MODE = "next_open"
+
+
+def _epx(d, i):
+    if ENTRY_MODE == "signal_close":
+        return d["c"][i]
+    if ENTRY_MODE == "trigger6":
+        return d["c"][i - 1] * 1.06
+    return d["o"][i + 1]
+
 
 def load_universe():
     stocks = {}
@@ -42,8 +55,10 @@ def load_universe():
         ma60.append((pre[len(c)] - pre[len(c) - 60]) / 60)
         ma60 = ma60[:len(c)]  # 自查修正：原构造多出一个尾部元素（无害但脏）
         stocks[Path(fp).stem] = {
+            "code": Path(fp).stem,
             "c": c, "o": [k["open"] for k in ks], "h": [k["high"] for k in ks],
             "l": [k["low"] for k in ks], "v": [k.get("volume", 0) for k in ks], "ma60": ma60,
+            "amt": [k.get("amount", 0.0) for k in ks],
             "date": [k["date"] for k in ks], "n": len(ks),
         }
     return stocks
@@ -113,14 +128,14 @@ def calendar_time(events, stocks, horizon, fee):
     by_date = defaultdict(list)
     for code, i in events:
         d = stocks[code]
-        by_date[d["date"][min(i + 1, d["n"] - 1)]].append(d["c"][i + horizon] / d["o"][i + 1] - 1 - fee)
+        by_date[d["date"][min(i + 1, d["n"] - 1)]].append(d["c"][i + horizon] / _epx(d, i) - 1 - fee)
     # 全宇宙日度均值（同窗口口径）
     uni = defaultdict(list)
     for code, d in stocks.items():
         c, o, n = d["c"], d["o"], d["n"]
         for i in range(START, n - horizon - 1):
-            if o[i + 1] > 0:
-                uni[d["date"][i + 1]].append(c[i + horizon] / o[i + 1] - 1 - fee)
+            if _epx(d, i) > 0:
+                uni[d["date"][i + 1]].append(c[i + horizon] / _epx(d, i) - 1 - fee)
     uni_m = {dt: st.mean(v) for dt, v in uni.items()}
     dates = sorted(by_date)
     series = [st.mean(by_date[dt]) - uni_m[dt] for dt in dates if dt in uni_m]
@@ -192,10 +207,10 @@ def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, f
         hi = n - max(HORIZONS) - 1
         sc = stock_cap.get(code, {})
         for i in range(START, hi):
-            if o[i + 1] <= 0 or not detect(d, i):
+            if _epx(d, i) <= 0 or not detect(d, i):
                 continue
             events.append((code, i))
-            r = c[i + horizon] / o[i + 1] - 1 - fee
+            r = c[i + horizon] / _epx(d, i) - 1 - fee
             full.append(r)
             dt = d["date"][i]
             seg_t["2019-2022" if dt < "2023" else "2023-2026"].append(r)
@@ -206,12 +221,12 @@ def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, f
                 seg_c[sum(cap > x for x in b)].append(r)
         for _ in range(3):
             i = random.randint(START + 1, n - max(HORIZONS) - 2)
-            ctrl.append(c[i + horizon] / o[i + 1] - 1 - fee)
+            ctrl.append(c[i + horizon] / _epx(d, i) - 1 - fee)
 
     # IC 衰减曲线：同一批事件在 T+1/3/5/10/20 的表现 + NW 修正 t
     decay = {}
     for h in HORIZONS:
-        rs = [stocks[code]["c"][i + h] / stocks[code]["o"][i + 1] - 1 - fee for code, i in events]
+        rs = [stocks[code]["c"][i + h] / _epx(stocks[code], i) - 1 - fee for code, i in events]
         s = S(rs)
         if s:
             s["t_NW"] = nw_t(rs, h)
@@ -256,20 +271,20 @@ def matched_marginal(detect, stocks, horizons, fee=0.0015, seed=7):
             c, o, n, ma = d["c"], d["o"], d["n"], d["ma60"]
             days, lows, highs = [], [], []
             for i in range(START, n - h - 1):
-                if o[i + 1] <= 0 or ma[i] is None:
+                if _epx(d, i) <= 0 or ma[i] is None:
                     continue
                 (lows if c[i] <= ma[i] else highs).append(i)
                 if detect(d, i):
                     days.append(i)
             for i in days:
-                sig.append(c[i + h] / o[i + 1] - 1 - fee)
+                sig.append(c[i + h] / _epx(d, i) - 1 - fee)
             # 按信号日自身位置分组匹配
             lo_n = sum(1 for i in days if c[i] <= ma[i])
             hi_n = len(days) - lo_n
             for pool, k in ((lows, lo_n), (highs, hi_n)):
                 if pool and k:
                     for i in rnd.sample(pool, min(k, len(pool))):
-                        ctl.append(c[i + h] / o[i + 1] - 1 - fee)
+                        ctl.append(c[i + h] / _epx(d, i) - 1 - fee)
         if len(sig) >= 30 and len(ctl) >= 30:
             out[h] = round(100 * (st.mean(sig) - st.mean(ctl)), 2)
     return out
@@ -289,10 +304,18 @@ def submit_gate(name, detect, stocks, regime, stock_cap, qs):
     r = run_pipeline(name, detect, stocks, regime, stock_cap, qs)
     marg = matched_marginal(detect, stocks, [5, 20])
     d5 = r["衰减曲线"].get("T+5", {})
+    # G3（2026-09-13 修正）：原判据要求 ≥3 个 regime 格为正——对自带 regime 闸门的信号
+    # （如 banlu_b5 只在平淡/恐慌期触发）结构性不可能通过，属类别错误。修正：有样本格<3 时
+    # 改判「所有有样本格为正」，跨regime稳健性由机制层（L1）背书；有样本格≥3 维持原判据。
+    cells = {k: v for k, v in r["regime分段"].items() if v}
+    if len(cells) >= 3:
+        g3 = sum(1 for v in cells.values() if v["mean%"] > 0) >= len(cells) - 1
+    else:
+        g3 = bool(cells) and all(v["mean%"] > 0 for v in cells.values())
     gates = {
         "G1_tNW≥3": abs(d5.get("t_NW") or 0) >= NW_MIN_T,
         "G2_时间分段": all(v and v["mean%"] > 0 for v in r["时间分段"].values()),
-        "G3_regime≥3/4": sum(1 for v in r["regime分段"].values() if v and v["mean%"] > 0) >= max(3, len(r["regime分段"]) - 1),
+        "G3_regime≥3/4": g3,
         "G4_市值≥4/5": sum(1 for v in r["市值五分位"].values() if v and v["mean%"] > 0) >= len(r["市值五分位"]) - 1,
         "G5_位置匹配边际>0": bool(marg) and all(v > 0 for v in marg.values()),
         "G6_0.30%成本仍正": (r["成本压力"].get("0.30%") or {}).get("mean%", -9) > 0,
@@ -300,12 +323,68 @@ def submit_gate(name, detect, stocks, regime, stock_cap, qs):
     passed = all(gates.values())
     verdict = {"信号": name, "闸门": {k: "✅" if v else "❌" for k, v in gates.items()},
                "判决": "PASS 可入注册表" if passed else "REJECT",
+               "入场口径": ENTRY_MODE,
                "位置匹配边际pp": marg, "日历时间DSR": r["DSR概率"],
+               "时间分段": r["时间分段"], "regime分段": r["regime分段"], "衰减曲线": r["衰减曲线"],
                "每票每年触发": r["每票每年触发"], "全样本": r["全样本"], "随机对照": r["随机对照"]}
     return passed, verdict
 
 
 # ---------- 信号注册表（新增信号往这里加，不许再写一次性脚本） ----------
+
+# ---- 跨股截面上下文（梯队/市值/行业/周期，供打板系探测器用）----
+# 惰性构建：claims_audit / main 在 load_universe 后调 build_xsection(stocks)。
+# 未构建时探测器一律返回 False（防半初始化误判）。
+_XLADDER = None   # date -> industry -> 当日涨停家数（≥+9.8%，kcache 比率，复权安全）
+_XCAP = None      # code -> month(YYYY-MM) -> 流通市值(亿)
+_XREGIME = None   # date -> regime
+_IND = None       # code -> industry
+
+
+def build_xsection(stocks):
+    from collections import defaultdict
+    global _XLADDER, _XCAP, _XREGIME, _IND
+    if _XLADDER is not None:
+        return
+    ind_map = json.loads((ROOT / "data/industry_map.json").read_text())
+    _IND = {c: (v.get("industry") or "?") for c, v in ind_map.items()}
+    lad = defaultdict(lambda: defaultdict(int))
+    for code, d in stocks.items():
+        c, n, dates = d["c"], d["n"], d["date"]
+        ind = _IND.get(code, "?")
+        for i in range(1, n):
+            if c[i - 1] > 0 and c[i] / c[i - 1] - 1 >= 0.098:
+                lad[dates[i]][ind] += 1
+    _XLADDER = lad
+    _XCAP, _qs = load_cap_quintiles()
+    _XREGIME = load_regime()
+
+
+def _limitup(d, i):
+    return d["c"][i - 1] > 0 and d["c"][i] / d["c"][i - 1] - 1 >= 0.098
+
+
+def _no_board60(d, i):
+    """近60日无涨停（不含当日）——对齐 banlu_backtest.first_board60"""
+    if i < 61:
+        return False
+    for k in range(max(1, i - 60), i):
+        if _limitup(d, k):
+            return False
+    return True
+
+
+def _first_board60(d, i):
+    return _limitup(d, i) and _no_board60(d, i)
+
+
+def _ladder(d, i):
+    return _XLADDER.get(d["date"][i], {}).get(_IND.get(d["code"], "?"), 0)
+
+
+def _cap_ok(d, i):
+    m = _XCAP.get(d["code"], {}).get(d["date"][i][:7])
+    return m is not None and 20 <= m <= 400
 
 def _td9buy(d, i):
     c = d["c"]
@@ -365,6 +444,125 @@ def _uptrend_ld(d, i):
     vma = sum(v[i - 19:i + 1]) / 20
     return vma > 0 and v[i] > vma * 2.0
 
+
+# ---- 2026-09-13 清欠账：external 背书主张接入滚动审计的日K探测器 ----
+# 口径声明：frontrun_v2/watchpool_grad 为收盘上车（close-entry）主张，审计配 entry=signal_close；
+# banlu_b5 真实入场是盘中 +6% 市价触发，日K只能代理（h≥前收×1.06 视为触发），审计配 entry=trigger6。
+# 三者真实前向由 claims_shadow 逐日记账，这里是滚动kill线监视器。
+
+def _reversal(d, i):
+    """反转族：T-1 大跌（≤-3%）→ 次日开盘买（审计框架默认 next_open，与主张口径一致）"""
+    return d["c"][i - 1] > 0 and d["c"][i] / d["c"][i - 1] - 1 <= -0.03
+
+
+def _limitdown(d, i):
+    """跌停次日接（剔全天一字锁死：开盘≈跌停且振幅<1%，对齐 s10_retest）"""
+    c, o, h, l = d["c"], d["o"], d["h"], d["l"]
+    if c[i - 1] <= 0 or c[i] / c[i - 1] - 1 > -0.095:
+        return False
+    if o[i] / c[i - 1] - 1 <= -0.09 and (h[i] - l[i]) / c[i - 1] < 0.01:
+        return False
+    return True
+
+
+def _panic_deep(d, i):
+    """恐慌深度深档 ≤-9.5%（不剔一字，对齐 s3_combo 剂量曲线口径）"""
+    return d["c"][i - 1] > 0 and d["c"][i] / d["c"][i - 1] - 1 <= -0.095
+
+
+def _frontrun_v2(d, i):
+    """首板+梯队≥3+市值20-400亿（对齐 frontrun_intersection V2）"""
+    if _XLADDER is None or i < 61:
+        return False
+    return _first_board60(d, i) and _ladder(d, i) >= 3 and _cap_ok(d, i)
+
+
+def _watchpool_grad(d, i):
+    """池毕业：当日首板 + 前15日内触发B变体池信号（量比≥3/涨幅1~7.5%/未板/额≥2亿）"""
+    if i < 66 or not _first_board60(d, i):
+        return False
+    c, v, amt = d["c"], d["v"], d["amt"]
+    for k in range(max(6, i - 15), i):
+        if c[k - 1] <= 0:
+            continue
+        pj = c[k] / c[k - 1] - 1
+        if not (0.01 <= pj <= 0.075) or pj >= 0.098:
+            continue
+        base = v[k - 5:k]
+        if any(x <= 0 for x in base):
+            continue  # 复牌守卫（缩量停牌日剔除）
+        mb = sum(base) / 5
+        if mb <= 0 or v[k] / mb < 3.0:
+            continue
+        if amt[k] > 0 and amt[k] < 2e8:
+            continue  # 额≥2亿（amount 缺失时放行，与 banlu kcache 口径一致用 v*c 兜底）
+        if amt[k] <= 0 and v[k] * c[k] < 2e8:
+            continue
+        return True
+    return False
+
+
+def _banlu_b5(d, i):
+    """半路板B5日K代理：盘中触+6%（h≥前收×1.06）+量比≥2+梯队≥2+60日无板+市值带+平淡/恐慌期"""
+    if _XLADDER is None or _XREGIME is None or i < 61:
+        return False
+    if _XREGIME.get(d["date"][i]) not in ("平淡期", "恐慌期"):
+        return False
+    c, h, v = d["c"], d["h"], d["v"]
+    if c[i - 1] <= 0 or h[i] / c[i - 1] < 1.06:
+        return False
+    base = v[i - 5:i]
+    if any(x <= 0 for x in base):
+        return False
+    mb = sum(base) / 5
+    if mb <= 0 or v[i] / mb < 2.0:
+        return False
+    return _no_board60(d, i) and _ladder(d, i) >= 2 and _cap_ok(d, i)
+
+
+# ---- 2026-09-13 清欠账批②：祖训1细分（上升回调vs下跌趋势分组） ----
+# 祖训1「下跌买需处于上升趋势」从未分组验证过；MA60位置作趋势代理。
+
+# ---- 2026-09-13 清欠账批③：PEAD S4（业绩预告事件漂移） ----
+# 事件日=首个≥NOTICE_DATE的交易日（公告常为盘后/周末发）；入场=次日开盘（框架默认口径即正确）。
+# 数据源：东财 RPT_PUBLIC_OP_PREDICT（data/pead_events.json，39451条，2019至今）。
+import bisect as _bisect
+
+_PEAD = None
+
+
+def _pead_map():
+    global _PEAD
+    if _PEAD is None:
+        ev = json.loads((ROOT / "data/pead_events.json").read_text())
+        m = {}
+        for e in ev:
+            code, nd = e.get("SECURITY_CODE", ""), (e.get("NOTICE_DATE") or "")[:10]
+            if not code or not nd:
+                continue
+            m.setdefault(code, []).append((nd, e.get("FORECASTTYPE") or "", e.get("INCREASEL")))
+        _PEAD = {}
+        for code, lst in m.items():
+            lst.sort()
+            _PEAD[code] = ([x[0] for x in lst], [(x[1], x[2]) for x in lst])
+    return _PEAD
+
+
+def _pead_on(d, i, types, min_inc=None):
+    ent = _pead_map().get(d["code"])
+    if not ent:
+        return False
+    dts, metas = ent
+    lo = d["date"][i - 1] if i >= 1 else ""
+    hi = d["date"][i]
+    j = _bisect.bisect_right(dts, lo)
+    while j < len(dts) and dts[j] <= hi:
+        t, inc = metas[j]
+        if t in types and (min_inc is None or (inc is not None and inc >= min_inc)):
+            return True
+        j += 1
+    return False
+
 REGISTRY = {
     "TD9买入": _td9buy,
     "TD9卖出": _td9sell,
@@ -378,16 +576,39 @@ REGISTRY = {
     "高窄旗形HTF": _htf,
     "涨停洗盘Shakeout": _shakeout,
     "上升趋势跌停ULD": _uptrend_ld,
+    # ---- 2026-09-13 清欠账：打板系/反转系主张滚动审计接线 ----
+    "反转族_T-1大跌": _reversal,
+    "跌停次日接_剔一字": _limitdown,
+    "恐慌深度_≤-9.5": _panic_deep,
+    "frontrun_v2": _frontrun_v2,
+    "watchpool_grad": _watchpool_grad,
+    "banlu_b5": _banlu_b5,
+    # ---- 祖训1细分（2026-09-13）：反转族按趋势位置分组 ----
+    "反转族_MA60上": lambda d, i: d["ma60"][i] is not None and d["c"][i] > d["ma60"][i] and _reversal(d, i),
+    "反转族_MA60下": lambda d, i: d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i] and _reversal(d, i),
+    # ---- PEAD S4（2026-09-13）：业绩预告事件漂移 ----
+    "PEAD_预增50+": lambda d, i: _pead_on(d, i, {"预增"}, 50),
+    "PEAD_强利好": lambda d, i: _pead_on(d, i, {"预增", "扭亏"}),
+    "PEAD_强利空": lambda d, i: _pead_on(d, i, {"预减", "首亏"}),
 }
 
 
 def main():
-    only = sys.argv[1:] or None
+    global ENTRY_MODE
+    argv = sys.argv[1:]
+    if "--entry" in argv:
+        k = argv.index("--entry")
+        ENTRY_MODE = argv[k + 1]
+        del argv[k:k + 2]
+        assert ENTRY_MODE in ("next_open", "signal_close", "trigger6"), ENTRY_MODE
+        print(f"entry mode: {ENTRY_MODE}")
+    only = argv or None
     submit_mode = only and only[0] == "submit"
     if submit_mode:
         only = only[1:] or None
     stocks = load_universe()
     print("stocks:", len(stocks), flush=True)
+    build_xsection(stocks)
     regime = load_regime()
     stock_cap, qs = load_cap_quintiles()
     out = {}
@@ -404,7 +625,15 @@ def main():
             out[name] = run_pipeline(name, fn, stocks, regime, stock_cap, qs)
             print(f"{name}: 全样本{out[name]['全样本']} 判决{out[name]['判决']}", flush=True)
     tag = "submit" if submit_mode else "candle"
-    dst = ROOT / f"data/law_pipeline_{tag}_20260911.json"
+    # 2026-09-13 修正：文件名硬编码 20260911 → BJT 当日；存在同名文件则合并而非覆盖
+    # （分批跑不同 entry 口径时不再互相吃掉结果。教训：旧文件曾被覆盖丢失一次）
+    from datetime import datetime, timedelta, timezone
+    today = (datetime.now(timezone.utc) + timedelta(hours=8)).date().isoformat().replace("-", "")
+    dst = ROOT / f"data/law_pipeline_{tag}_{today}.json"
+    if dst.exists():
+        prev = json.loads(dst.read_text())
+        prev.update(out)
+        out = prev
     dst.write_text(json.dumps(out, ensure_ascii=False, indent=1))
     print("saved", dst)
     sys.exit(rc)

@@ -1,7 +1,7 @@
 {
  "CANDLE_UPPER_LOW": {
   "status": "DEAD",
-  "consecutive_fails": 3,
+  "consecutive_fails": 4,
   "history": [
    {
     "date": "2026-09-11",
@@ -47,12 +47,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-09-13",
+    "verdicts": {
+     "5": [
+      -0.92,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.51,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CANDLE_LOWER_LOW": {
   "status": "DEAD",
-  "consecutive_fails": 3,
+  "consecutive_fails": 4,
   "history": [
    {
     "date": "2026-09-11",
@@ -98,12 +113,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-09-13",
+    "verdicts": {
+     "5": [
+      -0.69,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.22,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "TD9_BUY": {
   "status": "DEAD",
-  "consecutive_fails": 3,
+  "consecutive_fails": 4,
   "history": [
    {
     "date": "2026-09-11",
@@ -137,6 +167,21 @@
    },
    {
     "date": "2026-09-11",
+    "verdicts": {
+     "5": [
+      -0.44,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.2,
+      0.0,
+      false
+     ]
+    }
+   },
+   {
+    "date": "2026-09-13",
     "verdicts": {
      "5": [
       -0.44,
@@ -185,18 +230,50 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-13",
+    "verdicts": {
+     "20": [
+      -2.71,
+      0.2,
+      true
+     ]
+    }
    }
   ]
  },
  "REVERSAL_OPEN_T1": {
   "status": "CANDIDATE",
   "consecutive_fails": 0,
-  "history": []
+  "history": [
+   {
+    "date": "2026-09-13",
+    "verdicts": {
+     "1": [
+      0.02,
+      0.0,
+      true
+     ]
+    }
+   }
+  ]
  },
  "LIMITDOWN_NEXT_DAY": {
   "status": "CANDIDATE",
   "consecutive_fails": 0,
-  "history": []
+  "history": [
+   {
+    "date": "2026-09-13",
+    "verdicts": {
+     "1": [
+      0.1,
+      0.0,
+      true
+     ]
+    }
+   }
+  ]
  },
  "MONDAY_EFFECT": {
   "status": "CANDIDATE",
@@ -207,5 +284,79 @@
   "status": "CANDIDATE",
   "consecutive_fails": 0,
   "history": []
+ },
+ "PANIC_DEPTH_DOSE": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-13",
+    "verdicts": {
+     "1": [
+      0.29,
+      0.0,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "FRONTRUN_FIRSTBOARD_V2": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-13",
+    "verdicts": {
+     "1": [
+      1.2,
+      0.0,
+      true
+     ],
+     "5": [
+      0.72,
+      0.0,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "WATCHPOOL_GRAD": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-13",
+    "verdicts": {
+     "1": [
+      0.68,
+      0.0,
+      true
+     ],
+     "5": [
+      0.44,
+      0.0,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "BANLU_B5": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-13",
+    "verdicts": {
+     "1": [
+      6.7,
+      0.0,
+      true
+     ]
+    }
+   }
+  ]
  }
 }

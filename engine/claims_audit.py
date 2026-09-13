@@ -10,12 +10,13 @@
 用法：python3 engine/claims_audit.py [--report]   # --report 强制全量输出
 """
 import json, math, random, statistics as st, sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
-from law_pipeline import load_universe, REGISTRY, START
+from law_pipeline import load_universe, REGISTRY, START, build_xsection
 
 ROOT = Path("/opt/data/fenjue")
 REG_YAML = ROOT / "data/claims_registry.yaml"
@@ -25,7 +26,17 @@ ROLL_N = 250  # 滚动窗口（交易日）
 RECOVER_RATIO = 0.7
 
 
-def marginals(det, stocks, control, horizons):
+def _entry_px(d, i, entry):
+    """入场价口径：next_open=次日开盘（默认）/ signal_close=信号日收盘（打板系close-entry主张）/
+    trigger6=前收×1.06（半路板盘中触发价代理）"""
+    if entry == "signal_close":
+        return d["c"][i]
+    if entry == "trigger6":
+        return d["c"][i - 1] * 1.06
+    return d["o"][i + 1]
+
+
+def marginals(det, stocks, control, horizons, entry="next_open"):
     """返回 {h: (全量边际pp, 滚动边际pp, 滚动事件数)}"""
     rnd = random.Random(7)
     sig = {h: ([], []) for h in horizons}  # h -> ([日期], [收益])
@@ -34,7 +45,7 @@ def marginals(det, stocks, control, horizons):
         c, o, n, ma = d["c"], d["o"], d["n"], d["ma60"]
         days, lows = [], []
         for i in range(START, n - max(horizons) - 1):
-            if o[i + 1] <= 0:
+            if _entry_px(d, i, entry) <= 0:
                 continue
             if control == "position_matched":
                 if ma[i] is None:
@@ -48,16 +59,18 @@ def marginals(det, stocks, control, horizons):
                 if det(d, i):
                     days.append(i)
         for i in days:
+            ep = _entry_px(d, i, entry)
             for h in horizons:
                 sig[h][0].append(d["date"][i])
-                sig[h][1].append(c[i + h] / o[i + 1] - 1 - FEE)
+                sig[h][1].append(c[i + h] / ep - 1 - FEE)
         if control == "position_matched":
             pool = lows
         else:
-            pool = list(range(START, n - max(horizons) - 1))
+            pool = [i for i in range(START, n - max(horizons) - 1) if _entry_px(d, i, entry) > 0]
         for i in rnd.sample(pool, min(len(days), len(pool))):
+            ep = _entry_px(d, i, entry)
             for h in horizons:
-                ctl[h].append(c[i + h] / o[i + 1] - 1 - FEE)
+                ctl[h].append(c[i + h] / ep - 1 - FEE)
     out = {}
     # 修正（2026-09-12 自查）：滚动窗口必须按交易日历切，不是按信号日切——
     # 稀疏信号（年触发30次）按信号日切会把窗口拉到数年，丧失"近期存活"语义。
@@ -103,7 +116,9 @@ def main():
             continue
         if stocks is None:
             stocks = load_universe()
-        res = marginals(REGISTRY[det_key], stocks, c.get("control", "random_entry"), c["horizon"])
+            build_xsection(stocks)
+        res = marginals(REGISTRY[det_key], stocks, c.get("control", "random_entry"), c["horizon"],
+                        entry=c.get("entry", "next_open"))
         # 填基线
         for h, (full_pp, _r, _n) in res.items():
             if c["baseline_pp"].get(h) is None:
@@ -122,7 +137,8 @@ def main():
         ok_all = all(v[2] for v in verdicts.values()) if verdicts else True
         new, fails, prev = transit(s, ok_all)
         s.update(status=new, consecutive_fails=fails)
-        s["history"].append({"date": "2026-09-11", "verdicts": {str(h): v[:3] for h, v in verdicts.items()}})
+        today_bjt = (datetime.now(timezone.utc) + timedelta(hours=8)).date().isoformat()
+        s["history"].append({"date": today_bjt, "verdicts": {str(h): v[:3] for h, v in verdicts.items()}})
         s["history"] = s["history"][-52:]
         state[cid] = s
         line = f"[{cid}] {prev}→{new} | " + " ".join(
