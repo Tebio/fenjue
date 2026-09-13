@@ -175,6 +175,33 @@ def ma20_tag(code: str, price: float) -> tuple[float, float, bool] | None:
     return ma20, dist, abs(dist) <= 1.0
 
 
+_MONTHLY_CACHE: dict[str, dict | None] = {}
+
+
+def monthly_ma(code: str, price: float) -> dict | None:
+    """月级均线（#16 残留销账：5月/5季/10季线）：新浪日K datalen=700 聚合月收盘，
+    当月用最新价顶替进行月中（含当日口径，与 ma20_tag 一致）。
+    返回 {ma5m, ma15m, ma30m, dist5m%}；数据不足返回 None。"""
+    if code not in _MONTHLY_CACHE:
+        sym = ("sh" if code.startswith("6") else "sz") + code
+        try:
+            ks = kline_sina(sym, 700)
+            mclose: dict[str, float] = {}
+            for k in ks:
+                mclose[k["day"][:7]] = float(k["close"])  # 逐日覆盖→月末收盘
+            months = sorted(mclose)
+            vals = [mclose[m] for m in months[:-1]]  # 去掉进行月中，当月由调用方用现价顶替
+            _MONTHLY_CACHE[code] = {"vals": vals} if len(vals) >= 30 else None
+        except Exception:
+            _MONTHLY_CACHE[code] = None
+    ent = _MONTHLY_CACHE[code]
+    if not ent:
+        return None
+    v = ent["vals"] + [price]
+    return {"ma5m": round(sum(v[-5:]) / 5, 2), "ma15m": round(sum(v[-15:]) / 15, 2),
+            "ma30m": round(sum(v[-30:]) / 30, 2), "dist5m%": round((price / (sum(v[-5:]) / 5) - 1) * 100, 1)}
+
+
 # ── 板块强度灯 ──────────────────────────────────────────────
 def sector_strength(codes: list[str], quotes: dict[str, dict], etf: str | None = None) -> dict:
     """成分股横截面：上涨家数比/均涨幅/均换手 + 板块ETF 20日相对上证强度（有配置才算）。"""
@@ -228,6 +255,10 @@ def build_console() -> dict:
                 row["ma20"], row["ma20_dist%"] = m[0], m[1]
                 if m[2] and zone == "买入区":
                     row["tie"] = True  # 买入区内+贴20日线 = 大佬「次核心买点」近似（技术腿未回测，标注用）
+            if zone == "买入区":  # 月级均线只在买入区算（控制请求量，#16④同款纪律）
+                mm = monthly_ma(code, q["price"])
+                if mm:
+                    row["monthly"] = mm
         f = funds.get(code)
         if f:
             row["fundamentals"] = f
@@ -250,10 +281,12 @@ def render_text(console: dict) -> str:
             continue
         b, l = r["bands"], r["ladder"]
         ma = f" MA20 {r.get('ma20')}({r.get('ma20_dist%'):+.1f}%){'📌贴线' if r.get('tie') else ''}" if r.get("ma20") else ""
+        mmo = r.get("monthly")
+        mms = f" 月线:5月{mmo['ma5m']}/5季{mmo['ma15m']}/10季{mmo['ma30m']}" if mmo else ""
         lines.append(
             f"{r['name']}({r['code']}) {r['price']} ({r['pct']:+.1f}%) 息率{r['yield']}% PB{r.get('pb')} | "
             f"{r['zone']}·{r['action']} | 买≤{b['buy']} 加≤{b['add50']} 卖{b['sell']} 清≥{b['clear']} | "
-            f"距买入{r['dist_to_buy%']:+.1f}%{ma}")
+            f"距买入{r['dist_to_buy%']:+.1f}%{ma}{mms}")
     lines.append("")
     lines.append("── 明日委托单（价格线不随日内波动，分红/财报更新后调整）──")
     for r in console["rows"]:
