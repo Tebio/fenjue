@@ -235,6 +235,9 @@ def main():
                 if j is None or j < 1 or ks[j - 1]["close"] <= 0:
                     continue
                 if ks[j]["close"] / ks[j - 1]["close"] - 1 <= -0.03:
+                    nm = ind.get(c, {}).get("name", "")
+                    if "ST" in nm or "退" in nm:
+                        continue  # ST/退市整理期票剔除（2026-09-12 审计：+1.76% vs 干净票+0.40%，彩票反弹污染）
                     nj = idx[c].get(dates[di + 1])
                     if nj is None:
                         continue
