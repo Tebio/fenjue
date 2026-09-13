@@ -91,31 +91,48 @@ def f0(s):
     return 0.0 if v is None else v
 
 
+import signal
+
+
+class _BSTimeout(Exception):
+    pass
+
+
+def _alarm(sig, frm):
+    raise _BSTimeout()
+
+
 def pull(code, end_date):
-    rs = bs.query_history_k_data_plus(
-        bs_code(code), FIELDS,
-        start_date=START_DATE, end_date=end_date,
-        frequency="d", adjustflag="3")
-    if rs.error_code != "0":
-        raise RuntimeError("query_err %s %s" % (rs.error_code, rs.error_msg))
-    bars = []
-    while rs.next():
-        r = rs.get_row_data()
-        if len(r) < 7 or not r[0]:
-            continue
-        close = to_f(r[4])
-        if close is None:
-            continue
-        bars.append({
-            "date": r[0],
-            "open": f0(r[1]),
-            "high": f0(r[2]),
-            "low": f0(r[3]),
-            "close": close,
-            "volume": f0(r[5]),
-            "amount": f0(r[6]),
-        })
-    return bars
+    """K3修（2026-09-13）：baostock查询会无限挂死（实测卡死26分钟），加90s SIGALRM超时"""
+    signal.signal(signal.SIGALRM, _alarm)
+    signal.alarm(90)
+    try:
+        rs = bs.query_history_k_data_plus(
+            bs_code(code), FIELDS,
+            start_date=START_DATE, end_date=end_date,
+            frequency="d", adjustflag="3")
+        if rs.error_code != "0":
+            raise RuntimeError("query_err %s %s" % (rs.error_code, rs.error_msg))
+        bars = []
+        while rs.next():
+            r = rs.get_row_data()
+            if len(r) < 7 or not r[0]:
+                continue
+            close = to_f(r[4])
+            if close is None:
+                continue
+            bars.append({
+                "date": r[0],
+                "open": f0(r[1]),
+                "high": f0(r[2]),
+                "low": f0(r[3]),
+                "close": close,
+                "volume": f0(r[5]),
+                "amount": f0(r[6]),
+            })
+        return bars
+    finally:
+        signal.alarm(0)
 
 
 def build_universe():
