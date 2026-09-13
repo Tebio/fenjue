@@ -271,9 +271,10 @@ def main():
     tour = jload(D / "sim_tournament_20260912.json", {})
     audit = jload(D / "sim_audit_20260912.json", {})
     if tour and tour.get("strategies"):
-        NAMES = {"reversal": "🔄 反转/跌停接（每日最深3只当日开→收）", "scalp_overnight": "⚡ 短差（打板吃隔夜缺口）",
-                 "short_t1": "📅 短线（打板次日尾盘）", "dividend_hold": "💰 股息躺平",
-                 "dividend_t": "🔁 股息做T", "long_trend": "📈 长线（金叉/破年线）",
+        NAMES = {"reversal": "🔄 反转/跌停接（每日最深3只）❌已枪毙", "scalp_overnight": "⚡ 短差（打板吃隔夜缺口）",
+                 "short_optimized": "🚀 打板优化（涨停隔夜次早卖）", "short_t1": "📅 短线（打板次日尾盘）",
+                 "dividend_hold": "💰 股息躺平", "dividend_t": "🔁 股息做T",
+                 "long_trend": "📈 长线（金叉/破年线次早卖）", "long_optimized": "📈 长线优化（破位当日尾盘卖）",
                  "swing_t5": "🌊 波段（打板拿5天）"}
         rows = []
         for k, v in sorted(tour["strategies"].items(), key=lambda x: -x[1]["return%"]):

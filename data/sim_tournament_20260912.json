@@ -31,12 +31,20 @@
    "avg%": 0
   },
   "long_trend": {
-   "final": 129176,
-   "return%": 29.2,
-   "maxDD%": -25.2,
-   "trades": 66,
-   "win%": 36.4,
-   "avg%": 2.85
+   "final": 128834,
+   "return%": 28.8,
+   "maxDD%": -25.5,
+   "trades": 69,
+   "win%": 34.8,
+   "avg%": 2.72
+  },
+  "long_optimized": {
+   "final": 129008,
+   "return%": 29.0,
+   "maxDD%": -24.9,
+   "trades": 69,
+   "win%": 34.8,
+   "avg%": 2.75
   },
   "short_t1": {
    "final": 166253,
@@ -61,6 +69,14 @@
    "trades": 379,
    "win%": 51.2,
    "avg%": 0.83
+  },
+  "short_optimized": {
+   "final": 295542,
+   "return%": 195.5,
+   "maxDD%": -15.9,
+   "trades": 373,
+   "win%": 47.7,
+   "avg%": 1.08
   },
   "reversal": {
    "final": 21725,

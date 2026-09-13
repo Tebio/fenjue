@@ -88,8 +88,8 @@ def main():
     print("股息篮子:", basket, file=sys.stderr)
 
     books = {k: Book(s) for k, s in {
-        "dividend_hold": 5, "dividend_t": 5, "long_trend": 5,
-        "short_t1": 3, "swing_t5": 3, "scalp_overnight": 3, "reversal": 3}.items()}
+        "dividend_hold": 5, "dividend_t": 5, "long_trend": 5, "long_optimized": 5,
+        "short_t1": 3, "swing_t5": 3, "scalp_overnight": 3, "short_optimized": 3, "reversal": 3}.items()}
 
     # 股息组：窗口首日开盘买入拿死（做T组另加T收益流）
     t_pnl = defaultdict(float)  # dividend_t 每日 T 净收益（占权益比例累加到日收益）
@@ -133,20 +133,31 @@ def main():
 
     # ── 主循环 ──
     for di, d in enumerate(dates):
-        # 3. 长线趋势：先处理后卖/买（开盘执行）
+        # 3. 长线趋势：先处理后卖/买（开盘执行）；long_optimized=破位当日尾盘卖（不挨次日低开）
+        for lname in ("long_trend", "long_optimized"):
+            bk = books[lname]
+            for pos in list(bk.open):
+                ks = stocks[pos["code"]]
+                if d == pos["entry_date"]:
+                    continue  # 入场日不可卖（T+1）；金叉日可能收在MA60下，防当日误触发
+                j = idx[pos["code"]].get(d)
+                if j is None or j < 61:
+                    continue
+                m60v = ma(ks, 60, j)
+                if lname == "long_trend":
+                    if m60v and ks[j - 1]["close"] < ma(ks, 60, j - 1) and ks[j]["open"] > 0:
+                        ret = ks[j]["open"] / pos["entry"] - 1 - FEE
+                        bk.eq += pos["cash"] * (1 + ret)
+                        bk.trades.append((pos["entry_date"], d, pos["code"], ret))
+                        bk.open.remove(pos)
+                else:
+                    if m60v and ks[j]["close"] < m60v:  # 当日收盘破线 → 尾盘直接走
+                        ret = ks[j]["close"] / pos["entry"] - 1 - FEE
+                        bk.eq += pos["cash"] * (1 + ret)
+                        bk.trades.append((pos["entry_date"], d, pos["code"], ret))
+                        bk.open.remove(pos)
         bk = books["long_trend"]
-        for pos in list(bk.open):
-            ks = stocks[pos["code"]]
-            j = idx[pos["code"]].get(d)
-            if j is None or j < 61:
-                continue
-            m60v = ma(ks, 60, j)
-            if m60v and ks[j - 1]["close"] < ma(ks, 60, j - 1) and ks[j]["open"] > 0:
-                # 昨收破MA60 → 今开卖（连本带利回笼）
-                ret = ks[j]["open"] / pos["entry"] - 1 - FEE
-                bk.eq += pos["cash"] * (1 + ret)
-                bk.trades.append((pos["entry_date"], d, pos["code"], ret))
-                bk.open.remove(pos)
+        bk2 = books["long_optimized"]
         if len(bk.open) < 5:
             best = None
             for c, ks in stocks.items():
@@ -171,6 +182,9 @@ def main():
                 cash = bk.eq / 5
                 bk.eq -= cash
                 bk.open.append({"code": best[1], "entry": best[3], "cash": cash, "entry_date": best[2]})
+                cash2 = bk2.eq / 5
+                bk2.eq -= cash2
+                bk2.open.append({"code": best[1], "entry": best[3], "cash": cash2, "entry_date": best[2]})
 
         # 4-6. 打板系信号（frontrun V2 + fill）
         lad = ladder_by_date[d]
@@ -187,23 +201,41 @@ def main():
                         sigs.append((c, j))
         sigs = sigs[:3]
 
-        for name, exit_mode in (("short_t1", "t1_close"), ("swing_t5", "t5_close"), ("scalp_overnight", "t1_open")):
+        for name, exit_mode in (("short_t1", "t1_close"), ("swing_t5", "t5_close"), ("scalp_overnight", "t1_open"),
+                                 ("short_optimized", "optimized")):
             bk = books[name]
             # 到期平仓（尾盘/开盘按模式）
             for pos in list(bk.open):
                 ks = stocks[pos["code"]]
                 hold_days = di - pos["entry_di"]
-                due = (exit_mode == "t1_close" and hold_days >= 1) or \
-                      (exit_mode == "t1_open" and hold_days >= 1) or \
-                      (exit_mode == "t5_close" and hold_days >= 5)
-                if not due:
-                    continue
-                j = idx[pos["code"]].get(d)
-                if j is None or ks[j]["close"] <= 0:
-                    continue
-                px = ks[j]["open"] if (exit_mode == "t1_open") else ks[j]["close"]
-                if px <= 0:
-                    continue
+                if exit_mode == "optimized":
+                    # #18 处置规则修正版：持有期内某日涨停收盘→拿隔夜次日早盘卖；未涨停→当日尾盘卖；封顶5天
+                    # （入场日的涨停是信号本身，不触发隔夜规则——此前误用致退化成 scalp）
+                    if hold_days < 1:
+                        continue
+                    j = idx[pos["code"]].get(d)
+                    if j is None or j < 1 or ks[j]["close"] <= 0:
+                        continue
+                    if pos.get("sell_at_open"):
+                        px = ks[j]["open"] if ks[j]["open"] > 0 else ks[j]["close"]
+                    else:
+                        today_limited = ks[j - 1]["close"] > 0 and ks[j]["close"] / ks[j - 1]["close"] - 1 >= 0.098
+                        if today_limited and hold_days < 5:
+                            pos["sell_at_open"] = True
+                            continue                 # 今涨停 → 明早卖
+                        px = ks[j]["close"]          # 未涨停尾盘 / 到期强制
+                else:
+                    due = (exit_mode == "t1_close" and hold_days >= 1) or \
+                          (exit_mode == "t1_open" and hold_days >= 1) or \
+                          (exit_mode == "t5_close" and hold_days >= 5)
+                    if not due:
+                        continue
+                    j = idx[pos["code"]].get(d)
+                    if j is None or ks[j]["close"] <= 0:
+                        continue
+                    px = ks[j]["open"] if (exit_mode == "t1_open") else ks[j]["close"]
+                    if px <= 0:
+                        continue
                 ret = px / pos["entry"] - 1 - FEE
                 bk.eq += pos["cash"] * (1 + ret)
                 bk.trades.append((pos["entry_date"], d, pos["code"], ret))
@@ -286,9 +318,12 @@ def main():
         }
     json.dump(out, open(f"{D}/sim_tournament_20260912.json", "w"), ensure_ascii=False, indent=1)
     # 交易明细落盘（G10 审计用）：name, entry_date, exit_date, code, ret
+    # T+1 时序硬断言（2026-09-12 纪律 B-T1：出场日必须严格晚于入场日）
+    order = {d: i for i, d in enumerate(cal)}
     with open(f"{D}/sim_trades_20260912.jsonl", "w") as f:
         for name, bk in books.items():
             for t in bk.trades:
+                assert order.get(t[1], -1) > order.get(t[0], 10**9), f"T+1 违规: {name} {t}"
                 f.write(json.dumps({"s": name, "in": t[0], "out": t[1], "code": t[2], "ret": round(t[3], 6)},
                                    ensure_ascii=False) + "\n")
     print(json.dumps(out, ensure_ascii=False, indent=1))
