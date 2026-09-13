@@ -217,11 +217,11 @@ def main():
                 bk.eq -= cash
                 bk.open.append({"code": c, "entry": entry, "cash": cash, "entry_date": d, "entry_di": di})
 
-        # 7. 反转族（入场日尾盘卖=当日开→收，与 +0.139% 实测口径一致）
+        # 7. 反转族（T+1 合规：入场日=信号次日开盘买，第3日尾盘卖——买入当日不可卖！2026-09-12 用户抓包）
         bk = books["reversal"]
         for pos in list(bk.open):
             ks = stocks[pos["code"]]
-            if di >= pos["entry_di"]:
+            if di >= pos["entry_di"] + 1:  # 入场日的次日尾盘才卖（T+1 物理约束）
                 j = idx[pos["code"]].get(d)
                 if j and ks[j]["close"] > 0:
                     ret = ks[j]["close"] / pos["entry"] - 1 - FEE

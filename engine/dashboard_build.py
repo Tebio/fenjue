@@ -281,7 +281,14 @@ def main():
                          f'{v["trades"]}笔/{v["win%"]}%' if v["trades"] else "拿死不动",
                          pct(v["avg%"]) if v["trades"] else '<span class="muted">—</span>'])
         slip = ""
-        if audit:
+        rt = jload(D / "sim_retest_t1_20260912.json", {})
+        if rt:
+            r2, r3 = rt["R2_对账"], rt["R3_连板跌停"]
+            slip = (f'T+1合规终审（用户抓包修正）：跌停接top3 = -78%（{r3["入场日再跌停笔数"]}笔/{r3["占C臂比例%"]}% 撞连板跌停，'
+                    f'子集均{r3["该子集均笔%"]}%）。引擎对账✓：全量跌3% {r2["A_全量跌3%(期望≈+0.139/晚段≈0)"]["avg%"]}%'
+                    f'、全量跌停接 {r2["B_全量跌停接(期望≈+0.26)"]["avg%"]}% 复现框架。'
+                    f'统计意义 edge 存在但"每日最深3只"策略化失败——最深的票=正在连板跌停的票。')
+        elif audit:
             tiers = audit.get("B_tiers", {})
             deep = tiers.get("≤-9.5", {})
             slip = (f'审计：收益引擎=跌停接子集（{deep.get("n")}笔 均{deep.get("avg%")}%），-5~-9.5%中间档为负期望。'

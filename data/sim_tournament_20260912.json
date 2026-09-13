@@ -63,12 +63,12 @@
    "avg%": 0.83
   },
   "reversal": {
-   "final": 421226,
-   "return%": 321.2,
-   "maxDD%": -31.2,
-   "trades": 1488,
-   "win%": 47.5,
-   "avg%": 0.53
+   "final": 21725,
+   "return%": -78.3,
+   "maxDD%": -83.8,
+   "trades": 744,
+   "win%": 39.4,
+   "avg%": -0.69
   }
  }
 }
