@@ -23,7 +23,7 @@ KC, CAP = ROOT / "data/big_kcache", ROOT / "data/cap_hist"
 TIMELINE = ROOT / "data/regime_timeline_hcap.json"
 FEES = [0.0015, 0.003, 0.005]
 HORIZON = 5
-HORIZONS = [1, 3, 5, 10, 20]  # IC 衰减曲线（alphalens/qlib 惯例）
+HORIZONS = [1, 3, 5, 10, 20, 60]  # IC 衰减曲线（alphalens/qlib 惯例；60=长周期主张持有期，2026-09-13 加）
 NW_MIN_T = 3.0                # Harvey & Liu 2015 多重检验门槛（本项目累计已测>20个信号）
 START = 65
 
@@ -339,23 +339,31 @@ _XLADDER = None   # date -> industry -> 当日涨停家数（≥+9.8%，kcache �
 _XCAP = None      # code -> month(YYYY-MM) -> 流通市值(亿)
 _XREGIME = None   # date -> regime
 _IND = None       # code -> industry
+_XLOSERQ = None   # date -> 当日全市场250日回报的Q20边界（长周期反转横截面）
 
 
 def build_xsection(stocks):
     from collections import defaultdict
-    global _XLADDER, _XCAP, _XREGIME, _IND
+    global _XLADDER, _XCAP, _XREGIME, _IND, _XLOSERQ
     if _XLADDER is not None:
         return
     ind_map = json.loads((ROOT / "data/industry_map.json").read_text())
     _IND = {c: (v.get("industry") or "?") for c, v in ind_map.items()}
     lad = defaultdict(lambda: defaultdict(int))
+    r250_by_date = defaultdict(list)
     for code, d in stocks.items():
         c, n, dates = d["c"], d["n"], d["date"]
         ind = _IND.get(code, "?")
         for i in range(1, n):
             if c[i - 1] > 0 and c[i] / c[i - 1] - 1 >= 0.098:
                 lad[dates[i]][ind] += 1
+        # 250日回报（长周期反转横截面用）
+        for i in range(250, n):
+            if c[i - 250] > 0:
+                r250_by_date[dates[i]].append(c[i] / c[i - 250] - 1)
     _XLADDER = lad
+    # 每日横截面 250日回报 Q20 边界（≥500只才有统计意义）
+    _XLOSERQ = {dt: sorted(v)[int(len(v) * 0.2)] for dt, v in r250_by_date.items() if len(v) >= 500}
     _XCAP, _qs = load_cap_quintiles()
     _XREGIME = load_regime()
 
@@ -463,6 +471,15 @@ def _limitdown(d, i):
     if o[i] / c[i - 1] - 1 <= -0.09 and (h[i] - l[i]) / c[i - 1] < 0.01:
         return False
     return True
+
+
+def _loser250(d, i):
+    """长周期反转（De Bondt-Thaler）：当日 250 日回报处于全市场最低五分位。
+    注意：输家状态是连续的（入组后天天触发），事件高度重叠——以日历时间层/DSR 为准。"""
+    if _XLOSERQ is None or i < 250 or d["c"][i - 250] <= 0:
+        return False
+    q = _XLOSERQ.get(d["date"][i])
+    return q is not None and d["c"][i] / d["c"][i - 250] - 1 <= q
 
 
 def _panic_deep(d, i):
@@ -578,6 +595,7 @@ REGISTRY = {
     "上升趋势跌停ULD": _uptrend_ld,
     # ---- 2026-09-13 清欠账：打板系/反转系主张滚动审计接线 ----
     "反转族_T-1大跌": _reversal,
+    "长周期反转_250日输家": _loser250,
     "跌停次日接_剔一字": _limitdown,
     "恐慌深度_≤-9.5": _panic_deep,
     "frontrun_v2": _frontrun_v2,
