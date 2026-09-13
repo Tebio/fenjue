@@ -191,8 +191,9 @@ def main():
             rows.append([esc(e["code"]), esc(e["name"]), f'<span class="muted">{esc(e["entry_date"])}</span>',
                          f'{e["volratio"]}x', pct(e["pct"]), str(e.get("days", 0)),
                          '<span class="up">缩量持稳</span>' if e.get("shrink") else '<span class="muted">观察中</span>'])
-        # G7 焦点：临启动票（第1-5天=窗口期；中位2日/71.6%≤3日毕业，实测分布）
-        for e in sorted((e for e in wp["pool"] if 1 <= e.get("days", 0) <= 5), key=lambda e: e["days"]):
+        # G7 焦点：临启动票（第1-5天=窗口期；中位2日/71.6%≤3日毕业，实测分布）；上限8条防爆版
+        for e in sorted((e for e in wp["pool"] if 1 <= e.get("days", 0) <= 5),
+                        key=lambda e: (e["days"], -e["volratio"]))[:8]:
             win = ("🔥高发窗口" if e["days"] <= 3 else "窗口尾（第4-5天）")
             focus_rows.append(("🎯观察池临启动", f"{esc(e['name'])}({e['code']})",
                                f'量比{e["volratio"]}x · 第{e["days"]}天' + (" · 缩量持稳" if e.get("shrink") else ""),
@@ -386,6 +387,22 @@ def main():
     body = "\n".join(secs)
     OUT.write_text(TPL.replace("__DATE__", today).replace("__BODY__", body)
                    .replace("__STAMP__", datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
+    # ── 人机共用状态契约（2026-09-13 用户裁决：你我都顺手的前端=单一事实源）──
+    # docs/ops-state.json：面板渲染源数据聚合。人看 index.html，agent 读这个 JSON。
+    ops = {
+        "version": 1, "built_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "regime": reg and {"date": reg["date"], "regime": reg["regime"], "limit_ups": reg["stats"]["limit_ups"],
+                            "limit_downs": reg["stats"]["limit_downs"]},
+        "focus": [{"src": s, "target": t2, "info": re.sub(r"<[^>]+>", "", i), "window": re.sub(r"<[^>]+>", "", w)}
+                  for s, t2, i, w in focus_rows],
+        "watch_pool_top": [{"code": e["code"], "name": e["name"], "days": e.get("days"), "volratio": e["volratio"]}
+                           for e in sorted(wp.get("pool", []), key=lambda e: -e["volratio"])[:10]] if wp else [],
+        "playbook": "playbook-202609.md",
+        "kill_lines": {"countercrowd_board": "平淡/恐慌期 fillable 影子 20 交易日均值<0 → 进攻仓归零",
+                       "dividend_anchor": "买入区滚动胜率跌破对照 → 降级复审"},
+        "links": {"panel": "https://tebio.github.io/fenjue/", "ops_state": "https://tebio.github.io/fenjue/ops-state.json"},
+    }
+    (OUT.parent / "ops-state.json").write_text(json.dumps(ops, ensure_ascii=False, indent=1))
     print(f"built {OUT} sections={len(secs)}")
 
 
