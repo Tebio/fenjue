@@ -16,7 +16,10 @@ from collections import defaultdict
 
 ROOT = "/opt/data/fenjue"
 D = ROOT + "/data"
-START = "2024-08-26"
+# 8年模式：--start=2019-01-03 --no-m60（m60 只有 2 年深，8年段=纸面close-entry+事后中签压测）
+START = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--start=")), "2024-08-26")
+NO_M60 = "--no-m60" in sys.argv
+LONG_MODE = START < "2024-01-01"  # 8年模式剔股息组（2026息率选2019篮子=未来函数）
 FEE = 0.0015
 CAPITAL = 100000.0
 
@@ -25,6 +28,8 @@ import claims_shadow as cs
 
 
 def m60_fillable(code, d, close):
+    if NO_M60:
+        return True  # 8年模式无 m60，纸面口径（事后按 30~50% 中签压测）
     try:
         bars = [r for r in json.load(open(f"{D}/m60_cache/{code}.json")) if r["day"].startswith(d)]
     except Exception:
@@ -88,26 +93,37 @@ def main():
     print("股息篮子:", basket, file=sys.stderr)
 
     books = {k: Book(s) for k, s in {
-        "dividend_hold": 5, "dividend_t": 5, "long_trend": 5, "long_optimized": 5,
-        "short_t1": 3, "swing_t5": 3, "scalp_overnight": 3, "short_optimized": 3, "reversal": 3}.items()}
+        "long_trend": 5, "long_optimized": 5,
+        "short_t1": 3, "swing_t5": 3, "scalp_overnight": 3, "short_optimized": 3,
+        "panic_off": 3, "reversal": 3,
+        **({} if LONG_MODE else {"dividend_hold": 5, "dividend_t": 5})}.items()}
+    # panic_off = 打板优化但恐慌期信号日不开仓（周期切换 v1 单规则版）
 
-    # 股息组：窗口首日开盘买入拿死（做T组另加T收益流）
+    # 周期标签（panic_off 用）
+    try:
+        timeline = {r["date"]: r["regime"] for r in json.load(open(f"{D}/regime_timeline_hcap.json"))}
+    except Exception:
+        timeline = {}
+
+    # 股息组：窗口首日开盘买入拿死（做T组另加T收益流）。8年模式跳过（未来函数）
     t_pnl = defaultdict(float)  # dividend_t 每日 T 净收益（占权益比例累加到日收益）
-    for c in basket:
-        j = idx[c].get(dates[0])
-        if j is None:
-            continue
-        entry = stocks[c][j]["open"]
-        if entry <= 0:
-            continue
-        for name in ("dividend_hold", "dividend_t"):
-            bk = books[name]
-            cash = bk.eq / 5
-            bk.eq -= cash
-            bk.open.append({"code": c, "entry": entry, "cash": cash, "entry_date": dates[0]})
+    if not LONG_MODE:
+        for c in basket:
+            j = idx[c].get(dates[0])
+            if j is None:
+                continue
+            entry = stocks[c][j]["open"]
+            if entry <= 0:
+                continue
+            for name in ("dividend_hold", "dividend_t"):
+                bk = books[name]
+                cash = bk.eq / 5
+                bk.eq -= cash
+                bk.open.append({"code": c, "entry": entry, "cash": cash, "entry_date": dates[0]})
 
     # 做T 预计算：每日 bar 路径（-1.5%/+1.5%，同bar双触不成交，买进卖不出尾盘了结）
-    for c in basket:
+    if not LONG_MODE:
+      for c in basket:
         try:
             rows = json.load(open(f"{D}/m60_cache/{c}.json"))
         except Exception:
@@ -202,7 +218,7 @@ def main():
         sigs = sigs[:3]
 
         for name, exit_mode in (("short_t1", "t1_close"), ("swing_t5", "t5_close"), ("scalp_overnight", "t1_open"),
-                                 ("short_optimized", "optimized")):
+                                 ("short_optimized", "optimized"), ("panic_off", "optimized")):
             bk = books[name]
             # 到期平仓（尾盘/开盘按模式）
             for pos in list(bk.open):
@@ -241,6 +257,8 @@ def main():
                 bk.trades.append((pos["entry_date"], d, pos["code"], ret))
                 bk.open.remove(pos)
             # 开仓
+            if name == "panic_off" and timeline.get(d) == "恐慌期":
+                continue  # 恐慌期不开新仓（周期切换 v1 单规则）
             for c, j in sigs:
                 if len(bk.open) >= 3:
                     break
@@ -316,11 +334,12 @@ def main():
             "win%": round(len(wins) / len(bk.trades) * 100, 1) if bk.trades else 0,
             "avg%": round(sum(t[3] for t in bk.trades) / len(bk.trades) * 100, 2) if bk.trades else 0,
         }
-    json.dump(out, open(f"{D}/sim_tournament_20260912.json", "w"), ensure_ascii=False, indent=1)
+    SUF = "_8y" if LONG_MODE else ""
+    json.dump(out, open(f"{D}/sim_tournament{SUF}_20260912.json", "w"), ensure_ascii=False, indent=1)
     # 交易明细落盘（G10 审计用）：name, entry_date, exit_date, code, ret
     # T+1 时序硬断言（2026-09-12 纪律 B-T1：出场日必须严格晚于入场日）
     order = {d: i for i, d in enumerate(cal)}
-    with open(f"{D}/sim_trades_20260912.jsonl", "w") as f:
+    with open(f"{D}/sim_trades{SUF}_20260912.jsonl", "w") as f:
         for name, bk in books.items():
             for t in bk.trades:
                 assert order.get(t[1], -1) > order.get(t[0], 10**9), f"T+1 违规: {name} {t}"

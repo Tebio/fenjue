@@ -5,14 +5,17 @@ Q2 分年稳定性：每臂按出场年拆 均笔/胜率/n
 Q3 分周期：每臂按 regime 拆（出场日贴标签，regime_timeline_hcap）
 Q4 周期切换组合：样本内演示（每期选该期实测最优臂）——标注过拟合风险，待影子前向
 """
-import json
+import json, sys, random
 from collections import defaultdict
 
 ROOT = "/opt/data/fenjue"
-trades = [json.loads(l) for l in open(f"{ROOT}/data/sim_trades_20260912.jsonl")]
+TRADES_F = sys.argv[1] if len(sys.argv) > 1 else f"{ROOT}/data/sim_trades_20260912.jsonl"
+OUT_F = sys.argv[2] if len(sys.argv) > 2 else f"{ROOT}/data/sim_regime_split_20260912.json"
+WIN_START = "2019-01-03" if "8y" in TRADES_F else "2024-08-26"
+trades = [json.loads(l) for l in open(TRADES_F)]
 timeline = {r["date"]: r["regime"] for r in json.load(open(f"{ROOT}/data/regime_timeline_hcap.json"))}
 cal = [k["date"] for k in json.load(open(f"{ROOT}/data/big_kcache/000001.json"))]
-window = [d for d in cal if d >= "2024-08-26"]
+window = [d for d in cal if d >= WIN_START]
 
 arms = sorted({t["s"] for t in trades})
 
@@ -66,7 +69,25 @@ out["switched_portfolio"] = {"equity": round(eq, 2), "return%": round((eq - 1) *
                              "maxDD%": round(mdd * 100, 1), "active_days": ndays,
                              "note": "样本内选择=过拟合演示，真实切换逻辑须由8年研究结论驱动+影子前向验证"}
 
-json.dump(out, open(f"{ROOT}/data/sim_regime_split_20260912.json", "w"), ensure_ascii=False, indent=1)
+json.dump(out, open(OUT_F, "w"), ensure_ascii=False, indent=1)
+
+# 中签压测（close-entry 臂）：30%/50% 排队中签后的权益
+def fill_stress(arm, keep, seed=42):
+    rnd = random.Random(seed)
+    by_d = defaultdict(list)
+    for t in trades:
+        if t["s"] == arm and rnd.random() < keep:
+            by_d[t["in"]].append(t["ret"])
+    eq = 1.0
+    for d in window:
+        r = by_d.get(d, [])
+        if r:
+            eq *= 1 + sum(r) / 3
+    return round(eq, 2)
+
+for arm in ("short_optimized", "scalp_overnight", "panic_off"):
+    if any(t["s"] == arm for t in trades):
+        print(f"fill压测 {arm}: 100%→{fill_stress(arm, 1.0)}x 50%→{fill_stress(arm, 0.5)}x 30%→{fill_stress(arm, 0.3)}x")
 print(json.dumps(out["regime_best_arm_样本内"], ensure_ascii=False))
 print(json.dumps(out["switched_portfolio"], ensure_ascii=False))
 print("\n=== 分年（主力臂）===")

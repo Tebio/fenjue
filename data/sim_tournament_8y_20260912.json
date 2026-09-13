@@ -1,0 +1,82 @@
+{
+ "window": [
+  "2019-01-03",
+  "2026-09-11"
+ ],
+ "days": 1867,
+ "capital": 100000.0,
+ "bench%": 62.8,
+ "basket": [
+  "601919",
+  "600096",
+  "601717",
+  "600039",
+  "600295"
+ ],
+ "strategies": {
+  "long_trend": {
+   "final": 36605,
+   "return%": -63.4,
+   "maxDD%": -74.4,
+   "trades": 292,
+   "win%": 24.3,
+   "avg%": -2.91
+  },
+  "long_optimized": {
+   "final": 43176,
+   "return%": -56.8,
+   "maxDD%": -71.3,
+   "trades": 292,
+   "win%": 24.0,
+   "avg%": -2.4
+  },
+  "short_t1": {
+   "final": 368310910272,
+   "return%": 368310810.3,
+   "maxDD%": -12.8,
+   "trades": 3999,
+   "win%": 56.2,
+   "avg%": 1.58
+  },
+  "swing_t5": {
+   "final": 822299,
+   "return%": 722.3,
+   "maxDD%": -28.6,
+   "trades": 1022,
+   "win%": 44.1,
+   "avg%": 1.16
+  },
+  "scalp_overnight": {
+   "final": 8873393913123,
+   "return%": 8873393813.1,
+   "maxDD%": -4.7,
+   "trades": 3999,
+   "win%": 66.2,
+   "avg%": 1.93
+  },
+  "short_optimized": {
+   "final": 11968797054362,
+   "return%": 11968796954.4,
+   "maxDD%": -13.3,
+   "trades": 3517,
+   "win%": 55.8,
+   "avg%": 2.32
+  },
+  "panic_off": {
+   "final": 2198115988293,
+   "return%": 2198115888.3,
+   "maxDD%": -12.7,
+   "trades": 3180,
+   "win%": 55.7,
+   "avg%": 2.31
+  },
+  "reversal": {
+   "final": 17811,
+   "return%": -82.2,
+   "maxDD%": -90.6,
+   "trades": 2797,
+   "win%": 42.7,
+   "avg%": -0.23
+  }
+ }
+}
