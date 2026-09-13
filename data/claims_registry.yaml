@@ -169,9 +169,15 @@ claims:
   kill_line_pp:
     1: 0.0
   grade: 候选L2（2026-09-13 submit闸门6/6全过——8年日K代理trigger6口径：T+1 +1.76%/56.9%/t_NW34.6，双段同正（19-22
-    +1.9→23-26 +0.74 衰减但仍正），DSR=1.0，位置匹配边际T+5 +6.63/T+20 +7.51pp；原2年m60口径
-    +3.52%/59.9%/n=4122。剩L5影子前向20交易日毕业）
+    +1.9→23-26 +0.74 衰减但仍正），DSR=1.0，位置匹配边际T+5 +6.63/T+20 +7.51pp；原2年m60口径 +3.52%/59.9%/n=4122。剩L5影子前向20交易日毕业）
   created: 2026-09-13
   audit_every_days: 7
   note: 影子走 banlu_daily 日更信号（cron 4ce84d817a97 19:10BJT）+ banlu_signals.jsonl；trigger价与kcache前复权存在口径差（分红跨度），影子期接受。2026-09-13
     接滚动审计：日K代理（h≥前收×1.06=触发，entry=trigger6 前收×1.06，T+1收盘出）——真实断板即跑出场日K测不了，代理只作kill线监视，数值不与m60口径3.52%直接可比
+- id: ZHABAN_SHALLOW_RULE
+  statement: 炸板浅炸规则：昨涨停+今开≥5%+今开幅度6~7%+首30分钟量能比<1.0，挂+7%限价买→T+1收盘，每信号期望+2.91%（n=178，train+2.32/test+3.42两段同正超基线）
+  detector: external:engine/zhaban_features.py
+  grade: 候选（2026-09-13 任务B：441格子882次评估全披露下的规则搜索最优；残留乐观=60min粒度fill；信号量薄~年90只）
+  created: '2026-09-13'
+  audit_every_days: 30
+  note: 影子前向=engine/zhaban_daily.py（cron c73023823b3e 20:10BJT，账本data/zhaban_shadow.jsonl，含seed固定随机对照）；L5前不进作战手册
