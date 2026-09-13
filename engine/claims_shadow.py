@@ -24,6 +24,18 @@ FEE = 0.0015
 CLOSE_ENTRY_CLAIMS = {"FRONTRUN_FIRSTBOARD_V2", "WATCHPOOL_GRAD"}
 _industry = None
 _stock_cap = None
+_regime_tl = None
+
+
+def _regime_of(d):
+    """当日周期标签（regime_timeline_hcap），懒加载。"""
+    global _regime_tl
+    if _regime_tl is None:
+        try:
+            _regime_tl = {r["date"]: r["regime"] for r in json.load(open(ROOT / "data/regime_timeline_hcap.json"))}
+        except Exception:
+            _regime_tl = {}
+    return _regime_tl.get(d, "?")
 
 
 def industry_map():
@@ -88,7 +100,9 @@ def detect(code, ks, i, ladder=None):
                 if ladder.get(industry, 0) >= 3:
                     cap = stock_caps().get(code, {}).get(ks[i]["date"][:7])
                     if cap is not None and 20 <= cap <= 400:
-                        hits.append(("FRONTRUN_FIRSTBOARD_V2", None))
+                        # tier=当日regime（2026-09-12：反人群打板假设的前向测量——恐慌/平淡期fill是漏，主线/妖股期是坑）
+                        reg = _regime_of(ks[i]["date"])
+                        hits.append(("FRONTRUN_FIRSTBOARD_V2", reg))
     # WATCHPOOL_GRAD（G8，2026-09-12）：观察池毕业=今日首板 + 前15日内曾触发 B 变体池信号
     # （量比≥3、涨幅1~7.5%、未板、复牌守卫、额≥2亿）。入场=信号日收盘（打板口径同 FRONTRUN）。
     if chg >= 0.098 and i >= 6:

@@ -368,13 +368,21 @@ def main():
         secs.append(card("今日涨停全景 · 市值前 10", table(["代码", "名称", "涨幅", "市值", "涨停原因"], rows),
                          "周期仪全量扫描 + HiThink 题材归因"))
     # ── G7 焦点置顶（市场状态之后第一位）──
+    # 作战手册卡（playbook-202609.md 摘要，静态规则层）——置顶第2位，焦点区第3位
+    secs.insert(1, card("🎯 作战手册 · 2026-09 起",
+                     """<table><tr><th>层</th><th>规则</th></tr>
+<tr><td><b>底仓 60-70%</b></td><td>红利躺平：连续≥3年分红+息率≥4.5%买入线，核心仓不清（轮动清仓跑输躺平13pp）</td></tr>
+<tr><td><b>进攻仓 0-30%</b></td><td><b>反人群打板</b>：只在<span class="dn">平淡/恐慌期</span>开仓（主线/妖股期开缝有毒-2.6~-2.9%已实测）；断板即跑，禁止宽容持有</td></tr>
+<tr><td><b>禁区</b></td><td>杠杆/单板块/跌停接/做T/跟席位/看新闻买/回踩限价/炸板回封/金叉长线</td></tr></table>""",
+                     "每条规则带证据编号 · <a href='playbook-202609.md' style='color:#c0392b'>完整版+kill线 →</a>",
+                     "周期仪是油门不是方向盘：恐慌期=打板fill黄金期（没人抢），主线期=红利拿稳别手痒"))
     if focus_rows:
         body_f = table(["来源", "标的", "关键信息", "启动窗口/时点"],
                        [[f"<b>{s}</b>", t, i, w] for s, t, i, w in focus_rows])
         focus_card = card("📌 今日焦点 · 只看这一屏", body_f,
                           "观察池毕业中位 2 天 · 71.6% 在入池 3 日内启动（8 年实测分布）",
                           "破位优先处理 > 临启动盯梯队 > 抢跑排队 > 反转等竞价。其余卡片是证据库，这屏是行动清单。")
-        secs.insert(1, focus_card)
+        secs.insert(2, focus_card)
     body = "\n".join(secs)
     OUT.write_text(TPL.replace("__DATE__", today).replace("__BODY__", body)
                    .replace("__STAMP__", datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
