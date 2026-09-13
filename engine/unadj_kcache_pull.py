@@ -33,6 +33,8 @@ import json
 import time
 import datetime
 
+import sys as _sys
+_sys.path.insert(0, "/opt/data/python-libs")  # baostock 在这里（对齐 update_kcache.py 惯例，K3审查修）
 import baostock as bs
 
 ROOT = "/opt/data/fenjue"

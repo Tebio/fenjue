@@ -166,17 +166,21 @@ def _held(c):
 
 
 def _no_div_gap(c, di):
-    """当前交易日往前, 距最近一次分红的交易日数; 无记录返回极大值。"""
+    """当前交易日往前, 距最近一次分红的交易日数; 无记录返回极大值。
+    K3审查修（2026-09-13）：必须用完整日历 cal 定位分红日——用窗口日历 dates 时，
+    若最近分红早于 START，bisect 得 -1 → 误判"500日无分红"→ 买入次日即强清
+    （考试窗 2026-03 起实测连环误杀：思维列控/东方雨虹 买入次日被清）。"""
     dts = div_dts.get(c) or []
     if not dts:
         return 10 ** 9
     p = bisect.bisect_right(dts, dates[di]) - 1
     if p < 0:
         return 10 ** 9
-    ld_i = bisect.bisect_right(dates, dts[p]) - 1
+    ld_i = bisect.bisect_right(cal, dts[p]) - 1   # 完整日历定位
+    di_full = bisect.bisect_right(cal, dates[di]) - 1
     if ld_i < 0:
         return 10 ** 9
-    return di - ld_i
+    return di_full - ld_i
 
 
 for di, d in enumerate(dates):
