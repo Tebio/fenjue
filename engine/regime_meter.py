@@ -34,7 +34,10 @@ def main_board_pool() -> list[dict]:
     if POOL_CODES_CACHE.exists():
         d = json.loads(POOL_CODES_CACHE.read_text())
         if time.time() - d.get("ts", 0) < 86400 and d.get("stocks"):
-            return d["stocks"]
+            # K3修（2026-09-13 夜）：缓存只信 code 名单，价格字段全部作废——
+            # 实锤事故：9/11 周期仪吃到 9/10 缓存快照，boards 整天复制前日
+            # （水发燃气 9/11 实际 -4.2% 被记成涨停 9.989），regime_log 污染。
+            return [{**s, "change_percent": None, "price": None} for s in d["stocks"]]
     stocks = []
     try:
         def rpc(method, params, rid):
@@ -86,6 +89,22 @@ def scan() -> dict:
     clear_proxy()
     stocks = main_board_pool()
     live = [s for s in stocks if s.get("change_percent") is not None]
+    if live:
+        # K3修（2026-09-13 夜）：live 路径新鲜度抽查——MCP 池可能服务端滞后返回昨日快照。
+        # 抽最多3只边缘票（|pct|∈[3,9]）与腾讯实时对照，偏差>1pp 即判定整池过期，转腾讯路径。
+        import random as _rnd
+        edge = [s for s in live if 3 <= abs(s["change_percent"]) <= 9][:3]
+        if edge:
+            probe = tencent_quotes([str(s["code"]).zfill(6) for s in edge])
+            stale = 0
+            for s in edge:
+                c = str(s["code"]).zfill(6)
+                q = probe.get(c)
+                if q and abs(q["pct"] - s["change_percent"]) > 1.0:
+                    stale += 1
+            if stale >= 2:
+                print(f"[SILENT] MCP池新鲜度抽查失败（{stale}/{len(edge)} 偏差>1pp），转腾讯全量路径")
+                live = []
     if live:
         # MCP 全市场实时：直接统计涨停；市值只对涨停票补拉腾讯（几十只，快）
         boards = [{"code": str(s["code"]).zfill(6), "name": s.get("name", ""),

@@ -4,6 +4,7 @@
 盘后（m60 日更后）计算当日 B5 信号：+6% 触发 + 量比≥2 + 梯队≥2 + 60日首板 + 市值20-400亿
 + regime∈平淡/恐慌期。落盘 data/banlu_signals.jsonl（影子记账源）+ 打印名单（cron 推送用）。
 """
+import os
 import json, glob, sys
 from collections import defaultdict
 
@@ -73,9 +74,24 @@ for f in glob.glob(f"{D}/m60_cache/*.json"):
                  "trigger_px": round(entry, 2), "sealed": sealed,
                  "close": stocks[c][j]["close"], "regime_ok": regime in ("平淡期", "恐慌期")})
 
-with open(f"{D}/banlu_signals.jsonl", "a") as f:
-    for s in sigs:
+# K3修（2026-09-13 夜）：同日幂等——手工复核+cron双跑会产生重复行，写入前按(date,code)去重
+_lp = f"{D}/banlu_signals.jsonl"
+_existing = set()
+if os.path.exists(_lp):
+    for _l in open(_lp):
+        _l = _l.strip()
+        if _l:
+            try:
+                _r = json.loads(_l)
+                _existing.add((_r.get("date"), _r.get("code")))
+            except Exception:
+                pass
+_new = [s for s in sigs if (s["date"], s["code"]) not in _existing]
+with open(_lp, "a") as f:
+    for s in _new:
         f.write(json.dumps(s, ensure_ascii=False) + "\n")
+if len(_new) < len(sigs):
+    print(f"[幂等] 跳过重复登记 {len(sigs) - len(_new)} 条")
 ok = [s for s in sigs if s["regime_ok"]]
 print(f"B5 半路板 · {today} · 周期={regime}")
 print(f"触发 {len(sigs)} 只，周期合规（平淡/恐慌）{len(ok)} 只")

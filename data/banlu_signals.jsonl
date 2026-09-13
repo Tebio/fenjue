@@ -3,8 +3,3 @@
 {"date": "2026-09-11", "code": "002848", "name": "高斯贝尔", "industry": "C39计算机、通信和其他电子设备制造业", "trigger_px": 14.68, "sealed": true, "close": 15.24, "regime_ok": true}
 {"date": "2026-09-11", "code": "603693", "name": "江苏新能", "industry": "D44电力、热力生产和供应业", "trigger_px": 12.34, "sealed": true, "close": 12.8, "regime_ok": true}
 {"date": "2026-09-11", "code": "605058", "name": "澳弘电子", "industry": "C39计算机、通信和其他电子设备制造业", "trigger_px": 32.1, "sealed": true, "close": 33.31, "regime_ok": true}
-{"date": "2026-09-11", "code": "002519", "name": "银河电子", "industry": "C39计算机、通信和其他电子设备制造业", "trigger_px": 6.08, "sealed": true, "close": 6.31, "regime_ok": true}
-{"date": "2026-09-11", "code": "002735", "name": "王子新材", "industry": "C29橡胶和塑料制品业", "trigger_px": 13.25, "sealed": false, "close": 13.23, "regime_ok": true}
-{"date": "2026-09-11", "code": "002848", "name": "高斯贝尔", "industry": "C39计算机、通信和其他电子设备制造业", "trigger_px": 14.68, "sealed": true, "close": 15.24, "regime_ok": true}
-{"date": "2026-09-11", "code": "603693", "name": "江苏新能", "industry": "D44电力、热力生产和供应业", "trigger_px": 12.34, "sealed": true, "close": 12.8, "regime_ok": true}
-{"date": "2026-09-11", "code": "605058", "name": "澳弘电子", "industry": "C39计算机、通信和其他电子设备制造业", "trigger_px": 32.1, "sealed": true, "close": 33.31, "regime_ok": true}

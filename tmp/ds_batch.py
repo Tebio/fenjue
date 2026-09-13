@@ -47,7 +47,7 @@ def call(task_file: Path) -> str:
 
 
 def main():
-    for tf in sorted(TASKS.glob("*.md")):
+    for tf in sorted(f for f in TASKS.glob("*.md") if not f.name.endswith(".out.md")):  # 防把产出当任务书重跑（2026-09-13 实战踩过）
         out = tf.with_suffix(".out.md")
         if out.exists():
             print(f"skip {tf.name} (done)", flush=True)
