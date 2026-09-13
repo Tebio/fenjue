@@ -270,6 +270,7 @@ def main():
     # ── 模拟盘锦标赛（G11）──
     tour = jload(D / "sim_tournament_20260912.json", {})
     audit = jload(D / "sim_audit_20260912.json", {})
+    split = jload(D / "sim_regime_split_20260912.json", {})
     if tour and tour.get("strategies"):
         NAMES = {"reversal": "🔄 反转/跌停接（每日最深3只）❌已枪毙", "scalp_overnight": "⚡ 短差（打板吃隔夜缺口）",
                  "short_optimized": "🚀 打板优化（涨停隔夜次早卖）", "short_t1": "📅 短线（打板次日尾盘）",
@@ -289,6 +290,12 @@ def main():
                     f'子集均{r3["该子集均笔%"]}%）。引擎对账✓：全量跌3% {r2["A_全量跌3%(期望≈+0.139/晚段≈0)"]["avg%"]}%'
                     f'、全量跌停接 {r2["B_全量跌停接(期望≈+0.26)"]["avg%"]}% 复现框架。'
                     f'统计意义 edge 存在但"每日最深3只"策略化失败——最深的票=正在连板跌停的票。')
+        if split:
+            y = (split.get("by_year", {}).get("short_optimized") or {})
+            r24, r26 = y.get("2024", {}), y.get("2026", {})
+            slip += (f' ⚠️分年衰减：打板优化 2024年均+{r24.get("avg%")}% → 2026年{r26.get("avg%")}%（edge 已归零，'
+                     f'历史收益大头在 24-25 年）。周期差异：主线期打板最强(+2.82%/62.5%)，恐慌期打板亏钱(-1.07%)——'
+                     f'切换组合样本内演示反而跑输固定打法(+45.8% vs +195%)，切换逻辑待 8 年数据立项。')
         elif audit:
             tiers = audit.get("B_tiers", {})
             deep = tiers.get("≤-9.5", {})
