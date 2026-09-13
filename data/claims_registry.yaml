@@ -132,3 +132,17 @@ claims:
   created: 2026-09-12
   audit_every_days: 7
   note: 影子前向已接入 claims_shadow（CLOSE_ENTRY_CLAIMS）；审计端 detector 接线待做
+- id: BANLU_B5
+  statement: 半路板（+6%市价触发）+量比≥2+梯队≥2+60日首板+市值20-400亿+平淡/恐慌期 → T+1断板即跑，有可执行正期望
+  detector: banlu_b5
+  control: position_matched
+  horizon:
+  - 1
+  baseline_pp:
+    1: 3.52
+  kill_line_pp:
+    1: 0.0
+  grade: 候选（2026-09-13：2年m60回测 +3.52%/59.9%/n=4122，组合级9.57x/回撤-17.8%；分年 2024+9.39/2025+0.78/2026+1.04；市价触发无排队问题=fill死后的活路；滑点0.2-0.5%仍正；待submit闸门+影子前向）
+  created: 2026-09-13
+  audit_every_days: 7
+  note: 影子走 banlu_daily 日更信号（cron 4ce84d817a97 19:10BJT）+ banlu_signals.jsonl；trigger价与kcache前复权存在口径差（分红跨度），影子期接受
