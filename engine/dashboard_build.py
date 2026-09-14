@@ -91,7 +91,7 @@ _TABMAP = [
     ("持仓哨兵", "持仓"), ("股息锚", "持仓"), ("银行股", "持仓"), ("银行 ·", "持仓"),
     ("收割型席位", "持仓"),
     ("📋 策略分工", "候选池"),
-    ("放量异动观察池", "候选池"), ("首板抢跑", "候选池"), ("反转族", "候选池"),
+    ("放量异动观察池", "候选池"), ("首板抢跑", "候选池"), ("反转族", "候选池"), ("反转族 · 今日确认单", "候选池"),
 ]
 _TABS = ["作战", "持仓", "候选池", "证据库"]
 
@@ -503,6 +503,26 @@ def main():
                 secs.append(card("⚡ B5 持仓处置",
                                  table(["标的", "状态", "动作"], rows_b),
                                  f"{lastd} 信号 · 反人群打板不留恋"))
+    except Exception:
+        pass
+    # ── 反转族今日确认单（2026-09-14 用户令：执行清单上看板+实时价）──
+    try:
+        cf = D / "reversal_confirmed.json"
+        if cf.exists():
+            c = json.loads(cf.read_text())
+            if c.get("date") == today and c.get("executable"):
+                rows_c = []
+                for x in c["executable"][:8]:
+                    mk = ("sh" if x["code"].startswith("6") else "sz") + x["code"]
+                    rows_c.append([f'{esc(x.get("name",""))}<br><span class="muted">{x["code"]}</span>',
+                                   f'开{x["open_chg"]:+.1f}%',
+                                   f'<span data-q="{mk}" data-f="r"><span class="muted">…</span></span>'])
+                secs.append(card("反转族 · 今日确认单（ICU期仅供观察）",
+                                 table(["标的", "竞价", "现在"], rows_c) +
+                                 f'<div class="muted" style="margin-top:6px">共 {c["n"]} 只可执行 · '
+                                 f'高开{c["high_open"]}只（{"❌已作废" if c.get("voided") else "未动作废线"}）· '
+                                 f'ICU期：体系不推但账目照记</div>',
+                                 f'{today} 9:32 竞价确认 · 实时价30秒刷'))
     except Exception:
         pass
     # ── 反转族 ──（rev 已在 main() 开头预载）
