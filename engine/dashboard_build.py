@@ -302,17 +302,19 @@ def main():
         except Exception:
             pass
         def _wrow(e):
+            _mk = ("sh" if str(e["code"]).startswith("6") else "sz") + str(e["code"]).zfill(6)
             return [esc(e["code"]), esc(e["name"]),
                     f'<span class="muted">{esc(_secmap.get(str(e["code"]).zfill(6), "—"))}</span>',
                     f'<span class="muted">{esc(e["entry_date"])}</span>',
                     f'{e["volratio"]}x', pct(e["pct"]), str(e.get("days", 0)),
-                    '<span class="up">缩量持稳</span>' if e.get("shrink") else '<span class="muted">观察中</span>']
+                    '<span class="up">缩量持稳</span>' if e.get("shrink") else '<span class="muted">观察中</span>',
+                    f'<span data-q="{_mk}" data-f="r"><span class="muted">…</span></span>']
         _pool_sorted = sorted(wp["pool"], key=lambda e: -e["volratio"])
         rows = [_wrow(e) for e in _pool_sorted[:3]]
         if len(_pool_sorted) > 3:
             rows.append([f'<details><summary class="muted">展开其余 {len(_pool_sorted)-3} 只（不用盯）</summary>'
-                         + table(["代码", "名称", "板块", "入池", "量比", "当日", "天数", "状态"],
-                                 [_wrow(e) for e in _pool_sorted[3:]]) + '</details>', "", "", "", "", "", "", ""])
+                         + table(["代码", "名称", "板块", "入池", "量比", "当日", "天数", "状态", "现在"],
+                                 [_wrow(e) for e in _pool_sorted[3:]]) + '</details>', "", "", "", "", "", "", "", ""])
         # G7 焦点：临启动票（第1-5天=窗口期；中位2日/71.6%≤3日毕业，实测分布）；上限8条防爆版
         for e in sorted((e for e in wp["pool"] if 1 <= e.get("days", 0) <= 5),
                         key=lambda e: (e["days"], -e["volratio"]))[:8]:
@@ -322,7 +324,7 @@ def main():
                                f'量比{e["volratio"]}x · 第{e["days"]}天 · {esc(sec_tag)}' + (" · 缩量持稳" if e.get("shrink") else ""),
                                win + ' · 梯队+首板=抢跑口径+1.79%/58.9%'))
         hint = f'{esc(wp.get("updated", ""))} · 放量未板+缩量横盘不破=启动前形态（002519 原型）'
-        secs.append(card("放量异动观察池", table(["代码", "名称", "板块", "入池", "量比", "当日", "天数", "状态"], rows),
+        secs.append(card("放量异动观察池", table(["代码", "名称", "板块", "入池", "量比", "当日", "天数", "状态", "现在"], rows),
                          hint,
                          "用法：量比大≠好——放量只是入池门票（异动2.4x基率），真正加分项是入池后缩量持稳；"
                          "该票板块当日≥3只涨停=梯队成型，雷达10:30/14:45会在QQ单独提醒；破入池日前低=出局。"))
@@ -393,9 +395,11 @@ def main():
         rows_d = [[f'{esc(nm)}<br><span class="muted">{c0}</span>',
                    pct(p0), '<span class="up">MA60下✓</span>',
                    '<span class="muted">跌停接L2+ +2.65%/57.6%（剔一字后）</span>',
-                   "竞价一字跌停=作废；封死板买不进则放弃"] for c0, p0, nm in _deep[:3]]
+                   "竞价一字跌停=作废；封死板买不进则放弃",
+                   f'<span data-q="{("sh" if c0.startswith("6") else "sz")+c0}" data-f="r"><span class="muted">…</span></span>']
+                  for c0, p0, nm in _deep[:3]]
         secs.append(card("🥇 首选 · 深档低位（跌停接健康主张）",
-                         table(["标的", "昨跌幅", "位置", "历史口径", "作废条件"], rows_d),
+                         table(["标的", "昨跌幅", "位置", "历史口径", "作废条件", "现在"], rows_d),
                          f"{_deep_lastd} 深档≤-9.5%全扫 · 只留MA60下（高位断板大面已剔除）",
                          "这是全库扫描不是名单切片——9/14 宏盛股份涨停就是这条的命中。"
                          "买点=次日开盘（竞价确认非一字），T+1尾盘兑现。"))
@@ -659,6 +663,8 @@ def main():
 TPL = """<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <title>焚诀操作台</title>
 <style>
 :root{--text:#37352f;--muted:#9b9a97;--bg:#fff;--divider:#ededeb;--soft:#f7f6f3}
