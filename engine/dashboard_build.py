@@ -70,13 +70,29 @@ def badge_regime(r):
 
 
 def card(title, inner, hint="", rule="", collapsed=False):
-    """collapsed=True → 证据库卡片默认折叠（<details>），减瀑布流信息冗余（2026-09-14 用户裁决）。"""
+    """collapsed=True → 证据库卡片默认折叠（<details>），减瀑布流信息冗余（2026-09-14 用户裁决）。
+    tab 由标题前缀自动归组（2026-09-14 用户裁决：切换菜单替代瀑布流）。"""
     h = f'<span class="hint">{esc(hint)}</span>' if hint else ""
     r = f'<div class="rule">{esc(rule)}</div>' if rule else ""
+    tab = "证据库" if collapsed else "作战"
+    for prefix, t2 in _TABMAP:
+        if title.startswith(prefix):
+            tab = t2
+            break
     if collapsed:
-        return (f'<details class="card"><summary>{esc(title)}{h}</summary>'
+        return (f'<details class="card" data-tab="{tab}"><summary>{esc(title)}{h}</summary>'
                 f'<div class="cardbody">{r}{inner}</div></details>')
-    return f'<section class="card"><h2>{esc(title)}{h}</h2>{r}{inner}</section>'
+    return f'<section class="card" data-tab="{tab}"><h2>{esc(title)}{h}</h2>{r}{inner}</section>'
+
+
+_TABMAP = [
+    ("市场状态", "作战"), ("🎯 作战手册", "作战"), ("📌 今日焦点", "作战"),
+    ("🥇 明日首选", "作战"), ("⚡ B5", "作战"), ("📲 怎么配合", "作战"),
+    ("持仓哨兵", "持仓"), ("股息锚", "持仓"), ("银行股", "持仓"), ("银行 ·", "持仓"),
+    ("收割型席位", "持仓"),
+    ("放量异动观察池", "候选池"), ("首板抢跑", "候选池"), ("反转族", "候选池"),
+]
+_TABS = ["作战", "持仓", "候选池", "证据库"]
 
 
 def table(headers, rows):
@@ -152,6 +168,15 @@ def main():
     if watch and watch.get("positions"):
         codes = [p["code"] for p in watch["positions"]] + [a["code"] for a in watch.get("anchors", [])]
         q = fetch_quotes(codes)
+        # K3修（2026-09-14 盘前）：sina 9:15 前返回空 → 哨兵/锚卡消失。缺报价的票用 kcache 昨收顶上。
+        for c in codes:
+            if c not in q:
+                kf = D / "big_kcache" / f"{c}.json"
+                try:
+                    ks = json.loads(kf.read_text())
+                    q[c] = (ks[-1]["close"], (ks[-1]["close"] / ks[-2]["close"] - 1) * 100)
+                except Exception:
+                    pass
         rows = []
         for p in watch["positions"]:
             if p["code"] not in q:
@@ -506,18 +531,42 @@ details.card summary{font-size:15px;font-weight:600;padding-bottom:8px;border-bo
 details.card summary::before{content:"▸ ";color:var(--muted)}
 details.card[open] summary::before{content:"▾ "}
 details.card .cardbody{padding-top:12px}
+.tabbar{display:flex;gap:8px;margin-top:18px;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:9;border-bottom:1px solid var(--divider)}
+.tabbtn{border:1px solid var(--divider);background:var(--soft);color:var(--muted);border-radius:8px;padding:7px 14px;font-size:13.5px;cursor:pointer;font-weight:500}
+.tabbtn.active{background:var(--text);color:#fff;border-color:var(--text)}
+.card[data-tab]{display:none}
+.card[data-tab].showtab{display:block}
 .up{color:#c0392b}.dn{color:#0f7b3d}.ok{color:#0f7b3d;font-size:12px}
 .pre{background:var(--soft);border-radius:6px;padding:14px 16px;font:12.5px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-all}
 .foot{margin-top:48px;padding-top:16px;border-top:1px solid var(--divider);color:var(--muted);font-size:12px}
 </style></head><body><div class="wrap">
 <h1>焚诀操作台</h1>
 <div class="sub">__DATE__ · 研究辅助，不是买卖指令 · 数据构建于 __STAMP__ · <span id="cd">下次更新计算中…</span></div>
+<div class="tabbar" id="tabbar">
+<button class="tabbtn active" data-tab="作战">⚔️ 作战</button>
+<button class="tabbtn" data-tab="持仓">💰 持仓/底仓</button>
+<button class="tabbtn" data-tab="候选池">🔭 候选池</button>
+<button class="tabbtn" data-tab="证据库">📚 证据库</button>
+</div>
 __BODY__
 <div class="foot">焚诀 Research Engine · 交易日自动重建：09:40 竞价确认后 / 10:40 / 11:20 / 13:35 / 14:50 / 15:50 收盘后 / 16:15 委托单后 / 20:40 晚间数据齐<br>
 非交易日不重建（显示最近交易日数据，版块日期戳为准）· 红涨绿跌 · 胜率均值均为净口径（扣 0.15% 费用）· 所有策略结论带作废条件与 kill 线</div>
 </div>
 <script>
 (function(){
+// ── 标签页切换（2026-09-14：切换菜单替代瀑布流）──
+var btns=document.querySelectorAll(".tabbtn");
+function show(tab){
+  document.querySelectorAll(".card[data-tab]").forEach(function(c){
+    c.classList.toggle("showtab", c.getAttribute("data-tab")===tab);
+  });
+  btns.forEach(function(b){b.classList.toggle("active", b.getAttribute("data-tab")===tab);});
+  try{localStorage.setItem("fj_tab",tab);}catch(e){}
+}
+btns.forEach(function(b){b.onclick=function(){show(b.getAttribute("data-tab"));};});
+var saved=null;try{saved=localStorage.getItem("fj_tab");}catch(e){}
+show(saved||"作战");
+// ── 更新倒计时 ──
 var SLOTS=["09:40","10:40","11:20","13:35","14:50","15:50","16:15","20:40"];
 function next(){
   var n=new Date();
