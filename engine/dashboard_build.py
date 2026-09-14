@@ -297,10 +297,35 @@ def main():
                 focus_rows.append(("🚀首板抢跑", f'{esc(_names.get(r["code"], ""))}({esc(r["code"])})', "封板 bar 排队打板（开盘追-0.52%已证伪）",
                                    f"{latest_dt} 已封板 · 隔夜+2.11%/65.2%"))
     # ── 明日首选（2026-09-14 用户令：页面要显示"如果是我，最可能买哪只"）──
-    # 规则排序，非拍脑袋：持仓破位>反转族预筛(深档+MA60下+流动性)>抢跑>B5处置。首选=规则下第一名+作废条件。
+    # 2026-09-14 盘中用户裁决（实锤）：①胜率<50%的主张不进首选卡（反转族T+1=49.8%且滚动edge贴线+0.02pp→降级观察，不再当头条）；
+    # ②首选排序按主张健康度：B5(56.9% submit 6/6)>抢跑(58.9% 四regime全正)>观察池临启动>反转族(重症监护)。
     pick_rows = []
     rev = jload(D / "reversal_list.json", {})  # 首选卡先于反转族卡消费，这里先载
-    if rev and rev.get("candidates"):
+    _claims_state = jload(D / "claims_state.json", {})
+    _rev_r = None
+    try:  # claims_state 结构：history[-1].verdicts["1"][0] = 滚动250日边际贡献(pp)
+        _rev_r = _claims_state["REVERSAL_OPEN_T1"]["history"][-1]["verdicts"]["1"][0]
+    except Exception:
+        pass
+    _rev_sick = _rev_r is None or _rev_r < 0.05  # 滚动边际<0.05pp=贴线重症（无数据按重症处理，宁缺勿推）
+    # 首选层1：观察池临启动（缩量持稳优先，触发=梯队≥3涨停+首板，雷达10:30/14:45推送）
+    if wp and wp.get("pool"):
+        lin = sorted((e for e in wp["pool"] if 1 <= e.get("days", 0) <= 5),
+                     key=lambda e: (not e.get("shrink"), e["days"], -e["volratio"]))[:3]
+        for e in lin:
+            pick_rows.append([f"{esc(e['name'])}<br><span class='muted'>{e['code']}</span>",
+                              f'第{e["days"]}天 · 量比{e["volratio"]}x' + (" · 缩量持稳" if e.get("shrink") else ""),
+                              '<span class="muted">抢跑口径+1.79%/58.9%（close口径偏乐观）</span>',
+                              "板块梯队≥3涨停+自身首板=触发；破入池前低=作废"])
+    if pick_rows:
+        secs.append(card("🥇 首选 · 观察池临启动（触发制，非买卖指令）",
+                         table(["标的", "池内状态", "历史口径", "触发/作废"], pick_rows),
+                         "排序=缩量持稳>天数>量比 · 梯队成型雷达会QQ推送",
+                         "这不是现在就买——等梯队+首板信号。胜率口径 58.9% 是 close-entry（封死板买不进），"
+                         "实战 edge 介于 +1.79% 与 -0.52% 之间，fill 影子定量中。"))
+    # 首选层2：反转族预筛（仅当主张健康；贴线期降级为观察注释——用户规则：胜率<50%不推）
+    pick_rows = []  # 防串行：层1的池子行数列数不同，重置
+    if rev and rev.get("candidates") and not _rev_sick:
         pre = []
         for c in rev["candidates"][:60]:  # 深度前60逐一算位置（建页离线，成本可接受）
             kf = D / "big_kcache" / f'{c["code"]}.json'
@@ -336,6 +361,13 @@ def main():
                              "执行前提=明日 9:32 竞价确认通过（QQ会推确认结果）；开盘买→T+1尾盘卖；"
                              "深档若为高位断板大面（MA60上）降级观察。9:40 打回平盘=放弃。"))
     # B5 未封持仓处置提示
+    if _rev_sick and rev and rev.get("candidates"):
+        secs.append(card("🔄 反转族 · 重症监护中（不出首选）",
+                         f'<div class="muted">滚动250日边际贡献 +{_rev_r:.2f}pp 贴线（健康线 0.05pp）· '
+                         f'T+1 胜率 49.8% 未过 50% 用户规则线 · 名单仍在下方证据区可查，但体系当前不主动推它。</div>',
+                         "2026-09-14 盘中用户裁决：胜率<50%或滚动edge贴线的主张降级为观察，不进首选",
+                         "恢复条件：claims_audit 滚动边际回到 +0.05pp 以上。历史上它 +0.139%/46万样本是真的，"
+                         "但最近一年近乎熄火——是真衰减还是风格期，影子盘继续量。"))
     try:
         blines = [json.loads(l) for l in open(D / "banlu_signals.jsonl") if l.strip()]
         if blines:
