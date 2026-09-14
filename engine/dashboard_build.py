@@ -549,7 +549,7 @@ details.card .cardbody{padding-top:12px}
 <button class="tabbtn" data-tab="证据库">📚 证据库</button>
 </div>
 __BODY__
-<div class="foot">焚诀 Research Engine · 交易日自动重建：09:40 竞价确认后 / 10:40 / 11:20 / 13:35 / 14:50 / 15:50 收盘后 / 16:15 委托单后 / 20:40 晚间数据齐<br>
+<div class="foot">焚诀 Research Engine · 交易日自动重建：09:40 竞价确认后 / 10:40 雷达后 / 13:35 午后 / 14:50 尾盘 / 15:50 收盘后 / 16:15 委托单后 / 19:20 晚间 / 20:40 数据齐<br>
 非交易日不重建（显示最近交易日数据，版块日期戳为准）· 红涨绿跌 · 胜率均值均为净口径（扣 0.15% 费用）· 所有策略结论带作废条件与 kill 线</div>
 </div>
 <script>
@@ -567,7 +567,7 @@ btns.forEach(function(b){b.onclick=function(){show(b.getAttribute("data-tab"));}
 var saved=null;try{saved=localStorage.getItem("fj_tab");}catch(e){}
 show(saved||"作战");
 // ── 更新倒计时 ──
-var SLOTS=["09:40","10:40","11:20","13:35","14:50","15:50","16:15","20:40"];
+var SLOTS=["09:40","10:40","13:35","14:50","15:50","16:15","19:20","20:40"];
 function next(){
   var n=new Date();
   for(var d=0;d<8;d++){
