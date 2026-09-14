@@ -146,7 +146,20 @@ def parse_bank(text):
 def main():
     today = datetime.date.today().isoformat()
     secs = []
-    # ── 周期仪 ──
+    # ── 每日操作时间表（2026-09-14 用户令：80岁老人也能看懂的显眼窗口期标注）──
+    secs.insert(0, card("🕐 现在该干嘛",
+                        """<div id="nownow" style="font-size:19px;font-weight:700;padding:14px 16px;background:var(--soft);border-radius:8px;line-height:1.6">读取当前时间…</div>
+<table style="margin-top:12px"><tr><th>时间</th><th>动作（每天就这几件事）</th></tr>
+<tr><td>9:25 前</td><td>照「持仓」页的银行委托单挂单。挂完就不用管了</td></tr>
+<tr><td>9:32</td><td>看 QQ 确认单：说"作废"今天就别买；说"可执行"才进下一步</td></tr>
+<tr><td>9:32–9:45</td><td><b>买入窗口（每天唯一）</b>：首选卡里有票才买，没票=今天不买。9:45 后一律不追</td></tr>
+<tr><td>10:30</td><td>看 QQ 雷达：喊"梯队成型/冲板"才动手，没喊=继续休息</td></tr>
+<tr><td>10:30–14:45</td><td><b>什么都不干</b>。QQ 不喊就是没事</td></tr>
+<tr><td>14:45–15:00</td><td><b>卖出窗口</b>：昨天买的短线票，这个时间卖掉（无论盈亏）</td></tr>
+<tr><td>15:40 后</td><td>看这页"市场状态"徽章，定明天仓位；晚上看委托单</td></tr></table>""",
+                        "规则只有三条：买入只在 9:32-9:45、卖出只在尾盘、其余时间不操作",
+                        "为什么：延迟买入每小时烧掉 0.2% 收益（实测）；开盘卖是全场最差卖点（实测）；"
+                        "盘中盯盘不产生收益只产生冲动。QQ 会主动喊你，不用你盯。"))
     reg = None
     rl = D / "regime_log.jsonl"
     if rl.exists():
@@ -695,6 +708,22 @@ tick();setInterval(tick,30000);
 function bjt(){var n=new Date();return new Date(n.getTime()+(n.getTimezoneOffset()+480)*60000);}
 var b=bjt(),wd=b.getDay(),hh=b.getHours()*60+b.getMinutes();
 if(wd>=1&&wd<=5&&hh>=565&&hh<=910){setTimeout(function(){location.reload();},180000);}
+// ── "现在该干嘛"动态横幅（BJT 时间→一句话动作）──
+(function(){
+var el=document.getElementById("nownow");if(!el)return;
+var b2=bjt(),w=b2.getDay(),m=b2.getHours()*60+b2.getMinutes();
+var msg,color="#37352f";
+if(w===0||w===6){msg="📴 今天不开市。不用操作，想看就翻翻「证据库」。";}
+else if(m<565){msg="🌅 盘前：照「持仓」页的银行委托单挂单。挂完收工。";}
+else if(m<572){msg="⏳ 竞价中：别动手，等 9:32 QQ 确认单。";}
+else if(m<585){msg="🟢 买入窗口（9:32-9:45）：首选卡有票才买，没票=今天不买。看 QQ 确认单！";color="#c0392b";}
+else if(m<630){msg="🪑 窗口已过。别追，等 10:30 雷达。";}
+else if(m<885){msg="🪑 现在什么都不用干。QQ 不喊你=没事。盯盘不产生收益。";}
+else if(m<900){msg="🔴 卖出窗口（14:45-15:00）：昨天买的短线票现在卖，无论盈亏。";color="#0f7b3d";}
+else if(m<940){msg="📊 收盘了。等 15:40 周期仪徽章，定明天仓位。";}
+else{msg="🌙 晚间：看「持仓」页委托单，明天 9:25 前照挂即可。";}
+el.textContent=msg;el.style.color=color;
+})();
 })();
 </script>
 </body></html>"""
