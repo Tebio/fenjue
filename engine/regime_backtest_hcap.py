@@ -43,7 +43,7 @@ def load_sectors() -> dict[str, str]:
 
 def main() -> None:
     sectors = load_sectors()
-    idx = json.loads((KCACHE / "000001.json").read_text())
+    idx = json.loads((KCACHE.parent / "index_sh000001.json").read_text())  # 2026-09-14 撞代码修复：000001.json=平安银行
     idx_pct = {k["date"]: 0.0 for k in idx}
     for i in range(1, len(idx)):
         idx_pct[idx[i]["date"]] = (float(idx[i]["close"]) / float(idx[i - 1]["close"]) - 1) * 100

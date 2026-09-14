@@ -128,7 +128,7 @@ def deep_low_scan():
     try:
         names = {str(s["code"]).zfill(6): s.get("name", "")
                  for s in json.loads((D / "main_board_codes.json").read_text())["stocks"]}
-        idx = json.loads((D / "big_kcache" / "000001.json").read_text())
+        idx = json.loads((D / "index_sh000001.json").read_text())  # 仅用日期；000001.json=平安银行(撞代码)
         lastd = idx[-1]["date"]
         # 2026-09-14: 合并收盘快报覆盖层（15:10 新浪快照），让深档扫描盘后立即可用
         ov = {}

@@ -608,6 +608,9 @@ REGISTRY = {
     "PEAD_预增50+": lambda d, i: _pead_on(d, i, {"预增"}, 50),
     "PEAD_强利好": lambda d, i: _pead_on(d, i, {"预增", "扭亏"}),
     "PEAD_强利空": lambda d, i: _pead_on(d, i, {"预减", "首亏"}),
+    # ---- 双高格唯一存活（2026-09-14 #79）：跌停接×MA60上×2月，节令格终审 ----
+    "跌停接_MA60上_2月": lambda d, i: (d["ma60"][i] is not None and d["c"][i] > d["ma60"][i]
+                                     and d["date"][i][5:7] == "02" and _limitdown(d, i)),
 }
 
 

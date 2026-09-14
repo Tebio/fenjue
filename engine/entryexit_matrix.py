@@ -48,7 +48,7 @@ def stock_group(code: str, sectors: dict[str, str]) -> str:
 def main() -> None:
     sectors = load_sectors()
     # 上证 MA60 状态序列
-    idx = json.loads((KCACHE / "000001.json").read_text())
+    idx = json.loads((KCACHE.parent / "index_sh000001.json").read_text())  # 2026-09-14 撞代码修复：000001.json=平安银行
     idx_c = [float(k["close"]) for k in idx]
     idx_strong = {}
     for i, k in enumerate(idx):
