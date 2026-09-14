@@ -308,6 +308,44 @@ def main():
     except Exception:
         pass
     _rev_sick = _rev_r is None or _rev_r < 0.05  # 滚动边际<0.05pp=贴线重症（无数据按重症处理，宁缺勿推）
+    # 首选层0：深档低位（LIMITDOWN_NEXT_DAY L2+ 57.6% 健康主张）——独立于反转族名单直接扫 kcache。
+    # 2026-09-14 实锤教训：宏盛股份(周五-9.9%唯一低位)今早涨停，但旧预筛从 reversal_list 按成交额截前60把它切掉了。
+    try:
+        import glob as _g2
+        _kdates = sorted(_g2.glob(str(D / "big_kcache" / "*.json")))
+        _pool_names = {str(s["code"]).zfill(6): s.get("name", "")
+                       for s in json.loads((D / "main_board_codes.json").read_text())["stocks"]}
+        # 找最近交易日（任一大盘文件）
+        _idx = json.loads((D / "big_kcache" / "000001.json").read_text())
+        _lastd = _idx[-1]["date"]
+        _deep = []
+        for fp in _kdates:
+            c0 = fp.rsplit("/", 1)[-1].replace(".json", "")
+            if c0[:2] not in ("60", "00"):
+                continue
+            try:
+                ks = json.loads(open(fp).read())
+                if len(ks) < 61 or ks[-1]["date"] != _lastd:
+                    continue
+                p0 = (ks[-1]["close"] / ks[-2]["close"] - 1) * 100
+                if p0 <= -9.5:
+                    ma = sum(k["close"] for k in ks[-60:]) / 60
+                    if ks[-1]["close"] < ma:
+                        _deep.append((c0, p0, ma))
+            except Exception:
+                continue
+        if _deep:
+            rows_d = [[f'{esc(_pool_names.get(c0, ""))}<br><span class="muted">{c0}</span>',
+                       pct(p0), '<span class="up">MA60下✓</span>',
+                       '<span class="muted">跌停接L2+ +2.65%/57.6%（剔一字后）</span>',
+                       "竞价一字跌停=作废；封死板买不进则放弃"] for c0, p0, ma in sorted(_deep, key=lambda x: x[1])]
+            secs.append(card("🥇 首选 · 深档低位（跌停接健康主张）",
+                             table(["标的", "昨跌幅", "位置", "历史口径", "作废条件"], rows_d),
+                             f"{_lastd} 深档≤-9.5%全扫 · 只留MA60下（高位断板大面已剔除）",
+                             "这是全库扫描不是名单切片——9/14 宏盛股份涨停就是这条的命中。"
+                             "买点=次日开盘（竞价确认非一字），T+1尾盘兑现。"))
+    except Exception:
+        pass
     # 首选层1：观察池临启动（缩量持稳优先，触发=梯队≥3涨停+首板，雷达10:30/14:45推送）
     if wp and wp.get("pool"):
         lin = sorted((e for e in wp["pool"] if 1 <= e.get("days", 0) <= 5),
