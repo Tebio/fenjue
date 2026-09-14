@@ -123,7 +123,7 @@ def scan() -> dict:
         # 回退路径：腾讯批量
         codes = [str(s["code"]).zfill(6) for s in stocks]
         quotes = tencent_quotes(codes)
-        boards = [{"code": c, "name": q["name"], "cap": q.get("mktcap_yi") or 0}
+        boards = [{"code": c, "name": q["name"], "cap": q.get("mktcap_yi") or 0, "pct": q.get("pct")}
                   for c, q in quotes.items() if q["pct"] >= 9.8]
         limit_downs = sum(1 for q in quotes.values() if q["pct"] <= -9.8)
         idx_pct = 0.0

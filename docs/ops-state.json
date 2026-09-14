@@ -1,11 +1,11 @@
 {
  "version": 1,
- "built_at": "2026-09-14 07:20",
+ "built_at": "2026-09-14 08:09",
  "regime": {
-  "date": "2026-09-11",
-  "regime": "恐慌期",
-  "limit_ups": 38,
-  "limit_downs": 23
+  "date": "2026-09-14",
+  "regime": "平淡期",
+  "limit_ups": 26,
+  "limit_downs": 1
  },
  "focus": [
   {

@@ -676,7 +676,7 @@ def main():
         rows = []
         for b in sorted(reg["boards"], key=lambda b: -b["cap"])[:10]:
             rsn = reasons.get(b["code"], "")
-            rows.append([esc(b["code"]), esc(b["name"]), pct(b["pct"]), f'{b["cap"]:.0f}亿',
+            rows.append([esc(b["code"]), esc(b["name"]), pct(b.get("pct")), f'{b["cap"]:.0f}亿',
                          f'<span class="muted">{esc(rsn)}</span>'])
         secs.append(card(f"涨停全景 · 市值前 10（{esc(reg["date"])}）", table(["代码", "名称", "涨幅", "市值", "涨停原因"], rows),
                          "周期仪全量扫描 + HiThink 题材归因", collapsed=True))
