@@ -168,7 +168,7 @@ def main():
             reg = json.loads(lines[-1])
     if reg:
         st = reg["stats"]
-        secs.append(card("市场状态", f"""
+        secs.append(card(f"市场状态 · {reg['date']}（最近交易日）" if reg["date"] != today else "市场状态 · 今日", f"""
 <div class="statrow"><div><div class="big">{badge_regime(reg['regime'])}</div>
 <div class="muted">周期仪 · {esc(reg['date'])}</div></div>
 <div class="stat"><div class="num">{st['limit_ups']}<span class="muted"> / {st['limit_downs']}</span></div><div class="muted">涨停 / 跌停</div></div>
@@ -203,8 +203,10 @@ def main():
                     flags.append(f'<span class="dn">⚠️破{esc(desc)}</span>')
                 elif not bear and price > lv:
                     flags.append(f'<span class="up">✅过{esc(desc)}</span>')
+            _mk = ("sh" if p["code"].startswith("6") else "sz") + p["code"]
             rows.append([f"{esc(p['name'])}<br><span class='muted'>{p['code']}</span>",
-                         f"{price:.2f}", pct(chg),
+                         f'<span data-q="{_mk}" data-f="p">{price:.2f}</span>',
+                         f'<span data-q="{_mk}" data-f="r">{pct(chg)}</span>',
                          f'<span class="muted">{esc(p["note"])}</span>',
                          " ".join(flags) or '<span class="muted">区间内</span>'])
             if any("⚠️破" in f0 for f0 in flags):
@@ -219,9 +221,13 @@ def main():
                 continue
             price, chg = q[a["code"]]
             in_zone = price <= a["buy"]
-            arows.append([esc(a["name"]), f"{price:.2f}", f'{a["buy"]:.2f}',
-                          '<span class="up">🟢买入区内</span>' if in_zone
-                          else f'<span class="muted">线上方{(price/a["buy"]-1)*100:+.1f}%</span>'])
+            _mk = ("sh" if a["code"].startswith("6") else "sz") + a["code"]
+            arows.append([esc(a["name"]),
+                          f'<span data-q="{_mk}" data-f="p">{price:.2f}</span>', f'{a["buy"]:.2f}',
+                          f'<span data-q="{_mk}" data-f="z" data-buy="{a["buy"]:.2f}">'
+                          + ('<span class="up">🟢买入区内</span>' if in_zone
+                             else f'<span class="muted">线上方{(price/a["buy"]-1)*100:+.1f}%</span>')
+                          + '</span>'])
         if arows:
             secs.append(card("股息锚买入区", table(["标的", "现价", "买入线", "状态"], arows),
                              "现价≤线=可建仓/加仓"))
@@ -440,7 +446,7 @@ def main():
     if rev and rev.get("candidates"):
         rows = [[esc(c["code"]), esc(c["name"]), pct(c["close_chg"]), f'{c["amt_yi"]:.0f}亿']
                 for c in rev["candidates"][:8]]
-        secs.append(card("反转族 · 明日观察名单", table(["代码", "名称", "今日跌幅", "成交额"], rows),
+        secs.append(card(f"反转族 · 待确认名单（{esc(rev.get("date", ""))} 收盘扫）", table(["代码", "名称", "当日跌幅", "成交额"], rows),
                          f'{esc(rev.get("date", ""))} 收盘扫描 · 外部复审 +0.139%/49.8% 净口径', REV_RULE))
         for c in rev["candidates"][:3]:
             focus_rows.append(("🔄反转族", f"{esc(c['name'])}({c['code']})",
@@ -567,7 +573,7 @@ def main():
             rsn = reasons.get(b["code"], "")
             rows.append([esc(b["code"]), esc(b["name"]), pct(b["pct"]), f'{b["cap"]:.0f}亿',
                          f'<span class="muted">{esc(rsn)}</span>'])
-        secs.append(card("今日涨停全景 · 市值前 10", table(["代码", "名称", "涨幅", "市值", "涨停原因"], rows),
+        secs.append(card(f"涨停全景 · 市值前 10（{esc(reg["date"])}）", table(["代码", "名称", "涨幅", "市值", "涨停原因"], rows),
                          "周期仪全量扫描 + HiThink 题材归因", collapsed=True))
     # ── G7 焦点置顶（市场状态之后第一位）──
     # QQ联动说明卡（2026-09-14 用户令：页面内说明QQ推送与本页关系）
@@ -591,7 +597,7 @@ def main():
     if focus_rows:
         body_f = table(["来源", "标的", "关键信息", "启动窗口/时点"],
                        [[f"<b>{s}</b>", t, i, w] for s, t, i, w in focus_rows])
-        focus_card = card("📌 今日焦点 · 只看这一屏", body_f,
+        focus_card = card(f"📌 焦点清单 · 只看这一屏（数据 {reg["date"] if reg else today}）", body_f,
                           "观察池毕业中位 2 天 · 71.6% 在入池 3 日内启动（8 年实测分布）",
                           "破位优先处理 > 临启动盯梯队 > 抢跑排队 > 反转等竞价。其余卡片是证据库，这屏是行动清单。")
         secs.insert(2, focus_card)
@@ -655,7 +661,7 @@ details.card .cardbody{padding-top:12px}
 .foot{margin-top:48px;padding-top:16px;border-top:1px solid var(--divider);color:var(--muted);font-size:12px}
 </style></head><body><div class="wrap">
 <h1>焚诀操作台</h1>
-<div class="sub">__DATE__ · 研究辅助，不是买卖指令 · 数据构建于 __STAMP__ · <span id="cd">下次更新计算中…</span></div>
+<div class="sub">__DATE__ · 研究辅助，不是买卖指令 · 构建于 __STAMP__ · <span id="cd">…</span> · <span id="livepulse" style="color:#c0392b"></span></div>
 <div class="tabbar" id="tabbar">
 <button class="tabbtn active" data-tab="作战">⚔️ 作战</button>
 <button class="tabbtn" data-tab="持仓">💰 持仓/底仓</button>
@@ -708,7 +714,41 @@ tick();setInterval(tick,30000);
 function bjt(){var n=new Date();return new Date(n.getTime()+(n.getTimezoneOffset()+480)*60000);}
 var b=bjt(),wd=b.getDay(),hh=b.getHours()*60+b.getMinutes();
 if(wd>=1&&wd<=5&&hh>=565&&hh<=910){setTimeout(function(){location.reload();},180000);}
-// ── "现在该干嘛"动态横幅（BJT 时间→一句话动作）──
+// ── 实时报价（JSONP 注入 qt.gtimg.cn，静态页免跨域；2026-09-14 用户令）──
+(function(){
+var nodes=document.querySelectorAll("[data-q]");
+if(!nodes.length)return;
+var codes=[];nodes.forEach(function(n){var c=n.getAttribute("data-q");if(codes.indexOf(c)<0)codes.push(c);});
+var b3=bjt(),w3=b3.getDay(),m3=b3.getHours()*60+b3.getMinutes();
+var live=(w3>=1&&w3<=5&&m3>=555&&m3<=905); // 9:15-15:05 BJT
+function paint(){
+  var s=document.createElement("script");
+  s.src="https://qt.gtimg.cn/q="+codes.join(",")+"&_="+Date.now();
+  s.onload=function(){
+    codes.forEach(function(c){
+      var v=window["v_"+c];if(!v)return;
+      var f=v.split("~");if(f.length<33)return;
+      var price=parseFloat(f[3]),prev=parseFloat(f[4]);
+      if(!(price>0)||!(prev>0))return;
+      var r=(price/prev-1)*100;
+      document.querySelectorAll('[data-q="'+c+'"]').forEach(function(n){
+        var k=n.getAttribute("data-f");
+        if(k==="p")n.textContent=price.toFixed(2);
+        else if(k==="r"){var cls=r>0?"up":r<0?"dn":"muted";
+          n.innerHTML='<span class="'+cls+'">'+(r>0?"+":"")+r.toFixed(2)+"%</span>";}
+        else if(k==="z"){var buy=parseFloat(n.getAttribute("data-buy"));
+          n.innerHTML=price<=buy?'<span class="up">🟢买入区内</span>':'<span class="muted">线上方'+((price/buy-1)*100).toFixed(1)+"%</span>";}
+      });
+    });
+    var lp=document.getElementById("livepulse");
+    if(lp){var n2=bjt();lp.textContent="实时 "+("0"+n2.getHours()).slice(-2)+":"+("0"+n2.getMinutes()).slice(-2)+":"+("0"+n2.getSeconds()).slice(-2);}
+    s.remove();
+  };
+  s.onerror=function(){s.remove();};
+  document.head.appendChild(s);
+}
+paint(); if(live)setInterval(paint,30000);
+})();
 (function(){
 var el=document.getElementById("nownow");if(!el)return;
 var b2=bjt(),w=b2.getDay(),m=b2.getHours()*60+b2.getMinutes();
