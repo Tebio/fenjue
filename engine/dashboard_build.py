@@ -215,22 +215,37 @@ def main():
     # ── 观察池（G1）──
     wp = jload(D / "watch_pool.json", {})
     if wp and wp.get("pool"):
+        # K3修（2026-09-14 用户抓包）：池内票没标板块，梯队无从盯起——挂 HiThink 板块映射
+        _secmap = {}
+        try:
+            import glob as _g
+            _sm = json.loads(open(sorted(_g.glob(str(D / "hithink/sectors/stock_sectors_*.json")))[-1]).read())
+            _STOP = {"融资融券", "深股通", "沪股通", "国企改革", "次新股", "ST股"}
+            for c0, arr in _sm.items():
+                tags = [e["name"] for e in arr if e.get("name") and e["name"] not in _STOP][:2]
+                _secmap[str(c0).zfill(6)] = "|".join(tags)
+        except Exception:
+            pass
         rows = []
         for e in sorted(wp["pool"], key=lambda e: -e["volratio"])[:10]:
-            rows.append([esc(e["code"]), esc(e["name"]), f'<span class="muted">{esc(e["entry_date"])}</span>',
+            rows.append([esc(e["code"]), esc(e["name"]),
+                         f'<span class="muted">{esc(_secmap.get(str(e["code"]).zfill(6), "—"))}</span>',
+                         f'<span class="muted">{esc(e["entry_date"])}</span>',
                          f'{e["volratio"]}x', pct(e["pct"]), str(e.get("days", 0)),
                          '<span class="up">缩量持稳</span>' if e.get("shrink") else '<span class="muted">观察中</span>'])
         # G7 焦点：临启动票（第1-5天=窗口期；中位2日/71.6%≤3日毕业，实测分布）；上限8条防爆版
         for e in sorted((e for e in wp["pool"] if 1 <= e.get("days", 0) <= 5),
                         key=lambda e: (e["days"], -e["volratio"]))[:8]:
             win = ("🔥高发窗口" if e["days"] <= 3 else "窗口尾（第4-5天）")
+            sec_tag = _secmap.get(str(e["code"]).zfill(6), "")
             focus_rows.append(("🎯观察池临启动", f"{esc(e['name'])}({e['code']})",
-                               f'量比{e["volratio"]}x · 第{e["days"]}天' + (" · 缩量持稳" if e.get("shrink") else ""),
+                               f'量比{e["volratio"]}x · 第{e["days"]}天 · {esc(sec_tag)}' + (" · 缩量持稳" if e.get("shrink") else ""),
                                win + ' · 梯队+首板=抢跑口径+1.79%/58.9%'))
         hint = f'{esc(wp.get("updated", ""))} · 放量未板+缩量横盘不破=启动前形态（002519 原型）'
-        secs.append(card("放量异动观察池", table(["代码", "名称", "入池", "量比", "当日", "天数", "状态"], rows),
+        secs.append(card("放量异动观察池", table(["代码", "名称", "板块", "入池", "量比", "当日", "天数", "状态"], rows),
                          hint,
-                         "用法：池内票出现板块梯队+首板=抢跑买点（frontrun 规则条）；破入池日前低=出局。"))
+                         "用法：量比大≠好——放量只是入池门票（异动2.4x基率），真正加分项是入池后缩量持稳；"
+                         "该票板块当日≥3只涨停=梯队成型，雷达10:30/14:45会在QQ单独提醒；破入池日前低=出局。"))
     # ── 银行委托单（表格化）──
     bf = D / "bank_console_latest.txt"
     if bf.exists():
@@ -255,23 +270,31 @@ def main():
             if r["claim"] == "FRONTRUN_FIRSTBOARD_V2":
                 fr.append(r)
     if fr:
+        # K3修（2026-09-14 用户抓包）：抢跑表只有代码没名称——补名称映射
+        _names = {}
+        try:
+            _names = {str(s["code"]).zfill(6): s.get("name", "")
+                      for s in json.loads((D / "main_board_codes.json").read_text())["stocks"]}
+        except Exception:
+            pass
         by_date = {}
         for r in fr:
             by_date.setdefault(r["signal_date"], []).append(r)
         rows = []
         for dt in sorted(by_date, reverse=True)[:3]:
             for r in by_date[dt]:
-                rows.append([f'<span class="muted">{esc(dt)}</span>', esc(r["code"]),
+                rows.append([f'<span class="muted">{esc(dt)}</span>',
+                             f'{esc(_names.get(r["code"], ""))}<br><span class="muted">{esc(r["code"])}</span>',
                              pct(r["r1"] * 100 if r["r1"] is not None else None),
                              pct(r["r5"] * 100 if r["r5"] is not None else None),
                              '<span class="muted">未成交</span>' if r.get("untradeable") else (
                                  '<span class="ok">在车上</span>' if r["entry"] else '<span class="muted">待回填</span>')])
-        secs.append(card("首板抢跑 · 影子名单", table(["信号日", "代码", "T+1", "T+5", "状态"], rows),
+        secs.append(card("首板抢跑 · 影子名单", table(["信号日", "标的", "T+1", "T+5", "状态"], rows),
                          "首板+板块梯队≥3+市值20-400亿 · 测量级通过 影子验证中", FRONT_RULE + FILL_NOTE))
         latest_dt = max(by_date) if by_date else None
         if latest_dt:
             for r in by_date[latest_dt]:
-                focus_rows.append(("🚀首板抢跑", esc(r["code"]), "封板 bar 排队打板（开盘追-0.52%已证伪）",
+                focus_rows.append(("🚀首板抢跑", f'{esc(_names.get(r["code"], ""))}({esc(r["code"])})', "封板 bar 排队打板（开盘追-0.52%已证伪）",
                                    f"{latest_dt} 已封板 · 隔夜+2.11%/65.2%"))
     # ── 明日首选（2026-09-14 用户令：页面要显示"如果是我，最可能买哪只"）──
     # 规则排序，非拍脑袋：持仓破位>反转族预筛(深档+MA60下+流动性)>抢跑>B5处置。首选=规则下第一名+作废条件。
@@ -590,6 +613,10 @@ function tick(){
     (h>0?"（"+h+"小时"+m+"分后）":"（"+m+"分钟后）");
 }
 tick();setInterval(tick,30000);
+// ── 盘中自动刷新（2026-09-14 用户裁决）：交易日 9:25-15:10 BJT 每 3 分钟重载 ──
+function bjt(){var n=new Date();return new Date(n.getTime()+(n.getTimezoneOffset()+480)*60000);}
+var b=bjt(),wd=b.getDay(),hh=b.getHours()*60+b.getMinutes();
+if(wd>=1&&wd<=5&&hh>=565&&hh<=910){setTimeout(function(){location.reload();},180000);}
 })();
 </script>
 </body></html>"""
