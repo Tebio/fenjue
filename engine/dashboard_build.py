@@ -69,9 +69,13 @@ def badge_regime(r):
     return f'<span class="badge" style="color:{fg};background:{bg}">{esc(r)}</span>'
 
 
-def card(title, inner, hint="", rule=""):
+def card(title, inner, hint="", rule="", collapsed=False):
+    """collapsed=True → 证据库卡片默认折叠（<details>），减瀑布流信息冗余（2026-09-14 用户裁决）。"""
     h = f'<span class="hint">{esc(hint)}</span>' if hint else ""
     r = f'<div class="rule">{esc(rule)}</div>' if rule else ""
+    if collapsed:
+        return (f'<details class="card"><summary>{esc(title)}{h}</summary>'
+                f'<div class="cardbody">{r}{inner}</div></details>')
     return f'<section class="card"><h2>{esc(title)}{h}</h2>{r}{inner}</section>'
 
 
@@ -167,7 +171,7 @@ def main():
                          " ".join(flags) or '<span class="muted">区间内</span>'])
             if any("⚠️破" in f0 for f0 in flags):
                 focus_rows.append(("⚠️持仓破位", f"{esc(p['name'])}({p['code']})",
-                                   " ".join(flags), "立即检查纪律"))
+                                   " ".join(flags), "立即检查纪律 · 假突破收不回5日-0.53%实测"))
         if rows:
             secs.append(card("持仓哨兵", table(["标的", "现价", "今日", "备注", "关键位"], rows),
                              "config/watchlist.json · 越线自动标记"))
@@ -197,7 +201,7 @@ def main():
             win = ("🔥高发窗口" if e["days"] <= 3 else "窗口尾（第4-5天）")
             focus_rows.append(("🎯观察池临启动", f"{esc(e['name'])}({e['code']})",
                                f'量比{e["volratio"]}x · 第{e["days"]}天' + (" · 缩量持稳" if e.get("shrink") else ""),
-                               win))
+                               win + ' · 梯队+首板=抢跑口径+1.79%/58.9%'))
         hint = f'{esc(wp.get("updated", ""))} · 放量未板+缩量横盘不破=启动前形态（002519 原型）'
         secs.append(card("放量异动观察池", table(["代码", "名称", "入池", "量比", "当日", "天数", "状态"], rows),
                          hint,
@@ -205,16 +209,18 @@ def main():
     # ── 银行委托单（表格化）──
     bf = D / "bank_console_latest.txt"
     if bf.exists():
+        import os as _os
+        _bt = datetime.datetime.fromtimestamp(_os.path.getmtime(bf)).strftime("%m-%d %H:%M")
         rows, orders = parse_bank(bf.read_text())
         if rows:
             secs.append(card("银行股操作台", table(
                 ["标的", "现价", "息率", "PB", "状态", "买入线", "卖出线", "清仓线", "距买入"], rows),
-                "股息率锚 · 样本外 60.1% 胜率 · 价格线仅分红/财报后调整",
+                f"股息率锚 · 样本外 60.1% 胜率 · 生成于 {_bt}（价格线仅分红/财报后调整，跨日仍有效）",
                 "规则：买入区=可建仓/加仓（阶梯挂单 买线/-4%/-8%）；卖出区=减仓不清仓；清仓区=清仓离场。价格线不随日内波动。"))
         if orders:
-            secs.append(card("银行 · 明日委托单", table(
+            secs.append(card("银行 · 委托单", table(
                 ["标的", "操作", "买入", "加仓阶梯", "卖出", "清仓"], orders),
-                "明早盘前照抄挂单即可"))
+                f"生成于 {_bt} · 价格线在下个交易日 16:05 重建前持续有效，盘前照抄挂单即可"))
     # ── frontrun 影子 ──
     fr = []
     sf = D / "claims_shadow.jsonl"
@@ -240,8 +246,64 @@ def main():
         latest_dt = max(by_date) if by_date else None
         if latest_dt:
             for r in by_date[latest_dt]:
-                focus_rows.append(("🚀首板抢跑", esc(r["code"]), "封板 bar 排队打板",
-                                   f"{latest_dt} 已封板"))
+                focus_rows.append(("🚀首板抢跑", esc(r["code"]), "封板 bar 排队打板（开盘追-0.52%已证伪）",
+                                   f"{latest_dt} 已封板 · 隔夜+2.11%/65.2%"))
+    # ── 明日首选（2026-09-14 用户令：页面要显示"如果是我，最可能买哪只"）──
+    # 规则排序，非拍脑袋：持仓破位>反转族预筛(深档+MA60下+流动性)>抢跑>B5处置。首选=规则下第一名+作废条件。
+    pick_rows = []
+    rev = jload(D / "reversal_list.json", {})  # 首选卡先于反转族卡消费，这里先载
+    if rev and rev.get("candidates"):
+        pre = []
+        for c in rev["candidates"][:60]:  # 深度前60逐一算位置（建页离线，成本可接受）
+            kf = D / "big_kcache" / f'{c["code"]}.json'
+            if not kf.exists():
+                continue
+            try:
+                ks = json.loads(kf.read_text())
+                if len(ks) < 61 or ks[-1]["date"] != rev.get("date"):
+                    continue
+                ma60 = sum(k["close"] for k in ks[-60:]) / 60
+                below = ks[-1]["close"] < ma60
+                depth = c["close_chg"]
+                band = ("≤-9.5%" if depth <= -9.5 else "-7~-9.5%" if depth <= -7 else
+                        "-5~-7%" if depth <= -5 else "-3~-5%")
+                edge = {"≤-9.5%": "档均+1.10%", "-7~-9.5%": "档均+0.42%",
+                        "-5~-7%": "档均+0.17%", "-3~-5%": "档均+0.03%"}[band]
+                # 排序分：深档优先 + MA60下加分 + 流动性
+                score = ({"≤-9.5%": 4, "-7~-9.5%": 3, "-5~-7%": 2, "-3~-5%": 1}[band]
+                         + (2 if below else 0) + min(c.get("amt_yi", 0) / 20, 1))
+                pre.append((score, c, band, edge, below))
+            except Exception:
+                continue
+        for score, c, band, edge, below in sorted(pre, key=lambda x: -x[0])[:3]:
+            pick_rows.append([f"{esc(c['name'])}<br><span class='muted'>{c['code']}</span>",
+                              pct(c["close_chg"]), band,
+                              '<span class="up">MA60下✓</span>' if below else '<span class="muted">MA60上</span>',
+                              f'<span class="muted">{edge} · 净口径</span>',
+                              "竞价剔一字/抢跑>1/3作废"])
+        if pick_rows:
+            secs.append(card("🥇 明日首选 · 规则排序预筛（非买卖指令）",
+                             table(["标的", "今日", "深度档", "位置", "历史档口径", "作废条件"], pick_rows),
+                             f'{esc(rev.get("date", ""))} 数据 · 反转族×位置×流动性三维排序',
+                             "执行前提=明日 9:32 竞价确认通过（QQ会推确认结果）；开盘买→T+1尾盘卖；"
+                             "深档若为高位断板大面（MA60上）降级观察。9:40 打回平盘=放弃。"))
+    # B5 未封持仓处置提示
+    try:
+        blines = [json.loads(l) for l in open(D / "banlu_signals.jsonl") if l.strip()]
+        if blines:
+            lastd = blines[-1]["date"]
+            uns = [b for b in blines if b["date"] == lastd and not b.get("sealed")]
+            sealed = [b for b in blines if b["date"] == lastd and b.get("sealed")]
+            rows_b = ([[f'{esc(b["name"])}({b["code"]})', "未封板",
+                        '<span class="dn">开盘即走（断板即跑铁律）</span>'] for b in uns]
+                      + [[f'{esc(b["name"])}({b["code"]})', "封板在手",
+                          '<span class="up">早盘兑现（隔夜+2.11%/65.2%实测）</span>'] for b in sealed])
+            if rows_b:
+                secs.append(card("⚡ B5 持仓处置",
+                                 table(["标的", "状态", "动作"], rows_b),
+                                 f"{lastd} 信号 · 反人群打板不留恋"))
+    except Exception:
+        pass
     # ── 反转族 ──
     rev = jload(D / "reversal_list.json", {})
     if rev and rev.get("candidates"):
@@ -251,7 +313,7 @@ def main():
                          f'{esc(rev.get("date", ""))} 收盘扫描 · 外部复审 +0.139%/49.8% 净口径', REV_RULE))
         for c in rev["candidates"][:3]:
             focus_rows.append(("🔄反转族", f"{esc(c['name'])}({c['code']})",
-                               f'昨{c["close_chg"]:.1f}% · 额{c["amt_yi"]:.0f}亿',
+                               f'昨{c["close_chg"]:.1f}% · 额{c["amt_yi"]:.0f}亿 · T+1净+0.139%/49.8%',
                                "明日 9:32 竞价确认"))
     # ── 主张影子汇总 ──
     summ = jload(D / "claims_shadow_summary.json", {})
@@ -267,7 +329,7 @@ def main():
     secs.append(card("主张影子表现",
                      table(["主张", "档", "T+1 均值/胜率", "T+5 均值/胜率", "n"], rows) if rows
                      else '<div class="muted">影子期积累中（2026-09-11 起，20 交易日见分晓）</div>',
-                     "L5 前向验证 · kill 线滚动审计，不达标自动降级"))
+                     "L5 前向验证 · kill 线滚动审计，不达标自动降级", collapsed=True))
     # ── 模拟盘锦标赛（G11）──
     tour = jload(D / "sim_tournament_20260912.json", {})
     audit = jload(D / "sim_audit_20260912.json", {})
@@ -303,7 +365,7 @@ def main():
                     f'赔率{audit.get("E_payoff_ratio")}（均赢{audit.get("E_avg_win%")}%/均亏{audit.get("E_avg_loss%")}%）')
         secs.append(card("模拟盘锦标赛 · 两年各10万", table(["玩法", "收益", "最大回撤", "笔数/胜率", "均笔"], rows),
                          f'{tour["window"][0]} ~ {tour["window"][1]} · 基准(上证) +{tour["bench%"]}% · 净口径 m60成交验证',
-                         f'历史重放≠未来。{slip}'))
+                         f'历史重放≠未来。{slip}', collapsed=True))
     # ── 席位口味 ──
     taste = jload(D / "seat_gene_rolling.json", {})
     if taste and taste.get("seats"):
@@ -317,7 +379,7 @@ def main():
             rows.append([esc(nm), "、".join(c for c, _ in s["top_concepts"][:3]),
                          pct(t5.get("avg%")) if t5 else "—", note])
         secs.append(card("游资口味 · 滚动 90 天", table(["席位", "近 90 天偏好", "买向 T+5", "备注"], rows),
-                         f'{esc(taste.get("window", ""))} · 口味半年换血，每周六更新'))
+                         f'{esc(taste.get("window", ""))} · 口味半年换血，每周六更新', collapsed=True))
     # ── 收割型反向提示（G4：持仓×收割席位交叉）──
     SHOUGE_SEATS = {"T王", "山东帮", "温州帮"}
     hdirs2 = sorted((D / "hithink").glob("2026-*"))
@@ -352,7 +414,7 @@ def main():
 <div class="stat"><div class="num">{mv['减持']}</div><div class="muted">减持</div></div>
 <div class="stat"><div class="num">{north['coverage']['with_north']}</div><div class="muted">覆盖个股</div></div></div>
 <div style="margin-top:10px">{table(["代码", "北向持股", "环比变动", "行业"], rows)}</div>""",
-                         f'季度慢变量 · 截至 {esc(north.get("latest_quarter", ""))}', NORTH_RULE))
+                         f'季度慢变量 · 截至 {esc(north.get("latest_quarter", ""))}', NORTH_RULE, collapsed=True))
     # ── 涨停全景（挂涨停原因=消息面）──
     reasons = {}
     hdirs = sorted((D / "hithink").glob("2026-*"))
@@ -367,8 +429,18 @@ def main():
             rows.append([esc(b["code"]), esc(b["name"]), pct(b["pct"]), f'{b["cap"]:.0f}亿',
                          f'<span class="muted">{esc(rsn)}</span>'])
         secs.append(card("今日涨停全景 · 市值前 10", table(["代码", "名称", "涨幅", "市值", "涨停原因"], rows),
-                         "周期仪全量扫描 + HiThink 题材归因"))
+                         "周期仪全量扫描 + HiThink 题材归因", collapsed=True))
     # ── G7 焦点置顶（市场状态之后第一位）──
+    # QQ联动说明卡（2026-09-14 用户令：页面内说明QQ推送与本页关系）
+    secs.insert(1, card("📲 怎么配合 QQ 推送用这页",
+                        """<table><tr><th>QQ 推送</th><th>对应本页版块</th><th>动作</th></tr>
+<tr><td>9:32 反转族竞价确认</td><td>🥇明日首选 / 🔄反转族名单</td><td>确认通过→开盘买；被剔→作废</td></tr>
+<tr><td>10:30 / 14:45 盘中雷达</td><td>持仓哨兵⚠️ / 观察池 / 冲板候选</td><td>⚠️破位=按处置树执行；冲板票对焦点区梯队</td></tr>
+<tr><td>15:40 周期仪</td><td>市场状态徽章</td><td>周期切换=仓位档调整（平淡/恐慌期才开进攻仓）</td></tr>
+<tr><td>19:00 后影子/委托单系列</td><td>银行委托单 / 主张影子 / B5处置</td><td>次日盘前照委托单挂单</td></tr></table>""",
+                        "QQ=触发器（有事才说话），本页=证据库（盘后全貌+规则原文）",
+                        "顺序：收到 QQ 推送 → 来这页找对应版块看规则和实测口径 → 按作废条件执行。别只看推送就动手。",
+                        collapsed=True))
     # 作战手册卡（playbook-202609.md 摘要，静态规则层）——置顶第2位，焦点区第3位
     secs.insert(1, card("🎯 作战手册 · 2026-09 起",
                      """<table><tr><th>层</th><th>规则</th></tr>
@@ -430,16 +502,48 @@ table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;color:var(--muted);font-weight:500;font-size:12px;padding:4px 8px 4px 0;border-bottom:1px solid var(--divider);white-space:nowrap}
 td{padding:6px 8px 6px 0;border-bottom:1px solid var(--divider);vertical-align:top}
 tr:last-child td{border-bottom:none}
+details.card summary{font-size:15px;font-weight:600;padding-bottom:8px;border-bottom:1px solid var(--divider);cursor:pointer;list-style:none}
+details.card summary::before{content:"▸ ";color:var(--muted)}
+details.card[open] summary::before{content:"▾ "}
+details.card .cardbody{padding-top:12px}
 .up{color:#c0392b}.dn{color:#0f7b3d}.ok{color:#0f7b3d;font-size:12px}
 .pre{background:var(--soft);border-radius:6px;padding:14px 16px;font:12.5px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-all}
 .foot{margin-top:48px;padding-top:16px;border-top:1px solid var(--divider);color:var(--muted);font-size:12px}
 </style></head><body><div class="wrap">
 <h1>焚诀操作台</h1>
-<div class="sub">__DATE__ · 研究辅助，不是买卖指令 · 数据构建于 __STAMP__</div>
+<div class="sub">__DATE__ · 研究辅助，不是买卖指令 · 数据构建于 __STAMP__ · <span id="cd">下次更新计算中…</span></div>
 __BODY__
-<div class="foot">焚诀 Research Engine · 各版块数据由盘后 cron 自动落盘，本页静态快照每交易日更新<br>
-红涨绿跌 · 胜率均值均为净口径（扣 0.15% 费用）· 所有策略结论带作废条件与 kill 线</div>
-</div></body></html>"""
+<div class="foot">焚诀 Research Engine · 交易日自动重建：09:40 竞价确认后 / 10:40 / 11:20 / 13:35 / 14:50 / 15:50 收盘后 / 16:15 委托单后 / 20:40 晚间数据齐<br>
+非交易日不重建（显示最近交易日数据，版块日期戳为准）· 红涨绿跌 · 胜率均值均为净口径（扣 0.15% 费用）· 所有策略结论带作废条件与 kill 线</div>
+</div>
+<script>
+(function(){
+var SLOTS=["09:40","10:40","11:20","13:35","14:50","15:50","16:15","20:40"];
+function next(){
+  var n=new Date();
+  for(var d=0;d<8;d++){
+    var t=new Date(n.getFullYear(),n.getMonth(),n.getDate()+d);
+    var wd=t.getDay();
+    if(wd===0||wd===6)continue;
+    for(var i=0;i<SLOTS.length;i++){
+      var p=SLOTS[i].split(":");
+      var s=new Date(t.getFullYear(),t.getMonth(),t.getDate(),+p[0],+p[1]);
+      if(s>n)return s;
+    }
+  }
+  return null;
+}
+function tick(){
+  var s=next(),el=document.getElementById("cd");
+  if(!s){el.textContent="下次更新未知";return;}
+  var ms=s-new Date(),h=Math.floor(ms/36e5),m=Math.ceil(ms%36e5/6e4);
+  el.textContent="下次更新 "+(s.getHours()<10?"0":"")+s.getHours()+":"+(s.getMinutes()<10?"0":"")+s.getMinutes()+
+    (h>0?"（"+h+"小时"+m+"分后）":"（"+m+"分钟后）");
+}
+tick();setInterval(tick,30000);
+})();
+</script>
+</body></html>"""
 
 if __name__ == "__main__":
     main()
