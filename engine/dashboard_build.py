@@ -458,10 +458,12 @@ def main():
         def _chg(s):
             # K3修（2026-09-14 用户抓包）：north_profile 的 change 是字符串股数，原代码只认数值 → 全渲染成"—亿股"
             try:
-                return round(float(s["change"]) / 1e8, 2)
+                v = float(s["change"]) / 1e8
+                cls = "up" if v > 0 else "dn" if v < 0 else "muted"
+                return f'<span class="{cls}">{v:+.2f}</span>'
             except (TypeError, ValueError):
-                return None
-        rows = [[esc(s["code"]), f'{s["ratio"]:.1f}%', pct(_chg(s), plus=True) + '<span class="muted">亿股</span>',
+                return '<span class="muted">—</span>'
+        rows = [[esc(s["code"]), f'{s["ratio"]:.1f}%', _chg(s) + '<span class="muted">亿股</span>',
                  f'<span class="muted">{esc(s["industry"].split("、")[0][1:])}</span>'] for s in inc]
         secs.append(card("北向资金 · 季报画像", f"""
 <div class="statrow"><div class="stat"><div class="num">{mv['增持+新进']}</div><div class="muted">增持+新进</div></div>
