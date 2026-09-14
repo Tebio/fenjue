@@ -292,8 +292,13 @@ def main():
         ov = []
         # 深档低位（层0扫描结果 _deep 可能存在）
         n_deep = len(_deep)
+        # 季节档（2026-09-14 #78：12/01/09月8/8全正加档、02月小加档，上限1.2）
+        _sm = jload(D / "seasonal_modulation.json", {})
+        _mm = today[5:7]
+        _mult = (((_sm.get("rules") or {}).get("LIMITDOWN_NEXT_DAY") or {}).get("boost_months") or {}).get(_mm, 1.0)
+        _seas = f"季节档×{_mult}" if _mult != 1.0 else "季节档×1.0（平月）"
         ov.append(["🥇 深档低位", "57.6%", "🟢健康",
-                   f"今日 {n_deep} 只" if n_deep else "今日无（没大跌日就没票）",
+                   f"今日 {n_deep} 只 · {_seas}" if n_deep else f"今日无（没大跌日就没票）· {_seas}",
                    "大跌次日开盘买，后天尾盘卖"])
         lin_n = len([e for e in (wp or {}).get("pool", []) if 1 <= e.get("days", 0) <= 5]) if wp else 0
         ov.append(["🏗️ 观察池临启动", "58.9%", "🟢健康",
