@@ -537,7 +537,28 @@ def main():
             slip = (f'审计：收益引擎=跌停接子集（{deep.get("n")}笔 均{deep.get("avg%")}%），-5~-9.5%中间档为负期望。'
                     f'滑点：入场贵0.3%→权益{audit.get("D_slip0.003_equity")}x、贵0.5%→{audit.get("D_slip0.005_equity")}x（命门）。'
                     f'赔率{audit.get("E_payoff_ratio")}（均赢{audit.get("E_avg_win%")}%/均亏{audit.get("E_avg_loss%")}%）')
-        secs.append(card("模拟盘锦标赛 · 两年各10万", table(["玩法", "收益", "最大回撤", "笔数/胜率", "均笔"], rows),
+        # 分时代胜率表（2026-09-14 用户令：标注26年vs往年差异）
+        zoo = jload(D / "strategy_zoo_20260911.json", {})
+        era_rows = []
+        for k, v in (zoo or {}).items():
+            if not isinstance(v, dict) or "前半" not in v:
+                continue
+            f1 = v["前半"].get("T+1尾盘", {})
+            l1 = v["后半"].get("T+1尾盘", {})
+            fw, lw = f1.get("win%"), l1.get("win%")
+            if fw is None or lw is None:
+                continue
+            trend = ('<span class="up">↑变强</span>' if lw - fw >= 1
+                     else '<span class="dn">↓衰退</span>' if lw - fw <= -1 else '<span class="muted">→持平</span>')
+            name = k.split(" ", 1)[-1]
+            era_rows.append([esc(name), f"{fw}%", f"{lw}%",
+                             pct(l1.get("mean%")), trend])
+        era_rows.sort(key=lambda r: -float(r[2].rstrip('%')))
+        era_html = ("<div style='margin-top:14px'><b>分时代胜率（前半=2019-22 / 后半=2023-26，T+1净口径）</b>"
+                    + table(["策略", "19-22 胜率", "23-26 胜率", "后段均笔", "趋势"], era_rows)
+                    + "<div class='muted' style='margin-top:6px'>另：红利锚（不在此表，长线口径）胜率 57.5%→60.1% 逆势上升；"
+                      "2026 年真实图景=挤板/追高全灭，活的是两端（深跌接+红利躺平）。</div></div>")
+        secs.append(card("模拟盘锦标赛 · 两年各10万", table(["玩法", "收益", "最大回撤", "笔数/胜率", "均笔"], rows) + era_html,
                          f'{tour["window"][0]} ~ {tour["window"][1]} · 基准(上证) +{tour["bench%"]}% · 净口径 m60成交验证',
                          f'历史重放≠未来。{slip}', collapsed=True))
     # ── 席位口味 ──
