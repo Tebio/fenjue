@@ -398,7 +398,7 @@ def main():
                    "竞价一字跌停=作废；封死板买不进则放弃",
                    f'<span data-q="{("sh" if c0.startswith("6") else "sz")+c0}" data-f="r"><span class="muted">…</span></span>']
                   for c0, p0, nm in _deep[:3]]
-        secs.append(card("🥇 首选 · 深档低位（跌停接健康主张）",
+        secs.append(card("🥇 首选 · 深档低位（胜率57.6% · 跌停接）",
                          table(["标的", "昨跌幅", "位置", "历史口径", "作废条件", "现在"], rows_d),
                          f"{_deep_lastd} 深档≤-9.5%全扫 · 只留MA60下（高位断板大面已剔除）",
                          "这是全库扫描不是名单切片——9/14 宏盛股份涨停就是这条的命中。"
@@ -413,7 +413,7 @@ def main():
                               '<span class="muted">抢跑口径+1.79%/58.9%（close口径偏乐观）</span>',
                               "板块梯队≥3涨停+自身首板=触发；破入池前低=作废"])
     if pick_rows:
-        secs.append(card("🥇 首选 · 观察池临启动（触发制，非买卖指令）",
+        secs.append(card("🥇 首选 · 观察池临启动（胜率58.9% · 触发制）",
                          table(["标的", "池内状态", "历史口径", "触发/作废"], pick_rows),
                          "排序=缩量持稳>天数>量比 · 梯队成型雷达会QQ推送",
                          "这不是现在就买——等梯队+首板信号。胜率口径 58.9% 是 close-entry（封死板买不进），"
@@ -485,10 +485,11 @@ def main():
                 for c in rev["candidates"][:8]]
         secs.append(card(f"反转族 · 待确认名单（{esc(rev.get("date", ""))} 收盘扫）", table(["代码", "名称", "当日跌幅", "成交额"], rows),
                          f'{esc(rev.get("date", ""))} 收盘扫描 · 外部复审 +0.139%/49.8% 净口径', REV_RULE))
-        for c in rev["candidates"][:3]:
-            focus_rows.append(("🔄反转族", f"{esc(c['name'])}({c['code']})",
-                               f'昨{c["close_chg"]:.1f}% · 额{c["amt_yi"]:.0f}亿 · T+1净+0.139%/49.8%',
-                               "明日 9:32 竞价确认"))
+        if not _rev_sick:  # ICU期不上焦点（用户红线：胜率<50%不推）
+            for c in rev["candidates"][:3]:
+                focus_rows.append(("🔄反转族", f"{esc(c['name'])}({c['code']})",
+                                   f'昨{c["close_chg"]:.1f}% · 额{c["amt_yi"]:.0f}亿 · T+1净+0.139%/49.8%',
+                                   "明日 9:32 竞价确认"))
     # ── 主张影子汇总 ──
     summ = jload(D / "claims_shadow_summary.json", {})
     rows = []
@@ -647,18 +648,42 @@ def main():
     # 作战手册卡（playbook-202609.md 摘要，静态规则层）——置顶第2位，焦点区第3位
     secs.insert(1, card("🎯 作战手册 · 2026-09 起",
                      """<table><tr><th>层</th><th>规则</th></tr>
-<tr><td><b>底仓 60-70%</b></td><td>红利躺平：连续≥3年分红+息率≥4.5%买入线，核心仓不清（轮动清仓跑输躺平13pp）</td></tr>
-<tr><td><b>进攻仓 0-30%</b></td><td><b>反人群打板</b>：只在<span class="dn">平淡/恐慌期</span>开仓（主线/妖股期开缝有毒-2.6~-2.9%已实测）；断板即跑，禁止宽容持有</td></tr>
-<tr><td><b>禁区</b></td><td>杠杆/单板块/跌停接/做T/跟席位/看新闻买/回踩限价/炸板回封/金叉长线</td></tr></table>""",
+<tr><td><b>底仓 60-70%</b></td><td>大部分钱买会分红的股票（银行为主），放着收租不动。只有跌得很便宜（分红率≥4.5%）才加买。<b>永远不要全卖</b>——折腾来回去还不如躺着（实测少赚13%）</td></tr>
+<tr><td><b>进攻仓 0-30%</b></td><td>小部分钱玩短线，<b>只在市场冷清/恐慌的日子玩</b>（热闹日子玩=送钱，实测-2.6%）；买的票第二天没涨停就立刻卖掉，不许心疼留着</td></tr>
+<tr><td><b>禁区（碰都别碰）</b></td><td>借钱炒股/全押一个板块/买跌停板/当天买当天卖/跟游资买/看新闻买/挂低价等回踩/炸板回封/金叉长线——全部实测亏钱</td></tr></table>""",
                      "每条规则带证据编号 · <a href='playbook-202609.md' style='color:#c0392b'>完整版+kill线 →</a>",
                      "周期仪是油门不是方向盘：恐慌期=打板fill黄金期（没人抢），主线期=红利拿稳别手痒"))
     if focus_rows:
+        _pri = {"⚠️": 0, "🥇": 1, "🎯": 2, "🚀": 3, "🔄": 4}
+        focus_rows = sorted(focus_rows, key=lambda r: _pri.get(r[0][:1], 5))[:8]
         body_f = table(["来源", "标的", "关键信息", "启动窗口/时点"],
                        [[f"<b>{s}</b>", t, i, w] for s, t, i, w in focus_rows])
         focus_card = card(f"📌 焦点清单 · 只看这一屏（数据 {reg["date"] if reg else today}）", body_f,
                           "观察池毕业中位 2 天 · 71.6% 在入池 3 日内启动（8 年实测分布）",
                           "破位优先处理 > 临启动盯梯队 > 抢跑排队 > 反转等竞价。其余卡片是证据库，这屏是行动清单。")
         secs.insert(2, focus_card)
+    # ── 卡片显式排序（2026-09-14 用户令：按行动优先级排，首选卡按胜率降序）──
+    _ORDER = {
+        "🕐 现在该干嘛": 1, "市场状态": 2, "📌 焦点清单": 3,
+        "🥇 首选 · 观察池临启动": 4,      # 58.9%
+        "🥇 首选 · 深档低位": 5,          # 57.6%
+        "⚡ B5": 6, "🔄 反转族 · 重症监护": 7,
+        "🎯 作战手册": 8, "📲 怎么配合": 9,
+        "📋 策略分工": 1, "放量异动观察池": 2, "首板抢跑": 3, "反转族 · 待确认": 4,
+        "持仓哨兵": 1, "股息锚": 2, "银行股操作台": 3, "银行 ·": 4, "收割型席位": 5,
+    }
+    def _rank(html_s):
+        m = re.search(r'data-tab="([^"]+)"', html_s)
+        tab = m.group(1) if m else "证据库"
+        t = re.sub(r"<[^>]+>", "", html_s)[:40]
+        rnk = 99
+        for prefix, r0 in _ORDER.items():
+            if t.startswith(re.sub(r"<[^>]+>", "", prefix)):
+                rnk = r0
+                break
+        return (tab, rnk)
+    # 证据库保持胜率无关的原序；作战/候选池/持仓按 _ORDER
+    secs.sort(key=lambda s: ({"作战": 0, "持仓": 1, "候选池": 2}.get(_rank(s)[0], 3), _rank(s)[1]))
     body = "\n".join(secs)
     OUT.write_text(TPL.replace("__DATE__", today).replace("__BODY__", body)
                    .replace("__STAMP__", datetime.datetime.now().strftime("%Y-%m-%d %H:%M")))
