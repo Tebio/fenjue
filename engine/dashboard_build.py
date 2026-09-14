@@ -90,6 +90,7 @@ _TABMAP = [
     ("🥇 明日首选", "作战"), ("⚡ B5", "作战"), ("📲 怎么配合", "作战"),
     ("持仓哨兵", "持仓"), ("股息锚", "持仓"), ("银行股", "持仓"), ("银行 ·", "持仓"),
     ("收割型席位", "持仓"),
+    ("📋 策略分工", "候选池"),
     ("放量异动观察池", "候选池"), ("首板抢跑", "候选池"), ("反转族", "候选池"),
 ]
 _TABS = ["作战", "持仓", "候选池", "证据库"]
@@ -118,6 +119,36 @@ BANK_LINE = re.compile(
     r"买≤([\d.]+) 加≤([\d.]+) 卖([\d.]+) 清≥([\d.]+) \| 距买入(\S+?) MA20 ([\d.]+)\(([^)]*)\)(📌贴线)?")
 ORDER_LINE = re.compile(
     r"^(\S+?)\s*(?:📌贴线)?\s*\[(\S+?)\]\s*买([\d.]+)/加([\d.]+)/([\d.]+)/5%线([\d.]+)\s*卖([\d.]+)\s*清([\d.]+)")
+
+
+def deep_low_scan():
+    """深档低位（≤-9.5% 且 MA60下）全库扫描。返回 (最近交易日, [(code, pct), ...])。
+    2026-09-14：首选层0+策略总览共用，只扫一次。"""
+    import glob as _g
+    try:
+        names = {str(s["code"]).zfill(6): s.get("name", "")
+                 for s in json.loads((D / "main_board_codes.json").read_text())["stocks"]}
+        idx = json.loads((D / "big_kcache" / "000001.json").read_text())
+        lastd = idx[-1]["date"]
+        out = []
+        for fp in _g.glob(str(D / "big_kcache" / "*.json")):
+            c0 = fp.rsplit("/", 1)[-1].replace(".json", "")
+            if c0[:2] not in ("60", "00"):
+                continue
+            try:
+                ks = json.loads(open(fp).read())
+                if len(ks) < 61 or ks[-1]["date"] != lastd:
+                    continue
+                p0 = (ks[-1]["close"] / ks[-2]["close"] - 1) * 100
+                if p0 <= -9.5:
+                    ma = sum(k["close"] for k in ks[-60:]) / 60
+                    if ks[-1]["close"] < ma:
+                        out.append((c0, p0, names.get(c0, "")))
+            except Exception:
+                continue
+        return lastd, sorted(out, key=lambda x: x[1])
+    except Exception:
+        return None, []
 
 
 def parse_bank(text):
@@ -160,6 +191,9 @@ def main():
                         "规则只有三条：买入只在 9:32-9:45、卖出只在尾盘、其余时间不操作",
                         "为什么：延迟买入每小时烧掉 0.2% 收益（实测）；开盘卖是全场最差卖点（实测）；"
                         "盘中盯盘不产生收益只产生冲动。QQ 会主动喊你，不用你盯。"))
+    _deep_lastd, _deep = deep_low_scan()  # 策略总览+首选层0共用（只扫一次）
+    wp = jload(D / "watch_pool.json", {})          # 策略总览+观察池卡共用
+    rev = jload(D / "reversal_list.json", {})      # 策略总览+首选层2+反转卡共用
     reg = None
     rl = D / "regime_log.jsonl"
     if rl.exists():
@@ -231,8 +265,30 @@ def main():
         if arows:
             secs.append(card("股息锚买入区", table(["标的", "现价", "买入线", "状态"], arows),
                              "现价≤线=可建仓/加仓"))
-    # ── 观察池（G1）──
-    wp = jload(D / "watch_pool.json", {})
+    # ── 候选池总览（2026-09-14 用户令：按策略分开+标胜率+每策略≤3只，小学生可读）──
+    try:
+        ov = []
+        # 深档低位（层0扫描结果 _deep 可能存在）
+        n_deep = len(_deep)
+        ov.append(["🥇 深档低位", "57.6%", "🟢健康",
+                   f"今日 {n_deep} 只" if n_deep else "今日无（没大跌日就没票）",
+                   "大跌次日开盘买，后天尾盘卖"])
+        lin_n = len([e for e in (wp or {}).get("pool", []) if 1 <= e.get("days", 0) <= 5]) if wp else 0
+        ov.append(["🏗️ 观察池临启动", "58.9%", "🟢健康",
+                   f"{lin_n} 只在窗口期（页面上只列前 3）" if lin_n else "今日无",
+                   "等它首板+板块 3 只涨停才买，雷达会喊"])
+        ov.append(["⚡ B5 半路板", "56.9%", "🟢健康",
+                   "触发制：盘中冲 +6% 才算信号", "只在平淡/恐慌期，10:30/14:45 雷达喊"])
+        n_rev = len(rev.get("candidates", [])) if rev else 0
+        ov.append(["🔄 反转族", "49.8%", "🟡重症监护",
+                   f"{n_rev} 只（胜率没过 50% 红线，不主动推）", "最近一年 edge 贴线，降级观察"])
+        secs.append(card("📋 策略分工一览 · 每个策略每天最多盯 3 只",
+                         table(["策略", "胜率", "状态", "今日", "怎么用它（一句话）"], ov),
+                         "胜率=8 年实测净口径 · 🟢=可动手 🟡=只看不动",
+                         "纪律：同一时刻只执行一个策略的信号；都没信号=今天空仓休息，空仓也是操作。"))
+    except Exception:
+        pass
+    # ── 观察池（G1）──（wp 已在 main() 开头预载）
     if wp and wp.get("pool"):
         # K3修（2026-09-14 用户抓包）：池内票没标板块，梯队无从盯起——挂 HiThink 板块映射
         _secmap = {}
@@ -245,13 +301,18 @@ def main():
                 _secmap[str(c0).zfill(6)] = "|".join(tags)
         except Exception:
             pass
-        rows = []
-        for e in sorted(wp["pool"], key=lambda e: -e["volratio"])[:10]:
-            rows.append([esc(e["code"]), esc(e["name"]),
-                         f'<span class="muted">{esc(_secmap.get(str(e["code"]).zfill(6), "—"))}</span>',
-                         f'<span class="muted">{esc(e["entry_date"])}</span>',
-                         f'{e["volratio"]}x', pct(e["pct"]), str(e.get("days", 0)),
-                         '<span class="up">缩量持稳</span>' if e.get("shrink") else '<span class="muted">观察中</span>'])
+        def _wrow(e):
+            return [esc(e["code"]), esc(e["name"]),
+                    f'<span class="muted">{esc(_secmap.get(str(e["code"]).zfill(6), "—"))}</span>',
+                    f'<span class="muted">{esc(e["entry_date"])}</span>',
+                    f'{e["volratio"]}x', pct(e["pct"]), str(e.get("days", 0)),
+                    '<span class="up">缩量持稳</span>' if e.get("shrink") else '<span class="muted">观察中</span>']
+        _pool_sorted = sorted(wp["pool"], key=lambda e: -e["volratio"])
+        rows = [_wrow(e) for e in _pool_sorted[:3]]
+        if len(_pool_sorted) > 3:
+            rows.append([f'<details><summary class="muted">展开其余 {len(_pool_sorted)-3} 只（不用盯）</summary>'
+                         + table(["代码", "名称", "板块", "入池", "量比", "当日", "天数", "状态"],
+                                 [_wrow(e) for e in _pool_sorted[3:]]) + '</details>', "", "", "", "", "", "", ""])
         # G7 焦点：临启动票（第1-5天=窗口期；中位2日/71.6%≤3日毕业，实测分布）；上限8条防爆版
         for e in sorted((e for e in wp["pool"] if 1 <= e.get("days", 0) <= 5),
                         key=lambda e: (e["days"], -e["volratio"]))[:8]:
@@ -319,7 +380,6 @@ def main():
     # 2026-09-14 盘中用户裁决（实锤）：①胜率<50%的主张不进首选卡（反转族T+1=49.8%且滚动edge贴线+0.02pp→降级观察，不再当头条）；
     # ②首选排序按主张健康度：B5(56.9% submit 6/6)>抢跑(58.9% 四regime全正)>观察池临启动>反转族(重症监护)。
     pick_rows = []
-    rev = jload(D / "reversal_list.json", {})  # 首选卡先于反转族卡消费，这里先载
     _claims_state = jload(D / "claims_state.json", {})
     _rev_r = None
     try:  # claims_state 结构：history[-1].verdicts["1"][0] = 滚动250日边际贡献(pp)
@@ -327,44 +387,18 @@ def main():
     except Exception:
         pass
     _rev_sick = _rev_r is None or _rev_r < 0.05  # 滚动边际<0.05pp=贴线重症（无数据按重症处理，宁缺勿推）
-    # 首选层0：深档低位（LIMITDOWN_NEXT_DAY L2+ 57.6% 健康主张）——独立于反转族名单直接扫 kcache。
+    # 首选层0：深档低位（LIMITDOWN_NEXT_DAY L2+ 57.6% 健康主张）——main() 开头 deep_low_scan() 已扫
     # 2026-09-14 实锤教训：宏盛股份(周五-9.9%唯一低位)今早涨停，但旧预筛从 reversal_list 按成交额截前60把它切掉了。
-    try:
-        import glob as _g2
-        _kdates = sorted(_g2.glob(str(D / "big_kcache" / "*.json")))
-        _pool_names = {str(s["code"]).zfill(6): s.get("name", "")
-                       for s in json.loads((D / "main_board_codes.json").read_text())["stocks"]}
-        # 找最近交易日（任一大盘文件）
-        _idx = json.loads((D / "big_kcache" / "000001.json").read_text())
-        _lastd = _idx[-1]["date"]
-        _deep = []
-        for fp in _kdates:
-            c0 = fp.rsplit("/", 1)[-1].replace(".json", "")
-            if c0[:2] not in ("60", "00"):
-                continue
-            try:
-                ks = json.loads(open(fp).read())
-                if len(ks) < 61 or ks[-1]["date"] != _lastd:
-                    continue
-                p0 = (ks[-1]["close"] / ks[-2]["close"] - 1) * 100
-                if p0 <= -9.5:
-                    ma = sum(k["close"] for k in ks[-60:]) / 60
-                    if ks[-1]["close"] < ma:
-                        _deep.append((c0, p0, ma))
-            except Exception:
-                continue
-        if _deep:
-            rows_d = [[f'{esc(_pool_names.get(c0, ""))}<br><span class="muted">{c0}</span>',
-                       pct(p0), '<span class="up">MA60下✓</span>',
-                       '<span class="muted">跌停接L2+ +2.65%/57.6%（剔一字后）</span>',
-                       "竞价一字跌停=作废；封死板买不进则放弃"] for c0, p0, ma in sorted(_deep, key=lambda x: x[1])]
-            secs.append(card("🥇 首选 · 深档低位（跌停接健康主张）",
-                             table(["标的", "昨跌幅", "位置", "历史口径", "作废条件"], rows_d),
-                             f"{_lastd} 深档≤-9.5%全扫 · 只留MA60下（高位断板大面已剔除）",
-                             "这是全库扫描不是名单切片——9/14 宏盛股份涨停就是这条的命中。"
-                             "买点=次日开盘（竞价确认非一字），T+1尾盘兑现。"))
-    except Exception:
-        pass
+    if _deep:
+        rows_d = [[f'{esc(nm)}<br><span class="muted">{c0}</span>',
+                   pct(p0), '<span class="up">MA60下✓</span>',
+                   '<span class="muted">跌停接L2+ +2.65%/57.6%（剔一字后）</span>',
+                   "竞价一字跌停=作废；封死板买不进则放弃"] for c0, p0, nm in _deep[:3]]
+        secs.append(card("🥇 首选 · 深档低位（跌停接健康主张）",
+                         table(["标的", "昨跌幅", "位置", "历史口径", "作废条件"], rows_d),
+                         f"{_deep_lastd} 深档≤-9.5%全扫 · 只留MA60下（高位断板大面已剔除）",
+                         "这是全库扫描不是名单切片——9/14 宏盛股份涨停就是这条的命中。"
+                         "买点=次日开盘（竞价确认非一字），T+1尾盘兑现。"))
     # 首选层1：观察池临启动（缩量持稳优先，触发=梯队≥3涨停+首板，雷达10:30/14:45推送）
     if wp and wp.get("pool"):
         lin = sorted((e for e in wp["pool"] if 1 <= e.get("days", 0) <= 5),
@@ -441,8 +475,7 @@ def main():
                                  f"{lastd} 信号 · 反人群打板不留恋"))
     except Exception:
         pass
-    # ── 反转族 ──
-    rev = jload(D / "reversal_list.json", {})
+    # ── 反转族 ──（rev 已在 main() 开头预载）
     if rev and rev.get("candidates"):
         rows = [[esc(c["code"]), esc(c["name"]), pct(c["close_chg"]), f'{c["amt_yi"]:.0f}亿']
                 for c in rev["candidates"][:8]]
