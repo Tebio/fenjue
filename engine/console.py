@@ -112,6 +112,15 @@ def dividend_ttm(code: str) -> float | None:
             prev_dps = float(prev_win["派息"].sum()) / 10
             if prev_dps > 0 and dps < prev_dps * 0.5:
                 suspect = True
+                # K3修（2026-09-14 对账大佬抓包）：一年两派股票的第二期派息滚出365天窗 → TTM 腰斩、
+                # 分区虚高两档（实锤：中国移动 2025-09-01 派息 9/13 滚出，息率 4.81% 被算成 2.25% → 清仓区）。
+                # 防御升级：窗口延到 450 天重算；延长窗 DPS 显著更高才采信，仍异常才保留 suspect。
+                cutoff3 = now - __import__("pandas").Timedelta(days=450)
+                recent2 = df[df["除权除息日"] >= cutoff3]
+                dps2 = round(float(recent2["派息"].sum()) / 10, 4) if len(recent2) else dps
+                if dps2 > dps * 1.5:
+                    dps = dps2
+                    suspect = False
         cache[code] = {"dps": dps, "ts": time.time(), "suspect": suspect}
         DIV_CACHE.write_text(json.dumps(cache))
         return dps
