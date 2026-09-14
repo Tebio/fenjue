@@ -28,3 +28,4 @@ unified/
 *.sqlite3
 *.db
 .venv/\n__pycache__/\n*.pyc\ndata/*.db\ntests/
+data/cb_kcache/
