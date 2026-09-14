@@ -187,7 +187,15 @@ def main():
 <tr><td>10:30</td><td>看 QQ 雷达：喊"梯队成型/冲板"才动手，没喊=继续休息</td></tr>
 <tr><td>10:30–14:45</td><td><b>什么都不干</b>。QQ 不喊就是没事</td></tr>
 <tr><td>14:45–15:00</td><td><b>卖出窗口</b>：昨天买的短线票，这个时间卖掉（无论盈亏）</td></tr>
-<tr><td>15:40 后</td><td>看这页"市场状态"徽章，定明天仓位；晚上看委托单</td></tr></table>""",
+<tr><td>15:40 后</td><td>看这页"市场状态"徽章，定明天仓位；晚上看委托单</td></tr></table>
+<div style="margin-top:10px"><b>📲 QQ 什么时候会喊你（不用自己盯）</b>
+<table><tr><th>触发</th><th>什么时候</th></tr>
+<tr><td>反转族确认单（能买/作废）</td><td>每交易日 9:32 准点</td></tr>
+<tr><td>雷达（冲板候选+梯队成型+持仓破位）</td><td>10:30 / 13:35 / 14:45 三班</td></tr>
+<tr><td>梯队成型（观察池票的板块≥3只涨停）</td><td>雷达班次里顺带报</td></tr>
+<tr><td>持仓破关键位 ⚠️</td><td>雷达班次里顺带报</td></tr>
+<tr><td>周期仪（明天仓位规则）</td><td>15:40</td></tr>
+<tr><td>银行委托单+影子回填</td><td>16:05 / 19:00 后</td></tr></table></div>""",
                         "规则只有三条：买入只在 9:32-9:45、卖出只在尾盘、其余时间不操作",
                         "为什么：延迟买入每小时烧掉 0.2% 收益（实测）；开盘卖是全场最差卖点（实测）；"
                         "盘中盯盘不产生收益只产生冲动。QQ 会主动喊你，不用你盯。"))
@@ -408,16 +416,20 @@ def main():
         lin = sorted((e for e in wp["pool"] if 1 <= e.get("days", 0) <= 5),
                      key=lambda e: (not e.get("shrink"), e["days"], -e["volratio"]))[:3]
         for e in lin:
+            _mk = ("sh" if str(e["code"]).startswith("6") else "sz") + str(e["code"]).zfill(6)
             pick_rows.append([f"{esc(e['name'])}<br><span class='muted'>{e['code']}</span>",
+                              f'<span data-q="{_mk}" data-f="r"><span class="muted">…</span></span>'
+                              f'<br><span data-q="{_mk}" data-f="j"></span>',
                               f'第{e["days"]}天 · 量比{e["volratio"]}x' + (" · 缩量持稳" if e.get("shrink") else ""),
-                              '<span class="muted">抢跑口径+1.79%/58.9%（close口径偏乐观）</span>',
-                              "板块梯队≥3涨停+自身首板=触发；破入池前低=作废"])
+                              "梯队≥3涨停+自身首板=触发；破入池前低=作废"])
     if pick_rows:
         secs.append(card("🥇 首选 · 观察池临启动（胜率58.9% · 触发制）",
-                         table(["标的", "池内状态", "历史口径", "触发/作废"], pick_rows),
+                         table(["标的", "现在（30秒刷新）", "池内状态", "触发/作废"], pick_rows),
                          "排序=缩量持稳>天数>量比 · 梯队成型雷达会QQ推送",
-                         "这不是现在就买——等梯队+首板信号。胜率口径 58.9% 是 close-entry（封死板买不进），"
-                         "实战 edge 介于 +1.79% 与 -0.52% 之间，fill 影子定量中。"))
+                         "⚠️ 合法买点只有一种：它今天涨停（且它板块≥3只涨停）→ 挂涨停价排队。"
+                         "红了2-5%没涨停=跟风，不买；绿了=转弱，不买；跌了=更不是抄底，不买。"
+                         "任何其它价位买=无信号操作。58.9%是历史口径（封死板买不进有水分），"
+                         "实战 edge 介于 +1.79% 与 -0.52% 之间。"))
     # 首选层2：反转族预筛（仅当主张健康；贴线期降级为观察注释——用户规则：胜率<50%不推）
     pick_rows = []  # 防串行：层1的池子行数列数不同，重置
     if rev and rev.get("candidates") and not _rev_sick:
@@ -656,8 +668,16 @@ def main():
     if focus_rows:
         _pri = {"⚠️": 0, "🥇": 1, "🎯": 2, "🚀": 3, "🔄": 4}
         focus_rows = sorted(focus_rows, key=lambda r: _pri.get(r[0][:1], 5))[:8]
-        body_f = table(["来源", "标的", "关键信息", "启动窗口/时点"],
-                       [[f"<b>{s}</b>", t, i, w] for s, t, i, w in focus_rows])
+        def _flive(t):
+            m0 = re.search(r"\((\d{6})\)", t)
+            if not m0:
+                return '<span class="muted">—</span>'
+            c0 = m0.group(1)
+            mk = ("sh" if c0.startswith("6") else "sz") + c0
+            return (f'<span data-q="{mk}" data-f="r"><span class="muted">…</span></span>'
+                    f'<br><span data-q="{mk}" data-f="j"></span>')
+        body_f = table(["来源", "标的", "现在", "关键信息", "启动窗口/时点"],
+                       [[f"<b>{s}</b>", t, _flive(t), i, w] for s, t, i, w in focus_rows])
         focus_card = card(f"📌 焦点清单 · 只看这一屏（数据 {reg["date"] if reg else today}）", body_f,
                           "观察池毕业中位 2 天 · 71.6% 在入池 3 日内启动（8 年实测分布）",
                           "破位优先处理 > 临启动盯梯队 > 抢跑排队 > 反转等竞价。其余卡片是证据库，这屏是行动清单。")
@@ -823,6 +843,14 @@ function paint(){
           n.innerHTML='<span class="'+cls+'">'+(r>0?"+":"")+r.toFixed(2)+"%</span>";}
         else if(k==="z"){var buy=parseFloat(n.getAttribute("data-buy"));
           n.innerHTML=price<=buy?'<span class="up">🟢买入区内</span>':'<span class="muted">线上方'+((price/buy-1)*100).toFixed(1)+"%</span>";}
+        else if(k==="j"){ // 强弱判定（2026-09-14 用户令：转弱/跟风标注，新手防误买）
+          var j,jc;
+          if(r>=9.7){j="🔥首板！挂涨停价排队";jc="up";}
+          else if(r>=5){j="🟡冲板中（未封不追）";jc="up";}
+          else if(r>=1.5){j="⚪跟风涨（非首板不买）";jc="muted";}
+          else if(r>-1.5){j="⚪横盘蓄力（继续观察）";jc="muted";}
+          else{j="🔴转弱（梯队热它跌=弱，别碰）";jc="dn";}
+          n.innerHTML='<span class="'+jc+'" style="font-size:12px">'+j+"</span>";}
       });
     });
     var lp=document.getElementById("livepulse");
