@@ -17,6 +17,27 @@ from pathlib import Path
 
 ROOT = Path("/opt/data/fenjue")
 KC = ROOT / "data/big_kcache"
+OVERLAY = ROOT / "data/kcache_today_overlay.json"  # 2026-09-14: 15:10 收盘快报覆盖层
+
+
+def load_ks(code):
+    """读个股K线+合并当日覆盖层（覆盖层日期比缓存新才追加）。"""
+    fp = KC / f"{code}.json"
+    if not fp.exists():
+        return None
+    try:
+        ks = json.loads(fp.read_text())
+    except Exception:
+        return None
+    if OVERLAY.exists():
+        try:
+            ov = json.loads(OVERLAY.read_text())
+            bar = ov.get(code)
+            if bar and (not ks or bar["date"] > ks[-1]["date"]):
+                ks = ks + [{k: bar[k] for k in ("date", "open", "high", "low", "close", "volume")}]
+        except Exception:
+            pass
+    return ks
 POOL_F = ROOT / "data/watch_pool.json"
 EXPIRE = 15
 
@@ -26,7 +47,8 @@ ACTIVE = "B_试盘宽容"  # 2026-09-12 回测选定：转化率 13.49%/倍数 2
 
 
 def load_stocks():
-    return {fp.stem: json.loads(fp.read_text()) for fp in sorted(KC.glob("*.json"))}
+    return {fp.stem: ks for fp in sorted(KC.glob("*.json"))
+            if (ks := load_ks(fp.stem))}
 
 
 def volratio(ks, i):

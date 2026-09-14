@@ -130,6 +130,16 @@ def deep_low_scan():
                  for s in json.loads((D / "main_board_codes.json").read_text())["stocks"]}
         idx = json.loads((D / "big_kcache" / "000001.json").read_text())
         lastd = idx[-1]["date"]
+        # 2026-09-14: 合并收盘快报覆盖层（15:10 新浪快照），让深档扫描盘后立即可用
+        ov = {}
+        ovf = D / "kcache_today_overlay.json"
+        if ovf.exists():
+            try:
+                ov = json.loads(ovf.read_text())
+                if ov and next(iter(ov.values()))["date"] > lastd:
+                    lastd = next(iter(ov.values()))["date"]
+            except Exception:
+                ov = {}
         out = []
         for fp in _g.glob(str(D / "big_kcache" / "*.json")):
             c0 = fp.rsplit("/", 1)[-1].replace(".json", "")
@@ -137,6 +147,10 @@ def deep_low_scan():
                 continue
             try:
                 ks = json.loads(open(fp).read())
+                if ov and c0 in ov and (not ks or ov[c0]["date"] > ks[-1]["date"]):
+                    b = ov[c0]
+                    ks = ks + [{"date": b["date"], "open": b["open"], "high": b["high"],
+                                "low": b["low"], "close": b["close"], "volume": b["volume"]}]
                 if len(ks) < 61 or ks[-1]["date"] != lastd:
                     continue
                 p0 = (ks[-1]["close"] / ks[-2]["close"] - 1) * 100
@@ -774,7 +788,7 @@ details.card .cardbody{padding-top:12px}
 <button class="tabbtn" data-tab="证据库">📚 证据库</button>
 </div>
 __BODY__
-<div class="foot">焚诀 Research Engine · 交易日自动重建：09:40 竞价确认后 / 10:40 雷达后 / 13:35 午后 / 14:50 尾盘 / 15:50 收盘后 / 16:15 委托单后 / 19:20 晚间 / 20:40 数据齐<br>
+<div class="foot">焚诀 Research Engine · 交易日自动重建：09:40 竞价后 / 10:40 雷达后 / 13:35 午后 / 14:50 尾盘 / 15:20 收盘快报 / 15:50 反转名单 / 16:15 委托单后 / 19:20 晚间 / 20:40 数据齐<br>
 非交易日不重建（显示最近交易日数据，版块日期戳为准）· 红涨绿跌 · 胜率均值均为净口径（扣 0.15% 费用）· 所有策略结论带作废条件与 kill 线</div>
 </div>
 <script>
@@ -792,7 +806,7 @@ btns.forEach(function(b){b.onclick=function(){show(b.getAttribute("data-tab"));}
 var saved=null;try{saved=localStorage.getItem("fj_tab");}catch(e){}
 show(saved||"作战");
 // ── 更新倒计时 ──
-var SLOTS=["09:40","10:40","13:35","14:50","15:50","16:15","19:20","20:40"];
+var SLOTS=["09:40","10:40","13:35","14:50","15:20","15:50","16:15","19:20","20:40"];
 function next(){
   var n=new Date();
   for(var d=0;d<8;d++){
