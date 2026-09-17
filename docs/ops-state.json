@@ -1,13 +1,13 @@
 {
  "version": 2,
- "built_at": "2026-09-17 07:21",
+ "built_at": "2026-09-17 07:51",
  "sig_date": "2026-09-17",
  "buy_day": "2026-09-18",
  "sell_day": "2026-09-21",
  "regime": {
-  "date": "2026-09-16",
+  "date": "2026-09-17",
   "regime": "平淡期",
-  "limit_ups": 43,
+  "limit_ups": 17,
   "limit_downs": 0
  },
  "deep_low": [
