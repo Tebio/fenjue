@@ -1,0 +1,11 @@
+[2026-09-18 15:55:32] driver start
+[2026-09-18 15:55:32] S1_exitgrid start: .venv/bin/python engine/exit_rule_grid.py
+[2026-09-18 15:56:45] S1_exitgrid done rc=0
+{"status": "accepted", "route": "fenjue-overnight", "event": "unknown", "delivery_id": "1789747005704"}[2026-09-18 16:16:45] S2_confluence start: .venv/bin/python engine/law_pipeline.py submit 组合_跌停低_缩量_剔亏ST 组合_跌停低_输家_超跌20_缩量 组合_跌停低_三连阴_缩量 组合_跌停低_避雷针_缩量 组合_跌停低_输家_超跌20_剔亏ST 组合_缺口低开_低位_剔亏ST
+[2026-09-18 16:19:21] S2_confluence done rc=1
+{"status": "accepted", "route": "fenjue-overnight", "event": "unknown", "delivery_id": "1789748361751"}[2026-09-18 16:39:21] F1_1 start: bash -c .venv/bin/python engine/law_pipeline.py submit 组合_跌停低_金叉MACD滤 组合_跌停低_缠论底滤 组合_跌停低_TD9买入滤 组合_跌停低_MA20上穿滤 组合_跌停低_海龟20滤
+[2026-09-18 16:41:32] F1_1 done rc=1
+{"status": "accepted", "route": "fenjue-overnight", "event": "unknown", "delivery_id": "1789749692300"}[2026-09-18 17:01:32] round 2: queue empty
+[2026-09-18 17:01:32] round 3: queue empty
+[2026-09-18 17:01:32] final hook
+{"status": "accepted", "route": "fenjue-overnight-final", "event": "unknown", "delivery_id": "1789750892554"}[2026-09-18 17:01:32] driver end

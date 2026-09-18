@@ -30,3 +30,4 @@ unified/
 .venv/\n__pycache__/\n*.pyc\ndata/*.db\ntests/
 data/cb_kcache/
 data/cb_m5/
+tmp/overnight/hook_secret
