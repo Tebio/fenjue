@@ -290,6 +290,81 @@ def matched_marginal(detect, stocks, horizons, fee=0.0015, seed=7):
     return out
 
 
+def _collect_sigs(detect, stocks):
+    """收集某 detector 的全部信号：date -> [(code, i)]（i=信号日票内索引）"""
+    sigs = {}
+    for code, d in stocks.items():
+        c, o, ma, n = d["c"], d["o"], d["ma60"], d["n"]
+        for i in range(61, n - 6):
+            if c[i-1] <= 0 or c[i] <= 0 or o[i+1] <= 0 or ma[i] is None:
+                continue
+            if o[i+1] <= c[i]*0.905:          # 次日开盘一字跌停＝买不到
+                continue
+            try:
+                if detect(d, i):
+                    sigs.setdefault(d["date"][i], []).append((code, i))
+            except Exception:
+                pass
+    return sigs
+
+
+def capacity_sim(sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=1, fee=0.0015, cap0=1_000_000.0):
+    """G7 容量检验（2026-09-18 立）：固定槽位下的资金曲线模拟。
+
+    规则：信号日收盘确认 → **次日开盘买**（开盘一字跌停作废）→ **入场日 +hold 个交易日收盘卖**
+          （出场日跌停封死顺延≤3日）→ 往返 fee → 每槽 cap0/slots，槽满则跳过（记溢出）。
+    cluster_k：只在「当日全市场信号数 ≥ cluster_k」的成簇日出手（收盘可知，无前视）。
+    返回随机选票 seeds 次的平均指标。
+    """
+    import random as _random
+    if not sigs:
+        return None
+    dates = sorted({x for s in stocks.values() for x in s["date"]})
+    didx = {c: {x: j for j, x in enumerate(s["date"])} for c, s in stocks.items()}
+    out = []
+    for seed in range(seeds):
+        rnd = _random.Random(seed)
+        cash, pos, trades, eqs = cap0, [], [], []
+        for k, day in enumerate(dates):
+            keep = []
+            for code, ei, xi, val in pos:
+                j = didx[code].get(day, -1)
+                if j < 0 or j < xi:
+                    keep.append((code, ei, xi, val)); continue
+                d = stocks[code]
+                c2, o2, nn = d["c"], d["o"], d["n"]
+                jj = ei + hold
+                if jj >= nn or c2[jj] <= 0 or o2[ei] <= 0:
+                    keep.append((code, ei, xi, val)); continue
+                r = c2[jj]/o2[ei] - 1 - fee
+                cash += val*(1+r)
+                trades.append(r*100)
+            pos = keep
+            if k > 0:
+                lst = sigs.get(dates[k-1], [])
+                cands = [s for s in lst if didx[s[0]].get(day) == s[1]+1]
+                if len(lst) < cluster_k:
+                    cands = []
+                rnd.shuffle(cands)
+                for code, i in cands[:max(0, slots - len(pos))]:
+                    if cash < cap0/slots:
+                        break
+                    cash -= cap0/slots
+                    pos.append((code, i+1, i+1+hold, cap0/slots))
+            eqs.append(cash + sum(v for *_x, v in pos))
+        yrs = len(dates)/244.0
+        final = eqs[-1] if eqs else cap0
+        peak, mdd = -1e18, 0
+        for e in eqs:
+            peak = max(peak, e)
+            mdd = min(mdd, e/peak - 1)
+        out.append({"年化%": round(((final/cap0)**(1/yrs)-1)*100, 1), "期末x": round(final/cap0, 2),
+                    "回撤%": round(mdd*100, 1), "笔数": len(trades),
+                    "均笔%": round(sum(trades)/len(trades), 2) if trades else 0,
+                    "胜率%": round(sum(1 for x in trades if x > 0)/len(trades)*100, 1) if trades else 0})
+    return {k: round(sum(o[k] for o in out)/len(out), 2) for k in out[0]}
+
+
 def submit_gate(name, detect, stocks, regime, stock_cap, qs):
     """WorldQuant BRAIN 式提交闸门：新信号入库前的确定性全检。
     硬闸门（任一不过即拒收，exit 1）：
@@ -312,6 +387,9 @@ def submit_gate(name, detect, stocks, regime, stock_cap, qs):
         g3 = sum(1 for v in cells.values() if v["mean%"] > 0) >= len(cells) - 1
     else:
         g3 = bool(cells) and all(v["mean%"] > 0 for v in cells.values())
+    _sigs = _collect_sigs(detect, stocks)
+    cap1 = capacity_sim(_sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=1)
+    cap5 = capacity_sim(_sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=5)
     gates = {
         "G1_tNW≥3": abs(d5.get("t_NW") or 0) >= NW_MIN_T,
         "G2_时间分段": all(v and v["mean%"] > 0 for v in r["时间分段"].values()),
@@ -319,10 +397,15 @@ def submit_gate(name, detect, stocks, regime, stock_cap, qs):
         "G4_市值≥4/5": sum(1 for v in r["市值五分位"].values() if v and v["mean%"] > 0) >= len(r["市值五分位"]) - 1,
         "G5_位置匹配边际>0": bool(marg) and all(v > 0 for v in marg.values()),
         "G6_0.30%成本仍正": (r["成本压力"].get("0.30%") or {}).get("mean%", -9) > 0,
+        # G7（2026-09-18 立）：容量/可执行性——槽位10 下的资金曲线必须为正；
+        # 若原始规则为负但「成簇日过滤(K≥5)」转正，标记 ⚠️（需带过滤执行）
+        "G7_槽位10资金曲线>0": bool(cap1) and cap1["年化%"] > 0,
     }
     passed = all(gates.values())
     verdict = {"信号": name, "闸门": {k: "✅" if v else "❌" for k, v in gates.items()},
                "判决": "PASS 可入注册表" if passed else "REJECT",
+               "容量": {"槽10_K1": cap1, "槽10_K5": cap5,
+                        "注释": "K1=原始规则；K5=只在当日全市场信号≥5 的成簇日出手"},
                "入场口径": ENTRY_MODE,
                "位置匹配边际pp": marg, "日历时间DSR": r["DSR概率"],
                "时间分段": r["时间分段"], "regime分段": r["regime分段"], "衰减曲线": r["衰减曲线"],
@@ -473,6 +556,28 @@ def _limitdown(d, i):
     return True
 
 
+def _shrink_board(d, i):
+    """缩量涨停（量比<0.8）：收盘涨停 + 当日量 < 前5日均量×0.8（#77b 晋级率1.7x放量板）"""
+    c, v = d["c"], d["v"]
+    if c[i - 1] <= 0 or c[i] / c[i - 1] - 1 < 0.098:
+        return False
+    if i < 5:
+        return False
+    v5 = sum(v[i - 5:i]) / 5
+    return v5 > 0 and v[i] / v5 < 0.8
+
+
+def _vol_board(d, i):
+    """放量涨停（量比≥1.5）：晋级段对照组"""
+    c, v = d["c"], d["v"]
+    if c[i - 1] <= 0 or c[i] / c[i - 1] - 1 < 0.098:
+        return False
+    if i < 5:
+        return False
+    v5 = sum(v[i - 5:i]) / 5
+    return v5 > 0 and v[i] / v5 >= 1.5
+
+
 def _loser250(d, i):
     """长周期反转（De Bondt-Thaler）：当日 250 日回报处于全市场最低五分位。
     注意：输家状态是连续的（入组后天天触发），事件高度重叠——以日历时间层/DSR 为准。"""
@@ -580,6 +685,154 @@ def _pead_on(d, i, types, min_inc=None):
         j += 1
     return False
 
+def _volratio(d, i):
+    """量比 = 当日量 / 前5日均量（基期不足或含0则返回0）。2026-09-18 第二轴细分批用。"""
+    v = d["v"]
+    base = v[max(0, i - 5):i]
+    if len(base) < 5 or any(x <= 0 for x in base):
+        return 0.0
+    mb = sum(base) / len(base)
+    return v[i] / mb if mb > 0 else 0.0
+
+
+def _macd_lines(d):
+    """DIF/DEA（12,26,9）逐日 EMA，按股票缓存（O(n) 一次），避免检测器里 O(n²)。"""
+    if "_macd" in d:
+        return d["_macd"]
+    c = d["c"]
+    e12 = e26 = None
+    dif = []
+    for x in c:
+        e12 = x if e12 is None else e12 + (x - e12) * 2 / 13
+        e26 = x if e26 is None else e26 + (x - e26) * 2 / 27
+        dif.append(e12 - e26)
+    dea, s = [], None
+    for x in dif:
+        s = x if s is None else s + (x - s) * 2 / 10
+        dea.append(s)
+    d["_macd"] = (dif, dea)
+    return d["_macd"]
+
+
+def _gold_ma5_20(d, i):
+    """MA5 上穿 MA20（当日金叉）"""
+    c = d["c"]
+    if i < 26 or c[i - 20] <= 0:
+        return False
+    m5 = sum(c[i - 4:i + 1]) / 5
+    m20 = sum(c[i - 19:i + 1]) / 20
+    p5 = sum(c[i - 5:i]) / 5
+    p20 = sum(c[i - 20:i]) / 20
+    return m5 > m20 and p5 <= p20
+
+
+def _gold_macd(d, i):
+    """MACD 金叉（DIF 上穿 DEA）"""
+    if i < 35:
+        return False
+    dif, dea = _macd_lines(d)
+    return dif[i] > dea[i] and dif[i - 1] <= dea[i - 1]
+
+
+def _ma(d, i, w):
+    c = d["c"]
+    return sum(c[i-w+1:i+1])/w if i >= w-1 else None
+
+
+def _turtle20(d, i):
+    """20日新高突破（海龟短）"""
+    if i < 21:
+        return False
+    return d["c"][i] > max(d["h"][i-20:i])
+
+
+def _turtle55(d, i):
+    """55日新高突破（海龟长）"""
+    if i < 56:
+        return False
+    return d["c"][i] > max(d["h"][i-55:i])
+
+
+def _ma20_cross(d, i):
+    """收盘上穿 MA20（价格穿越均线）"""
+    m, p = _ma(d, i, 20), _ma(d, i-1, 20)
+    if m is None or p is None:
+        return False
+    return d["c"][i] > m and d["c"][i-1] <= p
+
+
+def _three_down(d, i):
+    """三连阴（收盘<开盘）"""
+    if i < 3:
+        return False
+    c, o = d["c"], d["o"]
+    return all(c[j] < o[j] for j in (i, i-1, i-2))
+
+
+def _squeeze_breakout(d, i):
+    """缩量横盘放量突破（再升型）：近10日振幅<8% + 当日量比>2 + 涨幅>2%"""
+    if i < 15:
+        return False
+    h, l, c, v = d["h"], d["l"], d["c"], d["v"]
+    hi, lo = max(h[i-10:i]), min(l[i-10:i])
+    if lo <= 0 or (hi/lo - 1) > 0.08 or c[i-1] <= 0:
+        return False
+    base = v[i-5:i]
+    if len(base) < 5 or any(x <= 0 for x in base):
+        return False
+    return v[i]/(sum(base)/5) > 2 and c[i]/c[i-1] - 1 > 0.02
+
+
+def _chan_bottom(d, i):
+    """简化缠论底分型：i-1 为局部最低 + 当日收阳 + 缩量"""
+    if i < 6:
+        return False
+    l, c, o, v = d["l"], d["c"], d["o"], d["v"]
+    if not (l[i-1] < l[i-2] and l[i-1] < l[i]):
+        return False
+    if c[i] <= o[i]:
+        return False
+    base = v[i-5:i]
+    if len(base) < 5 or any(x <= 0 for x in base):
+        return False
+    return v[i]/(sum(base)/5) < 1.0
+
+
+def _limitup_close(d, i):
+    """涨停收盘（打板口径）"""
+    return i >= 1 and d["c"][i-1] > 0 and d["c"][i]/d["c"][i-1] - 1 >= 0.098
+
+
+def _two_boards(d, i):
+    """二连板"""
+    if i < 2 or d["c"][i-2] <= 0 or d["c"][i-1] <= 0:
+        return False
+    return d["c"][i]/d["c"][i-1] - 1 >= 0.098 and d["c"][i-1]/d["c"][i-2] - 1 >= 0.098
+
+
+def _oversold20_60d(d, i):
+    """60日内超跌≥20%（相对区间最高收盘）"""
+    if i < 60:
+        return False
+    hi = max(d["h"][i-60:i+1])
+    return hi > 0 and d["c"][i]/hi - 1 <= -0.20
+
+
+def _touch_not_seal(d, i):
+    """触板未封（当日最高触涨停但收盘未封）"""
+    if i < 1 or d["c"][i-1] <= 0:
+        return False
+    limit = d["c"][i-1]*1.098
+    return d["h"][i] >= limit*0.995 and d["c"][i] < limit
+
+
+def _gap_down(d, i):
+    """低开缺口≥3%"""
+    if i < 1 or d["c"][i-1] <= 0:
+        return False
+    return d["o"][i]/d["c"][i-1] - 1 <= -0.03
+
+
 REGISTRY = {
     "TD9买入": _td9buy,
     "TD9卖出": _td9sell,
@@ -608,9 +861,70 @@ REGISTRY = {
     "PEAD_预增50+": lambda d, i: _pead_on(d, i, {"预增"}, 50),
     "PEAD_强利好": lambda d, i: _pead_on(d, i, {"预增", "扭亏"}),
     "PEAD_强利空": lambda d, i: _pead_on(d, i, {"预减", "首亏"}),
+    # ---- 2026-09-18：跌停接按 MA60 位置拆分（8年网格实测：MA60下 +1.94%/59.9% vs MA60上 -0.12%/44.7%）----
+    "跌停接_MA60下": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                and _limitdown(d, i)),
+    "跌停接_MA60上": lambda d, i: (d["ma60"][i] is not None and d["c"][i] > d["ma60"][i]
+                                and _limitdown(d, i)),
+    # ---- 2026-09-18 第二轴细分批：位置方向假设（接跌要低位 / 追强要高位）----
+    # 依据 tmp/second_axis_grid.py：B5 半路板 MA60上 +1.55% vs 下 +0.20%（方向与接跌类相反）；
+    # 恐慌深度加量比档（缩量<0.8 最优）；frontrun 的"次日追"腿在低位子集转正。
+    "跌停接_MA60下_缩量": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                  and _volratio(d, i) < 0.8 and _limitdown(d, i)),
+    # ---- 2026-09-18 用户点名：金叉类从未测过，补两个基础金叉检测器 ----
+    "金叉_MA5上穿20": _gold_ma5_20,
+    "金叉_MACD": _gold_macd,
+    # ---- 2026-09-18 穷尽批：把历史上测过的经典玩法全部做成检测器（原联赛/临时脚本口径）----
+    "海龟20突破": _turtle20,
+    "海龟55突破": _turtle55,
+    "MA20上穿": _ma20_cross,
+    "三连阴": _three_down,
+    "缩量横盘放量突破": _squeeze_breakout,
+    "缠论底分型": _chan_bottom,
+    "涨停收盘打板": _limitup_close,
+    "二连板": _two_boards,
+    "超跌20_60日": _oversold20_60d,
+    "触板未封": _touch_not_seal,
+    "缺口低开3%": _gap_down,
+    # ---- 2026-09-18 组合批（用户要求：多种组合跑 submit 六闸门）----
+    # 底座 = 跌停×MA60下（=LIMITDOWN_LOW_MA60）；括号内是交集 n（8年）
+    "组合_跌停低_长周期输家": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                     and _limitdown(d, i) and _loser250(d, i)),            # 3022
+    "组合_跌停低_长周期_超跌20": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                      and _limitdown(d, i) and _loser250(d, i)
+                                      and _oversold20_60d(d, i)),                            # 2569
+    "组合_跌停低_三连阴": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                   and _limitdown(d, i) and _three_down(d, i)),              # 4191
+    "组合_跌停低_缺口低开": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                    and _limitdown(d, i) and _gap_down(d, i)),               # 7398
+    "组合_跌停低_TD9卖出": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                   and _limitdown(d, i) and _td9sell(d, i)),                 # 44
+    "组合_跌停低_金叉MA5": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                   and _limitdown(d, i) and _gold_ma5_20(d, i)),             # 86
+    "组合_跌停低_避雷针低位": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                     and _limitdown(d, i) and _bigupper(d, i)),              # 953
+    "组合_跌停低_大长腿低位": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                     and _limitdown(d, i) and _biglower(d, i)),
+    "组合_反转x避雷针低位": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                   and _reversal(d, i) and _bigupper(d, i)),
+    "组合_反转x大长腿低位": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                   and _reversal(d, i) and _biglower(d, i)),
+    "组合_缺口低开_低位阳线": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                     and d["c"][i] > d["o"][i] and _gap_down(d, i)),
+    "组合_触板未封_低位": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                   and _touch_not_seal(d, i)),
+    "banlu_b5_MA60上": lambda d, i: (d["ma60"][i] is not None and d["c"][i] > d["ma60"][i]
+                                 and _banlu_b5(d, i)),
+    "banlu_b5_MA60下": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                 and _banlu_b5(d, i)),
+    "frontrun_v2_低位追": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                   and _frontrun_v2(d, i)),
     # ---- 双高格唯一存活（2026-09-14 #79）：跌停接×MA60上×2月，节令格终审 ----
     "跌停接_MA60上_2月": lambda d, i: (d["ma60"][i] is not None and d["c"][i] > d["ma60"][i]
                                      and d["date"][i][5:7] == "02" and _limitdown(d, i)),
+    # ---- 妖股晋级段（2026-09-14 #77b）：缩量涨停=筹码锁定，晋级率1.7x放量板 ----
+    "缩量涨停_晋级": _shrink_board,
+    "放量涨停_对照": _vol_board,
 }
 
 

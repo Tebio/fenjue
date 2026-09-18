@@ -128,6 +128,40 @@ def dividend_ttm(code: str) -> float | None:
         return ent["dps"] if ent else None
 
 
+DIV_DECL_CACHE = ROOT / "data" / "dividend_declared_cache.json"
+
+
+def dividend_ttm_declared(code: str) -> float | None:
+    """大佬口径：宣告制每股分红 TTM —— 含已宣告未实施的预案/中期分红（按预案公告日取窗，缺失回退除权日）。
+    与 dividend_ttm（实施口径）并排展示，不动既有锚线逻辑（2026-09-16 用户裁决加列）。"""
+    cache = json.loads(DIV_DECL_CACHE.read_text()) if DIV_DECL_CACHE.exists() else {}
+    ent = cache.get(code)
+    import time
+    if ent and time.time() - ent.get("ts", 0) < 7 * 86400:
+        return ent["dps"]
+    sys.path.insert(0, "/opt/data/python-libs")
+    try:
+        import pandas as pd
+        import akshare as ak
+        df = ak.stock_history_dividend_detail(symbol=code, indicator="分红")
+        df = df[df["派息"].notna() & (df["派息"] > 0)].copy()
+        dt = pd.to_datetime(df.get("公告日期"), errors="coerce")
+        ex = pd.to_datetime(df.get("除权除息日"), errors="coerce")
+        df["_d"] = dt.fillna(ex)
+        df = df[df["_d"].notna()].sort_values("_d")
+        # 一年两派股票在 365 天公告窗里会装进 3 期（换届重叠），宣告口径按「每年派息次数」取最近 N 期
+        now = pd.Timestamp.now()
+        n730 = int((df["_d"] >= now - pd.Timedelta(days=730)).sum())
+        n_per_year = max(1, round(n730 / 2))
+        recent_n = df.tail(n_per_year)
+        dps = round(float(recent_n["派息"].sum()) / 10, 4) if len(recent_n) else None
+        cache[code] = {"dps": dps, "ts": time.time()}
+        DIV_DECL_CACHE.write_text(json.dumps(cache))
+        return dps
+    except Exception:
+        return ent["dps"] if ent else None
+
+
 def kline_sina(symbol: str, n: int = 90) -> list[dict]:
     url = ("http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/"
            f"CN_MarketData.getKLineData?symbol={symbol}&scale=240&ma=no&datalen={n}")
@@ -251,9 +285,17 @@ def build_console() -> dict:
         bands = bands_from_dividend(dps) if dps else None
         yld = round(dps / q["price"] * 100, 2) if dps else None
         zone, action = zone_of(q["price"], bands) if bands else ("无分红数据", "—")
+        # 大佬口径对照（宣告制 TTM，含预案/中期）：仅展示与分区对照，不动实施口径锚线
+        dps_decl = dividend_ttm_declared(code)
+        bands_decl = bands_from_dividend(dps_decl) if dps_decl else None
+        zone_decl = zone_of(q["price"], bands_decl)[0] if bands_decl else None
         row = {"code": code, "name": name, "tier": tier, "price": q["price"], "pct": q["pct"],
                "pe": q["pe"], "pb": q["pb"], "yield": yld, "mktcap": q["mktcap_yi"],
                "zone": zone, "action": action}
+        if dps_decl:
+            row["yield_declared"] = round(dps_decl / q["price"] * 100, 2)
+            row["zone_declared"] = zone_decl
+            row["diverge"] = bool(zone_decl and zone_decl != zone)
         if bands:
             row["bands"] = bands
             row["ladder"] = ladder(bands)
@@ -292,10 +334,11 @@ def render_text(console: dict) -> str:
         ma = f" MA20 {r.get('ma20')}({r.get('ma20_dist%'):+.1f}%){'📌贴线' if r.get('tie') else ''}" if r.get("ma20") else ""
         mmo = r.get("monthly")
         mms = f" 月线:5月{mmo['ma5m']}/5季{mmo['ma15m']}/10季{mmo['ma30m']}" if mmo else ""
+        decl = f" 宣告{r['yield_declared']}%→{r['zone_declared']}{'⚖️分歧' if r.get('diverge') else ''}" if r.get("yield_declared") else ""
         lines.append(
             f"{r['name']}({r['code']}) {r['price']} ({r['pct']:+.1f}%) 息率{r['yield']}% PB{r.get('pb')} | "
             f"{r['zone']}·{r['action']} | 买≤{b['buy']} 加≤{b['add50']} 卖{b['sell']} 清≥{b['clear']} | "
-            f"距买入{r['dist_to_buy%']:+.1f}%{ma}{mms}")
+            f"距买入{r['dist_to_buy%']:+.1f}%{ma}{mms}{decl}")
     lines.append("")
     lines.append("── 明日委托单（价格线不随日内波动，分红/财报更新后调整）──")
     for r in console["rows"]:

@@ -70,9 +70,16 @@ for f in glob.glob(f"{D}/m60_cache/*.json"):
     cap = caps.get(c, {}).get(today[:7])
     if cap is None or not (20 <= cap <= 400):
         continue
+    # 2026-09-18 位置细分（第二轴网格 + submit 双确认）：MA60上 +1.36%/48.7%（过闸门）、
+    # MA60下 +0.39%/45.7%（REJECT 挂2/6）→ 只推 MA60 上方，"追强要高位"。
+    ks = stocks[c]
+    _seg = [ks[x]["close"] for x in range(j - 59, j + 1)] if j >= 59 else []
+    m60 = sum(_seg) / 60 if _seg and all(x > 0 for x in _seg) else None
+    pos = "MA60下" if (m60 is not None and ks[j]["close"] <= m60) else ("MA60上" if m60 is not None else "?")
     sigs.append({"date": today, "code": c, "name": nm, "industry": industry,
                  "trigger_px": round(entry, 2), "sealed": sealed,
-                 "close": stocks[c][j]["close"], "regime_ok": regime in ("平淡期", "恐慌期")})
+                 "close": stocks[c][j]["close"], "ma60": round(m60, 3) if m60 else None, "pos": pos,
+                 "regime_ok": regime in ("平淡期", "恐慌期"), "pos_ok": pos == "MA60上"})
 
 # K3修（2026-09-13 夜）：同日幂等——手工复核+cron双跑会产生重复行，写入前按(date,code)去重
 _lp = f"{D}/banlu_signals.jsonl"
@@ -93,7 +100,12 @@ with open(_lp, "a") as f:
 if len(_new) < len(sigs):
     print(f"[幂等] 跳过重复登记 {len(sigs) - len(_new)} 条")
 ok = [s for s in sigs if s["regime_ok"]]
+push = [s for s in ok if s.get("pos_ok")]
 print(f"B5 半路板 · {today} · 周期={regime}")
-print(f"触发 {len(sigs)} 只，周期合规（平淡/恐慌）{len(ok)} 只")
-for s in ok:
+print(f"触发 {len(sigs)} 只，周期合规（平淡/恐慌）{len(ok)} 只，位置合规（MA60上）{len(push)} 只")
+for s in push:
     print(f"  {s['name']}({s['code']}) 触发价{s['trigger_px']} {'已封板' if s['sealed'] else '未封'} [{s['industry']}]")
+_dropped = [s for s in ok if not s.get("pos_ok")]
+if _dropped:
+    print(f"（剔除 MA60 下方 {len(_dropped)} 只：submit 实测 +0.39%/45.7% 挂 2/6 闸门，"
+          f"跌停接要低位、半路板要高位，别混：{'、'.join(s['name'] for s in _dropped[:8])}）")

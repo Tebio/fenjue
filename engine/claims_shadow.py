@@ -134,9 +134,16 @@ def main():
     stocks = load_stocks()
     import os
     today = os.environ.get("SHADOW_DATE") or date.today().isoformat()  # SHADOW_DATE 供测试回填历史日
-    last_dates = {ks[-1]["date"] for ks in stocks.values()}
-    if today not in last_dates:
-        print(f"[SILENT] kcache 最新 {max(last_dates)}，今日 {today} 无数据（非交易日或未刷新）")
+    last_max = max(ks[-1]["date"] for ks in stocks.values())
+    if os.environ.get("SHADOW_DATE"):
+        # 显式回填历史日：只要求该日在数据里真实存在（多数票有当日 bar），
+        # 不能用「等于最新交易日」当守卫——那会让所有补登记日一律 [SILENT]（2026-09-18 修）
+        n_has = sum(1 for ks in stocks.values() if any(k["date"] == today for k in ks[-6:]))
+        if n_has < 0.5 * len(stocks):
+            print(f"[SILENT] SHADOW_DATE={today} 在 kcache 中不存在（{n_has}/{len(stocks)} 票有当日 bar）")
+            return
+    elif today not in {ks[-1]["date"] for ks in stocks.values()}:
+        print(f"[SILENT] kcache 最新 {last_max}，今日 {today} 无数据（非交易日或未刷新）")
         return
 
     # 1. 登记今日信号（先算今日行业梯队，供 FRONTRUN 检测）
@@ -207,9 +214,15 @@ def main():
                 filled += 1
         if r["entry"]:
             e = r["entry"]
+            # T+1 时序硬断言（2026-09-18 修）：出场日必须严格晚于入场日。
+            # 旧实现用 off 从信号日 si 起算，open-entry 族（反转/跌停接）变成
+            # 「当日开盘买 → 当日收盘卖」= T+0，物理不可能成交（A股 T+1）。
+            # 现改为从入场日 ei 起算：ei=si（收盘入场）/ei=si+1（次日开盘入场）。
+            ei = si if r["claim"] in CLOSE_ENTRY_CLAIMS else si + 1
             for tag, off in [("r1", 1), ("r5", 5), ("r20", 20)]:
-                if r[tag] is None and si + off < len(ks):
-                    r[tag] = round(ks[si + off]["close"] / e - 1 - FEE, 5)
+                if r[tag] is None and ei + off < len(ks):
+                    assert ei + off > ei, "出场日必须晚于入场日"
+                    r[tag] = round(ks[ei + off]["close"] / e - 1 - FEE, 5)
                     filled += 1
     SHADOW.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in lines) + "\n")
 

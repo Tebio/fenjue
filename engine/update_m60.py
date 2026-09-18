@@ -42,8 +42,8 @@ def main():
     t0 = time.time()
     for idx, code in enumerate(codes):
         fp = CACHE / f"{code}.json"
-        if fp.exists() and fp.stat().st_size > 100:
-            done += 1  # 断点续跑：已有数据的跳过
+        if full and fp.exists() and fp.stat().st_size > 100:
+            done += 1  # 断点续跑只对 full 生效；delta 模式必须更新已有文件
             continue
         sym = ("sh" if code.startswith("6") else "sz") + code
         rows = fetch(sym, n_bars)

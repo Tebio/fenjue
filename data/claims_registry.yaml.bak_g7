@@ -1,0 +1,345 @@
+claims:
+- id: CANDLE_UPPER_LOW
+  statement: 低位避雷针(MA60下+长上影)相对位置匹配对照有正边际贡献
+  detector: 避雷针_低位
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 0.67
+    20: 1.55
+  kill_line_pp:
+    5: 0.0
+    20: 0.5
+  grade: 候选L2L3（日历时间口径已证伪为独立策略，仅作确认指标）
+  created: 2026-09-11
+  audit_every_days: 7
+- id: CANDLE_LOWER_LOW
+  statement: 低位大长腿(MA60下+长下影)相对位置匹配对照有正边际贡献
+  detector: 大长腿_低位
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 0.35
+    20: 1.07
+  kill_line_pp:
+    5: 0.0
+    20: 0.5
+  grade: 候选L2L3（平淡期regime闸门必须挂）
+  created: 2026-09-11
+  audit_every_days: 7
+- id: TD9_BUY
+  statement: TD9买入结构后T+3起有正edge（T+1为负）
+  detector: TD9买入
+  control: random_entry
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 0.23
+    20: 0.7
+  kill_line_pp:
+    5: 0.0
+    20: 0.0
+  grade: 降级观察（2023-26段edge≈0.05，疑似已死）
+  created: 2026-09-11
+  audit_every_days: 7
+- id: HIGH_UPPER_DISTRIBUTION
+  statement: 高位避雷针=出货形态（T+1正→T+20负的递减签名）
+  detector: 避雷针_高位
+  control: random_entry
+  horizon:
+  - 20
+  baseline_pp:
+    20: -0.48
+  kill_line_pp:
+    20: 0.2
+  grade: 黑名单候选（作否决信号用）
+  direction: negative
+  created: 2026-09-11
+  audit_every_days: 7
+- id: REVERSAL_OPEN_T1
+  statement: 反转族：T-1大跌后次日开盘买→次日尾盘，净+0.139%/49.8%（n=48.9万，含退市股+数据至9/11复审通过）
+  detector: 反转族_T-1大跌
+  control: random_entry
+  horizon:
+  - 1
+  baseline_pp:
+    1: 0.2
+  kill_line_pp:
+    1: 0.0
+  grade: 候选L2（2026-09-12 含退市股复审通过，edge从+0.16%微降至+0.139%仍为正，唯一为正的反转腿）
+  created: 2026-09-06
+  audit_every_days: 30
+  note: edge微降方向与幸存者偏差一致；2026-09-13 已接滚动审计（日K detector 反转族_T-1大跌，next_open口径与主张一致；基线为首跑自填的随机对照边际pp，非+0.139%净值口径）。2026-09-12
+    m60执行时点：开盘买=最优执行（延迟入场单调烧钱，edge集中开盘1小时）；回踩限价全事件期望显著为负；晚段(2025-07→)T+1 edge≈0需审计重点盯
+- id: LIMITDOWN_NEXT_DAY
+  statement: 跌停次日接 T+1腿 +0.26%仍活（T+5腿 2026-09-12 m60研究判死禁用至审计恢复；历史T+5 +2.65%/57.6%仅存档）
+  detector: 跌停次日接_剔一字
+  control: random_entry
+  horizon:
+  - 1
+  baseline_pp:
+    1: 0.76
+  kill_line_pp:
+    1: 0.0
+  grade: 候选L2+（一字剔除✅ +2.72→幸存者修正后 +2.65%/57.6%（n=30684 含186退市股），双段 2.58/2.71 一致。幸存者偏差实测仅
+    -0.07pp，方向如预测但幅度小）⚠2026-09-12 m60执行时点研究：T+5腿晚段(2025-07→)已死(-0.97%)， T+1腿仍活(+0.26%)；T+5长持禁用至审计恢复，见
+    docs/sprint-exec-timing-20260912.md
+  created: 2026-09-11
+  audit_every_days: 30
+  note: 一字剔除✅+含退市股✅；升 LAW 需影子前向20交易日。2026-09-13 接滚动审计（只监T+1腿，detector含一字剔除）
+- id: MONDAY_EFFECT
+  statement: 周一效应：周一日均+0.169%/60.8%（含退市股口径）；⚠分年不稳：2024 -0.142%/45.5%负、2022/2026近零，edge集中强趋势年——不作独立交易依据，仅组合层微弱先验（docs/external-reviews-20260912.md）
+  detector: external:engine/factor_research.py
+  grade: 候选L2（降级：2026-09-12 Perez挑战复验后）
+  created: 2026-09-11
+  audit_every_days: 30
+- id: TURNOVER_MAX_BLACKLIST
+  statement: 高换手20%与彩票型20%组 91个月累计跑输-54.0%/-56.1%（含退市股，回避即相对收益）
+  detector: external:engine/factor_research.py
+  grade: 候选L2+（2026-09-12 含退市股复审：-54.0%/-56.1%，绞肉机结论强化）
+  direction: negative
+  created: 2026-09-11
+  audit_every_days: 90
+- id: PANIC_DEPTH_DOSE
+  statement: 反转族/跌停接=恐慌深度单因子连续谱：T+1净额与同日超额随跌幅单调放大（-3~-5:+0.03 → ≤-9.5:+1.10，超额0.067→0.411）
+  detector: 恐慌深度_≤-9.5
+  control: random_entry
+  horizon:
+  - 1
+  baseline_pp:
+    1: 1.14
+  kill_line_pp:
+    1: 0.0
+  grade: 候选L2（S3首测，含退市股+regime重建后数据）
+  note: 分档仓位规则v1见sprint-s3报告；regime调制妖股期最佳，不用位置/星期闸门。2026-09-13 接滚动审计：监最深档(≤-9.5%)作整条剂量曲线的金丝雀，深档死=全曲线降级复审
+  created: '2026-09-12'
+  audit_every_days: 30
+- id: FRONTRUN_FIRSTBOARD_V2
+  statement: 首板+板块梯队>=3+市值20-400亿，首板当日收盘上车（打板成交口径），T+1/T+5相对位置匹配对照有正边际
+  detector: frontrun_v2
+  control: random_entry
+  entry: signal_close
+  horizon:
+  - 1
+  - 5
+  baseline_pp:
+    1: 2.06
+    5: 2.21
+  kill_line_pp:
+    1: 0.0
+    5: 0.0
+  grade: 候选（2026-09-12 测量级全闸门通过：双段+1.88/+2.14、四regime全正、t_NW 33.7/16.4；close-entry=打板成交口径乐观，fill率影子期定量；次日追变体-0.52%已证伪）
+  created: 2026-09-12
+  audit_every_days: 7
+  note: 影子前向已接入 claims_shadow（CLOSE_ENTRY_CLAIMS）。2026-09-13 审计端接线完成：entry=signal_close
+    对齐close-entry主张（框架默认next_open测的是已证伪的次日追变体，会误杀）；对照改random_entry——position_matched只取MA60下日，打板信号几乎全在MA60上，会无样本空转；审计基线为首跑自填的日K代理口径，非注册时位置匹配口径1.88/2.07pp
+- id: WATCHPOOL_GRAD
+  statement: 放量异动观察池毕业（入池后首板当日收盘上车），T+1/T+5相对位置匹配对照有正边际
+  detector: watchpool_grad
+  control: random_entry
+  entry: signal_close
+  horizon:
+  - 1
+  - 5
+  baseline_pp:
+    1: 1.73
+    5: 0.97
+  kill_line_pp:
+    1: 0.0
+    5: 0.0
+  grade: 候选（2026-09-12：8年池信号n=20487，5日毕业率13.42% vs 基率6.25%（2.15x），毕业后T+1 +1.18%/53.7%；close-entry打板口径，fill率同FRONTRUN黑盒；启动窗口中位2日/71.6%≤3日）
+  created: 2026-09-12
+  audit_every_days: 7
+  note: 影子前向已接入 claims_shadow（CLOSE_ENTRY_CLAIMS）；2026-09-13 审计端接线完成（entry/control
+    口径同 FRONTRUN_FIRSTBOARD_V2 注记）
+- id: BANLU_B5
+  statement: 半路板（+6%市价触发）+量比≥2+梯队≥2+60日首板+市值20-400亿+平淡/恐慌期+**收盘价在 MA60 上方** → T+1断板即跑，有可执行正期望（2026-09-18 补位置条件）
+  detector: banlu_b5_MA60上
+  pos_direction: 高位（MA60上）
+  control: random_entry
+  entry: trigger6
+  horizon:
+  - 1
+  baseline_pp:
+    1: 7.44
+  kill_line_pp:
+    1: 0.0
+  grade: 候选L2（2026-09-13 submit闸门6/6全过——8年日K代理trigger6口径：T+1 +1.76%/56.9%/t_NW34.6，双段同正（19-22
+    +1.9→23-26 +0.74 衰减但仍正），DSR=1.0，位置匹配边际T+5 +6.63/T+20 +7.51pp；原2年m60口径 +3.52%/59.9%/n=4122。剩L5影子前向20交易日毕业）；
+    2026-09-18 位置细分批（第二轴网格 → submit 双确认）：MA60上 +1.36%/48.7%/n=10386/双段+2.24,+0.79 ＞ 无位置版
+    +1.18%/48.2%/n=12811 ＞ MA60下 +0.39%/45.7%/n=2425（REJECT 挂2/6）——低位半路板已剔除，banlu_daily 加位置过滤
+    （打印位置合规数 + 剔除名单）；⚠️ T+5 胜率 48.2~48.7% ＜50%：这是「低胜率厚尾」画像，推送话术别写成高胜率。
+  created: 2026-09-13
+  audit_every_days: 7
+  note: 影子走 banlu_daily 日更信号（cron 4ce84d817a97 19:10BJT）+ banlu_signals.jsonl；trigger价与kcache前复权存在口径差（分红跨度），影子期接受。2026-09-13
+    接滚动审计：日K代理（h≥前收×1.06=触发，entry=trigger6 前收×1.06，T+1收盘出）——真实断板即跑出场日K测不了，代理只作kill线监视，数值不与m60口径3.52%直接可比
+- id: ZHABAN_SHALLOW_RULE
+  statement: 炸板浅炸规则：昨涨停+今开≥5%+今开幅度6~7%+首30分钟量能比<1.0，挂+7%限价买→T+1收盘，每信号期望+2.91%（n=178，train+2.32/test+3.42两段同正超基线）
+  detector: external:engine/zhaban_features.py
+  grade: 候选（2026-09-13 任务B：441格子882次评估全披露下的规则搜索最优；残留乐观=60min粒度fill；信号量薄~年90只）
+  created: '2026-09-13'
+  audit_every_days: 30
+  note: 影子前向=engine/zhaban_daily.py（cron c73023823b3e 20:10BJT，账本data/zhaban_shadow.jsonl，含seed固定随机对照）；L5前不进作战手册
+- id: LIMITDOWN_LOW_MA60
+  statement: 跌停次日接的 edge 只在信号日收盘价处于 MA60 下方时成立；MA60 上方为零/负期望（同一信号加位置过滤后由 G3 否决变六道全过）
+  detector: 跌停接_MA60下
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 4.14
+    20: 9.26
+  kill_line_pp:
+    5: 0.0
+    20: 0.5
+  grade: 候选L2+（2026-09-18 submit 六道闸门全过：T+5 +5.09%/71.6%/t_NW58，双段 +2.74/+6.79，regime 3/4 正（恐慌+6.35/妖股+1.41/主线+1.20/平淡-0.49），位置匹配边际 T+5 +4.14/T+20 +9.26pp，每票每年 0.55 次；对照：无位置过滤版 REJECT（G3）、MA60上版 REJECT 5/6 挂）
+  created: '2026-09-18'
+  audit_every_days: 7
+  note: 残留警告=日历时间 DSR=0（与形态族同款败因），它的钱有很大一块是恐慌日的市场反弹（beta）不是横截面 alpha，平淡期为负期望，别当全天候策略；频率极不均，恐慌日几十只、平淡日 0 只（该格空仓是常态）。证据=data/depth_position_grid_20260918.json（8年深度×位置网格，T+1口径）+data/law_pipeline_submit_20260918.json（闸门结果）。面板与推送已同步：KPI 71.6%+位置条件、反转族标注主体无 edge、新增网格+闸门两卡、reversal_daily 打印位置分层与🎯组。L5 影子前向沿用 claims_shadow 的 LIMITDOWN_NEXT_DAY 记账继续量。**2026-09-18 T+1 赔率验证（用户点名质询）：真跌停×MA60下 T+1 胜率 57.8%、均值 +1.53%、**赔率 1.34**（均赢+5.82% / 均亏-4.34%），已剔「次日开盘一字跌停」买不到的 6760 例；T+5 69.7%/赔率1.56。对照 MA60上 T+1 44.3%/-0.22%/赔率1.16。赔率随深度单调上升（-3~-5 赔率1.02 → 真跌停1.34），位置是乘数。稳定性：双段 58.4%/57.4%、近500日 57.6%，但 2021(-0.79%)/2026(-0.74%) 单年为负，近250日 T+1 降到 +0.82% 而 T+5 +3.98% → 持有期以 T+5 为主腿、T+1 当备选。数据=data/limitdown_odds_20260918.json + data/limitdown_odds_stability_20260918.json。**2026-09-18 追加实测（闸门否掉的口径别再用）****：加「量比<0.8（缩量）」档 → T+1 +0.91%/T+5 +4.54%/n=2245/每票每年0.09，对照全档 T+1 +1.05%/T+5 +5.09%/n=13983/每票每年0.55 —— 两个持有期都略低、频率砍 84%，**缩量不作过滤条件**（网格里「缩量最优」是人口差异假象：-9.5% 全体 vs 跌停专门×MA60下）。证据=data/second_axis_submit_20260918.json。
+- id: FRONTRUN_LOW_MA60
+  statement: 首板+梯队≥3+市值20-400亿 且 收盘价≤MA60（低位首板）→ 次日开盘追入有正期望；同一信号去掉位置条件按次日开盘追为负期望（REJECT 挂6/6）
+  detector: frontrun_v2_低位追
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 2.0
+    20: 3.78
+  kill_line_pp:
+    5: 0.3
+    20: 0.5
+  grade: 候选L2（2026-09-18 submit 六道闸门全过：T+5 +2.52%/54.9%/n=1942，双段 +1.53→+3.42（加速），
+    regime 4/4 正（恐慌+4.74/妖股+2.74/主线+2.40/平淡+0.40），位置匹配边际 T+5 +2.00/T+20 +3.78pp，每票每年 0.08 次；
+    对照：无位置过滤的次日追版 REJECT 挂6/6（T+5 -0.15%/41.2%/n=10269）——注册的 +1.79% 是 close-entry 口径，与次日追是两回事）
+  created: '2026-09-18'
+  audit_every_days: 7
+  note: ⚠️ 残留警告=日历时间 DSR 0.004（同形态族/跌停接的败因：钱主要来自恐慌+妖股期的市场修复，beta 成分大），
+    平淡期只有 +0.40%/44.8%；每票每年 0.08 次=极稀疏，多数交易日无信号（空仓是常态）。证据=data/second_axis_grid_20260918.json
+    （第二轴网格）+data/second_axis_submit_20260918.json（闸门结果）。推送侧尚未单列（等影子前向接线后与抢跑族合并处理）。
+
+# ===== 2026-09-18 组合批（用户「把多种组合跑一下然后走 submit 六闸门」）=====
+# 底座=跌停×MA60下（LIMITDOWN_LOW_MA60：T+5 +5.09%/71.6%/n=13983，边际 +4.14/+9.26，双段 +2.74/+6.79）。以下均 next_open 口径。
+- id: COMP_LIMITDOWN_LOW_LOSER250
+  statement: 跌停×MA60下 且 属 250 日输家（长期超跌）→ T+5 期望与位置匹配边际均高于裸底座
+  detector: 组合_跌停低_长周期输家
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 5.75
+    20: 11.24
+  kill_line_pp:
+    5: 0.0
+  grade: 候选L2+（2026-09-18 组合批 submit 六道全过：T+5 +6.21%/71.9%/n=2922，双段 +3.17/+7.60，位置匹配边际 +5.75/+11.24，每票每年 0.11）
+  created: '2026-09-18'
+  audit_every_days: 7
+  note: 长周期反转（250日输家）是本次唯一被验证的「真增量条件」（另一个时间尺度）；它单看 45.8%/-0.04%（零），只在跌停低位格内体现价值。beta/DSR 警告同底座。
+- id: COMP_LIMITDOWN_LOW_LOSER250_OS20
+  statement: 跌停×MA60下 + 250日输家 + 60日超跌≥20% → 本批 T+5 均值与边际最高
+  detector: 组合_跌停低_长周期_超跌20
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 5.94
+    20: 12.68
+  kill_line_pp:
+    5: 0.0
+  grade: 候选L2+（六道全过：T+5 +6.70%/72.3%/n=2489，双段 +3.18/+8.24，边际 +5.94/+12.68，每票每年 0.10）
+  created: '2026-09-18'
+  audit_every_days: 7
+  note: 超跌20 相对底座几乎无独立信息（底座已含），叠加后仅微优；三条件交集频率很低。
+- id: COMP_LIMITDOWN_LOW_3DOWN
+  statement: 跌停×MA60下 且 当日为三连阴 → 本批胜率最高
+  detector: 组合_跌停低_三连阴
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 5.80
+    20: 13.77
+  kill_line_pp:
+    5: 0.0
+  grade: 候选L2+（六道全过：T+5 +6.47%/胜率76.4%/n=4481，双段 +3.11/+8.48，边际 +5.80/+13.77（本批最高），每票每年 0.18）
+  created: '2026-09-18'
+  audit_every_days: 7
+  note: 三连阴单看零 edge（49.3%/+0.25%），只在跌停低位格内体现价值（连续下跌=恐慌更充分）。
+- id: COMP_DIPBUY_LOW_BULLISH
+  statement: 缺口低开≥3% 且 收盘≤MA60 且 当日收阳 → 大样本宽基抄底格
+  detector: 组合_缺口低开_低位阳线
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 1.85
+    20: 4.34
+  kill_line_pp:
+    5: 0.0
+  grade: 候选L2（六道全过：T+5 +2.26%/57.9%/n=18170（本批样本最大，每票每年 0.71），双段 +1.55/+3.42，边际 +1.85/+4.34）
+  created: '2026-09-18'
+  audit_every_days: 7
+  note: 缺口低开单看 +0.17%（零）；位置方向对称（MA60上×阳线 T+5 -1.48%）。频率高方差小，底仓型，不是爆发型。
+- id: COMP_TOUCH_NOT_SEAL_LOW
+  statement: 触板未封 且 收盘≤MA60 → 弱势修复格
+  detector: 组合_触板未封_低位
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  baseline_pp:
+    5: 1.31
+  kill_line_pp:
+    5: 0.0
+  grade: 候选L2（六道全过：T+5 +1.52%/52.5%/n=11037，双段 +0.76/+2.34，边际 +1.31/+2.41）
+  created: '2026-09-18'
+  audit_every_days: 7
+  note: 触板未封单看 T+1 +0.15%/T+5 -0.38%（零或负），仅低位格转正；胜率 52.5% 贴线，薄 edge 只作补充。
+- id: COMP_REVERSAL_X_BIGUPPER_LOW
+  statement: 反转族（T-1 跌≥3%）且 低位避雷针（MA60下+长上影）→ 抄底 × 形态确认
+  detector: 组合_反转x避雷针低位
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  baseline_pp:
+    5: 2.16
+  kill_line_pp:
+    5: 0.0
+  grade: 候选L2（六道全过：T+5 +3.23%/61.8%/n=5264，双段 +2.18/+4.18，边际 +2.16/+4.08）
+  created: '2026-09-18'
+  audit_every_days: 7
+  note: 验证了「抄底 × 形态确认」的正交叠加（600 票样本 +0.32%→+1.75%）；不要求跌停，样本比跌停族宽。
+- id: COMP_LIMITDOWN_LOW_BIGUPPER
+  statement: 跌停×MA60下 且 低位避雷针（跌停日的长上影）
+  detector: 组合_跌停低_避雷针低位
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 4.86
+    20: 9.00
+  kill_line_pp:
+    5: 0.0
+  grade: 候选L2（六道全过：T+5 +5.70%/73.7%/n=1097，双段 +4.56/+6.70（本批双段最稳），边际 +4.86/+9.00）
+  created: '2026-09-18'
+  audit_every_days: 7
+  note: 跌停日出现长上影=盘中曾大幅反弹被打回；样本 1097 但双段一致性最好。
