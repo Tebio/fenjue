@@ -18,7 +18,7 @@ ROOT = Path("/opt/data/fenjue")
 KC = ROOT / "data" / "big_kcache"
 OUT = ROOT / "data" / "cap_hist"
 OUT.mkdir(exist_ok=True)
-START, END = "2019-01-01", "2026-09-11"
+START, END = "2019-01-01", "2026-09-18"
 
 
 def main() -> None:

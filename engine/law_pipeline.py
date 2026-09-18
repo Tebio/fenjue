@@ -423,11 +423,54 @@ _XCAP = None      # code -> month(YYYY-MM) -> 流通市值(亿)
 _XREGIME = None   # date -> regime
 _IND = None       # code -> industry
 _XLOSERQ = None   # date -> 当日全市场250日回报的Q20边界（长周期反转横截面）
+_XFUND = None     # code -> date -> (peTTM, isST)；fund_cache baostock 日频（2026-09-18 夜间批立）
+
+
+def _load_fund_xsection():
+    """fund_cache -> code -> {date: (peTTM, isST)}。行格式见 fetch_fundamentals.FIELDS。
+    已知限制（2026-09-18 对账发现）：baostock isST 标记滞后（ST富煌实测标0），
+    亏损剔除以 peTTM<=0 为主，isST 为辅。"""
+    out = {}
+    fdir = ROOT / "data/fund_cache"
+    if not fdir.exists():
+        return out
+    for fp in fdir.glob("*.json"):
+        try:
+            rows = json.loads(fp.read_text())
+        except Exception:
+            continue
+        m = {}
+        for r in rows:
+            if len(r) >= 9:
+                m[r[0]] = (r[5], r[8])
+        if m:
+            out[fp.stem] = m
+    return out
+
+
+def _fund_healthy(d, i):
+    """财报健康过滤器：当日 peTTM>0（剔亏损）且非 ST。取信号日或之前最近记录。
+    拿不到数据 = None（诚实缺席）→ 视为不健康（宁缺毋滥，防止脏数据混进策略）。"""
+    if _XFUND is None:
+        return False
+    m = _XFUND.get(d["code"])
+    if not m:
+        return False
+    dt = d["date"][i]
+    cand = m.get(dt)
+    if cand is None:
+        # 取之前最近一个交易日记录（财报是低频数据）
+        ks = [k for k in m.keys() if k <= dt]
+        if not ks:
+            return False
+        cand = m[max(ks)]
+    pe, is_st = cand
+    return (pe is not None and pe > 0) and str(is_st) != "1"
 
 
 def build_xsection(stocks):
     from collections import defaultdict
-    global _XLADDER, _XCAP, _XREGIME, _IND, _XLOSERQ
+    global _XLADDER, _XCAP, _XREGIME, _IND, _XLOSERQ, _XFUND
     if _XLADDER is not None:
         return
     ind_map = json.loads((ROOT / "data/industry_map.json").read_text())
@@ -449,6 +492,7 @@ def build_xsection(stocks):
     _XLOSERQ = {dt: sorted(v)[int(len(v) * 0.2)] for dt, v in r250_by_date.items() if len(v) >= 500}
     _XCAP, _qs = load_cap_quintiles()
     _XREGIME = load_regime()
+    _XFUND = _load_fund_xsection()
 
 
 def _limitup(d, i):
@@ -933,6 +977,27 @@ REGISTRY = {
     "跌停接_MA60下_小市值": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
                                     and (_XCAP.get(d["code"], {}).get(d["date"][i][:7]) or 1e9) < 40
                                     and _limitdown(d, i)),
+    # ---- 2026-09-18 夜间批：confluence 组合（只用存活组件 + 财报健康过滤器）----
+    # 依据：白天画像/闸门裁决（缩量 PASS、放量/小市值 REJECT）+ Kimi 对账（命中票 7/20 亏损、2 ST）。
+    # 「比赛死了的票不进策略」——组件全部来自存活清单，死信号（金叉/缠论/TD9/海龟等）不做组件。
+    "组合_跌停低_缩量_剔亏ST": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                       and _volratio(d, i) < 0.8 and _limitdown(d, i)
+                                       and _fund_healthy(d, i)),
+    "组合_跌停低_输家_超跌20_缩量": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                            and _limitdown(d, i) and _loser250(d, i)
+                                            and _oversold20_60d(d, i) and _volratio(d, i) < 0.8),
+    "组合_跌停低_三连阴_缩量": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                       and _limitdown(d, i) and _three_down(d, i)
+                                       and _volratio(d, i) < 0.8),
+    "组合_跌停低_避雷针_缩量": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                       and _limitdown(d, i) and _bigupper(d, i)
+                                       and _volratio(d, i) < 0.8),
+    "组合_跌停低_输家_超跌20_剔亏ST": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                              and _limitdown(d, i) and _loser250(d, i)
+                                              and _oversold20_60d(d, i) and _fund_healthy(d, i)),
+    "组合_缺口低开_低位_剔亏ST": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                         and d["c"][i] > d["o"][i] and _gap_down(d, i)
+                                         and _fund_healthy(d, i)),
 }
 
 
