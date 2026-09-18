@@ -925,6 +925,14 @@ REGISTRY = {
     # ---- 妖股晋级段（2026-09-14 #77b）：缩量涨停=筹码锁定，晋级率1.7x放量板 ----
     "缩量涨停_晋级": _shrink_board,
     "放量涨停_对照": _vol_board,
+    # ---- 2026-09-18 基本面画像批（fundamental_commonality 结论的消融验证）----
+    # 画像发现：跌停接命中组换手率=对照3.5倍、市值=对照0.7倍。画像是描述不是edge，
+    # 是否与既有「缩量<0.8最优」（第二轴细分批）矛盾，由闸门裁决——两个方向都注册。
+    "跌停接_MA60下_放量": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                  and _volratio(d, i) >= 1.5 and _limitdown(d, i)),
+    "跌停接_MA60下_小市值": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                    and (_XCAP.get(d["code"], {}).get(d["date"][i][:7]) or 1e9) < 40
+                                    and _limitdown(d, i)),
 }
 
 
