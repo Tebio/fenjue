@@ -998,6 +998,20 @@ REGISTRY = {
     "组合_缺口低开_低位_剔亏ST": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
                                          and d["c"][i] > d["o"][i] and _gap_down(d, i)
                                          and _fund_healthy(d, i)),
+    # ---- 2026-09-18 深夜：死信号复活赛道（用户裁决：死信号可当过滤器，交互价值另算）----
+    # 方法论：standalone 无 edge ≠ 条件组合无贡献（交互项）。全部挂跌停×MA60下底座，
+    # 由 submit 闸门的位置匹配边际裁决「加了它底座变好还是变坏」。
+    # 注意多重比较风险：复活赛道批量测，Harvey t_NW≥3.0 + G7 是底线，一律不许放宽。
+    "组合_跌停低_金叉MACD滤": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                      and _limitdown(d, i) and _gold_macd(d, i)),
+    "组合_跌停低_缠论底滤": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                    and _limitdown(d, i) and _chan_bottom(d, i)),
+    "组合_跌停低_TD9买入滤": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                     and _limitdown(d, i) and _td9buy(d, i)),
+    "组合_跌停低_MA20上穿滤": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                      and _limitdown(d, i) and _ma20_cross(d, i)),
+    "组合_跌停低_海龟20滤": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                    and _limitdown(d, i) and _turtle20(d, i)),
 }
 
 
