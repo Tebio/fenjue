@@ -54,6 +54,8 @@ REGISTRY_SHADOW_CLAIMS = {
     "CROSS_GAPLOW_BIGUPPER_TD9": "交叉_缺口低开低_避雷针低_TD9买入",
     "CROSS_GAPLOW_BIGUPPER_XFUND": "交叉_缺口低开低_避雷针低_剔亏ST",
     "CROSS_GAPLOW_TD9_XFUND": "交叉_缺口低开低_TD9买入_剔亏ST",
+    "CROSS_TOUCH_OS20_TD9": "交叉_触板低_超跌20_TD9买入",
+    "CROSS_TOUCH_OS20_XFUND": "交叉_触板低_超跌20_剔亏ST",
 }
 
 _LP_CACHE = None

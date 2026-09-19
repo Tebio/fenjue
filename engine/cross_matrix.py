@@ -83,6 +83,8 @@ def main():
                 continue
             if BASE_MODE == "limitdown":
                 is_base = c[i] / c[i - 1] - 1 <= -0.095 and d["o"][i + 1] > c[i] * 0.905
+            elif BASE_MODE == "touch":  # 触板未封底座（第三底座）
+                is_base = lp._touch_not_seal(d, i) and d["o"][i + 1] > 0
             else:  # gaplow：缺口低开≥3%（次日开盘买入口径不变）
                 is_base = lp._gap_down(d, i) and d["o"][i + 1] > 0
             if is_base:
@@ -152,14 +154,11 @@ def main():
         regime = lp.load_regime()
         stock_cap, qs = lp.load_cap_quintiles()
         for na, nb in survivors:
-            base_tag = "跌停低" if BASE_MODE == "limitdown" else "缺口低开低"
+            base_tag = {"limitdown": "跌停低", "gaplow": "缺口低开低", "touch": "触板低"}[BASE_MODE]
             name = f"交叉_{base_tag}_{na}_{nb}"
-            if BASE_MODE == "limitdown":
-                base_fn = lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
-                                        and lp._limitdown(d, i))
-            else:
-                base_fn = lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
-                                        and lp._gap_down(d, i))
+            base_det = {"limitdown": lp._limitdown, "gaplow": lp._gap_down, "touch": lp._touch_not_seal}[BASE_MODE]
+            base_fn = lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                    and base_det(d, i))
             lp.REGISTRY[name] = (lambda bf, fa, fb: lambda d, i: (
                 bf(d, i) and fa(d, i) and fb(d, i)))(base_fn, COMP[na], COMP[nb])
             passed, v = lp.submit_gate(name, lp.REGISTRY[name], stocks, regime, stock_cap, qs)

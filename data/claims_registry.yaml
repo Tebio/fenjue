@@ -1030,3 +1030,43 @@ claims:
   note: 底座=缺口低开≥3%×低位。主线期最强格来自此底座族。基线边际为近似值，周审计校准。
   g7_槽10:
     过G7: true
+- id: CROSS_TOUCH_OS20_TD9
+  statement: 触板未封×低位 + 超跌20 + TD9买入
+  detector: 交叉_触板低_超跌20_TD9买入
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 5.4
+    '20': 10.53
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸：T+5 66.9%/+5.78%/n=502，第三底座交叉）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 触板底座交叉幸存对。stage2 曾因底座派发 bug 判无效，修复后重跑通过。
+  g7_槽10:
+    过G7: true
+- id: CROSS_TOUCH_OS20_XFUND
+  statement: 触板未封×低位 + 超跌20 + 剔亏ST
+  detector: 交叉_触板低_超跌20_剔亏ST
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 1.9
+    '20': 3.48
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸：T+5 56.2%/+2.2%/n=4892，第三底座交叉）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 触板底座交叉幸存对。stage2 曾因底座派发 bug 判无效，修复后重跑通过。
+  g7_槽10:
+    过G7: true

@@ -382,7 +382,11 @@ def capacity_sim(sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=1, fee=0.001
                 cands = [s for s in lst if didx[s[0]].get(day) == s[1]+1]
                 if len(lst) < cluster_k:
                     cands = []
-                if pick == "deep":
+                if pick == "strength":
+                    # 日内强度优先（收/开-1 最高）；主线腿实证选票器（qpack2 Q6）
+                    cands.sort(key=lambda s: -(stocks[s[0]]["c"][s[1]] / stocks[s[0]]["o"][s[1]] - 1)
+                               if stocks[s[0]]["o"][s[1]] > 0 else 1e9)
+                elif pick == "deep":
                     # 超跌最深优先（c/ma 越小越深，升序=最深在前；红队F1裁决：方向正确）
                     # 加固：ma<=0 或 c<=0 的脏数据排最后
                     def _deep_key(s):
