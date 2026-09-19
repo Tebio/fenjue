@@ -32,8 +32,15 @@ def stat(rs):
     rs = [r for r in rs if r is not None]
     if not rs:
         return None
-    return {"n": len(rs), "win%": round(100 * sum(x > 0 for x in rs) / len(rs), 1),
-            "mean%": round(100 * sum(rs) / len(rs), 2)}
+    wins = [r for r in rs if r > 0]
+    losses = [r for r in rs if r <= 0]
+    odds = (sum(wins) / len(wins)) / abs(sum(losses) / len(losses)) if wins and losses else None
+    return {"n": len(rs), "win%": round(100 * len(wins) / len(rs), 1),
+            "mean%": round(100 * sum(rs) / len(rs), 2),
+            "赔率": round(odds, 2) if odds else None}
+
+
+HORIZONS = (1, 2, 3, 5, 10, 20)  # 2026-09-19 用户批评「只出 T+5」→ 全 horizon 胜率+赔率
 
 
 def main():
@@ -44,20 +51,24 @@ def main():
         det = lp.REGISTRY.get(name)
         if not det:
             continue
-        r1, r5 = [], []
+        rs = {h: [] for h in HORIZONS}
         for code, d in stocks.items():
-            for i in range(61, d["n"] - 6):
+            for i in range(61, d["n"] - 21):
                 if d["date"][i] < "2026-01-01":
                     continue
                 try:
                     if det(d, i):
-                        r1.append(fwd(d, i, 1))
-                        r5.append(fwd(d, i, 5))
+                        for h in HORIZONS:
+                            rs[h].append(fwd(d, i, h))
                 except Exception:
                     pass
-        out[name] = {"T+1": stat(r1), "T+5": stat(r5)}
-        t5 = out[name]["T+5"]
-        print(f"{name}: 2026 {t5 and t5['n'] or 0} 事件  T+5 {t5 and t5['win%']}%/{t5 and t5['mean%']}%", flush=True)
+        out[name] = {f"T+{h}": stat(rs[h]) for h in HORIZONS}
+        line = f"{name}:"
+        for h in HORIZONS:
+            s = out[name][f"T+{h}"]
+            if s:
+                line += f"  T+{h} {s['win%']}%/{s['mean%']}%/赔{s['赔率']}"
+        print(line, flush=True)
     (ROOT := Path(__file__).resolve().parent.parent)
     (ROOT / "data/y2026_check_20260919.json").write_text(json.dumps(out, ensure_ascii=False, indent=1))
     print("saved")
