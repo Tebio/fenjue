@@ -450,6 +450,18 @@ def main():
         steps.append(step("1", "#f7f6f3", "#9b9a97",
                           f'{fmt_d(buy_day)} · 深档低位无合格标的',
                           f'{fmt_d(sig_date)} 没有「跌停+低位」的票。没信号 = 空仓休息，空仓也是操作。'))
+    # 妖股摇篮（DEMON_CRADLE_CLUSTER）：只在成簇日出现（年 1-3 次，平时静默）
+    try:
+        _crd, _cr, _crc = cradle_scan()
+    except Exception:
+        _crd, _cr, _crc = None, [], False
+    if _crc and _crd == sig_date:
+        _crn = "、".join(f'{nm}({c},{p:+.1f}%)' for c, p, nm in _cr[:4])
+        steps.append(step("1b", "#fdf2e9", "#b3541e",
+                          f'{fmt_d(buy_day)} 9:30 · 🔥妖股摇篮 {_crn}',
+                          f'{fmt_d(sig_date)} 全市场 {len(_cr)} 只「首板缩量深跌小市值」成簇（≥3）。'
+                          f'8年 T+5 73.8%/+7.74、T+20 82.5%/+14.67，但 6 成收益来自 2024-02 一个月——'
+                          f'分散 3-5 只别单挑；孤板日绝不出手。'))
     if lin:
         pool_names = "、".join(f'{e["name"]}({e["code"]})' for e in lin)
         steps.append(step("2", "#f7f6f3", "#73726e",

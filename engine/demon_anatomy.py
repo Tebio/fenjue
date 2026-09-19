@@ -178,7 +178,8 @@ def main():
     demons = [e for e in events if e["妖"]]
     if demons:
         out["妖股解剖"] = {
-            "连板分布": {str(k): sum(1 for e in demons if e["连板"] == k) for k in range(1, 8)},
+            "连板分布": {**{str(k): sum(1 for e in demons if e["连板"] == k) for k in range(1, 7)},
+                        "7+": sum(1 for e in demons if e["连板"] >= 7)},
             "均连板": round(st.mean([e["连板"] for e in demons]), 2),
             "一字板占比%": round(100 * sum(1 for e in demons if e["f"]["一字板"]) / len(demons), 1),
             "梯队≥3占比%": round(100 * sum(1 for e in demons if (e["板块梯队"] or 0) >= 3) / len(demons), 1),
