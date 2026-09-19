@@ -365,12 +365,17 @@ def main():
 
     # 新信号 steps
     steps = []
-    if _deep:
-        names = "、".join(f"{nm}({c},{p:+.1f}%)" for c, p, nm in _deep[:3])
+    if _deep and len(_deep) >= 5:
+        names = "、".join(f'{nm}({c},{p:+.1f}%)' for c, p, nm in _deep[:3])
         steps.append(step("1", "#edf5ee", "#1e7e34",
                           f'{fmt_d(buy_day)} 9:32 买 · {names}',
-                          f'{fmt_d(sig_date)} 跌停+低位（胜率57.6%）。竞价不是一字跌停 → 开盘买 → '
+                          f'{fmt_d(sig_date)} 跌停+低位（成簇日{len(_deep)}只 · 胜率57.6%）。竞价不是一字跌停 → 开盘买 → '
                           f'<b>{fmt_d(sell_day)} 尾盘卖</b>。一字跌停 = 作废。'))
+    elif _deep:
+        steps.append(step("1", "#f7f6f3", "#9b9a97",
+                          f'{fmt_d(buy_day)} · 深档低位零星日（{len(_deep)}只）不出手',
+                          f'{fmt_d(sig_date)} 仅 {len(_deep)} 只（<5 成簇线）。零星日信号 8 年全 weekday 负期望，'
+                          f'可执行形态=成簇日 ≥5 只。没簇 = 空仓休息，空仓也是操作。'))
     else:
         steps.append(step("1", "#f7f6f3", "#9b9a97",
                           f'{fmt_d(buy_day)} · 深档低位无合格标的',
@@ -788,10 +793,12 @@ def main():
         rows = []
         for dt in sorted(by_date, reverse=True)[:3]:
             for r in by_date[dt]:
+                # 注册表桥新记录只有 claim/code/entry/signal_date/tier（r1/r5 回填后才出现）——
+                # 2026-09-19 实锤：r["r1"] KeyError 会把整盘面构建炸掉（19:20 cron 静默失败）。
                 rows.append([f'<span class="muted">{esc(dt)}</span>',
                              f'{esc(_names.get(r["code"], ""))}<br><span class="muted">{esc(r["code"])}</span>',
-                             pct(r["r1"] * 100 if r["r1"] is not None else None),
-                             pct(r["r5"] * 100 if r["r5"] is not None else None),
+                             pct(r["r1"] * 100 if r.get("r1") is not None else None),
+                             pct(r["r5"] * 100 if r.get("r5") is not None else None),
                              '<span class="muted">未成交</span>' if r.get("untradeable") else (
                                  '<span class="ok">在车上</span>' if r["entry"] else '<span class="muted">待回填</span>')])
         S["证据库"].append(card("首板抢跑 · 影子名单", table(["信号日", "标的", "T+1", "T+5", "状态"], rows),
