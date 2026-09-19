@@ -1,7 +1,7 @@
 {
  "CANDLE_UPPER_LOW": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 6,
   "history": [
    {
     "date": "2026-09-11",
@@ -77,12 +77,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      -0.93,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.4,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CANDLE_LOWER_LOW": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 6,
   "history": [
    {
     "date": "2026-09-11",
@@ -158,12 +173,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      -0.52,
+      0.0,
+      false
+     ],
+     "20": [
+      0.05,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "TD9_BUY": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 6,
   "history": [
    {
     "date": "2026-09-11",
@@ -239,6 +269,21 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      -0.4,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.18,
+      0.0,
+      false
+     ]
+    }
    }
   ]
  },
@@ -295,6 +340,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "20": [
+      -2.65,
+      0.2,
+      true
+     ]
+    }
    }
   ]
  },
@@ -321,6 +376,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "1": [
+      0.01,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -343,6 +408,16 @@
     "verdicts": {
      "1": [
       0.1,
+      0.0,
+      true
+     ]
+    }
+   },
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "1": [
+      0.11,
       0.0,
       true
      ]
@@ -383,6 +458,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "1": [
+      0.26,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -415,6 +500,21 @@
      ],
      "5": [
       0.72,
+      0.0,
+      true
+     ]
+    }
+   },
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "1": [
+      1.17,
+      0.0,
+      true
+     ],
+     "5": [
+      0.76,
       0.0,
       true
      ]
@@ -455,6 +555,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "1": [
+      0.97,
+      0.0,
+      true
+     ],
+     "5": [
+      0.37,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -481,6 +596,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "1": [
+      7.16,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -488,5 +613,184 @@
   "status": "CANDIDATE",
   "consecutive_fails": 0,
   "history": []
+ },
+ "LIMITDOWN_LOW_MA60": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      -1.57,
+      0.0,
+      false
+     ],
+     "20": [
+      2.47,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "FRONTRUN_LOW_MA60": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      -1.49,
+      0.3,
+      false
+     ],
+     "20": [
+      -2.88,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_LOSER250": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      1.88,
+      0.0,
+      true
+     ],
+     "20": [
+      3.72,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_LOSER250_OS20": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      0.31,
+      0.0,
+      true
+     ],
+     "20": [
+      4.51,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_3DOWN": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      1.22,
+      0.0,
+      true
+     ],
+     "20": [
+      8.12,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_DIPBUY_LOW_BULLISH": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      -0.66,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.54,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_TOUCH_NOT_SEAL_LOW": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      0.69,
+      0.0,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_REVERSAL_X_BIGUPPER_LOW": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      -0.56,
+      0.0,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_BIGUPPER": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-19",
+    "verdicts": {
+     "5": [
+      -0.12,
+      0.0,
+      false
+     ],
+     "20": [
+      0.93,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
  }
 }
