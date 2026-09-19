@@ -755,6 +755,25 @@ def _volratio(d, i):
     return v[i] / mb if mb > 0 else 0.0
 
 
+def _nshape_retrace(d, E):
+    """N字回踩企稳（2026-09-19，金健米业走势研究）：E=B+3 日收盘企稳判定。
+    B=低位放量首板（涨停+量比≥2.5+前60日无板）；B+1..E 收盘不破启动位 o[B]×0.97；
+    E 日缩量（v[E]<v[B]×0.8，参照案例金健 8/11 实测 0.76——公开标注校准）。只用 E 日及以前信息，可执行。
+    nshape_study.py 委托本函数，禁两处实现。"""
+    c, o, v = d["c"], d["o"], d["v"]
+    B = E - 3
+    if B < 61 or c[B] <= 0 or c[B - 1] <= 0:
+        return False
+    if c[B] / c[B - 1] - 1 < 0.098 or _volratio(d, B) < 2.5:
+        return False
+    for j in range(max(1, B - 60), B):
+        if c[j] > 0 and c[j - 1] > 0 and c[j] / c[j - 1] - 1 >= 0.098:
+            return False
+    if min(c[B + 1:E + 1]) < o[B] * 0.97:
+        return False
+    return v[E] < v[B] * 0.8
+
+
 def _macd_lines(d):
     """DIF/DEA（12,26,9）逐日 EMA，按股票缓存（O(n) 一次），避免检测器里 O(n²)。"""
     if "_macd" in d:
@@ -1035,6 +1054,9 @@ REGISTRY = {
     "组合_跌停低_输家_超跌20_TD9滤": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
                                              and _limitdown(d, i) and _loser250(d, i)
                                              and _oversold20_60d(d, i) and _td9buy(d, i)),
+    # ---- 2026-09-19 N字回踩企稳（金健米业走势研究）：低位放量首板后第3日缩量不破企稳 ----
+    # 事件研究：二波启动日进=全负（12格）；回踩期进=全转正（+0.2~+0.96%）。控制对照与闸门裁决为准。
+    "N字回踩企稳": _nshape_retrace,
 }
 
 

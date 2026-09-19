@@ -136,10 +136,14 @@ def metrics(rs):
 
 
 def main():
+    # 2026-09-19 用户裁决「比赛也得配上卖点」：--all 时对 REGISTRY 全部信号跑入场×出场矩阵
+    sig_list = SIGNALS
+    if "--all" in sys.argv:
+        sig_list = sorted(lp.REGISTRY.keys())
     stocks = lp.load_universe()
     lp.build_xsection(stocks)
     out = {}
-    for name in SIGNALS:
+    for name in sig_list:
         det = lp.REGISTRY.get(name)
         if det is None:
             print(f"[skip] {name} 不在注册表", flush=True)
@@ -159,7 +163,7 @@ def main():
         out[name] = rec
         best = max(rec.items(), key=lambda kv: kv[1]["期望pp"]) if rec else None
         print(f"  最优: {best[0]} 期望{best[1]['期望pp']}pp 胜{best[1]['win%']}% 赔{best[1]['赔率']}" if best else "  无有效", flush=True)
-    dst = ROOT / "data/exit_rule_grid_20260918.json"
+    dst = ROOT / f"data/exit_rule_grid{'_all' if '--all' in sys.argv else ''}_20260919.json"
     dst.write_text(json.dumps(out, ensure_ascii=False, indent=1))
     print("saved", dst)
 
