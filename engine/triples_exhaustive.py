@@ -132,6 +132,10 @@ def main():
     print(f"stage1 入围 {len(survivors)} 个（n≥{MIN_N} 且 T+5>0 且优于底座）", flush=True)
     for nm, b, cs, n, m5 in survivors:
         print(f"  {nm}  n={n}  T+5={m5}%", flush=True)
+    # 内存纪律（OOM 被杀两次的教训）：stage2 前释放事件列表，全库容量模拟的 didx 很吃内存
+    del combos, base_events
+    import gc
+    gc.collect()
 
     result = {"meta": {"date": (datetime.now(timezone.utc) + timedelta(hours=8)).date().isoformat(),
                        "口径": "次日开盘买/剔一字跌停开盘/净0.15%/", "min_n": MIN_N,

@@ -800,6 +800,15 @@ def _pead_on(d, i, types, min_inc=None):
         j += 1
     return False
 
+def _entry_wd(d, i):
+    """入场日（信号次日）的星期：0=周一 … 4=周五。i+1 越界返回 -1（不中过滤）。
+    注意用交易日历上的真实次日（跨周末/节假日自动正确）。"""
+    from datetime import datetime as _dt
+    if i + 1 >= d["n"]:
+        return -1
+    return _dt.strptime(d["date"][i + 1], "%Y-%m-%d").weekday()
+
+
 def _volratio(d, i):
     """量比 = 当日量 / 前5日均量（基期不足或含0则返回0）。2026-09-18 第二轴细分批用。"""
     v = d["v"]
@@ -1162,6 +1171,17 @@ REGISTRY = {
                                              and _gap_down(d, i) and _bigupper(d, i) and _fund_healthy(d, i)),
     "交叉_缺口低开低_TD9买入_剔亏ST": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
                                             and _gap_down(d, i) and _td9buy(d, i) and _fund_healthy(d, i)),
+    # ---- 2026-09-19 周一效应×组合交互（BACKLOG#9，data/monday_combo_20260919.json）----
+    # 机制=周末缺口：接跌类「周五信号→周一入场」全线弱（7 组合 -4.2~-7.9pp，跌停底座周一入场
+    # T+5 48.1%/+0.62 vs 周二~周四 64-74%/+5.5~7.6）；追强类相反，B5 周二入场 29.8%/-4.42 剧毒。
+    # 过滤条件挂在「入场日星期」（信号次日，PIT 安全）。闸门裁决加了它底座变好还是变坏。
+    "跌停接_MA60下_避周一": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                    and _limitdown(d, i) and _entry_wd(d, i) != 0),
+    "组合_缺口低开_低位阳线_避周一": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                          and d["c"][i] > d["o"][i] and _gap_down(d, i)
+                                          and _entry_wd(d, i) != 0),
+    "banlu_b5_MA60上_避周二": lambda d, i: (d["ma60"][i] is not None and d["c"][i] > d["ma60"][i]
+                                       and _banlu_b5(d, i) and _entry_wd(d, i) != 1),
 }
 
 

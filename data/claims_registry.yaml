@@ -1070,3 +1070,22 @@ claims:
   note: 触板底座交叉幸存对。stage2 曾因底座派发 bug 判无效，修复后重跑通过。
   g7_槽10:
     过G7: true
+- id: COMP_GAPLOW_BULLISH_NO_MON
+  statement: 缺口低开≥3% 且 收盘≤MA60 且 当日收阳 且 入场日非周一（周一效应×组合交互：周一入场 T+5 -0.97% 毒格剔除）
+  detector: 组合_缺口低开_低位阳线_避周一
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon: [5, 20]
+  baseline_pp: {5: 2.43, 20: 5.25}
+  kill_line_pp: {5: 0.0, 20: 0.5}
+  grade: 候选L2（全七闸：T+5 63.3%/+2.87/n=14167，T+20 65.6%/+6.76，双段 +2.83/+2.92，四regime全正，边际 +2.43/+5.25，槽10 K1 年化+5.07%）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 底座 COMP_DIPBUY_LOW_BULLISH 的入场星期过滤升级（底座 K1 年化-3.33 需K5才活，过滤后 K1 直接为正+5.07，回撤-35.3%）。对照实验：跌停低底座避周一虽 G1-G6 全过但 G7 崩（零星周一毒、成簇周五是钱——周末恐慌成簇日恰是利润源），故星期过滤只批缺口底座这一家。DSR=0.001 警告不变（β 成分）。B5 避周二 REJECT（edge 在 trigger6 口径，next_open 口径本身薄）。
+  g7_槽10:
+    K1_年化%: 5.07
+    K1_均笔%: 0.16
+    K1_回撤%: -35.27
+    K1_笔数: 2897.0
+    K5_年化%: 7.57
+    过G7: true
