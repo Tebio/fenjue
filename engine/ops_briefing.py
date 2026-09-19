@@ -127,10 +127,21 @@ def main():
         sell_d = today  # T+1 尾盘 = 下一个交易日尾盘；交易日历无分钟级需求，按下个交易日近似
         picks = "、".join(f'{nm} {c}({p:+.1f}%)' for c, p, nm in deep_list[:5])
         # 2026-09-19 成簇口径（零星日全 weekday 负期望，注册可执行形态=K≥5 才出手）
+        # + 周审计状态机接线（底座 DECAYING → 短窗禁用只许 T+20）
+        try:
+            _cs = json.loads(open(D + "/claims_state.json").read()).get("LIMITDOWN_LOW_MA60", {})
+            _cv = _cs.get("history", [{}])[-1].get("verdicts", {}) if _cs.get("status") in ("DECAYING", "DEAD") else None
+        except Exception:
+            _cv = None
         if len(deep_list) >= 5:
             L.append(f'1. 深档低位（{fmt(sig_date)} 跌停+低位 · 成簇日{len(deep_list)}只 · T+1 57.8%/赔率1.34 · T+5 69.7%/赔率1.56）：{picks}')
-            L.append(f'   {fmt(today)} 9:32 竞价非一字跌停 → 开盘买。出场二选一：T+1 尾盘 或 T+5 尾盘'
-                     f'（近250日 T+5 +3.98% 明显好于 T+1 +0.82%，2026 年 T+1 腿为负）；一字跌停=作废')
+            if _cv:
+                _t5, _t20 = _cv.get("5", [0, 0, False]), _cv.get("20", [0, 0, False])
+                L.append(f'   🚨 主张 DECAYING（周审计）：滚动250日 T+5 边际 {_t5[0]:+.2f} 破线 → 短窗禁用；'
+                         f'出场只许 入场日+20 尾盘（滚动 T+20 边际 {_t20[0]:+.2f}）。')
+            else:
+                L.append(f'   {fmt(today)} 9:32 竞价非一字跌停 → 开盘买。出场二选一：T+1 尾盘 或 T+5 尾盘'
+                         f'（近250日 T+5 +3.98% 明显好于 T+1 +0.82%，2026 年 T+1 腿为负）；一字跌停=作废')
             L.append('   持仓中强度分档（8年实测，n=6282）：次日收 ≥+3% → T+5 期望 +11~15%/正收益 88%；'
                      '次日平淡±3% → +5.2%；【次日跌 ≥3% → 只剩 +1.5%（当日首次破MA60 型是 -3.1%）→ 提前离场】')
         else:
