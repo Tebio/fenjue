@@ -1691,7 +1691,7 @@
 {"signal_date": "2026-09-11", "claim": "WATCHPOOL_GRAD", "code": "000636", "tier": null, "entry": 55.99, "r1": 0.05047, "r5": 0.03797}
 {"signal_date": "2026-09-11", "claim": "WATCHPOOL_GRAD", "code": "000823", "tier": null, "entry": 20.57, "r1": 0.09865, "r5": 0.13511}
 {"signal_date": "2026-09-11", "claim": "WATCHPOOL_GRAD", "code": "000993", "tier": null, "entry": 13.88, "r1": 0.09864, "r5": 0.4106}
-{"signal_date": "2026-09-11", "claim": "WATCHPOOL_GRAD", "code": "002161", "tier": null, "untradeable": "信号日一字板买不进"}
+{"signal_date": "2026-09-11", "claim": "WATCHPOOL_GRAD", "code": "002161", "tier": null, "untradeable": "信号日一字涨停买不进"}
 {"signal_date": "2026-09-11", "claim": "WATCHPOOL_GRAD", "code": "002201", "tier": null, "entry": 11.09, "r1": 0.01022, "r5": -0.04208}
 {"signal_date": "2026-09-11", "claim": "WATCHPOOL_GRAD", "code": "002519", "tier": null, "entry": 6.31, "r1": -0.00784, "r5": -0.03478}
 {"signal_date": "2026-09-11", "claim": "WATCHPOOL_GRAD", "code": "002815", "tier": null, "entry": 20.08, "r1": 0.05029, "r5": 0.16384}
@@ -2858,8 +2858,8 @@
 {"signal_date": "2026-09-15", "claim": "PANIC_DEPTH_DOSE", "code": "002431", "tier": "-3~-5%", "entry": 1.31, "r1": 0.0214}
 {"signal_date": "2026-09-15", "claim": "REVERSAL_OPEN_T1", "code": "002437", "tier": null, "entry": 3.36, "r1": 0.01933}
 {"signal_date": "2026-09-15", "claim": "PANIC_DEPTH_DOSE", "code": "002437", "tier": "-3~-5%", "entry": 3.36, "r1": 0.01933}
-{"signal_date": "2026-09-15", "claim": "REVERSAL_OPEN_T1", "code": "002442", "tier": null, "untradeable": "一字涨停买不进"}
-{"signal_date": "2026-09-15", "claim": "PANIC_DEPTH_DOSE", "code": "002442", "tier": "-3~-5%", "untradeable": "一字涨停买不进"}
+{"signal_date": "2026-09-15", "claim": "REVERSAL_OPEN_T1", "code": "002442", "tier": null, "untradeable": "一字涨停全天封死买不进"}
+{"signal_date": "2026-09-15", "claim": "PANIC_DEPTH_DOSE", "code": "002442", "tier": "-3~-5%", "untradeable": "一字涨停全天封死买不进"}
 {"signal_date": "2026-09-15", "claim": "REVERSAL_OPEN_T1", "code": "002451", "tier": null, "entry": 7.49, "r1": -0.00284}
 {"signal_date": "2026-09-15", "claim": "PANIC_DEPTH_DOSE", "code": "002451", "tier": "-3~-5%", "entry": 7.49, "r1": -0.00284}
 {"signal_date": "2026-09-15", "claim": "REVERSAL_OPEN_T1", "code": "002453", "tier": null, "entry": 4.3, "r1": 0.12641}

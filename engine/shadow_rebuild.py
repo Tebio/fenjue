@@ -40,8 +40,8 @@ def refill(r, ks):
         r["stale"] = "信号日不在该票k线（幽灵/已退市缺数据）"
         return old != r
     if r["claim"] in CLOSE_ENTRY_CLAIMS:
-        if ks[si]["high"] <= ks[si]["low"]:
-            r["untradeable"] = "信号日一字板买不进"
+        if ks[si]["high"] <= ks[si]["low"] and ks[si]["close"] > ks[si - 1]["close"]:
+            r["untradeable"] = "信号日一字涨停买不进"  # 红队S9：跌停一字可成交
         else:
             e = ks[si]["close"]
             if e > 0:
@@ -55,8 +55,8 @@ def refill(r, ks):
         pc0 = ks[si]["close"]
         gap = e / pc0 - 1 if pc0 > 0 else 0
         amp = (ks[si + 1]["high"] - ks[si + 1]["low"]) / pc0 if pc0 > 0 else 1
-        if gap >= 0.095:
-            r["untradeable"] = "一字涨停买不进"
+        if gap >= 0.095 and amp < 0.01:
+            r["untradeable"] = "一字涨停全天封死买不进"  # 红队S10：开板的高开能成交
         elif gap <= -0.095 and amp < 0.01:
             r["untradeable"] = "一字跌停锁死"
         elif e > 0:

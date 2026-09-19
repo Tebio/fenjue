@@ -30,7 +30,7 @@ def feats(d, i, code, fund, capm):
     while j > 0 and c[j] < c[j - 1]:
         n_down += 1
         j -= 1
-    fu = fund.get(code, {}).get(d["date"][i])
+    fu = lp.fund_at(code, d["date"][i])   # 红队S1后 packed 结构统一入口
     return {
         "深度": -(c[i] / ma[i] - 1),          # 越深越好（取负后越大越好）
         "超跌60": -(c[i] / hi60 - 1) if hi60 > 0 else 0,
@@ -82,15 +82,26 @@ def main():
                 scored.sort(key=lambda x: -x[0])
                 day_mean = sum(r for _, r in scored) / len(scored)
                 top_excess.append(scored[0][1] - day_mean)
-                # 秩相关（简化 Pearson on ranks）
-                n = len(scored)
-                rk_f = {k: rnk for rnk, (k, _) in enumerate(sorted(scored))}
-                rk_r = {k: rnk for rnk, k in enumerate(sorted(r for _, r in scored))}
-                mf = sum(rk_f.values()) / n
-                mr = sum(rk_r.values()) / n
-                cov = sum((rk_f[a] - mf) * (rk_r[b] - mr) for a, b in [(x[0], x[1]) for x in scored])
-                vf = sum((rk_f[x[0]] - mf) ** 2 for x in scored)
-                vr = sum((rk_r[x[1]] - mr) ** 2 for x in scored)
+                # 红队S5：真 Spearman（平均秩处理 ties，零依赖）
+                def _ranks(vals):
+                    order = sorted(range(len(vals)), key=lambda k: vals[k])
+                    rk = [0.0] * len(vals)
+                    k0 = 0
+                    while k0 < len(order):
+                        k1 = k0
+                        while k1 + 1 < len(order) and vals[order[k1 + 1]] == vals[order[k0]]:
+                            k1 += 1
+                        avg = (k0 + k1) / 2.0 + 1
+                        for k2 in range(k0, k1 + 1):
+                            rk[order[k2]] = avg
+                        k0 = k1 + 1
+                    return rk
+                rf, rr = _ranks([x[0] for x in scored]), _ranks([x[1] for x in scored])
+                n0 = len(rf)
+                mf, mr = sum(rf) / n0, sum(rr) / n0
+                cov = sum((a - mf) * (b - mr) for a, b in zip(rf, rr))
+                vf = sum((a - mf) ** 2 for a in rf)
+                vr = sum((b - mr) ** 2 for b in rr)
                 if vf > 0 and vr > 0:
                     ics.append(cov / (vf * vr) ** 0.5)
             if top_excess:

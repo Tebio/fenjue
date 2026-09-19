@@ -183,8 +183,10 @@ def detect(code, ks, i, ladder=None):
                     try:
                         if lp.REGISTRY[detname](d, j):
                             hits.append((claim, None))
-                    except Exception:
-                        pass
+                    except KeyError:
+                        print(f"[WARN] 注册表桥检测器不存在: {detname}")   # 红队M18：不再静默
+                    except Exception as _e:
+                        print(f"[WARN] 注册表桥 {claim} 异常: {_e}")
         except Exception:
             pass
     return hits
@@ -198,7 +200,10 @@ def main():
     if os.environ.get("SHADOW_DATE"):
         # 显式回填历史日：只要求该日在数据里真实存在（多数票有当日 bar），
         # 不能用「等于最新交易日」当守卫——那会让所有补登记日一律 [SILENT]（2026-09-18 修）
-        n_has = sum(1 for ks in stocks.values() if any(k["date"] == today for k in ks[-6:]))
+        import bisect as _bis
+        n_has = sum(1 for ks in stocks.values()
+                    if ks and 0 <= _bis.bisect_left([k["date"] for k in ks], today) < len(ks)
+                    and ks[_bis.bisect_left([k["date"] for k in ks], today)]["date"] == today)  # 红队M17：回填超6天历史日不再误判
         if n_has < 0.5 * len(stocks):
             print(f"[SILENT] SHADOW_DATE={today} 在 kcache 中不存在（{n_has}/{len(stocks)} 票有当日 bar）")
             return
@@ -248,8 +253,8 @@ def main():
         if r["entry"] is None:
             if r["claim"] in CLOSE_ENTRY_CLAIMS:
                 # 信号日收盘入场（打板成交假设）；信号日一字全天（high==low）判不可成交
-                if ks[si]["high"] <= ks[si]["low"]:
-                    r["untradeable"] = "信号日一字板买不进"
+                if ks[si]["high"] <= ks[si]["low"] and ks[si]["close"] > ks[si - 1]["close"]:
+                    r["untradeable"] = "信号日一字涨停买不进"  # 红队S9 同上
                     continue
                 e = ks[si]["close"]
                 if e <= 0:

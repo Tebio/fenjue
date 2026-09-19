@@ -99,7 +99,7 @@ def r3(stocks):
                     if pc > 0 and d["c"][ei] / pc - 1 >= 0.03 and cash >= cap0 / slots:
                         cash -= cap0 / slots
                         keep.append((code, ei, xi, val, True))
-                        keep.append((code, ei + 1, xi, cap0 / slots, True))  # 加仓腿：ei+1 开盘买
+                        keep.append((code, ei + 1, ei + 1 + hold, cap0 / slots, True))  # 红队M12：加仓腿独立持有期（原先用原腿出场日，少拿1天）
                         continue
                 if j < 0 or j < xi:
                     keep.append((code, ei, xi, val, added)); continue

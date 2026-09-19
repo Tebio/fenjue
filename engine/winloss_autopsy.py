@@ -37,7 +37,7 @@ def feats(d, i, code, fund, capm):
     f["次日缺口%"] = round((o[i + 1] / c[i] - 1) * 100, 1) if i + 1 < d["n"] else None
     cap = lp.cap_at_date(capm, code, d["date"][i])  # PIT 日频
     f["市值亿"] = cap
-    fu = fund.get(code, {}).get(d["date"][i])
+    fu = lp.fund_at(code, d["date"][i])
     f["peTTM"] = fu[0] if fu else None           # _XFUND 值=(peTTM, isST) 二元组
     f["亏损"] = (fu[0] is not None and fu[0] <= 0) if fu else None
     return f

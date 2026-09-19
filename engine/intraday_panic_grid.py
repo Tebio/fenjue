@@ -25,6 +25,17 @@ SIGS = ["跌停接_MA60下", "组合_跌停低_三连阴", "组合_跌停低_长
 SLOTS = [("9:30开", None), ("10:30", 0), ("11:30", 1), ("14:00", 2), ("15:00尾盘", 3)]
 
 
+
+def _paired_t(a, b):
+    """配对 t（红队S7，无 scipy 依赖）：mean(diff)/(sd/sqrt(n))"""
+    ds = [x - y for x, y in zip(a, b)]
+    n = len(ds)
+    if n < 3:
+        return 0.0
+    m = sum(ds) / n
+    sd = (sum((x - m) ** 2 for x in ds) / (n - 1)) ** 0.5
+    return round(m / (sd / n ** 0.5), 1) if sd > 0 else 0.0
+
 def slot_price(bars, slot):
     return bars[0]["open"] if slot is None else bars[slot]["close"]
 
@@ -54,11 +65,12 @@ def main():
                     _m6_tmp = load_m60(m60_files[code])
                 if _m6_tmp and dt2 in _m6_tmp and _m6_tmp[dt2] and kc_close[i2] > 0:
                     ratio[dt2] = _m6_tmp[dt2][-1]["close"] / kc_close[i2]
-            for dt2 in ks_dates:
+            prev_i = None
+            for _i2, dt2 in enumerate(ks_dates):
                 if dt2 in ratio:
-                    if prev is not None and abs(ratio[dt2] / ratio[prev] - 1) > 0.015:
-                        flagged.add(dt2)
-                    prev = dt2
+                    if prev_i is not None and _i2 - prev_i == 1 and abs(ratio[dt2] / ratio[ks_dates[prev_i]] - 1) > 0.015:
+                        flagged.add(dt2)   # 红队S8：只在相邻交易日判定，跨缺口不比
+                    prev_i = _i2
             m6 = _m6_tmp
             for i in range(61, d["n"] - 7):
                 try:
@@ -104,14 +116,14 @@ def main():
             winsl = [x for x in rs if x > 0]
             lossl = [x for x in rs if x <= 0]
             odds = (sum(winsl) / len(winsl)) / abs(sum(lossl) / len(lossl)) if winsl and lossl else 0
-            t = nw_t([a - b for a, b in zip(rs, base_e)]) if sname != "9:30开" else 0
+            t = _paired_t(rs, base_e) if sname != "9:30开" else 0   # 红队S7：同事件配对t
             print(f"  入场{sname:<8} n={len(rs)} 胜{100*wins/len(rs):.1f}% 均{mean:+.2f}% 赔{odds:.2f} 对开盘差t={t:.1f}")
         base_x = exit_grid["15:00尾盘"]
         for sname, _ in SLOTS:
             rs = exit_grid[sname]
             wins = sum(x > 0 for x in rs)
             mean = 100 * sum(rs) / len(rs)
-            t = nw_t([a - b for a, b in zip(rs, base_x)]) if sname != "15:00尾盘" else 0
+            t = _paired_t(rs, base_x) if sname != "15:00尾盘" else 0
             print(f"  离场{sname:<8} n={len(rs)} 胜{100*wins/len(rs):.1f}% 均{mean:+.2f}% 对尾盘差t={t:.1f}")
         print(f"  (剔除不可成交/缺bar {skipped})")
 

@@ -118,7 +118,8 @@ def main():
             continue
         pH = evalset(idxs)
         # 对照：同位置随机日（从对照池按事件数采样）
-        cs = rng.sample(ctrl_pool, min(len(idxs), len(ctrl_pool)))
+        import zlib as _z
+        cs = random.Random(_z.crc32(f"{na}×{nb}".encode())).sample(ctrl_pool, min(len(idxs), len(ctrl_pool)))  # 红队S3：每对独立 seed
         ccH = evalset(cs)
         marg = {h: round(pH[h]["mean%"] - ccH[h]["mean%"], 2) for h in HORIZONS}
         p5 = pH[5]

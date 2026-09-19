@@ -315,7 +315,7 @@ def _collect_sigs(detect, stocks):
     sigs = {}
     for code, d in stocks.items():
         c, o, ma, n = d["c"], d["o"], d["ma60"], d["n"]
-        for i in range(61, n - 6):
+        for i in range(61, n - 22):  # 红队M22：原 n-6 截断会砍断长持有窗口
             if c[i-1] <= 0 or c[i] <= 0 or o[i+1] <= 0 or ma[i] is None:
                 continue
             if o[i+1] <= c[i]*0.905:          # 次日开盘一字跌停＝买不到
@@ -383,9 +383,15 @@ def capacity_sim(sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=1, fee=0.001
                 if len(lst) < cluster_k:
                     cands = []
                 if pick == "deep":
-                    # 超跌最深优先（距MA60最远）；选票特征信号日收盘可知，无前视
-                    cands.sort(key=lambda s: -(1 - stocks[s[0]]["c"][s[1]] / stocks[s[0]]["ma60"][s[1]])
-                               if stocks[s[0]]["ma60"][s[1]] else 0)
+                    # 超跌最深优先（c/ma 越小越深，升序=最深在前；红队F1裁决：方向正确）
+                    # 加固：ma<=0 或 c<=0 的脏数据排最后
+                    def _deep_key(s):
+                        dd = stocks[s[0]]
+                        ma, cc = dd["ma60"][s[1]], dd["c"][s[1]]
+                        if not ma or ma <= 0 or cc <= 0:
+                            return 1e9
+                        return cc / ma - 1
+                    cands.sort(key=_deep_key)
                 else:
                     rnd.shuffle(cands)
                 for code, i in cands[:max(0, slots - len(pos))]:
@@ -488,8 +494,22 @@ def _load_fund_xsection():
             if len(r) >= 9:
                 m[r[0]] = (r[5], r[8])
         if m:
-            out[fp.stem] = m
+            ks = sorted(m)                      # 红队S1：预排序，_fund_healthy 二分
+            out[fp.stem] = (ks, [m[k] for k in ks])
     return out
+
+
+def fund_at(code, date):
+    """_XFUND packed 查询：date 或之前最近的 (peTTM, isST)，无则 None。红队修复后统一入口。"""
+    if _XFUND is None:
+        return None
+    packed = _XFUND.get(code)
+    if not packed:
+        return None
+    import bisect as _b
+    ks, vals = packed
+    j = _b.bisect_right(ks, date) - 1
+    return vals[j] if j >= 0 else None
 
 
 def _fund_healthy(d, i):
@@ -497,27 +517,24 @@ def _fund_healthy(d, i):
     拿不到数据 = None（诚实缺席）→ 视为不健康（宁缺毋滥，防止脏数据混进策略）。"""
     if _XFUND is None:
         return False
-    m = _XFUND.get(d["code"])
-    if not m:
+    packed = _XFUND.get(d["code"])
+    if not packed:
         return False
-    dt = d["date"][i]
-    cand = m.get(dt)
-    if cand is None:
-        # 取之前最近一个交易日记录（财报是低频数据）
-        ks = [k for k in m.keys() if k <= dt]
-        if not ks:
-            return False
-        cand = m[max(ks)]
-    pe, is_st = cand
+    import bisect as _b
+    ks, vals = packed
+    j = _b.bisect_right(ks, d["date"][i]) - 1   # 信号日或之前最近记录（红队S1 二分）
+    if j < 0:
+        return False
+    pe, is_st = vals[j]
     return (pe is not None and pe > 0) and str(is_st) != "1"
 
 
 def build_xsection(stocks):
     from collections import defaultdict
     global _XLADDER, _XCAP, _XREGIME, _IND, _XLOSERQ, _XFUND, _XLDC
-    _XLDC = defaultdict(int)
     if _XLADDER is not None:
         return
+    _XLDC = defaultdict(int)  # 红队F3：必须在守卫后，否则重复调用清空跌停横截面
     ind_map = json.loads((ROOT / "data/industry_map.json").read_text())
     _IND = {c: (v.get("industry") or "?") for c, v in ind_map.items()}
     lad = defaultdict(lambda: defaultdict(int))
