@@ -440,6 +440,7 @@ _XREGIME = None   # date -> regime
 _IND = None       # code -> industry
 _XLOSERQ = None   # date -> 当日全市场250日回报的Q20边界（长周期反转横截面）
 _XFUND = None     # code -> date -> (peTTM, isST)；fund_cache baostock 日频（2026-09-18 夜间批立）
+_XLDC = None      # date -> 当日全市场跌停数（2026-09-19 胜负解剖：恐慌强度）
 
 
 def _load_fund_xsection():
@@ -486,7 +487,8 @@ def _fund_healthy(d, i):
 
 def build_xsection(stocks):
     from collections import defaultdict
-    global _XLADDER, _XCAP, _XREGIME, _IND, _XLOSERQ, _XFUND
+    global _XLADDER, _XCAP, _XREGIME, _IND, _XLOSERQ, _XFUND, _XLDC
+    _XLDC = defaultdict(int)
     if _XLADDER is not None:
         return
     ind_map = json.loads((ROOT / "data/industry_map.json").read_text())
@@ -499,6 +501,8 @@ def build_xsection(stocks):
         for i in range(1, n):
             if c[i - 1] > 0 and c[i] / c[i - 1] - 1 >= 0.098:
                 lad[dates[i]][ind] += 1
+            if c[i - 1] > 0 and c[i] / c[i - 1] - 1 <= -0.095:
+                _XLDC[dates[i]] += 1   # 2026-09-19 胜负解剖：全市场日跌停数（恐慌强度曲线）
         # 250日回报（长周期反转横截面用）
         for i in range(250, n):
             if c[i - 250] > 0:
@@ -1057,6 +1061,18 @@ REGISTRY = {
     # ---- 2026-09-19 N字回踩企稳（金健米业走势研究）：低位放量首板后第3日缩量不破企稳 ----
     # 事件研究：二波启动日进=全负（12格）；回踩期进=全转正（+0.2~+0.96%）。控制对照与闸门裁决为准。
     "N字回踩企稳": _nshape_retrace,
+    # ---- 2026-09-19 胜负解剖细分（winloss_autopsy 发现：深度/恐慌强度是胜负的真正分界）----
+    # 深=距MA60≤-25%（89.7%/+13.71 vs 浅 60%/+2.14）；跌停潮=当日全市场跌停≥100（81.5%/+9.42 vs 零星46%/-0.21）
+    "组合_跌停低_深跌": lambda d, i: (d["ma60"][i] is not None and d["ma60"][i] > 0
+                                and d["c"][i] <= d["ma60"][i] * 0.75
+                                and _limitdown(d, i)),
+    "组合_跌停低_深跌_跌停潮": lambda d, i: (d["ma60"][i] is not None and d["ma60"][i] > 0
+                                       and d["c"][i] <= d["ma60"][i] * 0.75
+                                       and _limitdown(d, i)
+                                       and _XLDC.get(d["date"][i], 0) >= 100),
+    "组合_跌停低_三连阴_深跌": lambda d, i: (d["ma60"][i] is not None and d["ma60"][i] > 0
+                                       and d["c"][i] <= d["ma60"][i] * 0.75
+                                       and _limitdown(d, i) and _three_down(d, i)),
     # ---- 2026-09-19 全交叉矩阵幸存对（cross_matrix.py 两阶段漏斗：45对→9幸存→8 PASS）----
     # 消融纪律：每对都验证了「优于两个单件各自」（真交互），非单边驱动。
     "交叉_跌停低_缩量_避雷针低": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]

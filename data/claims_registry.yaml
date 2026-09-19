@@ -827,3 +827,66 @@ claims:
   note: 全交叉矩阵（45对→消融9幸存→submit 8 PASS）产物。缩量×TD9买入事件研究第一但 G2 结构性空段 REJECT，未注册。
   g7_槽10:
     过G7: true
+- id: COMP_LIMITDOWN_LOW_DEEP
+  statement: 跌停×MA60下 且 距MA60≤-25%（深跌）
+  detector: 组合_跌停低_深跌
+  pos_direction: 低位（MA60下深跌）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 8.0
+    '20': 15.0
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2+（全七闸：T+5 89.3%/+12.35%/n=2764，K1年化11.93%）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 胜负解剖产物：深度（距MA60≤-25%）+恐慌强度（跌停潮≥100）是胜负的真正分界。大赢票特征=跌得深/跌得久/小市值/恐慌期极值。2026-07 有大亏案例（逆风期仍有尾巴），纪律照旧。
+  g7_槽10:
+    K1_年化%: 11.93
+    过G7: true
+- id: COMP_LIMITDOWN_LOW_DEEP_LDC100
+  statement: 深跌 + 当日全市场跌停≥100（恐慌成簇）
+  detector: 组合_跌停低_深跌_跌停潮
+  pos_direction: 低位（MA60下深跌）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 8.0
+    '20': 15.0
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2+（全七闸：T+5 94.2%/+14.09%/n=2337，K1年化8.23%）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 胜负解剖产物：深度（距MA60≤-25%）+恐慌强度（跌停潮≥100）是胜负的真正分界。大赢票特征=跌得深/跌得久/小市值/恐慌期极值。2026-07 有大亏案例（逆风期仍有尾巴），纪律照旧。
+  g7_槽10:
+    K1_年化%: 8.23
+    过G7: true
+- id: COMP_LIMITDOWN_LOW_3DOWN_DEEP
+  statement: 三连阴 + 深跌（距MA60≤-25%）
+  detector: 组合_跌停低_三连阴_深跌
+  pos_direction: 低位（MA60下深跌）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 11.07
+    '20': 25.83
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2+（全七闸：T+5 91.7%/+12.14%/n=1684，K1年化9.97%）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 胜负解剖产物：深度（距MA60≤-25%）+恐慌强度（跌停潮≥100）是胜负的真正分界。大赢票特征=跌得深/跌得久/小市值/恐慌期极值。2026-07 有大亏案例（逆风期仍有尾巴），纪律照旧。
+  g7_槽10:
+    K1_年化%: 9.97
+    过G7: true

@@ -42,6 +42,10 @@ REGISTRY_SHADOW_CLAIMS = {
     "CROSS_LOW_3DOWN_OS20": "交叉_跌停低_三连阴_超跌20",
     "CROSS_LOW_LOSER250_BIGUPPER": "交叉_跌停低_输家250_避雷针低",
     "CROSS_LOW_TD9_GAPDOWN": "交叉_跌停低_TD9买入_缺口低开",
+    # 胜负解剖细分（2026-09-19，深度+恐慌强度分界）
+    "COMP_LIMITDOWN_LOW_DEEP": "组合_跌停低_深跌",
+    "COMP_LIMITDOWN_LOW_DEEP_LDC100": "组合_跌停低_深跌_跌停潮",
+    "COMP_LIMITDOWN_LOW_3DOWN_DEEP": "组合_跌停低_三连阴_深跌",
 }
 
 _LP_CACHE = None
