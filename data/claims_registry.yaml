@@ -687,3 +687,143 @@ claims:
     K1_回撤%: -5.87
     K1_笔数: 185.0
     过G7: true
+- id: CROSS_LOW_SHRINK_BIGUPPER
+  statement: 跌停×MA60下 + 缩量×避雷针低（全交叉矩阵消融幸存：优于两单件各自）
+  detector: 交叉_跌停低_缩量_避雷针低
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 6.76
+    '20': 11.85
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸：T+5 82.6%/6.62%/n=218，边际 +6.76/+11.85）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 全交叉矩阵（45对→消融9幸存→submit 8 PASS）产物。缩量×TD9买入事件研究第一但 G2 结构性空段 REJECT，未注册。
+  g7_槽10:
+    过G7: true
+- id: CROSS_LOW_SHRINK_XFUND
+  statement: 跌停×MA60下 + 缩量×剔亏ST（全交叉矩阵消融幸存：优于两单件各自）
+  detector: 交叉_跌停低_缩量_剔亏ST
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 5.43
+    '20': 11.77
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸：T+5 73.9%/5.7%/n=2141，边际 +5.43/+11.77）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 全交叉矩阵（45对→消融9幸存→submit 8 PASS）产物。缩量×TD9买入事件研究第一但 G2 结构性空段 REJECT，未注册。
+  g7_槽10:
+    过G7: true
+- id: CROSS_LOW_SHRINK_GAPDOWN
+  statement: 跌停×MA60下 + 缩量×缺口低开（全交叉矩阵消融幸存：优于两单件各自）
+  detector: 交叉_跌停低_缩量_缺口低开
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 5.59
+    '20': 10.85
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸：T+5 75.8%/5.89%/n=2378，边际 +5.59/+10.85）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 全交叉矩阵（45对→消融9幸存→submit 8 PASS）产物。缩量×TD9买入事件研究第一但 G2 结构性空段 REJECT，未注册。
+  g7_槽10:
+    过G7: true
+- id: CROSS_LOW_3DOWN_LOSER250
+  statement: 跌停×MA60下 + 三连阴×输家250（全交叉矩阵消融幸存：优于两单件各自）
+  detector: 交叉_跌停低_三连阴_输家250
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 8.62
+    '20': 15.67
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸：T+5 75.7%/8.56%/n=995，边际 +8.62/+15.67）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 全交叉矩阵（45对→消融9幸存→submit 8 PASS）产物。缩量×TD9买入事件研究第一但 G2 结构性空段 REJECT，未注册。
+  g7_槽10:
+    过G7: true
+- id: CROSS_LOW_3DOWN_OS20
+  statement: 跌停×MA60下 + 三连阴×超跌20（全交叉矩阵消融幸存：优于两单件各自）
+  detector: 交叉_跌停低_三连阴_超跌20
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 7.06
+    '20': 14.83
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸：T+5 74.4%/7.37%/n=4364，边际 +7.06/+14.83）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 全交叉矩阵（45对→消融9幸存→submit 8 PASS）产物。缩量×TD9买入事件研究第一但 G2 结构性空段 REJECT，未注册。
+  g7_槽10:
+    过G7: true
+- id: CROSS_LOW_LOSER250_BIGUPPER
+  statement: 跌停×MA60下 + 输家250×避雷针低（全交叉矩阵消融幸存：优于两单件各自）
+  detector: 交叉_跌停低_输家250_避雷针低
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 6.07
+    '20': 8.92
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸：T+5 67.3%/6.44%/n=251，边际 +6.07/+8.92）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 全交叉矩阵（45对→消融9幸存→submit 8 PASS）产物。缩量×TD9买入事件研究第一但 G2 结构性空段 REJECT，未注册。
+  g7_槽10:
+    过G7: true
+- id: CROSS_LOW_TD9_GAPDOWN
+  statement: 跌停×MA60下 + TD9买入×缺口低开（全交叉矩阵消融幸存：优于两单件各自）
+  detector: 交叉_跌停低_TD9买入_缺口低开
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 6.24
+    '20': 11.68
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸：T+5 83.2%/6.7%/n=1155，边际 +6.24/+11.68）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 全交叉矩阵（45对→消融9幸存→submit 8 PASS）产物。缩量×TD9买入事件研究第一但 G2 结构性空段 REJECT，未注册。
+  g7_槽10:
+    过G7: true

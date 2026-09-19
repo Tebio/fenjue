@@ -34,6 +34,14 @@ REGISTRY_SHADOW_CLAIMS = {
     "COMP_LIMITDOWN_LOW_LOSER250_OS20_XFUND": "组合_跌停低_输家_超跌20_剔亏ST",
     "COMP_LIMITDOWN_LOW_TD9": "组合_跌停低_TD9买入滤",
     "COMP_LIMITDOWN_LOW_LOSER250_OS20_TD9": "组合_跌停低_输家_超跌20_TD9滤",
+    # 全交叉矩阵幸存对（2026-09-19 cross_matrix 8 PASS）
+    "CROSS_LOW_SHRINK_BIGUPPER": "交叉_跌停低_缩量_避雷针低",
+    "CROSS_LOW_SHRINK_XFUND": "交叉_跌停低_缩量_剔亏ST",
+    "CROSS_LOW_SHRINK_GAPDOWN": "交叉_跌停低_缩量_缺口低开",
+    "CROSS_LOW_3DOWN_LOSER250": "交叉_跌停低_三连阴_输家250",
+    "CROSS_LOW_3DOWN_OS20": "交叉_跌停低_三连阴_超跌20",
+    "CROSS_LOW_LOSER250_BIGUPPER": "交叉_跌停低_输家250_避雷针低",
+    "CROSS_LOW_TD9_GAPDOWN": "交叉_跌停低_TD9买入_缺口低开",
 }
 
 _LP_CACHE = None

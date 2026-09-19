@@ -1057,6 +1057,29 @@ REGISTRY = {
     # ---- 2026-09-19 N字回踩企稳（金健米业走势研究）：低位放量首板后第3日缩量不破企稳 ----
     # 事件研究：二波启动日进=全负（12格）；回踩期进=全转正（+0.2~+0.96%）。控制对照与闸门裁决为准。
     "N字回踩企稳": _nshape_retrace,
+    # ---- 2026-09-19 全交叉矩阵幸存对（cross_matrix.py 两阶段漏斗：45对→9幸存→8 PASS）----
+    # 消融纪律：每对都验证了「优于两个单件各自」（真交互），非单边驱动。
+    "交叉_跌停低_缩量_避雷针低": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                         and _limitdown(d, i) and _volratio(d, i) < 0.8
+                                         and _bigupper(d, i)),
+    "交叉_跌停低_缩量_剔亏ST": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                       and _limitdown(d, i) and _volratio(d, i) < 0.8
+                                       and _fund_healthy(d, i)),
+    "交叉_跌停低_缩量_缺口低开": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                         and _limitdown(d, i) and _volratio(d, i) < 0.8
+                                         and _gap_down(d, i)),
+    "交叉_跌停低_三连阴_输家250": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                          and _limitdown(d, i) and _three_down(d, i)
+                                          and _loser250(d, i)),
+    "交叉_跌停低_三连阴_超跌20": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                         and _limitdown(d, i) and _three_down(d, i)
+                                         and _oversold20_60d(d, i)),
+    "交叉_跌停低_输家250_避雷针低": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                           and _limitdown(d, i) and _loser250(d, i)
+                                           and _bigupper(d, i)),
+    "交叉_跌停低_TD9买入_缺口低开": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                           and _limitdown(d, i) and _td9buy(d, i)
+                                           and _gap_down(d, i)),
 }
 
 
