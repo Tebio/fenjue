@@ -88,12 +88,12 @@ def stock_caps():
     global _stock_cap
     if _stock_cap is None:
         import glob
+        import bisect as _bis
         cap = {}
         for fp in glob.glob(str(ROOT / "data/cap_hist/*.json")):
-            d = {}
-            for dt, _px, c in json.loads(open(fp).read()):
-                d[dt[:7]] = c
-            cap[Path(fp).stem] = d
+            rows = sorted(json.loads(open(fp).read()), key=lambda r: r[0])
+            # 2026-09-19 PIT 修复：存 (dates, caps) 日频，弃「月度=月末值」旧口径
+            cap[Path(fp).stem] = ([r[0] for r in rows], [r[2] for r in rows])
         _stock_cap = cap
     return _stock_cap
 
@@ -137,7 +137,13 @@ def detect(code, ks, i, ladder=None):
             if first:
                 industry = industry_map().get(code, {}).get("industry") or "?"
                 if ladder.get(industry, 0) >= 3:
-                    cap = stock_caps().get(code, {}).get(ks[i]["date"][:7])
+                    cap = None
+                    packed = stock_caps().get(code)
+                    if packed:  # 2026-09-19 PIT：不晚于当日的最近市值
+                        import bisect as _b
+                        dts, cps = packed
+                        _j = _b.bisect_right(dts, ks[i]["date"]) - 1
+                        cap = cps[_j] if _j >= 0 else None
                     if cap is not None and 20 <= cap <= 400:
                         # tier=当日regime（2026-09-12：反人群打板假设的前向测量——恐慌/平淡期fill是漏，主线/妖股期是坑）
                         reg = _regime_of(ks[i]["date"])
