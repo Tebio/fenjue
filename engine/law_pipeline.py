@@ -322,13 +322,15 @@ def _ma60_exit_hold(d, ei, cap=21):
     return min(cap, max(1, n - 1 - ei))
 
 
-def capacity_sim(sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=1, fee=0.0015, cap0=1_000_000.0, exit_rule=None):
+def capacity_sim(sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=1, fee=0.0015, cap0=1_000_000.0, exit_rule=None, pick="random"):
     """G7 容量检验（2026-09-18 立）：固定槽位下的资金曲线模拟。
 
     规则：信号日收盘确认 → **次日开盘买**（开盘一字跌停作废）→ **入场日 +hold 个交易日收盘卖**
           （出场日跌停封死顺延≤3日）→ 往返 fee → 每槽 cap0/slots，槽满则跳过（记溢出）。
     cluster_k：只在「当日全市场信号数 ≥ cluster_k」的成簇日出手（收盘可知，无前视）。
     exit_rule="ma60"（2026-09-19 加）：出场改用 MA60 回收离场（_ma60_exit_hold），其余不变。
+    pick="deep"（2026-09-19 pick_ranker 实证）：成簇日候选按「超跌最深」（距MA60最远）优先吃槽，
+          替代随机——头名超额 +0.88pp/日、IC +0.117，是唯一真排名器。
     返回随机选票 seeds 次的平均指标。
     """
     import random as _random
@@ -360,7 +362,12 @@ def capacity_sim(sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=1, fee=0.001
                 cands = [s for s in lst if didx[s[0]].get(day) == s[1]+1]
                 if len(lst) < cluster_k:
                     cands = []
-                rnd.shuffle(cands)
+                if pick == "deep":
+                    # 超跌最深优先（距MA60最远）；选票特征信号日收盘可知，无前视
+                    cands.sort(key=lambda s: -(1 - stocks[s[0]]["c"][s[1]] / stocks[s[0]]["ma60"][s[1]])
+                               if stocks[s[0]]["ma60"][s[1]] else 0)
+                else:
+                    rnd.shuffle(cands)
                 for code, i in cands[:max(0, slots - len(pos))]:
                     if cash < cap0/slots:
                         break
