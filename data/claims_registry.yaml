@@ -890,3 +890,143 @@ claims:
   g7_槽10:
     K1_年化%: 9.97
     过G7: true
+- id: CROSS_GAPLOW_3DOWN_BIGUPPER
+  statement: 缺口低开×MA60下底座 + 三连阴_避雷针低（第二底座全交叉幸存）
+  detector: 交叉_缺口低开低_三连阴_避雷针低
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 2.0
+    '20': 4.0
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸过，第二底座交叉批）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 底座=缺口低开≥3%×低位。主线期最强格来自此底座族。基线边际为近似值，周审计校准。
+  g7_槽10:
+    过G7: true
+- id: CROSS_GAPLOW_3DOWN_TD9
+  statement: 缺口低开×MA60下底座 + 三连阴_TD9买入（第二底座全交叉幸存）
+  detector: 交叉_缺口低开低_三连阴_TD9买入
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 2.0
+    '20': 4.0
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸过，第二底座交叉批）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 底座=缺口低开≥3%×低位。主线期最强格来自此底座族。基线边际为近似值，周审计校准。
+  g7_槽10:
+    过G7: true
+- id: CROSS_GAPLOW_3DOWN_XFUND
+  statement: 缺口低开×MA60下底座 + 三连阴_剔亏ST（第二底座全交叉幸存）
+  detector: 交叉_缺口低开低_三连阴_剔亏ST
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 2.0
+    '20': 4.0
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸过，第二底座交叉批）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 底座=缺口低开≥3%×低位。主线期最强格来自此底座族。基线边际为近似值，周审计校准。
+  g7_槽10:
+    过G7: true
+- id: CROSS_GAPLOW_LOSER250_XFUND
+  statement: 缺口低开×MA60下底座 + 输家250_剔亏ST（第二底座全交叉幸存）
+  detector: 交叉_缺口低开低_输家250_剔亏ST
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 2.0
+    '20': 4.0
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸过，第二底座交叉批）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 底座=缺口低开≥3%×低位。主线期最强格来自此底座族。基线边际为近似值，周审计校准。
+  g7_槽10:
+    过G7: true
+- id: CROSS_GAPLOW_BIGUPPER_TD9
+  statement: 缺口低开×MA60下底座 + 避雷针低_TD9买入（第二底座全交叉幸存）
+  detector: 交叉_缺口低开低_避雷针低_TD9买入
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 2.0
+    '20': 4.0
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸过，第二底座交叉批）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 底座=缺口低开≥3%×低位。主线期最强格来自此底座族。基线边际为近似值，周审计校准。
+  g7_槽10:
+    过G7: true
+- id: CROSS_GAPLOW_BIGUPPER_XFUND
+  statement: 缺口低开×MA60下底座 + 避雷针低_剔亏ST（第二底座全交叉幸存）
+  detector: 交叉_缺口低开低_避雷针低_剔亏ST
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 2.0
+    '20': 4.0
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸过，第二底座交叉批）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 底座=缺口低开≥3%×低位。主线期最强格来自此底座族。基线边际为近似值，周审计校准。
+  g7_槽10:
+    过G7: true
+- id: CROSS_GAPLOW_TD9_XFUND
+  statement: 缺口低开×MA60下底座 + TD9买入_剔亏ST（第二底座全交叉幸存）
+  detector: 交叉_缺口低开低_TD9买入_剔亏ST
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    '5': 2.0
+    '20': 4.0
+  kill_line_pp:
+    '5': 0.0
+    '20': 0.5
+  grade: 候选L2（全七闸过，第二底座交叉批）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 底座=缺口低开≥3%×低位。主线期最强格来自此底座族。基线边际为近似值，周审计校准。
+  g7_槽10:
+    过G7: true

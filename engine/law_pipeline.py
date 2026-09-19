@@ -1140,6 +1140,21 @@ REGISTRY = {
     "交叉_跌停低_TD9买入_缺口低开": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
                                            and _limitdown(d, i) and _td9buy(d, i)
                                            and _gap_down(d, i)),
+    # ---- 2026-09-19 第二底座（缺口低开×MA60下）全交叉幸存对（8 PASS）----
+    "交叉_缺口低开低_三连阴_避雷针低": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                              and _gap_down(d, i) and _three_down(d, i) and _bigupper(d, i)),
+    "交叉_缺口低开低_三连阴_TD9买入": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                             and _gap_down(d, i) and _three_down(d, i) and _td9buy(d, i)),
+    "交叉_缺口低开低_三连阴_剔亏ST": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                            and _gap_down(d, i) and _three_down(d, i) and _fund_healthy(d, i)),
+    "交叉_缺口低开低_输家250_剔亏ST": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                             and _gap_down(d, i) and _loser250(d, i) and _fund_healthy(d, i)),
+    "交叉_缺口低开低_避雷针低_TD9买入": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                              and _gap_down(d, i) and _bigupper(d, i) and _td9buy(d, i)),
+    "交叉_缺口低开低_避雷针低_剔亏ST": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                             and _gap_down(d, i) and _bigupper(d, i) and _fund_healthy(d, i)),
+    "交叉_缺口低开低_TD9买入_剔亏ST": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                            and _gap_down(d, i) and _td9buy(d, i) and _fund_healthy(d, i)),
 }
 
 

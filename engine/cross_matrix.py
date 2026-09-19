@@ -58,11 +58,19 @@ def stat(rs):
             "mean%": round(100 * sum(rs) / len(rs), 2), "赔率": round(odds, 2) if odds else None}
 
 
+BASE_MODE = "limitdown"
+if "--base" in sys.argv:
+    BASE_MODE = sys.argv[sys.argv.index("--base") + 1]
+
+
 def main():
     stocks = lp.load_universe()
     lp.build_xsection(stocks)
 
     # 单遍收集：底座事件的组件位向量 + 对照池（同票 MA60下 非底座日）
+    if BASE_MODE == "gaplow":   # 底座=缺口低开时，组件剔除同名避免恒真
+        COMP.pop("缺口低开", None)
+        NAMES.remove("缺口低开")
     events = []          # (code, i, bitmask)
     ctrl_pool = []       # (code, i) MA60下非底座日
     for code, d in stocks.items():
@@ -73,7 +81,10 @@ def main():
             below = c[i] <= ma[i]
             if not below:
                 continue
-            is_base = c[i] / c[i - 1] - 1 <= -0.095 and d["o"][i + 1] > c[i] * 0.905
+            if BASE_MODE == "limitdown":
+                is_base = c[i] / c[i - 1] - 1 <= -0.095 and d["o"][i + 1] > c[i] * 0.905
+            else:  # gaplow：缺口低开≥3%（次日开盘买入口径不变）
+                is_base = lp._gap_down(d, i) and d["o"][i + 1] > 0
             if is_base:
                 mask = 0
                 for k, nm in enumerate(NAMES):
@@ -132,7 +143,7 @@ def main():
         if marg[5] > 0 and beats_both and p5["win%"] >= 55:
             survivors.append((na, nb))
     out["幸存待submit"] = survivors
-    (ROOT / "data/cross_matrix_20260919.json").write_text(json.dumps(out, ensure_ascii=False, indent=1))
+    (ROOT / f"data/cross_matrix_{BASE_MODE}_20260919.json").write_text(json.dumps(out, ensure_ascii=False, indent=1))
     print("幸存对:", survivors, flush=True)
     print("saved stage1", flush=True)
 
@@ -141,10 +152,16 @@ def main():
         regime = lp.load_regime()
         stock_cap, qs = lp.load_cap_quintiles()
         for na, nb in survivors:
-            name = f"交叉_跌停低_{na}_{nb}"
-            lp.REGISTRY[name] = (lambda fa, fb: lambda d, i: (
-                d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
-                and lp._limitdown(d, i) and fa(d, i) and fb(d, i)))(COMP[na], COMP[nb])
+            base_tag = "跌停低" if BASE_MODE == "limitdown" else "缺口低开低"
+            name = f"交叉_{base_tag}_{na}_{nb}"
+            if BASE_MODE == "limitdown":
+                base_fn = lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                        and lp._limitdown(d, i))
+            else:
+                base_fn = lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                        and lp._gap_down(d, i))
+            lp.REGISTRY[name] = (lambda bf, fa, fb: lambda d, i: (
+                bf(d, i) and fa(d, i) and fb(d, i)))(base_fn, COMP[na], COMP[nb])
             passed, v = lp.submit_gate(name, lp.REGISTRY[name], stocks, regime, stock_cap, qs)
             print(f"SUBMIT {name}: {'PASS' if passed else 'REJECT'}", flush=True)
             print(json.dumps(v, ensure_ascii=False)[:400], flush=True)

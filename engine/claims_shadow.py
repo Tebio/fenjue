@@ -46,6 +46,14 @@ REGISTRY_SHADOW_CLAIMS = {
     "COMP_LIMITDOWN_LOW_DEEP": "组合_跌停低_深跌",
     "COMP_LIMITDOWN_LOW_DEEP_LDC100": "组合_跌停低_深跌_跌停潮",
     "COMP_LIMITDOWN_LOW_3DOWN_DEEP": "组合_跌停低_三连阴_深跌",
+    # 第二底座交叉幸存对（2026-09-19 gaplow 底座 8 PASS 中的 7 个新检测器）
+    "CROSS_GAPLOW_3DOWN_BIGUPPER": "交叉_缺口低开低_三连阴_避雷针低",
+    "CROSS_GAPLOW_3DOWN_TD9": "交叉_缺口低开低_三连阴_TD9买入",
+    "CROSS_GAPLOW_3DOWN_XFUND": "交叉_缺口低开低_三连阴_剔亏ST",
+    "CROSS_GAPLOW_LOSER250_XFUND": "交叉_缺口低开低_输家250_剔亏ST",
+    "CROSS_GAPLOW_BIGUPPER_TD9": "交叉_缺口低开低_避雷针低_TD9买入",
+    "CROSS_GAPLOW_BIGUPPER_XFUND": "交叉_缺口低开低_避雷针低_剔亏ST",
+    "CROSS_GAPLOW_TD9_XFUND": "交叉_缺口低开低_TD9买入_剔亏ST",
 }
 
 _LP_CACHE = None
