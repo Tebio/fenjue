@@ -1089,3 +1089,75 @@ claims:
     K1_笔数: 2897.0
     K5_年化%: 7.57
     过G7: true
+- id: COMP_LIMITDOWN_TD9_LOSER250
+  statement: 跌停×MA60下 + TD9买入 + 250日输家（三条件穷举幸存：TD9确认层均笔放大器）
+  detector: 组合_跌停低_TD9买_输家250
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon: [5, 20]
+  baseline_pp: {5: 5.92, 20: 9.84}
+  kill_line_pp: {5: 0.0, 20: 0.5}
+  grade: 候选L2（全七闸：T+5 79.9%/+7.06/n=482，边际 +5.92/+9.84，槽10 K1 年化+7.17%/均笔+3.79%/回撤-5.4%）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 三条件以上穷举（252格→54 PASS 精编4条）产物。TD9买入作确认层是本场最大发现（均笔3.2~3.8% vs 裸底座1.4%）。REGISTRY lambda 与穷举组合版事件集合逐一相等已验证。笔数185/年频低，容量敏感。
+  g7_槽10:
+    K1_年化%: 7.17
+    K1_均笔%: 3.79
+    K1_回撤%: -5.37
+    K1_笔数: 185.0
+    过G7: true
+- id: COMP_LIMITDOWN_TD9_OS20
+  statement: 跌停×MA60下 + TD9买入 + 超跌20（三条件穷举幸存：TD9+超跌双确认）
+  detector: 组合_跌停低_TD9买_超跌20
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon: [5, 20]
+  baseline_pp: {5: 5.47, 20: 12.16}
+  kill_line_pp: {5: 0.0, 20: 0.5}
+  grade: 候选L2（全七闸：T+5 81.5%/+6.90/n=1548，边际 +5.47/+12.16，槽10 K1 年化+7.33%/均笔+1.66%/回撤-11.1%）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 穷举精编。胜率 81.5% 为跌停底座族最高档；与 COMP_LIMITDOWN_TD9_LOSER250 高度重叠（输家250⊂超跌20 大交集，E3 共线注记）。
+  g7_槽10:
+    K1_年化%: 7.33
+    K1_均笔%: 1.66
+    K1_回撤%: -11.07
+    K1_笔数: 436.0
+    过G7: true
+- id: COMP_GAPLOW_XFUND_OS20_LOSER250
+  statement: 缺口低开×低位×阳线 + 剔亏ST + 超跌20 + 250日输家（缺口底座四条件穷举最优）
+  detector: 组合_缺口低_剔亏ST_超跌20_输家250
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon: [5, 20]
+  baseline_pp: {5: 3.26, 20: 6.89}
+  kill_line_pp: {5: 0.0, 20: 0.5}
+  grade: 候选L2（全七闸：T+5 64.7%/+3.57/n=1339，边际 +3.26/+6.89，槽10 K1 年化+7.13%/回撤-19.2%）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 穷举精编，缺口底座 G7 K1 最高（7.13%）。四条件已接近叠加极限，别再往上叠（穷举实证五条件格全部碎片化 n<200）。
+  g7_槽10:
+    K1_年化%: 7.13
+    K1_均笔%: 1.07
+    K1_回撤%: -19.2
+    K1_笔数: 652.0
+    过G7: true
+- id: COMP_TOUCH_TD9_XFUND_OS20
+  statement: 触板未封×低位 + TD9买入 + 剔亏ST + 超跌20（触板底座四条件穷举最优）
+  detector: 组合_触板低_TD9买_剔亏ST_超跌20
+  pos_direction: 低位（MA60下）
+  control: position_matched
+  horizon: [5, 20]
+  baseline_pp: {5: 6.19, 20: 11.37}
+  kill_line_pp: {5: 0.0, 20: 0.5}
+  grade: 候选L2（全七闸：T+5 68.7%/+5.82/n=291，边际 +6.19/+11.37，槽10 K1 年化+5.43%/均笔+2.26%/回撤-13.8%）
+  created: '2026-09-19'
+  audit_every_days: 7
+  note: 穷举精编，触板底座族边际最高。n=291 样本偏薄，周审计重点盯。
+  g7_槽10:
+    K1_年化%: 5.43
+    K1_均笔%: 2.26
+    K1_回撤%: -13.8
+    K1_笔数: 223.0
+    过G7: true

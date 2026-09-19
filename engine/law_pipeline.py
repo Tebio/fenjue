@@ -1182,6 +1182,20 @@ REGISTRY = {
                                           and _entry_wd(d, i) != 0),
     "banlu_b5_MA60上_避周二": lambda d, i: (d["ma60"][i] is not None and d["c"][i] > d["ma60"][i]
                                        and _banlu_b5(d, i) and _entry_wd(d, i) != 1),
+    # ---- 2026-09-19 三条件以上穷举（BACKLOG#7，triples_exhaustive 252格→54 PASS 精编4条）----
+    # 全表 data/triples_exhaustive_20260919.json；精编标准=G7 K1年化+均笔+非已注册重复。
+    # TD9买入作确认层是本场最大发现（均笔3.2~3.8% vs 裸底座1.4%）。
+    "组合_跌停低_TD9买_输家250": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                        and _limitdown(d, i) and _td9buy(d, i) and _loser250(d, i)),
+    "组合_跌停低_TD9买_超跌20": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                       and _limitdown(d, i) and _td9buy(d, i) and _oversold20_60d(d, i)),
+    "组合_缺口低_剔亏ST_超跌20_输家250": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                              and d["c"][i] > d["o"][i] and _gap_down(d, i)
+                                              and _fund_healthy(d, i) and _oversold20_60d(d, i)
+                                              and _loser250(d, i)),
+    "组合_触板低_TD9买_剔亏ST_超跌20": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                             and _touch_not_seal(d, i) and _td9buy(d, i)
+                                             and _fund_healthy(d, i) and _oversold20_60d(d, i)),
 }
 
 
