@@ -308,12 +308,27 @@ def _collect_sigs(detect, stocks):
     return sigs
 
 
-def capacity_sim(sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=1, fee=0.0015, cap0=1_000_000.0):
+def _ma60_exit_hold(d, ei, cap=21):
+    """MA60 回收离场的持有天数（2026-09-19，对齐 exit_rule_grid ma60_out 口径）：
+    入场日 ei（次日开盘买）不可卖（T+1）；从 ei+1 起首个「收盘收复 MA60」日离场；
+    跌停封死（收盘≤入场价×0.905）顺延；兜底 cap 天。"""
+    c, o, ma, n = d["c"], d["o"], d["ma60"], d["n"]
+    entry = o[ei]
+    for j in range(ei + 1, min(ei + cap + 1, n)):
+        if c[j] <= 0 or c[j] <= entry * 0.905:
+            continue
+        if ma[j] is not None and c[j] > ma[j]:
+            return j - ei
+    return min(cap, max(1, n - 1 - ei))
+
+
+def capacity_sim(sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=1, fee=0.0015, cap0=1_000_000.0, exit_rule=None):
     """G7 容量检验（2026-09-18 立）：固定槽位下的资金曲线模拟。
 
     规则：信号日收盘确认 → **次日开盘买**（开盘一字跌停作废）→ **入场日 +hold 个交易日收盘卖**
           （出场日跌停封死顺延≤3日）→ 往返 fee → 每槽 cap0/slots，槽满则跳过（记溢出）。
     cluster_k：只在「当日全市场信号数 ≥ cluster_k」的成簇日出手（收盘可知，无前视）。
+    exit_rule="ma60"（2026-09-19 加）：出场改用 MA60 回收离场（_ma60_exit_hold），其余不变。
     返回随机选票 seeds 次的平均指标。
     """
     import random as _random
@@ -333,7 +348,7 @@ def capacity_sim(sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=1, fee=0.001
                     keep.append((code, ei, xi, val)); continue
                 d = stocks[code]
                 c2, o2, nn = d["c"], d["o"], d["n"]
-                jj = ei + hold
+                jj = xi  # 2026-09-19：原为 ei+hold，与默认口径 xi==ei+hold 等价；改 xi 后规则化出场（exit_rule）才生效
                 if jj >= nn or c2[jj] <= 0 or o2[ei] <= 0:
                     keep.append((code, ei, xi, val)); continue
                 r = c2[jj]/o2[ei] - 1 - fee
@@ -350,7 +365,8 @@ def capacity_sim(sigs, stocks, slots=10, hold=5, seeds=3, cluster_k=1, fee=0.001
                     if cash < cap0/slots:
                         break
                     cash -= cap0/slots
-                    pos.append((code, i+1, i+1+hold, cap0/slots))
+                    xidx = i + 1 + (_ma60_exit_hold(stocks[code], i + 1) if exit_rule == "ma60" else hold)
+                    pos.append((code, i+1, xidx, cap0/slots))
             eqs.append(cash + sum(v for *_x, v in pos))
         yrs = len(dates)/244.0
         final = eqs[-1] if eqs else cap0
@@ -1012,6 +1028,13 @@ REGISTRY = {
                                       and _limitdown(d, i) and _ma20_cross(d, i)),
     "组合_跌停低_海龟20滤": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
                                     and _limitdown(d, i) and _turtle20(d, i)),
+    # ---- 2026-09-19：复活胜者 TD9买入滤 的三滤叠加延伸 ----
+    "组合_跌停低_缩量_TD9滤": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                      and _limitdown(d, i) and _volratio(d, i) < 0.8
+                                      and _td9buy(d, i)),
+    "组合_跌停低_输家_超跌20_TD9滤": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                             and _limitdown(d, i) and _loser250(d, i)
+                                             and _oversold20_60d(d, i) and _td9buy(d, i)),
 }
 
 

@@ -22,6 +22,33 @@ FEE = 0.0015
 # 入场口径=信号日收盘（打板成交假设，fill 率由影子前向中的封板时间另行定量），
 # 与框架默认的次日开盘不同——次日追是该主张内部已证伪的变体（-0.52%）。
 CLOSE_ENTRY_CLAIMS = {"FRONTRUN_FIRSTBOARD_V2", "WATCHPOOL_GRAD"}
+
+# 2026-09-19：注册表桥——夜间流水线新 PASS 组合进影子前向（L5）。
+# 通过 law_pipeline REGISTRY 检测器原样执行，禁止在 detect() 里重复实现（口径漂移风险）。
+# claim_id 必须与 data/claims_registry.yaml 的 id 一致。
+REGISTRY_SHADOW_CLAIMS = {
+    "COMP_LIMITDOWN_LOW_SHRINK_XFUND": "组合_跌停低_缩量_剔亏ST",
+    "COMP_LIMITDOWN_LOW_LOSER250_OS20_SHRINK": "组合_跌停低_输家_超跌20_缩量",
+    "COMP_LIMITDOWN_LOW_3DOWN_SHRINK": "组合_跌停低_三连阴_缩量",
+    "COMP_LIMITDOWN_LOW_BIGUPPER_SHRINK": "组合_跌停低_避雷针_缩量",
+    "COMP_LIMITDOWN_LOW_LOSER250_OS20_XFUND": "组合_跌停低_输家_超跌20_剔亏ST",
+    "COMP_LIMITDOWN_LOW_TD9": "组合_跌停低_TD9买入滤",
+    "COMP_LIMITDOWN_LOW_LOSER250_OS20_TD9": "组合_跌停低_输家_超跌20_TD9滤",
+}
+
+_LP_CACHE = None
+
+
+def _lp_universe():
+    """law_pipeline 宇宙懒加载（每跑一次日线影子只建一次，约 1-2 分钟）。"""
+    global _LP_CACHE
+    if _LP_CACHE is None:
+        import law_pipeline as lp
+        stocks = lp.load_universe()
+        lp.build_xsection(stocks)
+        idx = {c: {x: j for j, x in enumerate(s["date"])} for c, s in stocks.items()}
+        _LP_CACHE = (lp, stocks, idx)
+    return _LP_CACHE
 _industry = None
 _stock_cap = None
 _regime_tl = None
@@ -127,6 +154,21 @@ def detect(code, ks, i, ladder=None):
                 continue
             hits.append(("WATCHPOOL_GRAD", None))
             break
+    # 注册表桥（2026-09-19）：新 PASS 组合委托 law_pipeline REGISTRY 检测器判定
+    if REGISTRY_SHADOW_CLAIMS:
+        try:
+            lp, lp_stocks, lp_idx = _lp_universe()
+            d = lp_stocks.get(code)
+            j = lp_idx.get(code, {}).get(ks[i]["date"]) if d is not None else None
+            if j is not None:
+                for claim, detname in REGISTRY_SHADOW_CLAIMS.items():
+                    try:
+                        if lp.REGISTRY[detname](d, j):
+                            hits.append((claim, None))
+                    except Exception:
+                        pass
+        except Exception:
+            pass
     return hits
 
 
