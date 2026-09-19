@@ -469,6 +469,47 @@ def submit_gate(name, detect, stocks, regime, stock_cap, qs):
     return passed, verdict
 
 
+def _demon_cradle(d, i):
+    """妖股摇篮（2026-09-19 demon_anatomy 产物）：首板缩量深跌小市值。
+    定义：60日无板后首个≥+9.8%涨停 且 板日量比<1.5(对前5日) 且 PIT市值<50亿
+         且 前收盘距60日高≤-25%。
+    实测（8年 n=893）：次日开盘买 T5 62%/+5.25%、T20 64%/+9.62%——
+    妖率仅 2.0%（不是妖股探测器）但入场期望厚（均值回归×首板确认）。
+    反例已证：贴高(距60高>-15)入场 T5 32%/-1.92 毒药；放量板 妖率 lift 0.64。"""
+    c, v, h = d["c"], d["v"], d["h"]
+    if i < 61 or c[i - 1] <= 0 or c[i] / c[i - 1] - 1 < 0.098:
+        return False
+    for j in range(max(1, i - 60), i):
+        if c[j - 1] > 0 and c[j] / c[j - 1] - 1 >= 0.098:
+            return False   # 60日内有板=非首板
+    base5 = [v[k] for k in range(i - 5, i) if v[k] > 0]
+    if not base5 or v[i] <= 0 or v[i] / (sum(base5) / len(base5)) >= 1.5:
+        return False
+    hi60 = max(h[i - 60:i])
+    if hi60 <= 0 or c[i - 1] / hi60 - 1 > -0.25:
+        return False
+    cap = cap_at_date(_XCAP, d["code"], d["date"][i]) if _XCAP else None
+    return cap is not None and cap < 50
+
+
+_XCRADLE = None   # date -> 当日全市场妖股摇篮信号数（成簇门用，惰性构建）
+
+
+def _cradle_count_map(stocks):
+    global _XCRADLE
+    if _XCRADLE is None:
+        m = {}
+        for code, d in stocks.items():
+            for i in range(61, d["n"] - 1):
+                try:
+                    if _demon_cradle(d, i):
+                        m[d["date"][i]] = m.get(d["date"][i], 0) + 1
+                except Exception:
+                    pass
+        _XCRADLE = m
+    return _XCRADLE
+
+
 # ---------- 信号注册表（新增信号往这里加，不许再写一次性脚本） ----------
 
 # ---- 跨股截面上下文（梯队/市值/行业/周期，供打板系探测器用）----
@@ -538,9 +579,10 @@ def _fund_healthy(d, i):
 
 def build_xsection(stocks):
     from collections import defaultdict
-    global _XLADDER, _XCAP, _XREGIME, _IND, _XLOSERQ, _XFUND, _XLDC
+    global _XLADDER, _XCAP, _XREGIME, _IND, _XLOSERQ, _XFUND, _XLDC, _XCRADLE
     if _XLADDER is not None:
         return
+    _XCRADLE = None   # 防重复调用残留（与 _XLDC 同款守卫纪律）
     _XLDC = defaultdict(int)  # 红队F3：必须在守卫后，否则重复调用清空跌停横截面
     ind_map = json.loads((ROOT / "data/industry_map.json").read_text())
     _IND = {c: (v.get("industry") or "?") for c, v in ind_map.items()}
@@ -564,6 +606,7 @@ def build_xsection(stocks):
     _XCAP, _qs = load_cap_quintiles()
     _XREGIME = load_regime()
     _XFUND = _load_fund_xsection()
+    _cradle_count_map(stocks)   # 妖股摇篮成簇横截面（必须在 _XCAP 就绪后——首版在头部调用致空表零信号）
 
 
 def _limitup(d, i):
@@ -1175,6 +1218,11 @@ REGISTRY = {
     # 跌停潮≥50 子集：大赢率 13.1→17.9%、大输率 23.6→23.9% 持平、胜率 56.1%、T5 +1.85
     # （基线 T1 +0.10/T5 +0.48）。给红线停推的宽清单一条「恐慌强度复活门」。
     "反转族_跌停潮50": lambda d, i: (_reversal(d, i) and _XLDC.get(d["date"][i], 0) >= 50),
+    # ---- 2026-09-19 妖股解剖（demon_anatomy）：首板缩量深跌小市值 ----
+    "妖股摇篮_缩量深跌小市值": _demon_cradle,
+    # 成簇版（G7 诊断：孤板日 T+5 41.6%/-0.33 毒、成簇日≥3 73.4%/+8.62）——钱全在成簇日
+    "妖股摇篮_成簇": lambda d, i: (_demon_cradle(d, i)
+                               and bool(_XCRADLE) and _XCRADLE.get(d["date"][i], 0) >= 3),
     # ---- 2026-09-19 周一效应×组合交互（BACKLOG#9，data/monday_combo_20260919.json）----
     # 机制=周末缺口：接跌类「周五信号→周一入场」全线弱（7 组合 -4.2~-7.9pp，跌停底座周一入场
     # T+5 48.1%/+0.62 vs 周二~周四 64-74%/+5.5~7.6）；追强类相反，B5 周二入场 29.8%/-4.42 剧毒。

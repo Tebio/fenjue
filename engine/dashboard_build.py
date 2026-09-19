@@ -159,6 +159,76 @@ def parse_bank(text):
     return rows, orders
 
 
+def cradle_scan():
+    """妖股摇篮（2026-09-19 demon_anatomy 产物，DEMON_CRADLE_CLUSTER 主张）：
+    首板(60日无板) + 板日缩量<1.5 + 距60日高≤-25% + PIT市值<50亿，全库扫描；
+    只在当日全市场同类信号≥3（成簇）时有效（孤板日 T+5 -0.33% 毒）。
+    返回 (最近交易日, [(code, pct, name)], 成簇与否)。
+    口径与 law_pipeline._demon_cradle 逐行对齐（改这里必须同步改它）。"""
+    import glob as _g
+    try:
+        names = {str(s["code"]).zfill(6): s.get("name", "")
+                 for s in json.loads((D / "main_board_codes.json").read_text())["stocks"]}
+        caps = {}
+        for fp in _g.glob(str(D / "cap_hist" / "*.json")):
+            try:
+                rows = json.loads(open(fp).read())
+                if rows:
+                    caps[fp.rsplit("/", 1)[-1][:6]] = rows[-1][2]
+            except Exception:
+                pass
+        idx = json.loads((D / "index_sh000001.json").read_text())
+        lastd = idx[-1]["date"]
+        ov = {}
+        ovf = D / "kcache_today_overlay.json"
+        if ovf.exists():
+            try:
+                ov = json.loads(ovf.read_text())
+                if ov and next(iter(ov.values()))["date"] > lastd:
+                    lastd = next(iter(ov.values()))["date"]
+            except Exception:
+                ov = {}
+        out = []
+        for fp in _g.glob(str(D / "big_kcache" / "*.json")):
+            c0 = fp.rsplit("/", 1)[-1].replace(".json", "")
+            if c0[:2] not in ("60", "00"):
+                continue
+            try:
+                ks = json.loads(open(fp).read())
+                if ov and c0 in ov and (not ks or ov[c0]["date"] > ks[-1]["date"]):
+                    b = ov[c0]
+                    ks = ks + [{"date": b["date"], "open": b["open"], "high": b["high"],
+                                "low": b["low"], "close": b["close"], "volume": b["volume"]}]
+                if len(ks) < 62 or ks[-1]["date"] != lastd:
+                    continue
+                j = len(ks) - 1
+                c = [k["close"] for k in ks]
+                v = [k["volume"] for k in ks]
+                h = [k["high"] for k in ks]
+                if c[j - 1] <= 0 or c[j] / c[j - 1] - 1 < 0.098:
+                    continue
+                if any(c[k - 1] > 0 and c[k] / c[k - 1] - 1 >= 0.098 for k in range(max(1, j - 60), j)):
+                    continue                       # 60日内有板=非首板
+                base5 = [v[k] for k in range(j - 5, j) if v[k] > 0]
+                if not base5 or v[j] <= 0 or v[j] / (sum(base5) / len(base5)) >= 1.5:
+                    continue                       # 非缩量板
+                hi60 = max(h[j - 60:j])
+                if hi60 <= 0 or c[j - 1] / hi60 - 1 > -0.25:
+                    continue                       # 非深跌位
+                cap = caps.get(c0)
+                if cap is None or cap >= 50:
+                    continue
+                nm0 = names.get(c0, "")
+                if "ST" in nm0 or "退" in nm0:
+                    continue
+                out.append((c0, round((c[j] / c[j - 1] - 1) * 100, 1), nm0))
+            except Exception:
+                continue
+        return lastd, out, len(out) >= 3
+    except Exception:
+        return None, [], False
+
+
 def deep_low_scan():
     """深档低位（≤-9.5% 且 MA60下）全库扫描。返回 (最近交易日, [(code, pct), ...])。"""
     import glob as _g

@@ -149,6 +149,18 @@ def main():
                      f'（8年零星日信号全 weekday 负期望 -0.2~-1.4%/36~45%，可执行形态=成簇日≥5 只）')
     else:
         L.append(f'1. 深档低位：{deep_lastd} 无合格标的')
+    # 妖股摇篮（DEMON_CRADLE_CLUSTER）：只在成簇日说话（年 1-3 次）
+    try:
+        from dashboard_build import cradle_scan
+        cr_d, cr_list, cr_cluster = cradle_scan()
+    except Exception:
+        cr_d, cr_list, cr_cluster = None, [], False
+    if cr_cluster and cr_d == deep_lastd:
+        picks = "、".join(f'{nm} {c}({p:+.1f}%)' for c, p, nm in cr_list[:6])
+        L.append(f'1b. 🔥妖股摇篮·踩踏修复首板潮（{fmt(cr_d)} 全市场 {len(cr_list)} 只成簇）：{picks}'
+                 f'{"…" if len(cr_list) > 6 else ""}')
+        L.append(f'   {fmt(today)} 9:30 开盘买（分散 3-5 只，别单挑）；8 年口径 T+5 73.8%/+7.74、T+20 82.5%/+14.67，'
+                 f'但 6 成收益来自 2024-02 一个月——这是结构性机会不是日常策略；孤板日（<3 只）绝不出手。')
     if pool_names:
         L.append(f'2. 观察池临启动（触发制，不用盯）：{pool_names} 等')
         L.append('   只有「它涨停+板块≥3只涨停」才挂涨停价排队；其它价位一律不买，梯队成型雷达会喊')
