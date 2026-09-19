@@ -21,7 +21,7 @@ import law_pipeline as lp
 
 ROOT = Path(__file__).resolve().parent.parent
 FEE = 0.0015
-T5, T20 = 5, 20
+HORIZONS = (1, 2, 3, 5, 10, 20)   # 2026-09-19 用户批评「又是T+5」→ 全 horizon
 
 COMP = {   # 组件名 -> lp 检测函数（(d,i)->bool）
     "缩量": lambda d, i: lp._volratio(d, i) < 0.8,
@@ -88,30 +88,27 @@ def main():
     print(f"底座事件 {len(events)}，对照池 {len(ctrl_pool)}", flush=True)
 
     def evalset(idxs):
-        r5 = [fwd(stocks[c], i, T5) for c, i in idxs]
-        r20 = [fwd(stocks[c], i, T20) for c, i in idxs]
-        return stat(r5), stat(r20)
+        return {h: stat([fwd(stocks[c], i, h) for c, i in idxs]) for h in HORIZONS}
 
     rng = random.Random(2026)
-    # 底座基线 + 对照边际基线
+    # 底座基线 + 对照边际基线（全 horizon）
     base_all = [(c, i) for c, i, _ in events]
-    base5, base20 = evalset(base_all)
+    baseH = evalset(base_all)
     ctrl_s = rng.sample(ctrl_pool, min(len(base_all), len(ctrl_pool)))
-    ctrl5, ctrl20 = evalset(ctrl_s)
-    base_marg5 = round(base5["mean%"] - ctrl5["mean%"], 2)
-    base_marg20 = round(base20["mean%"] - ctrl20["mean%"], 2)
-    print(f"底座: T+5 {base5['win%']}%/{base5['mean%']}%（边际{base_marg5}） T+20 {base20['win%']}%/{base20['mean%']}%（边际{base_marg20}）", flush=True)
+    ctrlH = evalset(ctrl_s)
+    base_marg = {h: round(baseH[h]["mean%"] - ctrlH[h]["mean%"], 2) for h in HORIZONS}
+    print("底座全horizon:", " ".join(
+        f"T+{h} {baseH[h]['win%']}%/{baseH[h]['mean%']}%/赔{baseH[h]['赔率']}/边{base_marg[h]}" for h in HORIZONS), flush=True)
 
-    out = {"底座": {"T+5": base5, "T+20": base20, "边际5": base_marg5, "边际20": base_marg20,
-                    "对照T+5": ctrl5, "对照T+20": ctrl20}, "pairs": {}}
+    out = {"底座": {"curve": baseH, "边际": base_marg, "对照curve": ctrlH}, "pairs": {}}
 
     singles = {}
     for k, nm in enumerate(NAMES):
         idxs = [(c, i) for c, i, m in events if m & (1 << k)]
-        s5, s20 = evalset(idxs)
-        singles[nm] = {"T+5": s5, "T+20": s20, "idxs_len": len(idxs)}
+        singles[nm] = {"curve": evalset(idxs), "idxs_len": len(idxs)}
+        s5 = singles[nm]["curve"][5]
         print(f"  单件 {nm}: n={len(idxs)} T+5 {s5 and s5['win%']}%/{s5 and s5['mean%']}%", flush=True)
-    out["singles"] = {k: {kk: vv for kk, vv in v.items() if kk != "idxs_len"} for k, v in singles.items()}
+    out["singles"] = {k: {"curve": v["curve"]} for k, v in singles.items()}
 
     survivors = []
     for a, b in combinations(range(len(NAMES)), 2):
@@ -119,20 +116,19 @@ def main():
         idxs = [(c, i) for c, i, m in events if (m & (1 << a)) and (m & (1 << b))]
         if len(idxs) < 200:
             continue
-        p5, p20 = evalset(idxs)
+        pH = evalset(idxs)
         # 对照：同位置随机日（从对照池按事件数采样）
         cs = rng.sample(ctrl_pool, min(len(idxs), len(ctrl_pool)))
-        cc5, cc20 = evalset(cs)
-        marg5 = round(p5["mean%"] - cc5["mean%"], 2)
-        marg20 = round(p20["mean%"] - cc20["mean%"], 2)
-        sa, sb = singles[na]["T+5"], singles[nb]["T+5"]
+        ccH = evalset(cs)
+        marg = {h: round(pH[h]["mean%"] - ccH[h]["mean%"], 2) for h in HORIZONS}
+        p5 = pH[5]
+        sa, sb = singles[na]["curve"][5], singles[nb]["curve"][5]
         beats_both = (sa is None or p5["mean%"] > sa["mean%"]) and (sb is None or p5["mean%"] > sb["mean%"])
-        rec = {"n": len(idxs), "T+5": p5, "T+20": p20, "边际5": marg5, "边际20": marg20,
-               "优于两单件": beats_both}
+        rec = {"n": len(idxs), "curve": pH, "边际": marg, "对照curve": ccH, "优于两单件": beats_both}
         out["pairs"][f"{na}×{nb}"] = rec
-        flag = "✅" if (marg5 > 0 and beats_both) else ""
-        print(f"  {na}×{nb}: n={len(idxs)} T+5 {p5['win%']}%/{p5['mean%']}% 边际{marg5}/{marg20} {flag}", flush=True)
-        if marg5 > 0 and beats_both and p5["win%"] >= 55:
+        flag = "✅" if (marg[5] > 0 and beats_both) else ""
+        print(f"  {na}×{nb}: n={len(idxs)} T+5 {p5['win%']}%/{p5['mean%']}% 边T1 {marg[1]}/T5 {marg[5]}/T20 {marg[20]} {flag}", flush=True)
+        if marg[5] > 0 and beats_both and p5["win%"] >= 55:
             survivors.append((na, nb))
     out["幸存待submit"] = survivors
     (ROOT / "data/cross_matrix_20260919.json").write_text(json.dumps(out, ensure_ascii=False, indent=1))
