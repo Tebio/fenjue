@@ -31,7 +31,9 @@ def fwd_t5(code, d):
 
 
 def main():
-    days = sorted(p.name for p in HT.iterdir() if p.is_dir())
+    # 只取日期目录（2026-09-19 实锤：sectors/index_hist 两个非日期目录混入，
+    # sorted 取末位拿到 'sectors' 直接 ValueError，周更任务连环炸）
+    days = sorted(p.name for p in HT.iterdir() if p.is_dir() and len(p.name) == 10 and p.name[4] == "-")
     cutoff = days[-1]
     import datetime
     c0 = (datetime.date.fromisoformat(cutoff) - datetime.timedelta(days=WINDOW)).isoformat()

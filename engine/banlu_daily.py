@@ -61,13 +61,22 @@ for f in glob.glob(f"{D}/m60_cache/*.json"):
     if entry is None:
         continue
     sealed = float(byday[today][-1]["close"]) >= pc * SEAL
-    j = idx[c].get(today)
+    # m60_cache 有而 big_kcache 没有的票（新上市/池外）——idx 直接 KeyError 会把整日信号炸没
+    # （2026-09-18 001399 实锤：B5 信号断更一天）。.get 兜底跳过。
+    j = idx.get(c, {}).get(today)
     if j is None:
         continue
     industry = ind.get(c, {}).get("industry") or "?"
     if lad.get(industry, 0) < 2 or not first_board60(stocks[c], j):
         continue
-    cap = caps.get(c, {}).get(today[:7])
+    # 2026-09-19 PIT 格式破坏（次生 bug）：stock_caps() 已改 (dates, caps) 日频 tuple，
+    # 旧「月→市值」dict 访问直接 AttributeError——按 claims_shadow 同款 bisect 口径取不晚于当日值
+    cap = None
+    packed = caps.get(c)
+    if packed:
+        import bisect as _b
+        _j = _b.bisect_right(packed[0], today) - 1
+        cap = packed[1][_j] if _j >= 0 else None
     if cap is None or not (20 <= cap <= 400):
         continue
     # 2026-09-18 位置细分（第二轴网格 + submit 双确认）：MA60上 +1.36%/48.7%（过闸门）、
