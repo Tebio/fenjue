@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "焚诀研究引擎 · 架构总图（2026-09-19）",
+    "output": "/opt/data/fenjue/docs/fenjue-architecture.html",
+    "visual_preset": "blueprint",
+    "animation": "none",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "mainline",
+        "label": "主张的一生",
+        "focus": [
+          "data",
+          "fjcore",
+          "registry",
+          "gates",
+          "claims",
+          "shadow",
+          "audit",
+          "push",
+          "user"
+        ],
+        "note": "信号从检测到推送的完整链路"
+      },
+      {
+        "id": "feedback",
+        "label": "反馈闭环",
+        "focus": [
+          "shadow",
+          "audit",
+          "claims",
+          "push"
+        ],
+        "note": "影子回填→审计→降级→静默→复活"
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "data",
+      "type": "database",
+      "label": "数据底座",
+      "sublabel": "kcache/cap/fund/龙虎榜/m60",
+      "pos": [
+        60,
+        120
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "PIT 纪律"
+    },
+    {
+      "id": "fjcore",
+      "type": "backend",
+      "label": "fjcore 门面",
+      "sublabel": "Universe 单例+统一统计",
+      "pos": [
+        280,
+        120
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "唯一入口"
+    },
+    {
+      "id": "registry",
+      "type": "backend",
+      "label": "REGISTRY 信号库",
+      "sublabel": "89 检测器",
+      "pos": [
+        500,
+        120
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "检测定义"
+    },
+    {
+      "id": "gates",
+      "type": "security",
+      "label": "submit 闸门 G1-G7",
+      "sublabel": "Harvey t≥3+容量",
+      "pos": [
+        720,
+        120
+      ],
+      "size": [
+        160,
+        64
+      ],
+      "tag": "证伪管线"
+    },
+    {
+      "id": "capacity",
+      "type": "backend",
+      "label": "capacity_sim",
+      "sublabel": "成簇K+深跌选票+出场库",
+      "pos": [
+        960,
+        120
+      ],
+      "size": [
+        168,
+        64
+      ],
+      "tag": "可执行性"
+    },
+    {
+      "id": "shadow",
+      "type": "backend",
+      "label": "影子盘",
+      "sublabel": "L5 前向账本",
+      "pos": [
+        1200,
+        120
+      ],
+      "size": [
+        136,
+        64
+      ],
+      "tag": "每日19:00"
+    },
+    {
+      "id": "push",
+      "type": "messagebus",
+      "label": "事件驱动推送",
+      "sublabel": "无事件零推送",
+      "pos": [
+        1420,
+        120
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "QQ"
+    },
+    {
+      "id": "user",
+      "type": "external",
+      "label": "你",
+      "sublabel": "Tebio",
+      "pos": [
+        1620,
+        120
+      ],
+      "size": [
+        100,
+        64
+      ]
+    },
+    {
+      "id": "claims",
+      "type": "database",
+      "label": "claims_registry",
+      "sublabel": "46 主张 状态机",
+      "pos": [
+        720,
+        340
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "写死废除"
+    },
+    {
+      "id": "audit",
+      "type": "security",
+      "label": "周审计",
+      "sublabel": "滚动边际 vs kill线",
+      "pos": [
+        960,
+        340
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "周六10:00"
+    },
+    {
+      "id": "explain",
+      "type": "backend",
+      "label": "归因引擎",
+      "sublabel": "深度×恐慌×玩家",
+      "pos": [
+        1200,
+        340
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "tag": "为什么涨跌"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "焚诀引擎 /opt/data/fenjue（NAS）",
+      "wraps": [
+        "fjcore",
+        "registry",
+        "gates",
+        "capacity",
+        "claims",
+        "audit",
+        "explain",
+        "shadow"
+      ],
+      "pad": 20
+    }
+  ],
+  "connections": [
+    {
+      "from": "data",
+      "to": "fjcore",
+      "label": "时点安全",
+      "variant": "emphasis"
+    },
+    {
+      "from": "fjcore",
+      "to": "registry",
+      "label": "检测",
+      "variant": "emphasis"
+    },
+    {
+      "from": "registry",
+      "to": "gates",
+      "label": "新信号"
+    },
+    {
+      "from": "gates",
+      "to": "capacity",
+      "label": "G7 容量"
+    },
+    {
+      "from": "capacity",
+      "to": "shadow",
+      "label": "过闸进影子"
+    },
+    {
+      "from": "shadow",
+      "to": "push",
+      "label": "存活主张",
+      "labelAt": [
+        1360,
+        100
+      ]
+    },
+    {
+      "from": "push",
+      "to": "user",
+      "label": "有事才响",
+      "labelAt": [
+        1600,
+        210
+      ]
+    },
+    {
+      "from": "gates",
+      "to": "claims",
+      "label": "PASS 注册",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "from": "capacity",
+      "to": "audit",
+      "label": "容量复查",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "from": "claims",
+      "to": "shadow",
+      "label": "前向登记",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "via": [
+        [
+          795,
+          455
+        ],
+        [
+          1140,
+          455
+        ],
+        [
+          1140,
+          152
+        ]
+      ],
+      "labelAt": [
+        1000,
+        478
+      ]
+    },
+    {
+      "from": "shadow",
+      "to": "explain",
+      "label": "归因卡",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "from": "audit",
+      "to": "claims",
+      "label": "降级/复活",
+      "labelAt": [
+        915,
+        470
+      ],
+      "fromSide": "bottom",
+      "toSide": "bottom",
+      "via": [
+        [
+          1035,
+          425
+        ],
+        [
+          795,
+          425
+        ]
+      ]
+    }
+  ]
+}
