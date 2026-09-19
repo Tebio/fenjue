@@ -44,6 +44,22 @@ def main():
             if code not in m60_files:
                 continue
             m6 = None
+            # ex-div 哨兵（对齐 exec_timing_m60：m60 不复权 vs kcache 前复权，比值漂移>1.5% 的日期标记）
+            ks_dates = d["date"]
+            kc_close = d["c"]
+            ratio, flagged, prev = {}, set(), None
+            _m6_tmp = None
+            for i2, dt2 in enumerate(ks_dates):
+                if _m6_tmp is None and code in m60_files:
+                    _m6_tmp = load_m60(m60_files[code])
+                if _m6_tmp and dt2 in _m6_tmp and _m6_tmp[dt2] and kc_close[i2] > 0:
+                    ratio[dt2] = _m6_tmp[dt2][-1]["close"] / kc_close[i2]
+            for dt2 in ks_dates:
+                if dt2 in ratio:
+                    if prev is not None and abs(ratio[dt2] / ratio[prev] - 1) > 0.015:
+                        flagged.add(dt2)
+                    prev = dt2
+            m6 = _m6_tmp
             for i in range(61, d["n"] - 7):
                 try:
                     if not det(d, i):
@@ -57,8 +73,11 @@ def main():
                 ed, xd = d["date"][ei], d["date"][xi]
                 if ed < WIN0:
                     continue
+                if any(dd in flagged for dd in ks_dates[i:xi + 1]):   # 除权跨度剔除
+                    skipped += 1
+                    continue
                 if m6 is None:
-                    m6 = load_m60(m60_files[code])
+                    continue
                 be, bx = m6.get(ed), m6.get(xd)
                 if not be or not bx or len(be) < 4 or len(bx) < 4:
                     skipped += 1
