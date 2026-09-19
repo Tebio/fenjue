@@ -37,6 +37,31 @@ def query(bcode, start, end):
     return rows
 
 
+def update_index(end):
+    """上证指数同步（2026-09-19 自查发现：index_sh000001.json 自 9/14 撞代码修复落盘后
+    无人更新，dashboard 交易日历/regime idx 字段/大盘量能全部吃旧数据）。
+    指数无复权问题（adjustflag=3），纯增量 append。"""
+    fp = KC.parent / "index_sh000001.json"
+    rows = json.loads(fp.read_text()) if fp.exists() else []
+    last = rows[-1]["date"] if rows else FULL_START
+    if last >= end:
+        print(f"index: 已最新 {last}", flush=True)
+        return
+    rs = bs.query_history_k_data_plus("sh.000001", FIELDS, start_date=last, end_date=end,
+                                      frequency="d", adjustflag="3")
+    new = []
+    while rs.error_code == "0" and rs.next():
+        r = rs.get_row_data()
+        if r[1]:
+            new.append({"date": r[0], "open": float(r[1]), "high": float(r[2]),
+                        "low": float(r[3]), "close": float(r[4]), "volume": float(r[5] or 0)})
+    seen = {r["date"] for r in rows}
+    rows.extend(r for r in new if r["date"] not in seen)
+    rows.sort(key=lambda r: r["date"])
+    fp.write_text(json.dumps(rows))
+    print(f"index: {last} → {rows[-1]['date']}（+{len(new)} 行）", flush=True)
+
+
 def main():
     end = sys.argv[1] if len(sys.argv) > 1 else date.today().isoformat()
     files = sorted(KC.glob("*.json"))
@@ -89,6 +114,7 @@ def main():
         if idx % 200 == 0:
             print(f"[{idx}/{len(files)}] updated={updated} upto={upto} seam={seams} err={errors} {time.time()-t0:.0f}s", flush=True)
         time.sleep(0.12)  # 限流纪律
+    update_index(end)
     bs.logout()
     print(f"DONE updated={updated} already_current={upto} seam_fixed={seams} errors={errors} elapsed={time.time()-t0:.0f}s")
 
