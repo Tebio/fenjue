@@ -35,7 +35,7 @@ def feats(d, i, code, fund, capm):
     f["跌停开板"] = h[i] > c[i] * 1.001      # 盘中高于收盘=开板过（有承接/撬板）
     f["一字跌停"] = h[i] == l[i]
     f["次日缺口%"] = round((o[i + 1] / c[i] - 1) * 100, 1) if i + 1 < d["n"] else None
-    cap = capm.get(code, {}).get(d["date"][i][:7])
+    cap = lp.cap_at_date(capm, code, d["date"][i])  # PIT 日频
     f["市值亿"] = cap
     fu = fund.get(code, {}).get(d["date"][i])
     f["peTTM"] = fu[0] if fu else None           # _XFUND 值=(peTTM, isST) 二元组

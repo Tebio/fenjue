@@ -69,26 +69,46 @@ def load_regime():
 
 
 def load_cap_quintiles():
-    per_month, stock_cap = {}, {}
+    """市值分位（2026-09-19 PIT 修复）：
+    旧实现两重月内未来函数——①个股月值取的是月末（循环覆写留下最后一行）；
+    ②分位边界用当月全月数据（月初信号用了含未来 20 天的横截面）。
+    现改为：个股取「不晚于当日的最近日值」；分位边界=上月全月（完全在过去）。
+    影响面：G4 市值闸门、_cap_ok（banlu/frontrun 市值带）、fundamental_commonality。"""
+    per_month, stock_cap_daily = {}, {}
     for fp in glob.glob(str(CAP / "*.json")):
         code = Path(fp).stem
-        d = {}
-        for date, _px, cap in json.loads(open(fp).read()):
-            m = date[:7]
-            d[m] = cap
-            per_month.setdefault(m, []).append(cap)
-        stock_cap[code] = d
+        rows = sorted(json.loads(open(fp).read()), key=lambda r: r[0])
+        stock_cap_daily[code] = ([r[0] for r in rows], [r[2] for r in rows])  # (dates, caps) 预拆分
+        for date, _px, cap in rows:
+            per_month.setdefault(date[:7], []).append(cap)
+    import bisect as _bis
     qs = {}
-    for m, caps in per_month.items():
-        caps.sort()
+    months = sorted(per_month)
+    for k, m in enumerate(months):
+        if k == 0:
+            qs[m] = None
+            continue
+        caps = sorted(per_month[months[k - 1]])           # 边界=上月横截面（全在过去）
         n = len(caps)
         qs[m] = [caps[int(n * p)] for p in (0.2, 0.4, 0.6, 0.8)] if n >= 50 else None
-    return stock_cap, qs
+    return stock_cap_daily, qs
+
+
+def cap_at_date(stock_cap_daily, code, date):
+    """不晚于 date 的最近流通市值（二分）。None=无数据。packed=(dates, caps)。"""
+    import bisect
+    packed = stock_cap_daily.get(code)
+    if not packed:
+        return None
+    dates, caps = packed
+    j = bisect.bisect_right(dates, date) - 1
+    return caps[j] if j >= 0 else None
 
 
 def cap_quintile(stock_cap, qs, code, date):
+    """stock_cap=日频行（PIT 修复版）；边界=上月横截面。"""
     m = date[:7]
-    cap = stock_cap.get(code, {}).get(m)
+    cap = cap_at_date(stock_cap, code, date)
     b = qs.get(m)
     if cap is None or b is None:
         return None
@@ -205,7 +225,7 @@ def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, f
     for code, d in stocks.items():
         c, o, n = d["c"], d["o"], d["n"]
         hi = n - max(HORIZONS) - 1
-        sc = stock_cap.get(code, {})
+        sc = stock_cap.get(code, [])
         for i in range(START, hi):
             if _epx(d, i) <= 0 or not detect(d, i):
                 continue
@@ -216,7 +236,7 @@ def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, f
             seg_t["2019-2022" if dt < "2023" else "2023-2026"].append(r)
             seg_r.setdefault(regime.get(dt, "?"), []).append(r)
             b = qs.get(dt[:7])
-            cap = sc.get(dt[:7])
+            cap = cap_at_date(stock_cap, code, dt)   # PIT 修复（2026-09-19）：不晚于当日的市值
             if cap is not None and b:
                 seg_c[sum(cap > x for x in b)].append(r)
         for _ in range(3):
@@ -545,7 +565,7 @@ def _ladder(d, i):
 
 
 def _cap_ok(d, i):
-    m = _XCAP.get(d["code"], {}).get(d["date"][i][:7])
+    m = cap_at_date(_XCAP, d["code"], d["date"][i])
     return m is not None and 20 <= m <= 400
 
 def _td9buy(d, i):
@@ -1021,7 +1041,7 @@ REGISTRY = {
     "跌停接_MA60下_放量": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
                                   and _volratio(d, i) >= 1.5 and _limitdown(d, i)),
     "跌停接_MA60下_小市值": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
-                                    and (_XCAP.get(d["code"], {}).get(d["date"][i][:7]) or 1e9) < 40
+                                    and (cap_at_date(_XCAP, d["code"], d["date"][i]) or 1e9) < 40
                                     and _limitdown(d, i)),
     # ---- 2026-09-18 夜间批：confluence 组合（只用存活组件 + 财报健康过滤器）----
     # 依据：白天画像/闸门裁决（缩量 PASS、放量/小市值 REJECT）+ Kimi 对账（命中票 7/20 亏损、2 ST）。

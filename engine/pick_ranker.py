@@ -35,7 +35,7 @@ def feats(d, i, code, fund, capm):
         "深度": -(c[i] / ma[i] - 1),          # 越深越好（取负后越大越好）
         "超跌60": -(c[i] / hi60 - 1) if hi60 > 0 else 0,
         "连跌": n_down,
-        "小市值": -(capm.get(code, {}).get(d["date"][i][:7]) or 1e9),  # 越小越好
+        "小市值": -(lp.cap_at_date(capm, code, d["date"][i]) or 1e9),  # 越小越好（PIT 日频）
         "缩量": -lp._volratio(d, i),           # 越缩越好
         "低PE": -(fu[0]) if fu and fu[0] is not None else 0,
     }
