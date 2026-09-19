@@ -1171,6 +1171,10 @@ REGISTRY = {
                                              and _gap_down(d, i) and _bigupper(d, i) and _fund_healthy(d, i)),
     "交叉_缺口低开低_TD9买入_剔亏ST": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
                                             and _gap_down(d, i) and _td9buy(d, i) and _fund_healthy(d, i)),
+    # ---- 2026-09-19 大赢票解剖（winner_anatomy）：唯一「大赢↑且大输不升」的过滤器 ----
+    # 跌停潮≥50 子集：大赢率 13.1→17.9%、大输率 23.6→23.9% 持平、胜率 56.1%、T5 +1.85
+    # （基线 T1 +0.10/T5 +0.48）。给红线停推的宽清单一条「恐慌强度复活门」。
+    "反转族_跌停潮50": lambda d, i: (_reversal(d, i) and _XLDC.get(d["date"][i], 0) >= 50),
     # ---- 2026-09-19 周一效应×组合交互（BACKLOG#9，data/monday_combo_20260919.json）----
     # 机制=周末缺口：接跌类「周五信号→周一入场」全线弱（7 组合 -4.2~-7.9pp，跌停底座周一入场
     # T+5 48.1%/+0.62 vs 周二~周四 64-74%/+5.5~7.6）；追强类相反，B5 周二入场 29.8%/-4.42 剧毒。
