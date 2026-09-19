@@ -180,11 +180,14 @@ def _kurt(x):
     return sum((v - m) ** 4 for v in x) / len(x) / s ** 4 if s > 0 else 3
 
 
-def deflated_sharpe(sr_daily, T, skew, kurt, trials=25):
+def deflated_sharpe(sr_daily, T, skew, kurt, trials=7491):
     """Deflated Sharpe Ratio（Bailey & López de Prado 2014）：
     在试过 trials 个策略的选择偏差下，观测 Sharpe 仍显著为正的概率。
     sr_daily 必须是日频 Sharpe（年化值/√244），T=日度观测数。
-    返回 P(SR>0 | 选择偏差修正后)，>0.95 才算硬。"""
+    返回 P(SR>0 | 选择偏差修正后)，>0.95 才算硬。
+    trials 口径（2026-09-19 E2 销账）：实测普查值 7491（engine/dsr_recount.py，
+    data/*.json 结构计数，含重复提交=保守方向）；旧默认 25 系拍脑袋，全库 DSR 曾系统性偏高。
+    后续每月/每大批研究后重跑 dsr_recount 更新此默认值。"""
     from math import erf, sqrt
     if T < 10:
         return None
