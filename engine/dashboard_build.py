@@ -1043,11 +1043,33 @@ def main():
                                 "周期仪全量扫描 + HiThink 题材归因", collapsed=True, tab="证据库"))
 
     # ══ 组装 ══
+    # 打法库（2026-09-20 终版：全部过了池级+组合层+细分三审的规则链 + 证伪禁令墙）
+    S["研究库"].insert(0, card("⚔️ 打法库 · 全规则链终版（2026-09-20 三审全过）", f"""
+<table><thead><tr><th>打法</th><th>扳机</th><th>买/卖</th><th>8年验证</th><th>频率</th></tr></thead><tbody>
+<tr><td><b>X3 恐慌狙击</b></td><td>恐慌期streak≥2+大簇日+非周一</td><td>浅跌前3次日开盘 / T+5或-12%</td><td><span class="up">58%胜 · 盈亏比2.09 · +37.5% · MDD-7.1%</span></td><td>~12次/年</td></tr>
+<tr><td><b>X2 收益王</b></td><td>妖股/恐慌期+大簇日</td><td>同上</td><td><span class="up">54%胜 · +51.4% · MDD-6.9%</span></td><td>~26次/年</td></tr>
+<tr><td><b>T1-MEGA v2 巨簇分散</b></td><td>缺口低簇≥20（任意regime，妖股/恐慌全仓平淡/主线半仓）</td><td>量比前10次日开盘 / T+3收盘</td><td><span class="up">组合层+107%（+53,661元/5万）· 55%胜</span></td><td>~6-15次/年</td></tr>
+<tr><td><b>J5 平衡版</b></td><td>妖股/恐慌期+恐慌streak≥2</td><td>浅跌前3 / T+5或-12%</td><td><span class="up">48%胜 · +42.6% · MDD-19.7% · 大市值格68%最肥</span></td><td>~40次/年</td></tr>
+<tr><td><b>红利底仓+网格做T</b></td><td>5只股息锚在买入区（常备）</td><td>底仓不动；±1.5%网格10%库存股T</td><td><span class="up">底仓~15%/年 + 做T增强3~6%/年（江苏银行实测24.2%）</span></td><td>每日</td></tr>
+</tbody></table>
+<div class="rule" style="margin-top:10px">🚫 证伪禁令墙（全有统计背书，勿复活）：打板/排队（G7死刑+当周8触发7亏）· 高位板块异动追（t=-4.3）· 妖股断魂刀（-6.94%期望）·
+缺口低机械T+1高频（-57%）· 盘中轮动追龙头（封板速度差）· 底部板块起色买篮子（纯beta零超额）· 启动前夜预测（信息不可见）。</div>
+<div class="muted" style="margin-top:6px">剂量定律：「簇规模」是反转族总开关（日簇≥20 = 77%/+2.73%，1-3只 = 42%/-0.27%）· 梯队≥3 = 日级信号唯一活的选择器（恐慌期×梯队 T+3 81%/+6.59%）·
+选票方向：距60日高点最近者优先（恐慌中的相对强度）· 全部规则待影子盘前向判决，历史数字按乐观版理解。</div>""",
+                                "X3/X2/T1-MEGA/J5/红利做T + 禁令墙", collapsed=False, tab="研究库"))
+
     body = "\n".join(h for tab in ("今日", "我的钱", "研究库", "证据库") for h in S[tab])
     stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-    OUT.write_text(TPL.replace("__DATE__", today).replace("__BODY__", body)
-                   .replace("__STAMP__", stamp)
-                   .replace("__SIG__", fmt_d(sig_date)).replace("__BUYDAY__", fmt_d(buy_day)))
+    # B 架构（2026-09-20）：数据/渲染分离——面板=静态壳+dashboard.json，60s自刷新，数据更新无需重建HTML
+    dash = {"built_at": stamp, "sig_date": sig_date, "sig_fmt": fmt_d(sig_date),
+            "buy_day": buy_day, "buy_fmt": fmt_d(buy_day),
+            "tabs": ["今日", "我的钱", "研究库", "证据库"],
+            "cards": [{"tab": tab, "html": h} for tab in ("今日", "我的钱", "研究库", "证据库") for h in S[tab]]}
+    (OUT.parent / "dashboard.json").write_text(json.dumps(dash, ensure_ascii=False))
+    if "--legacy" in __import__("sys").argv:
+        OUT.write_text(TPL.replace("__DATE__", today).replace("__BODY__", body)
+                       .replace("__STAMP__", stamp)
+                       .replace("__SIG__", fmt_d(sig_date)).replace("__BUYDAY__", fmt_d(buy_day)))
 
     # ops-state.json（人机共用单一事实源）
     ops = {
@@ -1071,7 +1093,7 @@ def main():
         "links": {"panel": "https://tebio.github.io/fenjue/", "ops_state": "https://tebio.github.io/fenjue/ops-state.json"},
     }
     (OUT.parent / "ops-state.json").write_text(json.dumps(ops, ensure_ascii=False, indent=1))
-    print(f"built {OUT} sections={sum(len(v) for v in S.values())}")
+    print(f"built {OUT.parent / 'dashboard.json'} cards={len(dash['cards'])}（渲染壳=docs/index.html 静态，--legacy 才写整页）")
 
 
 TPL = """<!DOCTYPE html>
