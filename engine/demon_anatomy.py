@@ -29,7 +29,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-import law_pipeline as lp
+from fjcore import Universe, td9buy   # 2026-09-20 绞杀者收编：门面层入口（行为不变——fjcore 直通 lp）
 from doubler import first_board_events
 
 ROOT = Path("/opt/data/fenjue")
@@ -56,17 +56,17 @@ def pre_feats(d, j):
         "板日量比": round(v[j] / (sum(base5) / len(base5)), 2) if base5 and v[j] > 0 else None,
         "板日量比20": round(v[j] / (sum(base20) / len(base20)), 2) if base20 and v[j] > 0 else None,
         "连跌天数": nd,
-        "TD9": lp._td9buy(d, j - 1) if j >= 13 else False,   # 前夜口径
+        "TD9": td9buy(d, j - 1) if j >= 13 else False,   # 前夜口径
         "一字板": bool(o[j] == l[j] == c[j] == h[j]),
     }
 
 
 def main():
-    stocks = lp.load_universe()
+    u = Universe().load()   # 全宇宙+横截面一次加载（fjcore 门面，等价 lp.load_universe+build_xsection）
+    stocks = u.stocks
     print("stocks:", len(stocks), flush=True)
-    lp.build_xsection(stocks)
-    fund, capm, ladder, ldc, ind = lp._XFUND, lp._XCAP, lp._XLADDER, lp._XLDC, (lp._IND or {})
-    regime = lp.load_regime()
+    ladder, ldc, ind = u.ladder, u.ldc, u.ind
+    regime = u.regime
     idx = json.load(open(ROOT / "data/index_sh000001.json"))
     idxc = {k["date"]: k["close"] for k in idx}
     idxd = [k["date"] for k in idx]
@@ -95,14 +95,14 @@ def main():
             while j + chain < d["n"] and c[j + chain - 1] > 0 \
                     and c[j + chain] / c[j + chain - 1] - 1 >= 0.098:
                 chain += 1
-            fu = lp.fund_at(code, dt)
+            fu = u.fund_at(code, dt)
             events.append({
                 "code": code, "date": dt, "妖": demon,
                 "fwd_max%": round((fwd_max / c[j] - 1) * 100, 1) if c[j] > 0 else None,
                 "连板": chain,
                 "T1开收%": round((c[j + 1] / d["o"][j + 1] - 1) * 100, 1) if d["o"][j + 1] > 0 else None,
                 "f": pre_feats(d, j),
-                "市值": lp.cap_at_date(capm, code, dt),
+                "市值": u.cap_at(code, dt),
                 "pe": fu[0] if fu else None, "st": fu[1] if fu else None,
                 "板块梯队": (ladder.get(dt, {}).get(ind.get(code)) if ladder else None),
                 "市场跌停": ldc.get(dt, 0) if ldc else 0,

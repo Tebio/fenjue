@@ -23,7 +23,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-import law_pipeline as lp
+from fjcore import Universe, forward, REGISTRY, START, td9buy, three_down  # 2026-09-20 绞杀者收编（fwd 与 fjcore.forward 逐行一致，直接换）
 
 ROOT = Path("/opt/data/fenjue")
 FEE = 0.0015
@@ -48,29 +48,25 @@ def feats(d, i):
     return {"前10日板数": pb10, "前20日板数": pb20, "距最近板": last_b if last_b is not None else 99,
             "量比": vr, "距MA60": (c[i] / ma[i] - 1) if ma[i] else None,
             "距60高": c[i] / hi60 - 1 if hi60 > 0 else None,
-            "TD9": lp._td9buy(d, i), "三连阴": lp._three_down(d, i)}
+            "TD9": td9buy(d, i), "三连阴": three_down(d, i)}
 
 
-def fwd(d, i, h):
-    ei = i + 1
-    if ei + h >= d["n"] or d["o"][ei] <= 0 or d["o"][ei] <= d["c"][i] * 0.905:
-        return None
-    return d["c"][ei + h] / d["o"][ei] - 1 - FEE
+# fwd 已收编：fjcore.forward（逐行一致：次日开盘/0.905剔一字跌停/净0.15%）
 
 
 def main():
-    stocks = lp.load_universe()
+    u = Universe().load()
+    stocks = u.stocks
     print("stocks:", len(stocks), flush=True)
-    lp.build_xsection(stocks)
-    fund, capm, ladder, ldc = lp._XFUND, lp._XCAP, lp._XLADDER, lp._XLDC
-    ind = lp._IND or {}   # code -> industry（str）
-    regime = lp.load_regime()
-    det = lp.REGISTRY["反转族_T-1大跌"]
+    ladder, ldc = u.ladder, u.ldc
+    ind = u.ind           # code -> industry（str）
+    regime = u.regime
+    det = REGISTRY["反转族_T-1大跌"]
 
     events = []  # (code, i, feats)
     for code, d in stocks.items():
         n = d["n"]
-        for i in range(lp.START, n - 22):
+        for i in range(START, n - 22):
             if d["o"][i + 1] <= 0:
                 continue
             try:
@@ -84,16 +80,16 @@ def main():
     recs = []
     for code, i, f in events:
         d = stocks[code]
-        r1, r5 = fwd(d, i, 1), fwd(d, i, 5)
+        r1, r5 = forward(d, i, 1), forward(d, i, 5)
         if r1 is None:
             continue
-        fu = lp.fund_at(code, d["date"][i])
+        fu = u.fund_at(code, d["date"][i])
         recs.append({"code": code, "date": d["date"][i], "f": f, "r1": r1, "r5": r5,
                      "梯队": (ladder.get(d["date"][i], {}).get(ind.get(code)) if ladder else None),
                      "恐慌": ldc.get(d["date"][i], 0) if ldc else 0,
                      "regime": regime.get(d["date"][i], "?"),
                      "pe": fu[0] if fu else None, "st": fu[1] if fu else None,
-                     "cap": lp.cap_at_date(capm, code, d["date"][i])})
+                     "cap": u.cap_at(code, d["date"][i])})
 
     def anat(rs, label):
         if len(rs) < 50:

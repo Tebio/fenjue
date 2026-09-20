@@ -38,8 +38,11 @@ class Universe:
         lp.build_xsection(self.stocks)
         self.regime = lp.load_regime()
         self.cap, self.cap_qs = lp.load_cap_quintiles()
-        self.fund = lp._XFUND          # code -> date -> (peTTM, isST)
+        self.fund = lp._XFUND          # code -> (dates, vals) packed tuple（查询走 fund_at）
         self.ldc = lp._XLDC            # date -> 当日全市场跌停数
+        self.ladder = lp._XLADDER      # date -> industry -> 涨停数（板块梯队）
+        self.ind = lp._IND or {}       # code -> industry
+        self.cradle_cnt = lp._XCRADLE  # date -> 当日妖股摇篮信号数（成簇横截面）
         self._ready = True
         return self
 
@@ -47,7 +50,8 @@ class Universe:
         return lp.cap_at_date(self.cap, code, date)
 
     def fund_at(self, code, date):
-        return (self.fund or {}).get(code, {}).get(date)
+        # 直通 lp.fund_at（packed tuple + bisect，2026-09-20 收编验证抓出：旧版按 dict.get 读 tuple 会炸）
+        return lp.fund_at(code, date)
 
 
 def forward(d, i, h, fee=FEE):
@@ -95,3 +99,7 @@ submit_gate = lp.submit_gate
 capacity_sim = lp.capacity_sim
 collect_sigs = lp._collect_sigs
 REGISTRY = lp.REGISTRY
+# 底层常数/检测器助手直通（绞杀者收编用：winner_anatomy 等迁移期引用）
+START = lp.START
+td9buy = lp._td9buy
+three_down = lp._three_down
