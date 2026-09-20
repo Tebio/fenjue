@@ -164,6 +164,21 @@ def main():
     if pool_names:
         L.append(f'2. 观察池临启动（触发制，不用盯）：{pool_names} 等')
         L.append('   只观察不挂单（G7容量死刑+当周8触发7亏实锤）：「它涨停+板块≥3只涨停」时雷达会报，但不排队')
+    # ⚔️ X规则线（xrules_daily 19:15 判定落盘，全保真口径）：T1-MEGA/X2/X3 状态一览
+    try:
+        _xs = json.loads(open(D + "/xrules_state.json").read())
+        if _xs.get("date") == deep_lastd:
+            L.append(f'3. ⚔️X规则线（{_xs["date"]} {_xs["regime"]} · 跌停{_xs["ldc"]} · 缺口低簇{_xs["gap_cluster"]} · 恐慌streak{_xs["streak"]}）：')
+            for _rule, _label in (("T1-MEGA", "T1-MEGA巨簇分散"), ("X2", "X2妖股大簇"), ("X3", "X3恐慌狙击")):
+                _r = _xs.get("rules", {}).get(_rule, {})
+                if _r.get("fired"):
+                    _pk = "、".join(f'{p["name"]}{p["code"]}' for p in _r.get("picks", [])[:5])
+                    L.append(f'   🔥{_label}触发 → {_pk}{"…" if len(_r.get("picks", [])) > 5 else ""}')
+                    L.append(f'      买：{_xs["entry_day"]}开盘；卖：{"T+3收盘" if _rule == "T1-MEGA" else "T+5收盘或-12%止损"}')
+                else:
+                    L.append(f'   · {_label}：未触发（{_r.get("why", "?")}）')
+    except FileNotFoundError:
+        pass
     L.append("")
     L.append("⏰ 买只在 9:32-9:45 · 卖只在尾盘/点名的早盘 · 其余时间不操作")
     L.append("📖 规则+证据 → tebio.github.io/fenjue")

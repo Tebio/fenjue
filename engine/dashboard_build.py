@@ -384,6 +384,21 @@ def main():
         lin = sorted((e for e in wp["pool"] if 1 <= e.get("days", 0) <= 5),
                      key=lambda e: (not e.get("shrink"), e["days"], -e["volratio"]))[:3]
 
+    # ⚔️ X规则线（xrules_daily 19:15 落盘）：T1-MEGA/X2/X3 状态
+    _xs = jload(D / "xrules_state.json", {})
+    xrules_html = ""
+    if _xs.get("date") == sig_date:
+        rows = []
+        for rule, label in (("T1-MEGA", "T1-MEGA巨簇分散"), ("X2", "X2妖股大簇"), ("X3", "X3恐慌狙击")):
+            r = _xs.get("rules", {}).get(rule, {})
+            if r.get("fired"):
+                pk = "、".join(f'{p["name"]}{p.get("ladder", 0) >= 3 and "🪜" or ""}' for p in r.get("picks", [])[:5])
+                rows.append(f'<span class="up">🔥{label}</span> → {esc(pk)}（买{_xs["entry_day"]}开盘，卖{"T+3" if rule == "T1-MEGA" else "T+5/-12%"}）')
+            else:
+                rows.append(f'<span class="mut">· {label}：{esc(r.get("why", "?"))}</span>')
+        xrules_html = (f'<div class="mut">{_xs["date"]} {_xs["regime"]} · 跌停{_xs["ldc"]} · 缺口低簇{_xs["gap_cluster"]} · 恐慌streak{_xs["streak"]}</div>'
+                       + "<br>".join(rows))
+
     # ══ 今日 ══
     # KPI 健康条
     n_deep = len(_deep)
@@ -483,6 +498,8 @@ def main():
                                    "其余时间不操作。每个交易日 9:25 QQ 发「作战单」，与本页同源。"))
     S["今日"].append(card("📋 行动单", action_html,
                           f"数据截至 {fmt_d(sig_date)}收盘 · 执行日 {fmt_d(buy_day)}", tab="今日"))
+    if xrules_html:
+        S["今日"].append(card("⚔️ X规则线 · 每晚19:15保真判定", xrules_html, tab="今日"))
 
     # 市场状态
     if reg:

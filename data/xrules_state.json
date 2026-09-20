@@ -1,0 +1,23 @@
+{
+ "date": "2026-09-18",
+ "regime": "妖股期",
+ "ldc": 1,
+ "gap_cluster": 0,
+ "panic_cluster": 0,
+ "streak": 0,
+ "entry_day": null,
+ "rules": {
+  "T1-MEGA": {
+   "fired": false,
+   "why": "簇0<20"
+  },
+  "X2": {
+   "fired": false,
+   "why": "非大簇日"
+  },
+  "X3": {
+   "fired": false,
+   "why": "非恐慌期"
+  }
+ }
+}
