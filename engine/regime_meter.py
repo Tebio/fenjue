@@ -89,6 +89,12 @@ def scan() -> dict:
     clear_proxy()
     stocks = main_board_pool()
     live = [s for s in stocks if s.get("change_percent") is not None]
+    # 2026-09-20 完整性闸门：MCP 池退化实锤（limit=5000 只回 233 行，9/16-18 涨停数 43/17/28
+    # vs 真实 82/47/75，徽标误报平淡期一周）。池行数不足 2500 = 明显不完整，直接转腾讯全量。
+    # 新鲜度抽查只管「过期」，不管「缺页」——两个都要查。
+    if live and len(live) < 2500:
+        print(f"[FALLBACK] MCP池完整性不足（{len(live)}行<2500），转腾讯全量路径")
+        live = []
     if live:
         # K3修（2026-09-13 夜）：live 路径新鲜度抽查——MCP 池可能服务端滞后返回昨日快照。
         # 抽最多3只边缘票（|pct|∈[3,9]）与腾讯实时对照，偏差>1pp 即判定整池过期，转腾讯路径。
