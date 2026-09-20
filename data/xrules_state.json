@@ -19,5 +19,13 @@
    "fired": false,
    "why": "非恐慌期"
   }
+ },
+ "shadow": {
+  "T1-MEGA": {
+   "n": 10,
+   "win%": 20.0,
+   "mean%": -8.43,
+   "open": 0
+  }
  }
 }

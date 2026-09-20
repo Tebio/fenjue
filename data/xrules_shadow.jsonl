@@ -1,0 +1,10 @@
+{"rule": "T1-MEGA", "sig_date": "2026-08-31", "code": "600378", "name": "昊华科技", "entry_date": "2026-09-01", "ep": 52.39, "status": "closed", "exit_date": "2026-09-04", "exit_px": 45.75, "ret": -0.1297, "how": "T+3"}
+{"rule": "T1-MEGA", "sig_date": "2026-08-31", "code": "002971", "name": "和远气体", "entry_date": "2026-09-01", "ep": 46.51, "status": "closed", "exit_date": "2026-09-04", "exit_px": 38.65, "ret": -0.172, "how": "T+3"}
+{"rule": "T1-MEGA", "sig_date": "2026-08-31", "code": "605376", "name": "博迁新材", "entry_date": "2026-09-01", "ep": 149.18, "status": "closed", "exit_date": "2026-09-04", "exit_px": 133.24, "ret": -0.1099, "how": "T+3"}
+{"rule": "T1-MEGA", "sig_date": "2026-08-31", "code": "600869", "name": "远东股份", "entry_date": "2026-09-01", "ep": 18.89, "status": "closed", "exit_date": "2026-09-04", "exit_px": 21.2, "ret": 0.1193, "how": "T+3"}
+{"rule": "T1-MEGA", "sig_date": "2026-08-31", "code": "603618", "name": "杭电股份", "entry_date": "2026-09-01", "ep": 35.02, "status": "closed", "exit_date": "2026-09-04", "exit_px": 36.46, "ret": 0.0381, "how": "T+3"}
+{"rule": "T1-MEGA", "sig_date": "2026-08-31", "code": "002138", "name": "顺络电子", "entry_date": "2026-09-01", "ep": 49.94, "status": "closed", "exit_date": "2026-09-04", "exit_px": 44.49, "ret": -0.1121, "how": "T+3"}
+{"rule": "T1-MEGA", "sig_date": "2026-08-31", "code": "002484", "name": "江海股份", "entry_date": "2026-09-01", "ep": 68.23, "status": "closed", "exit_date": "2026-09-04", "exit_px": 56.32, "ret": -0.1776, "how": "T+3"}
+{"rule": "T1-MEGA", "sig_date": "2026-08-31", "code": "000636", "name": "风华高科", "entry_date": "2026-09-01", "ep": 55.59, "status": "closed", "exit_date": "2026-09-04", "exit_px": 48.41, "ret": -0.1322, "how": "T+3"}
+{"rule": "T1-MEGA", "sig_date": "2026-08-31", "code": "603938", "name": "三孚股份", "entry_date": "2026-09-01", "ep": 45.66, "status": "closed", "exit_date": "2026-09-04", "exit_px": 39.49, "ret": -0.1381, "how": "T+3"}
+{"rule": "T1-MEGA", "sig_date": "2026-08-31", "code": "600580", "name": "卧龙电驱", "entry_date": "2026-09-01", "ep": 29.4, "status": "closed", "exit_date": "2026-09-04", "exit_px": 28.64, "ret": -0.0289, "how": "T+3"}

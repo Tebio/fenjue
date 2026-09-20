@@ -177,6 +177,11 @@ def main():
                     L.append(f'      买：{_xs["entry_day"]}开盘；卖：{"T+3收盘" if _rule == "T1-MEGA" else "T+5收盘或-12%止损"}')
                 else:
                     L.append(f'   · {_label}：未触发（{_r.get("why", "?")}）')
+            _sh = _xs.get("shadow") or {}
+            if _sh:
+                _sl = " · ".join(f'{r} {s["n"]}单{s["win%"]:.0f}%胜/{s["mean%"]:+.1f}%（在途{s.get("open", 0)}）'
+                                 for r, s in _sh.items())
+                L.append(f'   📒影子对账：{_sl}（巨簇日逐批中位仅+0.9%/41%批次亏损，单批胜负方差大，看累计别看单批）')
     except FileNotFoundError:
         pass
     L.append("")

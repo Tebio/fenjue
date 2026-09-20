@@ -19,7 +19,10 @@ import law_pipeline as lp
 
 ROOT = Path("/opt/data/fenjue")
 OUT = ROOT / "data" / "xrules_state.json"
+SHADOW = ROOT / "data" / "xrules_shadow.jsonl"
 FEE = 0.003
+EXIT_N = {'T1-MEGA': 3, 'X2': 5, 'X3': 5}
+STOP12 = {'X2', 'X3'}  # X2/X3 带 -12% 止损（T1-MEGA 无止损，T+3 硬出）
 
 DETS_PANIC = {'跌停底座': '组合_跌停低_三连阴', '复活门': '反转族_跌停潮50', '摇篮': '妖股摇篮_成簇',
               'TD9输家': '组合_跌停低_TD9买_输家250', 'TD9超跌': '组合_跌停低_TD9买_超跌20'}
@@ -29,6 +32,88 @@ GATED = {'跌停底座', 'TD9输家', 'TD9超跌'}
 
 def wd_cn(ds):
     return '一二三四五'[date(int(ds[:4]), int(ds[5:7]), int(ds[8:10])).weekday()]
+
+
+# ── X规则影子盘（前向对账，L5）：触发登记→次日回填→出场结算→汇总 ──
+def shadow_load():
+    if not SHADOW.exists():
+        return []
+    return [json.loads(x) for x in SHADOW.read_text().splitlines() if x.strip()]
+
+
+def shadow_register(entries):
+    have = {(e['rule'], e['sig_date'], e['code']) for e in shadow_load()}
+    new = [e for e in entries if (e['rule'], e['sig_date'], e['code']) not in have]
+    if new:
+        with SHADOW.open('a') as f:
+            for e in new:
+                f.write(json.dumps(e, ensure_ascii=False) + '\n')
+    return len(new)
+
+
+def shadow_backfill(stocks, cal):
+    """回填在途单：入场价→T1→出场（T1-MEGA=T+3硬出；X2/X3=T+5或-12%止损先到先出）。
+    返回 (汇总dict, 今日新结算list)。"""
+    rows = shadow_load()
+    if not rows:
+        return {}, []
+    changed = False
+    newly = []
+    for e in rows:
+        if e.get('status') == 'closed':
+            continue
+        d = stocks.get(e['code'])
+        if not d:
+            continue
+        didx = {dt: k for k, dt in enumerate(d['date'])}
+        ei = didx.get(e['entry_date'])
+        if ei is None:
+            continue
+        n = d['n']
+        # 入场价回填
+        if e.get('ep') is None and ei < n:
+            e['ep'] = d['o'][ei] if d['o'][ei] > 0 else d['c'][ei]
+            changed = True
+        ep = e.get('ep')
+        if not ep:
+            continue
+        exit_n = EXIT_N[e['rule']]
+        exit_i = min(ei + exit_n, n - 1)
+        # 止损（X2/X3）：入场后每日收盘 ≤ ep*0.88 → 当日收盘出
+        stop_i = None
+        if e['rule'] in STOP12:
+            for j in range(ei, min(ei + exit_n, n)):
+                if d['c'][j] / ep - 1 <= -0.12:
+                    stop_i = j
+                    break
+        final_i = min(stop_i, exit_i) if stop_i is not None else exit_i
+        if cal[-1] >= d['date'][final_i] and final_i < n:
+            e['exit_date'] = d['date'][final_i]
+            e['exit_px'] = d['c'][final_i]
+            e['ret'] = round(d['c'][final_i] / ep - 1 - FEE, 4)
+            e['status'] = 'closed'
+            e['how'] = '止损' if (stop_i is not None and final_i == stop_i) else f'T+{exit_n}'
+            changed = True
+            newly.append(e)
+    if changed:
+        SHADOW.write_text('\n'.join(json.dumps(e, ensure_ascii=False) for e in rows) + '\n')
+    summ = {}
+    for e in rows:
+        if e.get('status') != 'closed':
+            continue
+        s = summ.setdefault(e['rule'], {'n': 0, 'wins': 0, 'rets': []})
+        s['n'] += 1
+        s['wins'] += 1 if e['ret'] > 0 else 0
+        s['rets'].append(e['ret'])
+    out = {r: {'n': s['n'], 'win%': round(100 * s['wins'] / s['n'], 0),
+               'mean%': round(100 * sum(s['rets']) / s['n'], 2)} for r, s in summ.items()}
+    open_n = {}
+    for e in rows:
+        if e.get('status') != 'closed':
+            open_n[e['rule']] = open_n.get(e['rule'], 0) + 1
+    for r, s in out.items():
+        s['open'] = open_n.get(r, 0)
+    return out, newly
 
 
 def main():
@@ -89,10 +174,17 @@ def main():
     entry_d = cal[cal.index(day) + 1] if day in cal and cal.index(day) + 1 < len(cal) else None
     entry_wd = wd_cn(entry_d) if entry_d else '?'
 
+    # 影子盘：先回填历史在途单（今日收盘价=最新一根）
+    shadow_sum, newly_closed = shadow_backfill(stocks, cal)
+
     state = {'date': day, 'regime': rg, 'ldc': ldc, 'gap_cluster': len(gap_sigs),
              'panic_cluster': pan_cl, 'streak': streak.get(day, 0), 'entry_day': entry_d,
-             'rules': {}}
+             'rules': {}, 'shadow': shadow_sum}
     msgs = []
+    if newly_closed:
+        for e in newly_closed[:5]:
+            msgs.append(f"📒 影子结算 {e['rule']} {e['code']} {e.get('name', '')} {100 * e['ret']:+.1f}%（{e['how']}）")
+    shadow_entries = []
 
     # ── T1-MEGA v2 ──
     tier = 1.0 if rg in ('妖股期', '恐慌期') else 0.5
@@ -105,6 +197,9 @@ def main():
             lad = f" 梯队{r['ladder']}板" if r['ladder'] >= 3 else ''
             msgs.append(f"   {r['code']} {r['name']} 量比{r['vr']:.1f}{lad}")
         msgs.append(f"   买：{entry_d}（周{entry_wd}）开盘分散买入；卖：T+3 收盘（全史组合层 55%/+4.45%均笔）")
+        for r in picks:
+            shadow_entries.append({'rule': 'T1-MEGA', 'sig_date': day, 'code': r['code'],
+                                   'name': r['name'], 'entry_date': entry_d, 'ep': None, 'status': 'open'})
     else:
         state['rules']['T1-MEGA'] = {'fired': False, 'why': f"簇{len(gap_sigs)}<20"}
 
@@ -125,6 +220,9 @@ def main():
                 lad = f" 梯队{r['ladder']}板" if r['ladder'] >= 3 else ''
                 msgs.append(f"   {r['code']} {r['name']} {r['claim']} 距60高{r['pos60']:.0%}{lad}")
             msgs.append(f"   买：{entry_d}（周{entry_wd}）开盘；卖：T+5 收盘或 -12% 止损")
+            for r in picks:
+                shadow_entries.append({'rule': rule, 'sig_date': day, 'code': r['code'],
+                                       'name': r['name'], 'entry_date': entry_d, 'ep': None, 'status': 'open'})
         else:
             why = ('非妖股/恐慌期' if rg not in ('妖股期', '恐慌期')
                    else ('恐慌streak<2（第2天才接）' if rg == '恐慌期' and streak.get(day, 0) < 2
@@ -136,6 +234,9 @@ def main():
             state['rules'][rule] = {'fired': False, 'why': why}
 
     OUT.write_text(json.dumps(state, ensure_ascii=False, indent=1))
+    n_reg = shadow_register([e for e in shadow_entries if e['entry_date']])
+    if n_reg:
+        msgs.append(f"📒 影子登记 {n_reg} 单（{entry_d} 入场回填待跟）")
     if msgs:
         print(f"⚔️ X规则线 {day}（{rg}）判定")
         print("\n".join(msgs))
