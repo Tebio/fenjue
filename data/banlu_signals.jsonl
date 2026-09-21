@@ -16,3 +16,6 @@
 {"date": "2026-09-18", "code": "002785", "name": "万里石", "industry": "C30非金属矿物制品业", "trigger_px": 39.12, "sealed": false, "close": 39.39, "ma60": 35.942, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
 {"date": "2026-09-18", "code": "600719", "name": "大连热电", "industry": "D44电力、热力生产和供应业", "trigger_px": 8.11, "sealed": true, "close": 8.42, "ma60": 7.41, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
 {"date": "2026-09-18", "code": "600325", "name": "华发股份", "industry": "K70房地产业", "trigger_px": 2.5, "sealed": false, "close": 2.48, "ma60": 2.43, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-21", "code": "000031", "name": "大悦城", "industry": "K70房地产业", "trigger_px": 2.36, "sealed": false, "close": 2.37, "ma60": 2.188, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-21", "code": "000069", "name": "华侨城A", "industry": "K70房地产业", "trigger_px": 1.94, "sealed": false, "close": 1.92, "ma60": 1.756, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-21", "code": "000402", "name": "金融街", "industry": "K70房地产业", "trigger_px": 2.67, "sealed": true, "close": 2.77, "ma60": 2.484, "pos": "MA60上", "regime_ok": false, "pos_ok": true}

@@ -146,7 +146,10 @@ def main():
     gap_sigs, pan_sigs = [], []
     for code, d in stocks.items():
         i = d['_didx'].get(day)
-        if i is None or i < lp.START or i + 1 >= d['n'] or lp._epx(d, i) <= 0:
+        # 2026-09-21 致命 off-by-one 修复：原条件 `i+1 >= d['n'] or lp._epx(d,i)<=0` 把
+        # 「信号日=最新一根」全部跳过——生产路径（判定当日）永远零信号，只有历史日回测能出票。
+        # 探测器只需要 ≤i 的历史，入场在明天，不需要 i+1 存在。
+        if i is None or i < lp.START:
             continue
         c, h, v = d['c'], d['h'], d['v']
         hi60 = max(h[max(0, i - 60):i]) if i >= 1 else 0

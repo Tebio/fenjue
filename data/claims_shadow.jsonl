@@ -4096,3 +4096,9 @@
 {"signal_date": "2026-09-18", "claim": "REVERSAL_OPEN_T1", "code": "605177", "tier": null, "stale": "信号日为最后一根bar，无入场日"}
 {"signal_date": "2026-09-18", "claim": "PANIC_DEPTH_DOSE", "code": "605177", "tier": "-3~-5%", "stale": "信号日为最后一根bar，无入场日"}
 {"signal_date": "2026-09-18", "claim": "WATCHPOOL_GRAD", "code": "605188", "tier": null, "entry": 13.12}
+{"signal_date": "2026-09-21", "claim": "REVERSAL_OPEN_T1", "code": "000029", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-21", "claim": "PANIC_DEPTH_DOSE", "code": "000029", "tier": "-5~-7%", "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-21", "claim": "REVERSAL_OPEN_T1", "code": "000333", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-21", "claim": "PANIC_DEPTH_DOSE", "code": "000333", "tier": "-3~-5%", "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-21", "claim": "FRONTRUN_FIRSTBOARD_V2", "code": "000402", "tier": "?", "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-21", "claim": "WATCHPOOL_GRAD", "code": "000402", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}

@@ -972,7 +972,8 @@
    "volratio": 3.1,
    "pct": 4.62,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "000066",
@@ -984,7 +985,8 @@
    "volratio": 3.1,
    "pct": 5.1,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "000069",
@@ -996,7 +998,8 @@
    "volratio": 4.3,
    "pct": 4.92,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "000536",
@@ -1008,7 +1011,8 @@
    "volratio": 3.7,
    "pct": 5.41,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "000790",
@@ -1020,7 +1024,8 @@
    "volratio": 3.4,
    "pct": 6.95,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "001233",
@@ -1032,7 +1037,8 @@
    "volratio": 6.8,
    "pct": 7.44,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "002123",
@@ -1044,7 +1050,8 @@
    "volratio": 3.5,
    "pct": 5.11,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "002146",
@@ -1056,7 +1063,8 @@
    "volratio": 3.4,
    "pct": 5.0,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "002164",
@@ -1068,7 +1076,8 @@
    "volratio": 3.1,
    "pct": 5.82,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "002226",
@@ -1080,7 +1089,8 @@
    "volratio": 5.0,
    "pct": 4.71,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "002244",
@@ -1092,7 +1102,8 @@
    "volratio": 3.0,
    "pct": 6.8,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "002298",
@@ -1104,7 +1115,8 @@
    "volratio": 3.1,
    "pct": 2.22,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "002482",
@@ -1116,7 +1128,8 @@
    "volratio": 3.4,
    "pct": 5.22,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "002965",
@@ -1128,7 +1141,8 @@
    "volratio": 4.5,
    "pct": 6.98,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "600048",
@@ -1140,7 +1154,8 @@
    "volratio": 3.6,
    "pct": 6.77,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "600196",
@@ -1152,7 +1167,8 @@
    "volratio": 3.3,
    "pct": 4.63,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "600266",
@@ -1164,7 +1180,8 @@
    "volratio": 3.3,
    "pct": 4.55,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "600640",
@@ -1176,7 +1193,8 @@
    "volratio": 5.6,
    "pct": 3.98,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "600675",
@@ -1188,7 +1206,8 @@
    "volratio": 3.9,
    "pct": 6.06,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "600835",
@@ -1200,7 +1219,8 @@
    "volratio": 3.9,
    "pct": 4.95,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "600977",
@@ -1212,7 +1232,8 @@
    "volratio": 4.1,
    "pct": 4.64,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "601801",
@@ -1224,7 +1245,8 @@
    "volratio": 3.3,
    "pct": 3.37,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "603016",
@@ -1236,7 +1258,8 @@
    "volratio": 3.2,
    "pct": 6.86,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
   }
  ],
  "graduated": [
