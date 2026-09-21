@@ -42,11 +42,11 @@ def main():
     regime = reg.get("regime", "?")
     lu, ld = reg.get("limit_ups", "?"), reg.get("limit_downs", "?")
 
-    # 深档低位买入名单（与面板同函数）；deep_lastd=信号日（最近交易日）
-    deep_lastd, deep_list = "?", []
+    # 深档低位买入名单（与面板同函数，v2 口径：簇门=深档件(-25%)≥5，出手票=深跌件(≤-35%)）；deep_lastd=信号日（最近交易日）
+    deep_lastd, deep_list, deep_cluster = "?", [], 0
     try:
         from dashboard_build import deep_low_scan
-        deep_lastd, deep_list = deep_low_scan()
+        deep_lastd, deep_list, deep_cluster = deep_low_scan()
     except Exception:
         pass
     sig_date = datetime.date.fromisoformat(deep_lastd) if deep_lastd != "?" else None
@@ -123,32 +123,26 @@ def main():
     L.append("")
 
     L.append("🟢 今日新信号（9:32 竞价确认后才算数）")
-    if deep_list and sig_date:
+    if sig_date:
         sell_d = today  # T+1 尾盘 = 下一个交易日尾盘；交易日历无分钟级需求，按下个交易日近似
         picks = "、".join(f'{nm} {c}({p:+.1f}%)' for c, p, nm in deep_list[:5])
-        # 2026-09-19 成簇口径（零星日全 weekday 负期望，注册可执行形态=K≥5 才出手）
-        # + 周审计状态机接线（底座 DECAYING → 短窗禁用只许 T+20）
-        try:
-            _cs = json.loads(open(D + "/claims_state.json").read()).get("LIMITDOWN_LOW_MA60", {})
-            _cv = _cs.get("history", [{}])[-1].get("verdicts", {}) if _cs.get("status") in ("DECAYING", "DEAD") else None
-        except Exception:
-            _cv = None
-        if len(deep_list) >= 5:
-            L.append(f'1. 深档低位（{fmt(sig_date)} 跌停+低位 · 成簇日{len(deep_list)}只 · T+1 57.8%/赔率1.34 · T+5 69.7%/赔率1.56）：{picks}')
-            if _cv:
-                _t5, _t20 = _cv.get("5", [0, 0, False]), _cv.get("20", [0, 0, False])
-                L.append(f'   🚨 主张 DECAYING（周审计）：滚动250日 T+5 边际 {_t5[0]:+.2f} 破线 → 短窗禁用；'
-                         f'出场只许 入场日+20 尾盘（滚动 T+20 边际 {_t20[0]:+.2f}）。')
-            else:
-                L.append(f'   {fmt(today)} 9:32 竞价非一字跌停 → 开盘买。出场二选一：T+1 尾盘 或 T+5 尾盘'
-                         f'（近250日 T+5 +3.98% 明显好于 T+1 +0.82%，2026 年 T+1 腿为负）；一字跌停=作废')
-            L.append('   持仓中强度分档（8年实测，n=6282）：次日收 ≥+3% → T+5 期望 +11~15%/正收益 88%；'
-                     '次日平淡±3% → +5.2%；【次日跌 ≥3% → 只剩 +1.5%（当日首次破MA60 型是 -3.1%）→ 提前离场】')
+        # 2026-09-22 v2 口径（解剖台双段铁证 #152）：簇门=深档件(收≤MA60×0.75)≥5，
+        # 出手票=其中深跌件(收≤MA60×0.65)；裸底座主张已 DEAD，本口径=锐化后存活子集，不再挂底座状态。
+        if deep_cluster >= 5 and deep_list:
+            L.append(f'1. 深档低位·深跌件（{fmt(sig_date)} 跌停+深度≤-35% · 深档簇{deep_cluster}只 · '
+                     f'出手件 T+5 68%/+11.95% · 19-22 +9.40%/23-26 +12.83% 双段强 · 2026 死补丁期仍 +8.23%）：{picks}')
+            L.append(f'   {fmt(today)} 9:32 竞价非一字跌停 → 开盘买（深度最深优先，最多5只分散）。'
+                     f'出场：T+5 尾盘；一字跌停=作废')
+            L.append('   持仓中强度分档（8年实测）：次日收 ≥+3% → T+5 期望 +11~15%/正收益 88% 拿满；'
+                     '次日平淡±3% → +5.2%；【次日跌 ≥3% → 只剩 +1.5% → 提前离场】')
+        elif deep_cluster >= 5:
+            L.append(f'1. 深档低位：{fmt(sig_date)} 深档簇{deep_cluster}只≥5 但无一只深度≤-35% → 不出手'
+                     f'（-35~-25% 浅带近段已死 51%/+0.30%，宁可错过）')
+        elif deep_cluster > 0:
+            L.append(f'1. 深档低位：{fmt(sig_date)} 深档件仅 {deep_cluster} 只（零星日<5）→ 不出手'
+                     f'（零星日 T+5 41.8%/-1.26% 有毒）')
         else:
-            L.append(f'1. 深档低位：{fmt(sig_date)} 仅 {len(deep_list)} 只（零星日<5）→ 不出手'
-                     f'（8年零星日信号全 weekday 负期望 -0.2~-1.4%/36~45%，可执行形态=成簇日≥5 只）')
-    else:
-        L.append(f'1. 深档低位：{deep_lastd} 无合格标的')
+            L.append(f'1. 深档低位：{deep_lastd} 无合格标的')
     # 妖股摇篮（DEMON_CRADLE_CLUSTER）：只在成簇日说话（年 1-3 次）
     try:
         from dashboard_build import cradle_scan
@@ -169,12 +163,14 @@ def main():
         _xs = json.loads(open(D + "/xrules_state.json").read())
         if _xs.get("date") == deep_lastd:
             L.append(f'3. ⚔️X规则线（{_xs["date"]} {_xs["regime"]} · 跌停{_xs["ldc"]} · 缺口低簇{_xs["gap_cluster"]} · 恐慌streak{_xs["streak"]}）：')
-            for _rule, _label in (("T1-MEGA", "T1-MEGA巨簇分散"), ("X2", "X2妖股大簇"), ("X3", "X3恐慌狙击")):
+            for _rule, _label in (("T1-MEGA", "T1-MEGA巨簇分散"), ("X3", "X3恐慌狙击")):
                 _r = _xs.get("rules", {}).get(_rule, {})
                 if _r.get("fired"):
                     _pk = "、".join(f'{p["name"]}{p["code"]}' for p in _r.get("picks", [])[:5])
                     L.append(f'   🔥{_label}触发 → {_pk}{"…" if len(_r.get("picks", [])) > 5 else ""}')
                     L.append(f'      买：{_xs["entry_day"]}开盘；卖：{"T+3收盘" if _rule == "T1-MEGA" else "T+5收盘或-12%止损"}')
+                    if _r.get("vr_dropped"):
+                        L.append(f'      （已剔量比<1 票 {_r["vr_dropped"]} 只）')
                 else:
                     L.append(f'   · {_label}：未触发（{_r.get("why", "?")}）')
             _sh = _xs.get("shadow") or {}

@@ -198,29 +198,40 @@ def main():
     shadow_entries = []
 
     # ── T1-MEGA v2 ──
+    # 2026-09-22 解剖台复验（#152）：生产语境下 vr<1 票有毒（42%/-1.16%，近年段 -3.28%）→ 选票剔 vr<1；
+    # 梯队≥3 优先维持（妖股期语境双段复验成立 56%/+1.34% vs <3 35%/-1.24%）。
     tier = 1.0 if rg in ('妖股期', '恐慌期') else 0.5
     if len(gap_sigs) >= 20 and entry_d:
-        picks = sorted(gap_sigs, key=lambda r: (-(r['ladder'] >= 3), -r['vr']))[:10]
-        state['rules']['T1-MEGA'] = {'fired': True, 'tier': tier,
-                                     'picks': [{k: r[k] for k in ('code', 'name', 'vr', 'ladder', 'pos60')} for r in picks]}
-        msgs.append(f"🔥 T1-MEGA v2 触发（缺口低簇 {len(gap_sigs)}≥20，{rg}={'全仓' if tier == 1 else '半仓'}）：")
-        for r in picks:
-            lad = f" 梯队{r['ladder']}板" if r['ladder'] >= 3 else ''
-            msgs.append(f"   {r['code']} {r['name']} 量比{r['vr']:.1f}{lad}")
-        msgs.append(f"   买：{entry_d}（周{entry_wd}）开盘分散买入；卖：T+3 收盘（全史组合层 55%/+4.45%均笔）")
-        for r in picks:
-            shadow_entries.append({'rule': 'T1-MEGA', 'sig_date': day, 'code': r['code'],
-                                   'name': r['name'], 'entry_date': entry_d, 'ep': None, 'status': 'open'})
+        ranked = sorted(gap_sigs, key=lambda r: (-(r['ladder'] >= 3), -r['vr']))
+        picks = [r for r in ranked if r['vr'] >= 1][:10]
+        dropped = len(ranked[:10]) - len(picks)
+        state['rules']['T1-MEGA'] = {'fired': bool(picks), 'tier': tier,
+                                     'picks': [{k: r[k] for k in ('code', 'name', 'vr', 'ladder', 'pos60')} for r in picks],
+                                     'vr_dropped': dropped}
+        if picks:
+            msgs.append(f"🔥 T1-MEGA v2 触发（缺口低簇 {len(gap_sigs)}≥20，{rg}={'全仓' if tier == 1 else '半仓'}）：")
+            for r in picks:
+                lad = f" 梯队{r['ladder']}板" if r['ladder'] >= 3 else ''
+                msgs.append(f"   {r['code']} {r['name']} 量比{r['vr']:.1f}{lad}")
+            if dropped:
+                msgs.append(f"   （剔量比<1 票 {dropped} 只——解剖台：该档 42%/-1.16% 有毒）")
+            msgs.append(f"   买：{entry_d}（周{entry_wd}）开盘分散买入；卖：T+3 收盘（全史组合层 55%/+4.45%均笔）")
+            for r in picks:
+                shadow_entries.append({'rule': 'T1-MEGA', 'sig_date': day, 'code': r['code'],
+                                       'name': r['name'], 'entry_date': entry_d, 'ep': None, 'status': 'open'})
+        else:
+            state['rules']['T1-MEGA']['why'] = '簇≥20 但排序前10全部量比<1（有毒档全剔）→ 不出票'
     else:
         state['rules']['T1-MEGA'] = {'fired': False, 'why': f"簇{len(gap_sigs)}<20"}
 
-    # ── X2 / X3（浅跌前三，梯队标签）──
+    # ── X3（浅跌前三，梯队标签）；X2 已停用（2026-09-22 解剖台：12 维无一活格 t<2.3，组合层实测拖后腿）──
     shallow = sorted(pan_sigs, key=lambda r: -r['pos60'])
     x3_ok = rg == '恐慌期' and streak.get(day, 0) >= 2 and big
-    x2_ok = rg in ('妖股期', '恐慌期') and big and not (rg == '恐慌期' and streak.get(day, 0) < 2)
     if entry_d and date(int(entry_d[:4]), int(entry_d[5:7]), int(entry_d[8:10])).weekday() == 0:
-        x3_ok = x2_ok = False  # 跳周一
-    for rule, ok in (('X2', x2_ok), ('X3', x3_ok)):
+        x3_ok = False  # 跳周一
+    state['rules']['X2'] = {'fired': False, 'why': '已停用（2026-09-22 解剖台全维无活格）',
+                            'retired': True}
+    for rule, ok in (('X3', x3_ok),):
         if ok and shallow:
             picks = shallow[:3]
             state['rules'][rule] = {'fired': True,

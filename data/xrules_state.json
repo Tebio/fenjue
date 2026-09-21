@@ -13,7 +13,8 @@
   },
   "X2": {
    "fired": false,
-   "why": "非大簇日"
+   "why": "已停用（2026-09-22 解剖台全维无活格）",
+   "retired": true
   },
   "X3": {
    "fired": false,

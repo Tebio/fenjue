@@ -230,7 +230,12 @@ def cradle_scan():
 
 
 def deep_low_scan():
-    """深档低位（≤-9.5% 且 MA60下）全库扫描。返回 (最近交易日, [(code, pct), ...])。"""
+    """深档低位 v2（2026-09-22 升级：解剖台双段铁证 #152）：
+    簇门 = 当日全库「≤-9.5% 且收<MA60 且 收≤MA60×0.75」深档件数 ≥5（验证过的成簇结构）；
+    出手票 = 其中 收≤MA60×0.65（深度≤-35%）的锐化子集，按深度最深排序。
+    返回 (最近交易日, picks[(code, pct, name)], cluster_n)。
+    锐化证据：≤-35% 68%/+11.95%（t6.3，19-22 +9.40 / 23-26 +12.83 双段强，2026 死补丁期 60%/+8.23% 仍正）；
+    -35~-25% 带近段已死（51%/+0.30%）。"""
     import glob as _g
     try:
         names = {str(s["code"]).zfill(6): s.get("name", "")
@@ -246,7 +251,8 @@ def deep_low_scan():
                     lastd = next(iter(ov.values()))["date"]
             except Exception:
                 ov = {}
-        out = []
+        deep_events = []   # 深档件（-25% 口径，簇门计数）
+        out = []           # 出手票（-35% 锐化）
         for fp in _g.glob(str(D / "big_kcache" / "*.json")):
             c0 = fp.rsplit("/", 1)[-1].replace(".json", "")
             if c0[:2] not in ("60", "00"):
@@ -262,16 +268,20 @@ def deep_low_scan():
                 p0 = (ks[-1]["close"] / ks[-2]["close"] - 1) * 100
                 if p0 <= -9.5:
                     ma = sum(k["close"] for k in ks[-60:]) / 60
-                    if ks[-1]["close"] < ma:
+                    if ks[-1]["close"] < ma and ks[-1]["close"] <= ma * 0.75:
                         nm0 = names.get(c0, "")
                         if "ST" in nm0 or "退" in nm0:
                             continue     # 2026-09-18：风险警示/退市整理期剔除（*ST英飞实测 -10% 可达但不可做）
-                        out.append((c0, p0, nm0))
+                        depth = ks[-1]["close"] / ma - 1
+                        deep_events.append((c0, p0, nm0, depth))
+                        if depth <= -0.35:
+                            out.append((c0, p0, nm0, depth))
             except Exception:
                 continue
-        return lastd, sorted(out, key=lambda x: x[1])
+        # 按深度最深排序（验证口径=depth 排序取前5；pct 仅展示）
+        return lastd, [(c, p, nm) for c, p, nm, _ in sorted(out, key=lambda x: x[3])], len(deep_events)
     except Exception:
-        return "?", []
+        return "?", [], 0
 
 
 def kpi(name, pill, pill_cls, big, small, line):
@@ -295,7 +305,7 @@ def main():
     S = {"今日": [], "我的钱": [], "研究库": [], "证据库": []}
 
     # ══ 数据装载（全部只读）══
-    _deep_lastd, _deep = deep_low_scan()
+    _deep_lastd, _deep, _deep_cluster = deep_low_scan()
     wp = jload(D / "watch_pool.json", {})
     rev = jload(D / "reversal_list.json", {})
     reg = None
@@ -389,7 +399,7 @@ def main():
     xrules_html = ""
     if _xs.get("date") == sig_date:
         rows = []
-        for rule, label in (("T1-MEGA", "T1-MEGA巨簇分散"), ("X2", "X2妖股大簇"), ("X3", "X3恐慌狙击")):
+        for rule, label in (("T1-MEGA", "T1-MEGA巨簇分散"), ("X3", "X3恐慌狙击")):
             r = _xs.get("rules", {}).get(rule, {})
             if r.get("fired"):
                 pk = "、".join(f'{p["name"]}{p.get("ladder", 0) >= 3 and "🪜" or ""}' for p in r.get("picks", [])[:5])
@@ -401,8 +411,7 @@ def main():
     # 🎯 X门距仪表盘（盘中 10:30/13:30 追踪器 + 15:35 近收盘快照落盘，代理口径）
     _xg = jload(D / "xgate_intraday.json", {})
     if _xg.get("gap_low_n") is not None:
-        _n, _x2g, _mg = _xg["gap_low_n"], _xg.get("x2_gate", 8), _xg.get("mega_gate", 20)
-        _x2s = f'<span class="up">✅已过</span>' if _n >= _x2g else f'差{_x2g - _n}只'
+        _n, _mg = _xg["gap_low_n"], _xg.get("mega_gate", 20)
         _mgs = f'<span class="up">✅已过</span>' if _n >= _mg else f'差{_mg - _n}只'
         _bar = min(_n / _mg, 1) * 100
         _top = "、".join(f'{t[0]}({t[2]:+.1f}%)' for t in (_xg.get("top") or [])[:6])
@@ -410,8 +419,8 @@ def main():
             f'<div style="font-size:20px;font-weight:700">低开低走簇 {_n} 只</div>'
             f'<div style="background:var(--soft);border-radius:6px;height:8px;margin:6px 0">'
             f'<div style="width:{_bar:.0f}%;height:8px;border-radius:6px;background:'
-            f'{"var(--up)" if _n >= _x2g else "#c9a227"}"></div></div>'
-            f'X2门(≥{_x2g})：{_x2s} ｜ T1-MEGA门(≥{_mg})：{_mgs}<br>'
+            f'{"var(--up)" if _n >= _mg else "#c9a227"}"></div></div>'
+            f'簇门≥{_mg}：{_mgs}<br>'
             f'<span class="mut">触及跌停 {_xg.get("limitdown_touch_n", "?")} · 涨停 {_xg.get("limitup_n", "?")}'
             f' · {_xg.get("ts", "?")} · 代理口径，官方判定 19:15</span>'
             + (f'<br><span class="mut">簇前列：{esc(_top)}</span>' if _top else ""))
@@ -421,14 +430,14 @@ def main():
     # ══ 今日 ══
     # KPI 健康条
     n_deep = len(_deep)
+    n_deep_cluster = _deep_cluster
     lin_n = len([e for e in (wp or {}).get("pool", []) if 1 <= e.get("days", 0) <= 5]) if wp else 0
     n_rev = len(rev.get("candidates", [])) if rev else 0
     kpis = '<div class="kpis">' + "".join([
-        kpi("🥇 深档低位", "🟢健康", "ok", "57.8%", "赔率1.34 · T+1",
-            '跌停+MA60下方 · 8年1.4万次（剔买不到的一字跌停）· T+1 均赢+5.82%/均亏-4.34% · '
-            'T+5 胜率69.7%/赔率1.56（近250日 +3.98% 比 T+1 +0.82% 更稳）· 六道闸门全过 · '
-            f'上次命中：宏盛股份9/14涨停✓ · {_seas}'
-            + (f' · <b>信号{min(n_deep,3)}只</b>' if n_deep else ' · 今日无标的')),
+        kpi("🥇 深档低位·深跌件", "🟢健康", "ok", "68%", "T+5 均+11.95%",
+            '跌停+收≤MA60×0.65（深度≤-35%）· 8年109次 · 19-22 +9.40% / 23-26 +12.83% 双段强 · '
+            '2026死补丁期仍 +8.23% · 簇门=深档件≥5（-35~-25%浅带已死不出手）· '
+            f'簇{n_deep_cluster}只' + (f' · <b>出手{min(n_deep,5)}只</b>' if n_deep else ' · 今日无深跌件')),
         kpi("🏗️ 观察池临启动", "🟢健康", "ok", "58.9%", "历史口径",
             f'71.6%入池3日内启动 · {lin_n}只在窗口期 · 影子验证中'),
         kpi("⚡ B5半路板", "🟢健康", "ok", "48.7%", "低胜率厚尾",
@@ -469,21 +478,26 @@ def main():
 
     # 新信号 steps
     steps = []
-    if _deep and len(_deep) >= 5:
+    if _deep and n_deep_cluster >= 5:
         names = "、".join(f'{nm}({c},{p:+.1f}%)' for c, p, nm in _deep[:3])
         steps.append(step("1", "#edf5ee", "#1e7e34",
                           f'{fmt_d(buy_day)} 9:32 买 · {names}',
-                          f'{fmt_d(sig_date)} 跌停+低位（成簇日{len(_deep)}只 · 胜率57.6%）。竞价不是一字跌停 → 开盘买 → '
+                          f'{fmt_d(sig_date)} 跌停+深度≤-35%（深档簇{n_deep_cluster}只 · 出手件 T+5 68%/+11.95%）。竞价不是一字跌停 → 开盘买 → '
                           f'<b>{fmt_d(sell_day)} 尾盘卖</b>。一字跌停 = 作废。'))
-    elif _deep:
+    elif n_deep_cluster >= 5:
         steps.append(step("1", "#f7f6f3", "#9b9a97",
-                          f'{fmt_d(buy_day)} · 深档低位零星日（{len(_deep)}只）不出手',
-                          f'{fmt_d(sig_date)} 仅 {len(_deep)} 只（<5 成簇线）。零星日信号 8 年全 weekday 负期望，'
-                          f'可执行形态=成簇日 ≥5 只。没簇 = 空仓休息，空仓也是操作。'))
+                          f'{fmt_d(buy_day)} · 深档成簇但无深跌件，不出手',
+                          f'{fmt_d(sig_date)} 深档件{n_deep_cluster}只（≥5 成簇）但无一只深度≤-35%。'
+                          f'-35~-25% 浅带近段已死（51%/+0.30%），宁可错过。'))
+    elif _deep_cluster > 0:
+        steps.append(step("1", "#f7f6f3", "#9b9a97",
+                          f'{fmt_d(buy_day)} · 深档低位零星日（簇{_deep_cluster}只）不出手',
+                          f'{fmt_d(sig_date)} 深档件仅 {_deep_cluster} 只（<5 成簇线）。零星日 8 年负期望（T+5 41.8%/-1.26%），'
+                          f'可执行形态=成簇日 ≥5 只且深度≤-35%。没簇 = 空仓休息，空仓也是操作。'))
     else:
         steps.append(step("1", "#f7f6f3", "#9b9a97",
                           f'{fmt_d(buy_day)} · 深档低位无合格标的',
-                          f'{fmt_d(sig_date)} 没有「跌停+低位」的票。没信号 = 空仓休息，空仓也是操作。'))
+                          f'{fmt_d(sig_date)} 没有「跌停+深跌」的票。没信号 = 空仓休息，空仓也是操作。'))
     # 妖股摇篮（DEMON_CRADLE_CLUSTER）：只在成簇日出现（年 1-3 次，平时静默）
     try:
         _crd, _cr, _crc = cradle_scan()
@@ -621,9 +635,9 @@ def main():
 
     # ══ 研究库 ══
     ov = []
-    ov.append(["🥇 深档低位", "71.6%", "🟢健康",
-               f"信号 {n_deep} 只 · {_seas}" if n_deep else f"今日无（没大跌日就没票）· {_seas}",
-               "跌停且收盘在 MA60 下方 → 次日开盘买，持有 5 天。上方的不做"])
+    ov.append(["🥇 深档低位·深跌件", "68%", "🟢健康",
+               f"深档簇 {n_deep_cluster} 只 · 出手 {n_deep} 只" if n_deep_cluster else f"今日无（没大跌日就没票）",
+               "跌停+收≤MA60×0.65（深度≤-35%）且簇≥5 → 次日开盘买，T+5 尾盘出。浅带/零星日不做"])
     ov.append(["🏗️ 观察池临启动", "58.9%", "🟢健康",
                f"{lin_n} 只在窗口期" if lin_n else "今日无",
                "等它首板+板块 3 只涨停才买，雷达会喊"])
@@ -705,14 +719,14 @@ def main():
     # 信号明细（行动单的全量版本）
     if _deep:
         rows_d = [[f'{esc(nm)}<br><span class="muted">{c0}</span>',
-                   pct(p0), '<span class="up">MA60下✓</span>',
-                   '<span class="muted">跌停接L2+ +2.65%/57.6%（剔一字后）</span>',
+                   pct(p0), '<span class="up">深度≤-35%✓</span>',
+                   '<span class="muted">深跌件 T+5 68%/+11.95%（双段+2026皆正）</span>',
                    "竞价一字跌停=作废；封死板买不进则放弃",
                    f'<span data-q="{("sh" if c0.startswith("6") else "sz")+c0}" data-f="r"><span class="muted">…</span></span>']
                   for c0, p0, nm in _deep[:5]]
         S["证据库"].append(card("深档低位 · 信号明细",
                                 table(["标的", "昨跌幅", "位置", "历史口径", "作废条件", "现在"], rows_d),
-                                f"{fmt_d(sig_date)} 深档≤-9.5%全扫 · 只留MA60下（高位断板大面已剔除）",
+                                f"{fmt_d(sig_date)} 深档≤-9.5%全扫 · 只留收≤MA60×0.65 深跌件（深度最深优先）",
                                 "全库扫描不是名单切片——9/14 宏盛股份涨停就是这条的命中。",
                                 collapsed=True, tab="证据库"))
     if lin:
@@ -1067,8 +1081,8 @@ def main():
     S["研究库"].insert(0, card("⚔️ 打法库 · 全规则链终版（2026-09-20 三审全过）", f"""
 <table><thead><tr><th>打法</th><th>扳机</th><th>买/卖</th><th>8年验证</th><th>频率</th></tr></thead><tbody>
 <tr><td><b>X3 恐慌狙击</b></td><td>恐慌期streak≥2+大簇日+非周一</td><td>浅跌前3次日开盘 / T+5或-12%</td><td><span class="up">58%胜 · 盈亏比2.09 · +37.5% · MDD-7.1%</span></td><td>~12次/年</td></tr>
-<tr><td><b>X2 收益王</b></td><td>妖股/恐慌期+大簇日</td><td>同上</td><td><span class="up">54%胜 · +51.4% · MDD-6.9%</span></td><td>~26次/年</td></tr>
-<tr><td><b>T1-MEGA v2 巨簇分散</b></td><td>缺口低簇≥20（任意regime，妖股/恐慌全仓平淡/主线半仓）</td><td>量比前10次日开盘 / T+3收盘</td><td><span class="up">组合层+107%（+53,661元/5万）· 55%胜</span></td><td>~6-15次/年</td></tr>
+<tr><td><b>T1-MEGA v2 巨簇分散</b></td><td>缺口低簇≥20（任意regime；妖股/恐慌全仓平淡/主线半仓；<b>剔量比&lt;1票</b>）</td><td>梯队≥3优先+量比前10次日开盘 / T+3收盘</td><td><span class="up">组合层+107%（+53,661元/5万）· 55%胜 · vr&lt;1档42%/-1.16%已剔</span></td><td>~6-15次/年</td></tr>
+<tr><td class="mut"><b>X2 已停用</b></td><td class="mut">原：妖股/恐慌期+大簇日浅跌前三</td><td class="mut">—</td><td class="mut">解剖台12维无一活格（t&lt;2.3）+组合层实测拖后腿，2026-09-22 退役</td><td class="mut">—</td></tr>
 <tr><td><b>J5 平衡版</b></td><td>妖股/恐慌期+恐慌streak≥2</td><td>浅跌前3 / T+5或-12%</td><td><span class="up">48%胜 · +42.6% · MDD-19.7% · 大市值格68%最肥</span></td><td>~40次/年</td></tr>
 <tr><td><b>红利底仓+网格做T</b></td><td>5只股息锚在买入区（常备）</td><td>底仓不动；±1.5%网格10%库存股T</td><td><span class="up">底仓~15%/年 + 做T增强3~6%/年（江苏银行实测24.2%）</span></td><td>每日</td></tr>
 </tbody></table>
