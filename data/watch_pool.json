@@ -1,97 +1,6 @@
 {
  "pool": [
   {
-   "code": "002354",
-   "name": "天娱数科",
-   "entry_date": "2026-08-31",
-   "entry_close": 8.03,
-   "entry_low": 7.42,
-   "entry_vol": 566495292.0,
-   "volratio": 4.3,
-   "pct": 2.29,
-   "days": 14,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "002367",
-   "name": "康力电梯",
-   "entry_date": "2026-08-31",
-   "entry_close": 5.82,
-   "entry_low": 5.52,
-   "entry_vol": 38470897.0,
-   "volratio": 3.7,
-   "pct": 6.01,
-   "days": 14,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "600780",
-   "name": "通宝能源",
-   "entry_date": "2026-08-31",
-   "entry_close": 6.21,
-   "entry_low": 6.15,
-   "entry_vol": 42415318.0,
-   "volratio": 6.5,
-   "pct": 4.37,
-   "days": 14,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "601169",
-   "name": "北京银行",
-   "entry_date": "2026-08-31",
-   "entry_close": 5.35,
-   "entry_low": 5.19,
-   "entry_vol": 591613233.0,
-   "volratio": 4.5,
-   "pct": 5.11,
-   "days": 14,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "601658",
-   "name": "邮储银行",
-   "entry_date": "2026-08-31",
-   "entry_close": 5.26,
-   "entry_low": 5.04,
-   "entry_vol": 545043129.0,
-   "volratio": 3.8,
-   "pct": 5.41,
-   "days": 14,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "601665",
-   "name": "齐鲁银行",
-   "entry_date": "2026-08-31",
-   "entry_close": 7.03,
-   "entry_low": 6.74,
-   "entry_vol": 131520952.0,
-   "volratio": 3.1,
-   "pct": 6.68,
-   "days": 14,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "603598",
-   "name": "引力传媒",
-   "entry_date": "2026-08-31",
-   "entry_close": 17.93,
-   "entry_low": 16.6,
-   "entry_vol": 30297100.0,
-   "volratio": 3.3,
-   "pct": 6.09,
-   "days": 14,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
    "code": "002389",
    "name": "航天彩虹",
    "entry_date": "2026-09-01",
@@ -100,7 +9,7 @@
    "entry_vol": 36489055.0,
    "volratio": 3.2,
    "pct": 3.27,
-   "days": 13,
+   "days": 14,
    "status": "观察中",
    "shrink": true
   },
@@ -113,7 +22,7 @@
    "entry_vol": 179684683.0,
    "volratio": 3.6,
    "pct": 5.51,
-   "days": 13,
+   "days": 14,
    "status": "观察中",
    "shrink": true
   },
@@ -126,7 +35,7 @@
    "entry_vol": 60885703.0,
    "volratio": 5.6,
    "pct": 2.05,
-   "days": 13,
+   "days": 14,
    "status": "观察中",
    "shrink": true
   },
@@ -139,7 +48,7 @@
    "entry_vol": 36862288.0,
    "volratio": 6.1,
    "pct": 6.35,
-   "days": 13,
+   "days": 14,
    "status": "观察中",
    "shrink": true
   },
@@ -152,9 +61,9 @@
    "entry_vol": 42505283.0,
    "volratio": 3.8,
    "pct": 5.0,
-   "days": 12,
+   "days": 13,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "600435",
@@ -165,7 +74,7 @@
    "entry_vol": 70418800.0,
    "volratio": 3.9,
    "pct": 4.59,
-   "days": 12,
+   "days": 13,
    "status": "观察中",
    "shrink": true
   },
@@ -178,7 +87,7 @@
    "entry_vol": 46348148.0,
    "volratio": 3.3,
    "pct": 4.43,
-   "days": 11,
+   "days": 12,
    "status": "观察中",
    "shrink": true
   },
@@ -191,7 +100,7 @@
    "entry_vol": 476326919.0,
    "volratio": 3.4,
    "pct": 6.27,
-   "days": 10,
+   "days": 11,
    "status": "观察中",
    "shrink": true
   },
@@ -204,7 +113,7 @@
    "entry_vol": 40657806.0,
    "volratio": 89.6,
    "pct": 4.64,
-   "days": 9,
+   "days": 10,
    "status": "观察中",
    "shrink": false
   },
@@ -217,9 +126,9 @@
    "entry_vol": 25177250.0,
    "volratio": 216.9,
    "pct": 5.23,
-   "days": 9,
+   "days": 10,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "000988",
@@ -230,7 +139,7 @@
    "entry_vol": 49175383.0,
    "volratio": 154.6,
    "pct": 6.6,
-   "days": 9,
+   "days": 10,
    "status": "观察中",
    "shrink": false
   },
@@ -243,7 +152,7 @@
    "entry_vol": 13110712.0,
    "volratio": 89.4,
    "pct": 1.9,
-   "days": 9,
+   "days": 10,
    "status": "观察中",
    "shrink": false
   },
@@ -256,7 +165,7 @@
    "entry_vol": 4256632.0,
    "volratio": 149.9,
    "pct": 4.69,
-   "days": 9,
+   "days": 10,
    "status": "观察中",
    "shrink": true
   },
@@ -269,7 +178,7 @@
    "entry_vol": 60950018.0,
    "volratio": 111.7,
    "pct": 6.96,
-   "days": 9,
+   "days": 10,
    "status": "观察中",
    "shrink": true
   },
@@ -282,20 +191,7 @@
    "entry_vol": 49084292.0,
    "volratio": 4.3,
    "pct": 4.9,
-   "days": 8,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "000807",
-   "name": "云铝股份",
-   "entry_date": "2026-09-08",
-   "entry_close": 27.49,
-   "entry_low": 26.91,
-   "entry_vol": 69543006.0,
-   "volratio": 8.5,
-   "pct": 2.61,
-   "days": 8,
+   "days": 9,
    "status": "观察中",
    "shrink": true
   },
@@ -308,7 +204,7 @@
    "entry_vol": 54792359.0,
    "volratio": 9.4,
    "pct": 3.75,
-   "days": 8,
+   "days": 9,
    "status": "观察中",
    "shrink": true
   },
@@ -321,7 +217,7 @@
    "entry_vol": 59350144.0,
    "volratio": 8.4,
    "pct": 2.51,
-   "days": 8,
+   "days": 9,
    "status": "观察中",
    "shrink": true
   },
@@ -334,9 +230,9 @@
    "entry_vol": 33727712.0,
    "volratio": 3.3,
    "pct": 5.63,
-   "days": 8,
+   "days": 9,
    "status": "观察中",
-   "shrink": true
+   "shrink": false
   },
   {
    "code": "600734",
@@ -347,7 +243,7 @@
    "entry_vol": 112704751.0,
    "volratio": 4.4,
    "pct": 6.21,
-   "days": 8,
+   "days": 9,
    "status": "观察中",
    "shrink": true
   },
@@ -360,7 +256,7 @@
    "entry_vol": 51342967.0,
    "volratio": 4.5,
    "pct": 2.22,
-   "days": 7,
+   "days": 8,
    "status": "观察中",
    "shrink": true
   },
@@ -373,7 +269,7 @@
    "entry_vol": 20065010.0,
    "volratio": 3.0,
    "pct": 7.15,
-   "days": 7,
+   "days": 8,
    "status": "观察中",
    "shrink": true
   },
@@ -386,7 +282,7 @@
    "entry_vol": 141823669.0,
    "volratio": 7.4,
    "pct": 2.62,
-   "days": 7,
+   "days": 8,
    "status": "观察中",
    "shrink": true
   },
@@ -399,7 +295,7 @@
    "entry_vol": 28016110.0,
    "volratio": 3.6,
    "pct": 1.58,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": true
   },
@@ -412,7 +308,7 @@
    "entry_vol": 43375910.0,
    "volratio": 3.2,
    "pct": 3.8,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": true
   },
@@ -425,7 +321,7 @@
    "entry_vol": 109599286.0,
    "volratio": 3.7,
    "pct": 2.26,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": true
   },
@@ -438,7 +334,7 @@
    "entry_vol": 59402546.0,
    "volratio": 3.2,
    "pct": 2.97,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": true
   },
@@ -451,7 +347,7 @@
    "entry_vol": 105447513.0,
    "volratio": 4.1,
    "pct": 3.58,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": true
   },
@@ -464,7 +360,7 @@
    "entry_vol": 56850389.0,
    "volratio": 3.5,
    "pct": 2.02,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": false
   },
@@ -477,9 +373,9 @@
    "entry_vol": 54216273.0,
    "volratio": 4.1,
    "pct": 6.11,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "003029",
@@ -490,7 +386,7 @@
    "entry_vol": 18867300.0,
    "volratio": 6.4,
    "pct": 4.86,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": true
   },
@@ -503,7 +399,7 @@
    "entry_vol": 130145750.0,
    "volratio": 3.4,
    "pct": 4.1,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": true
   },
@@ -516,7 +412,7 @@
    "entry_vol": 61003448.0,
    "volratio": 3.1,
    "pct": 3.35,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": true
   },
@@ -529,7 +425,7 @@
    "entry_vol": 24999553.0,
    "volratio": 3.8,
    "pct": 3.34,
-   "days": 5,
+   "days": 6,
    "status": "观察中",
    "shrink": true
   },
@@ -542,20 +438,7 @@
    "entry_vol": 86195237.0,
    "volratio": 5.1,
    "pct": 5.53,
-   "days": 5,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "600104",
-   "name": "上汽集团",
-   "entry_date": "2026-09-11",
-   "entry_close": 11.72,
-   "entry_low": 11.09,
-   "entry_vol": 222907485.0,
-   "volratio": 3.9,
-   "pct": 5.11,
-   "days": 5,
+   "days": 6,
    "status": "观察中",
    "shrink": true
   },
@@ -568,7 +451,7 @@
    "entry_vol": 78821339.0,
    "volratio": 3.5,
    "pct": 3.56,
-   "days": 5,
+   "days": 6,
    "status": "观察中",
    "shrink": true
   },
@@ -581,9 +464,9 @@
    "entry_vol": 13505145.0,
    "volratio": 4.0,
    "pct": 3.4,
-   "days": 5,
+   "days": 6,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "603226",
@@ -594,7 +477,7 @@
    "entry_vol": 14500861.0,
    "volratio": 3.6,
    "pct": 7.41,
-   "days": 5,
+   "days": 6,
    "status": "观察中",
    "shrink": true
   },
@@ -607,7 +490,7 @@
    "entry_vol": 30290700.0,
    "volratio": 4.5,
    "pct": 5.56,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -620,7 +503,7 @@
    "entry_vol": 44958011.0,
    "volratio": 4.3,
    "pct": 3.61,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -633,7 +516,7 @@
    "entry_vol": 129973091.0,
    "volratio": 3.9,
    "pct": 6.12,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -646,7 +529,7 @@
    "entry_vol": 73494512.0,
    "volratio": 3.4,
    "pct": 3.0,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -659,7 +542,7 @@
    "entry_vol": 125428243.0,
    "volratio": 3.1,
    "pct": 6.72,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -672,7 +555,7 @@
    "entry_vol": 225719438.0,
    "volratio": 3.0,
    "pct": 1.36,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -685,7 +568,7 @@
    "entry_vol": 57480104.0,
    "volratio": 4.6,
    "pct": 4.95,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -698,7 +581,7 @@
    "entry_vol": 41446500.0,
    "volratio": 3.5,
    "pct": 4.8,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -711,7 +594,7 @@
    "entry_vol": 267377340.0,
    "volratio": 6.1,
    "pct": 5.84,
-   "days": 3,
+   "days": 4,
    "status": "观察中",
    "shrink": true
   },
@@ -724,9 +607,9 @@
    "entry_vol": 271044247.0,
    "volratio": 3.1,
    "pct": 5.48,
-   "days": 3,
+   "days": 4,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "002346",
@@ -737,7 +620,7 @@
    "entry_vol": 22117698.0,
    "volratio": 3.8,
    "pct": 3.77,
-   "days": 3,
+   "days": 4,
    "status": "观察中",
    "shrink": true
   },
@@ -750,7 +633,7 @@
    "entry_vol": 74906686.0,
    "volratio": 3.1,
    "pct": 4.87,
-   "days": 3,
+   "days": 4,
    "status": "观察中",
    "shrink": true
   },
@@ -763,7 +646,7 @@
    "entry_vol": 11926603.0,
    "volratio": 3.2,
    "pct": 2.26,
-   "days": 3,
+   "days": 4,
    "status": "观察中",
    "shrink": false
   },
@@ -776,7 +659,7 @@
    "entry_vol": 37421174.0,
    "volratio": 3.3,
    "pct": 3.44,
-   "days": 3,
+   "days": 4,
    "status": "观察中",
    "shrink": true
   },
@@ -789,20 +672,7 @@
    "entry_vol": 28856656.0,
    "volratio": 7.4,
    "pct": 7.48,
-   "days": 3,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "000607",
-   "name": "华媒控股",
-   "entry_date": "2026-09-17",
-   "entry_close": 4.04,
-   "entry_low": 3.86,
-   "entry_vol": 55077450.0,
-   "volratio": 3.2,
-   "pct": 5.21,
-   "days": 1,
+   "days": 4,
    "status": "观察中",
    "shrink": true
   },
@@ -815,7 +685,7 @@
    "entry_vol": 18349705.0,
    "volratio": 9.1,
    "pct": 5.82,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -828,7 +698,7 @@
    "entry_vol": 250806540.0,
    "volratio": 4.1,
    "pct": 6.09,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -841,9 +711,9 @@
    "entry_vol": 42694295.0,
    "volratio": 3.2,
    "pct": 4.86,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "002560",
@@ -854,9 +724,9 @@
    "entry_vol": 108086428.0,
    "volratio": 3.5,
    "pct": 4.07,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "002780",
@@ -867,9 +737,9 @@
    "entry_vol": 16149640.0,
    "volratio": 3.1,
    "pct": 2.14,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "002806",
@@ -880,7 +750,7 @@
    "entry_vol": 23477526.0,
    "volratio": 5.6,
    "pct": 3.42,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -893,7 +763,7 @@
    "entry_vol": 25089448.0,
    "volratio": 3.1,
    "pct": 7.03,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -906,7 +776,7 @@
    "entry_vol": 32272424.0,
    "volratio": 4.9,
    "pct": 2.77,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -919,7 +789,7 @@
    "entry_vol": 110143174.0,
    "volratio": 3.0,
    "pct": 7.04,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": false
   },
@@ -932,7 +802,7 @@
    "entry_vol": 142221977.0,
    "volratio": 3.7,
    "pct": 5.76,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -945,7 +815,7 @@
    "entry_vol": 24047100.0,
    "volratio": 5.0,
    "pct": 2.08,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -958,7 +828,7 @@
    "entry_vol": 20203981.0,
    "volratio": 3.0,
    "pct": 3.76,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": false
   },
@@ -971,9 +841,9 @@
    "entry_vol": 45352900.0,
    "volratio": 3.9,
    "pct": 5.18,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "000559",
@@ -984,7 +854,7 @@
    "entry_vol": 78666681.0,
    "volratio": 3.3,
    "pct": 2.99,
-   "days": 0,
+   "days": 1,
    "status": "观察中",
    "shrink": false
   },
@@ -997,33 +867,7 @@
    "entry_vol": 37754139.0,
    "volratio": 4.5,
    "pct": 5.97,
-   "days": 0,
-   "status": "观察中",
-   "shrink": false
-  },
-  {
-   "code": "000756",
-   "name": "新华制药",
-   "entry_date": "2026-09-18",
-   "entry_close": 13.34,
-   "entry_low": 12.77,
-   "entry_vol": 15805704.0,
-   "volratio": 3.0,
-   "pct": 4.55,
-   "days": 0,
-   "status": "观察中",
-   "shrink": false
-  },
-  {
-   "code": "000920",
-   "name": "沃顿科技",
-   "entry_date": "2026-09-18",
-   "entry_close": 13.16,
-   "entry_low": 12.96,
-   "entry_vol": 56714244.0,
-   "volratio": 7.7,
-   "pct": 4.2,
-   "days": 0,
+   "days": 1,
    "status": "观察中",
    "shrink": false
   },
@@ -1036,9 +880,9 @@
    "entry_vol": 19530396.0,
    "volratio": 5.3,
    "pct": 2.16,
-   "days": 0,
+   "days": 1,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "002261",
@@ -1049,9 +893,9 @@
    "entry_vol": 67267204.0,
    "volratio": 3.2,
    "pct": 3.59,
-   "days": 0,
+   "days": 1,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "002685",
@@ -1062,9 +906,9 @@
    "entry_vol": 92778147.0,
    "volratio": 4.5,
    "pct": 6.59,
-   "days": 0,
+   "days": 1,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "002693",
@@ -1075,9 +919,9 @@
    "entry_vol": 43084723.0,
    "volratio": 4.6,
    "pct": 3.48,
-   "days": 0,
+   "days": 1,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "600845",
@@ -1088,9 +932,9 @@
    "entry_vol": 38782905.0,
    "volratio": 5.0,
    "pct": 6.96,
-   "days": 0,
+   "days": 1,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "601369",
@@ -1101,9 +945,9 @@
    "entry_vol": 41755120.0,
    "volratio": 7.1,
    "pct": 7.38,
-   "days": 0,
+   "days": 1,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "603918",
@@ -1114,9 +958,285 @@
    "entry_vol": 23795822.0,
    "volratio": 4.1,
    "pct": 2.78,
-   "days": 0,
+   "days": 1,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
+  },
+  {
+   "code": "000036",
+   "name": "华联控股",
+   "entry_date": "2026-09-21",
+   "entry_close": 4.08,
+   "entry_low": 3.85,
+   "entry_vol": 49990789.0,
+   "volratio": 3.1,
+   "pct": 4.62,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "000066",
+   "name": "中国长城",
+   "entry_date": "2026-09-21",
+   "entry_close": 14.84,
+   "entry_low": 14.15,
+   "entry_vol": 143673104.0,
+   "volratio": 3.1,
+   "pct": 5.1,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "000069",
+   "name": "华侨城A",
+   "entry_date": "2026-09-21",
+   "entry_close": 1.92,
+   "entry_low": 1.79,
+   "entry_vol": 165623993.0,
+   "volratio": 4.3,
+   "pct": 4.92,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "000536",
+   "name": "华映科技",
+   "entry_date": "2026-09-21",
+   "entry_close": 3.7,
+   "entry_low": 3.57,
+   "entry_vol": 172678127.0,
+   "volratio": 3.7,
+   "pct": 5.41,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "000790",
+   "name": "华神科技",
+   "entry_date": "2026-09-21",
+   "entry_close": 4.31,
+   "entry_low": 4.03,
+   "entry_vol": 54566281.0,
+   "volratio": 3.4,
+   "pct": 6.95,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "001233",
+   "name": "海安集团",
+   "entry_date": "2026-09-21",
+   "entry_close": 48.97,
+   "entry_low": 45.89,
+   "entry_vol": 8047404.0,
+   "volratio": 6.8,
+   "pct": 7.44,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "002123",
+   "name": "梦网科技",
+   "entry_date": "2026-09-21",
+   "entry_close": 8.02,
+   "entry_low": 7.66,
+   "entry_vol": 39046056.0,
+   "volratio": 3.5,
+   "pct": 5.11,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "002146",
+   "name": "荣盛发展",
+   "entry_date": "2026-09-21",
+   "entry_close": 1.26,
+   "entry_low": 1.16,
+   "entry_vol": 275125220.0,
+   "volratio": 3.4,
+   "pct": 5.0,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "002164",
+   "name": "宁波东力",
+   "entry_date": "2026-09-21",
+   "entry_close": 11.1,
+   "entry_low": 10.41,
+   "entry_vol": 18571323.0,
+   "volratio": 3.1,
+   "pct": 5.82,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "002226",
+   "name": "江南化工",
+   "entry_date": "2026-09-21",
+   "entry_close": 5.34,
+   "entry_low": 5.08,
+   "entry_vol": 71675944.0,
+   "volratio": 5.0,
+   "pct": 4.71,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "002244",
+   "name": "滨江集团",
+   "entry_date": "2026-09-21",
+   "entry_close": 8.79,
+   "entry_low": 7.96,
+   "entry_vol": 81613837.0,
+   "volratio": 3.0,
+   "pct": 6.8,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "002298",
+   "name": "中电鑫龙",
+   "entry_date": "2026-09-21",
+   "entry_close": 9.2,
+   "entry_low": 8.82,
+   "entry_vol": 124821024.0,
+   "volratio": 3.1,
+   "pct": 2.22,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "002482",
+   "name": "广田集团",
+   "entry_date": "2026-09-21",
+   "entry_close": 1.41,
+   "entry_low": 1.33,
+   "entry_vol": 160150025.0,
+   "volratio": 3.4,
+   "pct": 5.22,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "002965",
+   "name": "祥鑫科技",
+   "entry_date": "2026-09-21",
+   "entry_close": 33.28,
+   "entry_low": 32.68,
+   "entry_vol": 41209267.0,
+   "volratio": 4.5,
+   "pct": 6.98,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "600048",
+   "name": "保利发展",
+   "entry_date": "2026-09-21",
+   "entry_close": 5.68,
+   "entry_low": 5.22,
+   "entry_vol": 483399056.0,
+   "volratio": 3.6,
+   "pct": 6.77,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "600196",
+   "name": "复星医药",
+   "entry_date": "2026-09-21",
+   "entry_close": 23.05,
+   "entry_low": 22.12,
+   "entry_vol": 35026290.0,
+   "volratio": 3.3,
+   "pct": 4.63,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "600266",
+   "name": "城建发展",
+   "entry_date": "2026-09-21",
+   "entry_close": 4.37,
+   "entry_low": 4.11,
+   "entry_vol": 72774048.0,
+   "volratio": 3.3,
+   "pct": 4.55,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "600640",
+   "name": "国脉文化",
+   "entry_date": "2026-09-21",
+   "entry_close": 12.54,
+   "entry_low": 11.95,
+   "entry_vol": 52012071.0,
+   "volratio": 5.6,
+   "pct": 3.98,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "600675",
+   "name": "中华企业",
+   "entry_date": "2026-09-21",
+   "entry_close": 2.45,
+   "entry_low": 2.27,
+   "entry_vol": 115620235.0,
+   "volratio": 3.9,
+   "pct": 6.06,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "600835",
+   "name": "上海机电",
+   "entry_date": "2026-09-21",
+   "entry_close": 18.66,
+   "entry_low": 18.2,
+   "entry_vol": 14205709.0,
+   "volratio": 3.9,
+   "pct": 4.95,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "600977",
+   "name": "中国电影",
+   "entry_date": "2026-09-21",
+   "entry_close": 13.53,
+   "entry_low": 12.93,
+   "entry_vol": 62930871.0,
+   "volratio": 4.1,
+   "pct": 4.64,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "601801",
+   "name": "皖新传媒",
+   "entry_date": "2026-09-21",
+   "entry_close": 5.52,
+   "entry_low": 5.35,
+   "entry_vol": 45045305.0,
+   "volratio": 3.3,
+   "pct": 3.37,
+   "days": 0,
+   "status": "观察中"
+  },
+  {
+   "code": "603016",
+   "name": "新宏泰",
+   "entry_date": "2026-09-21",
+   "entry_close": 32.57,
+   "entry_low": 30.55,
+   "entry_vol": 10190354.0,
+   "volratio": 3.2,
+   "pct": 6.86,
+   "days": 0,
+   "status": "观察中"
   }
  ],
  "graduated": [
@@ -1866,6 +1986,48 @@
    "status": "毕业",
    "shrink": false,
    "graduate_date": "2026-09-18"
+  },
+  {
+   "code": "002367",
+   "name": "康力电梯",
+   "entry_date": "2026-08-31",
+   "entry_close": 5.82,
+   "entry_low": 5.52,
+   "entry_vol": 38470897.0,
+   "volratio": 3.7,
+   "pct": 6.01,
+   "days": 15,
+   "status": "毕业",
+   "shrink": true,
+   "graduate_date": "2026-09-21"
+  },
+  {
+   "code": "000607",
+   "name": "华媒控股",
+   "entry_date": "2026-09-17",
+   "entry_close": 4.04,
+   "entry_low": 3.86,
+   "entry_vol": 55077450.0,
+   "volratio": 3.2,
+   "pct": 5.21,
+   "days": 2,
+   "status": "毕业",
+   "shrink": true,
+   "graduate_date": "2026-09-21"
+  },
+  {
+   "code": "000756",
+   "name": "新华制药",
+   "entry_date": "2026-09-18",
+   "entry_close": 13.34,
+   "entry_low": 12.77,
+   "entry_vol": 15805704.0,
+   "volratio": 3.0,
+   "pct": 4.55,
+   "days": 1,
+   "status": "毕业",
+   "shrink": false,
+   "graduate_date": "2026-09-21"
   }
  ],
  "ejected": [
@@ -4767,9 +4929,126 @@
    "days": 3,
    "status": "出局·破前低",
    "shrink": false
+  },
+  {
+   "code": "002354",
+   "name": "天娱数科",
+   "entry_date": "2026-08-31",
+   "entry_close": 8.03,
+   "entry_low": 7.42,
+   "entry_vol": 566495292.0,
+   "volratio": 4.3,
+   "pct": 2.29,
+   "days": 15,
+   "status": "出局·超时",
+   "shrink": true
+  },
+  {
+   "code": "600780",
+   "name": "通宝能源",
+   "entry_date": "2026-08-31",
+   "entry_close": 6.21,
+   "entry_low": 6.15,
+   "entry_vol": 42415318.0,
+   "volratio": 6.5,
+   "pct": 4.37,
+   "days": 15,
+   "status": "出局·超时",
+   "shrink": true
+  },
+  {
+   "code": "601169",
+   "name": "北京银行",
+   "entry_date": "2026-08-31",
+   "entry_close": 5.35,
+   "entry_low": 5.19,
+   "entry_vol": 591613233.0,
+   "volratio": 4.5,
+   "pct": 5.11,
+   "days": 15,
+   "status": "出局·超时",
+   "shrink": true
+  },
+  {
+   "code": "601658",
+   "name": "邮储银行",
+   "entry_date": "2026-08-31",
+   "entry_close": 5.26,
+   "entry_low": 5.04,
+   "entry_vol": 545043129.0,
+   "volratio": 3.8,
+   "pct": 5.41,
+   "days": 15,
+   "status": "出局·超时",
+   "shrink": true
+  },
+  {
+   "code": "601665",
+   "name": "齐鲁银行",
+   "entry_date": "2026-08-31",
+   "entry_close": 7.03,
+   "entry_low": 6.74,
+   "entry_vol": 131520952.0,
+   "volratio": 3.1,
+   "pct": 6.68,
+   "days": 15,
+   "status": "出局·超时",
+   "shrink": true
+  },
+  {
+   "code": "603598",
+   "name": "引力传媒",
+   "entry_date": "2026-08-31",
+   "entry_close": 17.93,
+   "entry_low": 16.6,
+   "entry_vol": 30297100.0,
+   "volratio": 3.3,
+   "pct": 6.09,
+   "days": 15,
+   "status": "出局·超时",
+   "shrink": true
+  },
+  {
+   "code": "000807",
+   "name": "云铝股份",
+   "entry_date": "2026-09-08",
+   "entry_close": 27.49,
+   "entry_low": 26.91,
+   "entry_vol": 69543006.0,
+   "volratio": 8.5,
+   "pct": 2.61,
+   "days": 9,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "600104",
+   "name": "上汽集团",
+   "entry_date": "2026-09-11",
+   "entry_close": 11.72,
+   "entry_low": 11.09,
+   "entry_vol": 222907485.0,
+   "volratio": 3.9,
+   "pct": 5.11,
+   "days": 6,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "000920",
+   "name": "沃顿科技",
+   "entry_date": "2026-09-18",
+   "entry_close": 13.16,
+   "entry_low": 12.96,
+   "entry_vol": 56714244.0,
+   "volratio": 7.7,
+   "pct": 4.2,
+   "days": 1,
+   "status": "出局·破前低",
+   "shrink": false
   }
  ],
  "seeded": true,
- "updated": "2026-09-18",
+ "updated": "2026-09-21",
  "variant": "B_试盘宽容"
 }

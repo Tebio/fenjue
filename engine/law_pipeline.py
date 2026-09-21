@@ -1019,6 +1019,29 @@ def _gap_down(d, i):
     return d["o"][i]/d["c"][i-1] - 1 <= -0.03
 
 
+# ---- 2026-09-21 反复票白名单×回调（用户立项：recurring winners 盲点，110只反复票咱家只覆盖2只）----
+# 白名单=「近20交易日大涨日(≥+9.5%)≥3次」（严格无前视，i 时点只看 <i 的历史）。
+# 假设：反复票是有资金持续运作的题材载体，其回调接 vs 全市场同形态回调接存在白名单边际。
+def _cbig(d):
+    cb = d.get("_cbig")
+    if cb is None:
+        c, n = d["c"], d["n"]
+        cb = [0] * n
+        cnt = 0
+        for j in range(1, n):
+            if c[j - 1] > 0 and c[j] / c[j - 1] - 1 >= 0.095:
+                cnt += 1
+            cb[j] = cnt
+        d["_cbig"] = cb
+    return cb
+
+
+def _wl(d, i, win=20, need=3):
+    cb = _cbig(d)
+    lo = max(0, i - win - 1)
+    return cb[i - 1] - cb[lo] >= need
+
+
 REGISTRY = {
     "TD9买入": _td9buy,
     "TD9卖出": _td9sell,
@@ -1038,6 +1061,16 @@ REGISTRY = {
     "跌停次日接_剔一字": _limitdown,
     "恐慌深度_≤-9.5": _panic_deep,
     "frontrun_v2": _frontrun_v2,
+    # ---- 2026-09-21 反复票白名单×回调（用户立项）----
+    # 回调日：当日收跌-3~-9.5%（剔跌停刀，那是恐慌族领地）且在白名单
+    "反复票_回调日": lambda d, i: (d["c"][i - 1] > 0
+                               and -0.095 < d["c"][i] / d["c"][i - 1] - 1 <= -0.03
+                               and _wl(d, i)),
+    # 回撤企稳：收盘距5日最高收回撤≥8%且当日非跌停，且在白名单（远东9/16型）
+    "反复票_回撤企稳": lambda d, i: (i >= 5 and d["c"][i - 1] > 0
+                                 and d["c"][i] <= max(d["c"][i - 4:i + 1]) * 0.92
+                                 and d["c"][i] / d["c"][i - 1] - 1 > -0.095
+                                 and _wl(d, i)),
     "watchpool_grad": _watchpool_grad,
     "banlu_b5": _banlu_b5,
     # ---- 祖训1细分（2026-09-13）：反转族按趋势位置分组 ----
