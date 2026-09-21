@@ -1042,6 +1042,47 @@ def _wl(d, i, win=20, need=3):
     return cb[i - 1] - cb[lo] >= need
 
 
+# ---- 2026-09-22 PEAD S4 冲刺：业绩预告事件探测器（数据=data/pead_events.json，39451 条东财业绩预告）----
+# 事件日对齐=NOTICE_DATE 之后第一个指数交易日（公告多在盘后发布；个股当日停牌则该事件自然跳过=保守）。
+# 懒加载 + 空文件守卫（无数据时探测器恒 False，不炸管线）。
+_PEAD_EVENTS = None
+
+
+def _pead_set():
+    global _PEAD_EVENTS
+    if _PEAD_EVENTS is None:
+        import bisect as _bs
+        _PEAD_EVENTS = {}
+        try:
+            idx = json.loads((ROOT / "data/index_sh000001.json").read_text())
+            cal = [k["date"] for k in idx]
+            for e in json.loads((ROOT / "data/pead_events.json").read_text()):
+                code = str(e.get("SECURITY_CODE", "")).zfill(6)
+                nd = (e.get("NOTICE_DATE") or "")[:10]
+                if not code or not nd:
+                    continue
+                j = _bs.bisect_left(cal, nd)
+                if j >= len(cal):
+                    continue
+                _PEAD_EVENTS.setdefault(code, {})[cal[j]] = e
+        except Exception:
+            _PEAD_EVENTS = {}
+    return _PEAD_EVENTS
+
+
+def _pead(d, i, types, min_inc=None, pos=None):
+    e = _pead_set().get(d.get("code", ""), {}).get(d["date"][i])
+    if not e or e.get("FORECASTTYPE") not in types:
+        return False
+    if min_inc is not None and (e.get("INCREASEL") or 0) < min_inc:
+        return False
+    if pos == "low" and not (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]):
+        return False
+    if pos == "high" and not (d["ma60"][i] is not None and d["c"][i] > d["ma60"][i]):
+        return False
+    return True
+
+
 REGISTRY = {
     "TD9买入": _td9buy,
     "TD9卖出": _td9sell,
@@ -1281,6 +1322,13 @@ REGISTRY = {
     "组合_触板低_TD9买_剔亏ST_超跌20": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
                                              and _touch_not_seal(d, i) and _td9buy(d, i)
                                              and _fund_healthy(d, i) and _oversold20_60d(d, i)),
+    # ---- 2026-09-22 PEAD S4（业绩预告漂移，数据 9/12 备好后首次上管线）----
+    "PEAD_预增": lambda d, i: _pead(d, i, {"预增"}),
+    "PEAD_预增50": lambda d, i: _pead(d, i, {"预增"}, min_inc=50),
+    "PEAD_扭亏": lambda d, i: _pead(d, i, {"扭亏"}),
+    "PEAD_首亏": lambda d, i: _pead(d, i, {"首亏"}),
+    "PEAD_预增50_低位": lambda d, i: _pead(d, i, {"预增"}, min_inc=50, pos="low"),
+    "PEAD_预增50_高位": lambda d, i: _pead(d, i, {"预增"}, min_inc=50, pos="high"),
 }
 
 
