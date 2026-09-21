@@ -398,6 +398,25 @@ def main():
                 rows.append(f'<span class="mut">· {label}：{esc(r.get("why", "?"))}</span>')
         xrules_html = (f'<div class="mut">{_xs["date"]} {_xs["regime"]} · 跌停{_xs["ldc"]} · 缺口低簇{_xs["gap_cluster"]} · 恐慌streak{_xs["streak"]}</div>'
                        + "<br>".join(rows))
+    # 🎯 X门距仪表盘（盘中 10:30/13:30 追踪器 + 15:35 近收盘快照落盘，代理口径）
+    _xg = jload(D / "xgate_intraday.json", {})
+    if _xg.get("gap_low_n") is not None:
+        _n, _x2g, _mg = _xg["gap_low_n"], _xg.get("x2_gate", 8), _xg.get("mega_gate", 20)
+        _x2s = f'<span class="up">✅已过</span>' if _n >= _x2g else f'差{_x2g - _n}只'
+        _mgs = f'<span class="up">✅已过</span>' if _n >= _mg else f'差{_mg - _n}只'
+        _bar = min(_n / _mg, 1) * 100
+        _top = "、".join(f'{t[0]}({t[2]:+.1f}%)' for t in (_xg.get("top") or [])[:6])
+        xgate_html = (
+            f'<div style="font-size:20px;font-weight:700">低开低走簇 {_n} 只</div>'
+            f'<div style="background:var(--soft);border-radius:6px;height:8px;margin:6px 0">'
+            f'<div style="width:{_bar:.0f}%;height:8px;border-radius:6px;background:'
+            f'{"var(--up)" if _n >= _x2g else "#c9a227"}"></div></div>'
+            f'X2门(≥{_x2g})：{_x2s} ｜ T1-MEGA门(≥{_mg})：{_mgs}<br>'
+            f'<span class="mut">触及跌停 {_xg.get("limitdown_touch_n", "?")} · 涨停 {_xg.get("limitup_n", "?")}'
+            f' · {_xg.get("ts", "?")} · 代理口径，官方判定 19:15</span>'
+            + (f'<br><span class="mut">簇前列：{esc(_top)}</span>' if _top else ""))
+    else:
+        xgate_html = '<span class="mut">盘中追踪器（10:30/13:30）尚未落盘</span>'
 
     # ══ 今日 ══
     # KPI 健康条
@@ -500,6 +519,7 @@ def main():
                           f"数据截至 {fmt_d(sig_date)}收盘 · 执行日 {fmt_d(buy_day)}", tab="今日"))
     if xrules_html:
         S["今日"].append(card("⚔️ X规则线 · 每晚19:15保真判定", xrules_html, tab="今日"))
+    S["今日"].append(card("🎯 X门距 · 明天有没有票的距离表", xgate_html, tab="今日"))
 
     # 市场状态
     if reg:

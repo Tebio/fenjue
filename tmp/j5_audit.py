@@ -1,0 +1,144 @@
+"""体检修复验证：J5 在保守时序（先入场后出场，当日收盘才释放的槽/现金当日不可用）下是否成立。
+对照：宽松时序（旧）vs 保守时序（新）。"""
+import sys, json, statistics as st
+sys.path.insert(0, 'engine')
+import law_pipeline as lp
+
+stocks = lp.load_universe()
+lp.build_xsection(stocks)
+regime = lp.load_regime()
+CLAIMS = {'跌停底座': '组合_跌停低_三连阴', '复活门': '反转族_跌停潮50', '摇篮': '妖股摇篮_成簇',
+          'TD9输家': '组合_跌停低_TD9买_输家250', 'TD9超跌': '组合_跌停低_TD9买_超跌20'}
+GATED = {'跌停底座', 'TD9输家', 'TD9超跌'}
+FEE = 0.003
+WIN0, WIN1 = '2018-01-01', '2026-09-18'
+IDX = json.loads(open('data/index_sh000001.json').read())
+IDXCAL = [k['date'] for k in IDX]
+CAL = [d for d in IDXCAL if WIN0 <= d <= WIN1]
+streak = {}
+s = 0
+for k in IDX:
+    s = s + 1 if regime.get(k['date']) == '恐慌期' else 0
+    streak[k['date']] = s
+
+raw = []
+for cname, dn in CLAIMS.items():
+    det = lp.REGISTRY[dn]
+    for code, d in stocks.items():
+        n = d['n']
+        c, h = d['c'], d['h']
+        for i in range(lp.START, n - 1):
+            if lp._epx(d, i) <= 0:
+                continue
+            try:
+                if not det(d, i):
+                    continue
+            except Exception:
+                continue
+            hi60 = max(h[max(0, i - 60):i]) if i >= 1 else 0
+            raw.append({'dt': d['date'][i], 'code': code, 'i': i, 'claim': cname,
+                        'rg': regime.get(d['date'][i], '?'),
+                        'pos60': c[i - 1] / hi60 - 1 if hi60 > 0 else 0})
+cl = {}
+for r in raw:
+    if r['claim'] in GATED:
+        cl.setdefault(r['dt'], set()).add(r['code'])
+kept, seen = [], set()
+for r in sorted(raw, key=lambda x: (x['dt'], -x['pos60'])):
+    if r['claim'] in GATED and len(cl.get(r['dt'], set())) < 5 and r['rg'] != '恐慌期':
+        continue
+    key = (r['dt'], r['code'])
+    if key not in seen:
+        seen.add(key)
+        kept.append(r)
+CANDS = []
+for r in kept:
+    d = stocks[r['code']]
+    ei = r['i'] + 1
+    if ei >= d['n']:
+        continue
+    entry_d = d['date'][ei]
+    if not (WIN0 <= entry_d <= WIN1):
+        continue
+    CANDS.append({'entry_d': entry_d, 'pos60': r['pos60'], 'claim': r['claim'],
+                  'code': r['code'], 'rg': r['rg'], 'ep': lp._epx(d, r['i']),
+                  'xi5': min(ei + 5, d['n'] - 1), 'sig_d': r['dt']})
+CANDS.sort(key=lambda x: (x['entry_d'], -x['pos60']))
+
+
+def sim(conservative, w0=WIN0, w1=WIN1):
+    cash = 50000.0
+    positions, trades, eq = [], [], []
+    p = 0
+    for day in [d for d in CAL if w0 <= d <= w1]:
+        def do_exits():
+            nonlocal cash
+            for pos in [x for x in positions if x['exit_d'] == day]:
+                d = stocks[pos['code']]
+                cash += 5000 * (d['c'][pos['xi']] / pos['ep']) * (1 - FEE)
+                trades.append(d['c'][pos['xi']] / pos['ep'] - 1 - FEE)
+            positions[:] = [x for x in positions if x['exit_d'] != day]
+        def do_stops():
+            nonlocal cash
+            for pos in [x for x in positions]:
+                d = stocks[pos['code']]
+                try:
+                    j = d['date'].index(day)
+                except ValueError:
+                    continue
+                if d['c'][j] / pos['ep'] - 1 <= -0.12:
+                    cash += 5000 * (d['c'][j] / pos['ep']) * (1 - FEE)
+                    trades.append(d['c'][j] / pos['ep'] - 1 - FEE)
+                    pos['exit_d'] = day
+            positions[:] = [x for x in positions if x['exit_d'] != day]
+        def do_entries():
+            nonlocal cash, p
+            entered = 0
+            while p < len(CANDS) and CANDS[p]['entry_d'] == day:
+                cd = CANDS[p]
+                p += 1
+                if entered >= 3 or cd['rg'] not in ('妖股期', '恐慌期'):
+                    continue
+                if cd['rg'] == '恐慌期' and streak.get(cd['sig_d'], 0) < 2:
+                    continue
+                if len(positions) < 10 and cash >= 5000:
+                    d = stocks[cd['code']]
+                    cash -= 5000
+                    positions.append({'code': cd['code'], 'ep': cd['ep'], 'xi': cd['xi5'],
+                                      'exit_d': d['date'][cd['xi5']], 'entry_d': day})
+                    entered += 1
+        if conservative:
+            do_entries()   # 开盘入场只用昨日收盘已空的槽/现金
+            do_stops()
+            do_exits()
+        else:
+            do_exits()
+            do_stops()
+            do_entries()
+        mtm = cash
+        for pos in positions:
+            d = stocks[pos['code']]
+            try:
+                j = d['date'].index(day)
+                mtm += 5000 * (d['c'][j] / pos['ep'])
+            except ValueError:
+                mtm += 5000
+        eq.append(mtm)
+    for pos in positions:
+        d = stocks[pos['code']]
+        cash += 5000 * (d['c'][-1] / pos['ep']) * (1 - FEE)
+        trades.append(d['c'][-1] / pos['ep'] - 1 - FEE)
+    pk, mdd = 50000.0, 0.0
+    for e in eq:
+        pk = max(pk, e)
+        mdd = min(mdd, (e - pk) / pk)
+    wins = sum(1 for x in trades if x > 0)
+    return cash, mdd, len(trades), 100 * wins / len(trades), 100 * st.mean(trades), 100 * min(trades)
+
+
+for label, cons in (('宽松时序（旧，当日槽可复用）', False), ('保守时序（新，次日才可用）', True)):
+    r = sim(cons)
+    print(f'{label}: {r[2]}笔 胜率{r[3]:.0f}% 均{r[4]:+.2f}% 期末{r[0]:,.0f}（{100*(r[0]/50000-1):+.1f}%）回撤{100*r[1]:.1f}% 最惨{r[5]:+.1f}%')
+# 保守时序下的 2-9月切片
+r = sim(True, '2026-02-01', '2026-09-18')
+print(f'保守时序 2-9月: {r[2]}笔 胜率{r[3]:.0f}% 期末{r[0]:,.0f}（{100*(r[0]/50000-1):+.1f}%）回撤{100*r[1]:.1f}%')

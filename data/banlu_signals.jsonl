@@ -13,3 +13,6 @@
 {"date": "2026-09-18", "code": "600606", "name": "绿地控股", "industry": "E48土木工程建筑业", "trigger_px": 1.4, "sealed": true, "close": 1.45, "ma60": 1.284, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
 {"date": "2026-09-18", "code": "601811", "name": "新华文轩", "industry": "R86新闻和出版业", "trigger_px": 13.4, "sealed": true, "close": 13.9, "ma60": 11.886, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
 {"date": "2026-09-18", "code": "603867", "name": "新化股份", "industry": "C26化学原料和化学制品制造业", "trigger_px": 32.37, "sealed": false, "close": 32.5, "ma60": 29.782, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-18", "code": "002785", "name": "万里石", "industry": "C30非金属矿物制品业", "trigger_px": 39.12, "sealed": false, "close": 39.39, "ma60": 35.942, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-18", "code": "600719", "name": "大连热电", "industry": "D44电力、热力生产和供应业", "trigger_px": 8.11, "sealed": true, "close": 8.42, "ma60": 7.41, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-18", "code": "600325", "name": "华发股份", "industry": "K70房地产业", "trigger_px": 2.5, "sealed": false, "close": 2.48, "ma60": 2.43, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
