@@ -25,16 +25,32 @@ def code_to_bs(code: str) -> str:
     return ("sh." if code.startswith("6") else "sz.") + code
 
 
-def query(bcode, start, end):
-    rs = bs.query_history_k_data_plus(bcode, FIELDS, start_date=start, end_date=end,
-                                      frequency="d", adjustflag="2")
-    rows = []
-    while rs.error_code == "0" and rs.next():
-        r = rs.get_row_data()
-        if r[1]:
-            rows.append({"date": r[0], "open": float(r[1]), "high": float(r[2]),
-                         "low": float(r[3]), "close": float(r[4]), "volume": float(r[5] or 0)})
-    return rows
+def query(bs_code, start, end, adjust="2"):
+    """带掉线重连：baostock 长会话会被服务端掐（2026-09-21 实锤：第328只后全空响应，
+    3000只被静默跳过还报 ok）。返回 None=查询失败（调用方计入失败连击），[]=当日无数据。"""
+    global _bs_fail
+    for attempt in range(3):
+        rs = bs.query_history_k_data_plus(bs_code, FIELDS, start_date=start, end_date=end,
+                                          frequency="d", adjustflag=adjust)
+        if rs.error_code == "0":
+            rows = []
+            while rs.error_code == "0" and rs.next():
+                r = rs.get_row_data()
+                if r[1]:
+                    rows.append({"date": r[0], "open": float(r[1]), "high": float(r[2]),
+                                 "low": float(r[3]), "close": float(r[4]), "volume": float(r[5] or 0)})
+            return rows
+        # 会话异常 → 重登重试
+        print(f"bs query {bs_code} err={rs.error_code}/{rs.error_msg}，重登({attempt + 1}/3)", flush=True)
+        try:
+            bs.logout()
+        except Exception:
+            pass
+        time.sleep(2 * (attempt + 1))
+        lg = bs.login()
+        if lg.error_code != "0":
+            time.sleep(5)
+    return None
 
 
 def update_index(end):
@@ -68,6 +84,7 @@ def main():
     lg = bs.login()
     assert lg.error_code == "0", lg.error_msg
     updated = upto = seams = errors = 0
+    fail_streak = 0  # 连续查询失败连击：>20 判定会话级故障，退出码1让 cron 报警（防静默"成功"）
     t0 = time.time()
     for idx, fp in enumerate(files):
         code = fp.stem
@@ -80,6 +97,15 @@ def main():
             # 重叠校验窗口：最后 7 天 → 今天
             ov_start = (date.fromisoformat(last) - timedelta(days=7)).isoformat()
             new = query(code_to_bs(code), ov_start, end)
+            if new is None:
+                fail_streak += 1
+                errors += 1
+                if fail_streak > 20:
+                    print(f"FATAL 连续 {fail_streak} 只查询失败（会话级故障），中止待重跑", flush=True)
+                    bs.logout()
+                    sys.exit(1)
+                continue
+            fail_streak = 0
             if not new:
                 continue
             old_by_date = {r["date"]: r for r in rows}
@@ -94,7 +120,7 @@ def main():
                     drift = True
             if drift:
                 full = query(code_to_bs(code), FULL_START, end)
-                if len(full) >= len(rows):
+                if full and len(full) >= len(rows):
                     fp.write_text(json.dumps(full))
                     seams += 1
                     print(f"SEAM-FIX {code}: 复权漂移，全量重拉 {len(rows)}→{len(full)} 行", flush=True)

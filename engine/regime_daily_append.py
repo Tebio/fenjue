@@ -139,6 +139,23 @@ def upsert_log(entry: dict) -> str:
     return action
 
 
+def coverage(day: str) -> float:
+    """big_kcache 中当日 bar 覆盖率（2026-09-21 实锤：baostock 断链只更了 328/3377，
+    下游把 10 涨停当全天 → 垃圾 regime。低于 80% 拒绝写盘）。哨兵阈值 0.6（容错停牌/新退）。"""
+    tot = hit = 0
+    for f in KCACHE.glob("*.json"):
+        if f.stem == "000001":
+            continue
+        tot += 1
+        try:
+            ks = json.loads(f.read_text())
+            if ks and ks[-1]["date"] == day:
+                hit += 1
+        except Exception:
+            pass
+    return hit / tot if tot else 0.0
+
+
 def main():
     if len(sys.argv) > 1:
         days = sys.argv[1:]
@@ -146,6 +163,10 @@ def main():
         idx = json.loads((ROOT / "data/index_sh000001.json").read_text())
         days = [idx[-1]["date"]]
     for day in days:
+        cov = coverage(day)
+        if cov < 0.6:
+            print(f"🚨 {day}: big_kcache 覆盖率仅 {cov:.0%}（<60%），数据不全拒绝落盘——kcache 可能断链，速查")
+            sys.exit(1)
         st = day_stats(day)
         if st is None:
             print(f"{day}: 零板日/无数据，与重建语义一致跳过")

@@ -123,6 +123,14 @@ def main():
     idx = json.loads((ROOT / "data/index_sh000001.json").read_text())
     cal = [k['date'] for k in idx]
     day = sys.argv[1] if len(sys.argv) > 1 else cal[-1]
+    # 覆盖率闸（2026-09-21 实锤：baostock 断链只更了 328/3377，不全数据会写出垃圾判定
+    # 并覆盖掉前一晚的正确状态——低于 60% 拒绝写 state，退出码 1 让 cron 报警。
+    # 只在生产路径（day=最新交易日）启用；历史日重判不受此限）
+    if day == cal[-1]:
+        _cov = sum(1 for d in stocks.values() if d['date'] and d['date'][-1] == day) / max(len(stocks), 1)
+        if _cov < 0.6:
+            print(f"🚨 X规则线 {day}: big_kcache 覆盖率仅 {_cov:.0%}（<60%），数据不全拒绝判定——kcache 可能断链，速查")
+            sys.exit(1)
     # 行业映射与名单
     mmap = json.loads((ROOT / "data/industry_map.json").read_text())
     code2ind = {str(k).zfill(6): v['industry'] for k, v in mmap.items() if isinstance(v, dict) and v.get('industry')}
