@@ -107,6 +107,11 @@ def main():
     stocks = None
     changes, rows = [], []
     for c in claims:
+        # 2026-09-22 夜班修复：注册批次把 kill_line_pp/baseline_pp 写成字符串键（'5'/'20'）
+        # 而 horizon 是 int → KeyError。读取处统一归一成 int 键（比改 26 条注册记录更防再犯）。
+        for fld in ("kill_line_pp", "baseline_pp"):
+            if isinstance(c.get(fld), dict):
+                c[fld] = {int(k): v for k, v in c[fld].items()}
         cid = c["id"]
         det_key = c.get("detector", "")
         s = state.get(cid, {"status": "CANDIDATE", "consecutive_fails": 0, "history": []})

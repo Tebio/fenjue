@@ -1,7 +1,7 @@
 {
  "CANDLE_UPPER_LOW": {
   "status": "DEAD",
-  "consecutive_fails": 6,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-11",
@@ -92,12 +92,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.88,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.05,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CANDLE_LOWER_LOW": {
   "status": "DEAD",
-  "consecutive_fails": 6,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-11",
@@ -188,12 +203,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.65,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.17,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "TD9_BUY": {
   "status": "DEAD",
-  "consecutive_fails": 6,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-11",
@@ -284,6 +314,21 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.48,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.17,
+      0.0,
+      false
+     ]
+    }
    }
   ]
  },
@@ -350,6 +395,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "20": [
+      -2.75,
+      0.2,
+      true
+     ]
+    }
    }
   ]
  },
@@ -386,6 +441,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "1": [
+      0.02,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -418,6 +483,16 @@
     "verdicts": {
      "1": [
       0.11,
+      0.0,
+      true
+     ]
+    }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "1": [
+      0.12,
       0.0,
       true
      ]
@@ -461,6 +536,16 @@
    },
    {
     "date": "2026-09-19",
+    "verdicts": {
+     "1": [
+      0.26,
+      0.0,
+      true
+     ]
+    }
+   },
+   {
+    "date": "2026-09-21",
     "verdicts": {
      "1": [
       0.26,
@@ -519,6 +604,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "1": [
+      1.19,
+      0.0,
+      true
+     ],
+     "5": [
+      0.58,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -570,6 +670,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "1": [
+      0.89,
+      0.0,
+      true
+     ],
+     "5": [
+      0.44,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -606,6 +721,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "1": [
+      7.22,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -615,8 +740,8 @@
   "history": []
  },
  "LIMITDOWN_LOW_MA60": {
-  "status": "DECAYING",
-  "consecutive_fails": 1,
+  "status": "DEAD",
+  "consecutive_fails": 2,
   "history": [
    {
     "date": "2026-09-19",
@@ -632,12 +757,27 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -1.62,
+      0.0,
+      false
+     ],
+     "20": [
+      2.25,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
  "FRONTRUN_LOW_MA60": {
-  "status": "DECAYING",
-  "consecutive_fails": 1,
+  "status": "DEAD",
+  "consecutive_fails": 2,
   "history": [
    {
     "date": "2026-09-19",
@@ -649,6 +789,21 @@
      ],
      "20": [
       -2.88,
+      0.5,
+      false
+     ]
+    }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -1.49,
+      0.3,
+      false
+     ],
+     "20": [
+      -3.67,
       0.5,
       false
      ]
@@ -674,6 +829,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      1.29,
+      0.0,
+      true
+     ],
+     "20": [
+      4.28,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
@@ -691,6 +861,21 @@
      ],
      "20": [
       4.51,
+      0.5,
+      true
+     ]
+    }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      0.18,
+      0.0,
+      true
+     ],
+     "20": [
+      3.77,
       0.5,
       true
      ]
@@ -716,12 +901,27 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      1.32,
+      0.0,
+      true
+     ],
+     "20": [
+      8.49,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
  "COMP_DIPBUY_LOW_BULLISH": {
-  "status": "DECAYING",
-  "consecutive_fails": 1,
+  "status": "DEAD",
+  "consecutive_fails": 2,
   "history": [
    {
     "date": "2026-09-19",
@@ -733,6 +933,21 @@
      ],
      "20": [
       -0.54,
+      0.5,
+      false
+     ]
+    }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.61,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.41,
       0.5,
       false
      ]
@@ -753,12 +968,22 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      0.79,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
  "COMP_REVERSAL_X_BIGUPPER_LOW": {
-  "status": "DECAYING",
-  "consecutive_fails": 1,
+  "status": "DEAD",
+  "consecutive_fails": 2,
   "history": [
    {
     "date": "2026-09-19",
@@ -769,12 +994,22 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.79,
+      0.0,
+      false
+     ]
+    }
    }
   ]
  },
  "COMP_LIMITDOWN_LOW_BIGUPPER": {
-  "status": "DECAYING",
-  "consecutive_fails": 1,
+  "status": "DEAD",
+  "consecutive_fails": 2,
   "history": [
    {
     "date": "2026-09-19",
@@ -790,7 +1025,688 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -1.44,
+      0.0,
+      false
+     ],
+     "20": [
+      0.76,
+      0.5,
+      true
+     ]
+    }
    }
   ]
+ },
+ "COMP_LIMITDOWN_LOW_SHRINK_XFUND": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -6.11,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.29,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_LOSER250_OS20_SHRINK": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_3DOWN_SHRINK": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -3.52,
+      0.0,
+      false
+     ],
+     "20": [
+      0.72,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_BIGUPPER_SHRINK": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_LOSER250_OS20_XFUND": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.76,
+      0.0,
+      false
+     ],
+     "20": [
+      -2.53,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_TD9": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.37,
+      0.0,
+      false
+     ],
+     "20": [
+      12.39,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_LOSER250_OS20_TD9": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_LOW_SHRINK_BIGUPPER": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_LOW_SHRINK_XFUND": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -6.11,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.29,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_LOW_SHRINK_GAPDOWN": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -2.84,
+      0.0,
+      false
+     ],
+     "20": [
+      1.46,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_LOW_3DOWN_LOSER250": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.78,
+      0.0,
+      false
+     ],
+     "20": [
+      3.29,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_LOW_3DOWN_OS20": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      1.53,
+      0.0,
+      true
+     ],
+     "20": [
+      9.28,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_LOW_LOSER250_BIGUPPER": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_LOW_TD9_GAPDOWN": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -4.89,
+      0.0,
+      false
+     ],
+     "20": [
+      0.54,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_DEEP": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      1.94,
+      0.0,
+      true
+     ],
+     "20": [
+      11.34,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_DEEP_LDC100": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      3.06,
+      0.0,
+      true
+     ],
+     "20": [
+      15.79,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_LOW_3DOWN_DEEP": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      5.51,
+      0.0,
+      true
+     ],
+     "20": [
+      17.92,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_GAPLOW_3DOWN_BIGUPPER": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      0.39,
+      0.0,
+      true
+     ],
+     "20": [
+      -3.09,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_GAPLOW_3DOWN_TD9": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      2.23,
+      0.0,
+      true
+     ],
+     "20": [
+      4.46,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_GAPLOW_3DOWN_XFUND": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      1.14,
+      0.0,
+      true
+     ],
+     "20": [
+      0.21,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_GAPLOW_LOSER250_XFUND": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.18,
+      0.0,
+      false
+     ],
+     "20": [
+      -2.22,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_GAPLOW_BIGUPPER_TD9": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      1.72,
+      0.0,
+      true
+     ],
+     "20": [
+      -1.9,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_GAPLOW_BIGUPPER_XFUND": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.66,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.28,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_GAPLOW_TD9_XFUND": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.38,
+      0.0,
+      false
+     ],
+     "20": [
+      1.07,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "CROSS_TOUCH_OS20_TD9": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": []
+ },
+ "CROSS_TOUCH_OS20_XFUND": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": []
+ },
+ "COMP_GAPLOW_BULLISH_NO_MON": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.44,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.33,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_TD9_LOSER250": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_LIMITDOWN_TD9_OS20": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.73,
+      0.0,
+      false
+     ],
+     "20": [
+      11.25,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_GAPLOW_XFUND_OS20_LOSER250": {
+  "status": "DECAYING",
+  "consecutive_fails": 1,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      -0.18,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.82,
+      0.5,
+      false
+     ]
+    }
+   }
+  ]
+ },
+ "COMP_TOUCH_TD9_XFUND_OS20": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      3.42,
+      0.0,
+      true
+     ],
+     "20": [
+      6.73,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "REVERSAL_PANIC50": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      0.61,
+      0.0,
+      true
+     ],
+     "20": [
+      3.79,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "DEMON_CRADLE_CLUSTER": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-09-21",
+    "verdicts": {
+     "5": [
+      1.88,
+      0.0,
+      true
+     ],
+     "20": [
+      3.67,
+      0.5,
+      true
+     ]
+    }
+   }
+  ]
+ },
+ "RECURRING_PULLBACK_WHITELIST": {
+  "status": "DEAD",
+  "consecutive_fails": 99,
+  "history": []
  }
 }
