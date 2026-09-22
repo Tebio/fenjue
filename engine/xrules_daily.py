@@ -255,6 +255,29 @@ def main():
                 why = '非恐慌期'
             state['rules'][rule] = {'fired': False, 'why': why}
 
+    # ── 公告排雷（2026-09-22 移植层）：出票过东财公告审查，hard_excluded 从名单+影子同步剔除 ──
+    try:
+        import announcement_vet
+        _codes = sorted({e['code'] for e in shadow_entries})
+        _vet = announcement_vet.vet_batch(_codes) if _codes else {}
+        _killed = {c for c, v in _vet.items() if v.get('status') == 'hard_excluded'}
+        if _killed:
+            msgs.append(f"🚫 公告排雷剔除 {len(_killed)} 只：" + "、".join(
+                f"{c}({','.join(_vet[c]['hard_flags'])})" for c in sorted(_killed)))
+            shadow_entries = [e for e in shadow_entries if e['code'] not in _killed]
+            for _r in state['rules'].values():
+                if _r.get('picks'):
+                    _r['picks'] = [p for p in _r['picks'] if p['code'] not in _killed]
+                    if not _r['picks']:
+                        _r['fired'] = False
+                        _r['why'] = (_r.get('why') or '') + '；全部票被公告排雷剔除'
+        _rev = [f"{c}({','.join(v['review_flags'])})" for c, v in sorted(_vet.items())
+                if v.get('status') in ('review', 'review_light')]
+        if _rev:
+            msgs.append(f"📰 公告需复核：{'、'.join(_rev)}")
+    except Exception as _e:
+        msgs.append(f"📰 公告排雷数据源不可达（{type(_e).__name__}）——名单未经审查")
+
     OUT.write_text(json.dumps(state, ensure_ascii=False, indent=1))
     n_reg = shadow_register([e for e in shadow_entries if e['entry_date']])
     if n_reg:
