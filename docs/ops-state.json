@@ -1,14 +1,14 @@
 {
  "version": 2,
- "built_at": "2026-09-22 11:20",
+ "built_at": "2026-09-22 12:07",
  "sig_date": "2026-09-22",
  "buy_day": "2026-09-23",
  "sell_day": "2026-09-24",
  "regime": {
-  "date": "2026-09-21",
+  "date": "2026-09-22",
   "regime": "妖股期",
-  "limit_ups": 94,
-  "limit_downs": 3
+  "limit_ups": 60,
+  "limit_downs": 6
  },
  "deep_low": [],
  "focus": [
@@ -42,9 +42,19 @@
  ],
  "shadow_t1": null,
  "b5": {
-  "date": "2026-09-21",
-  "sealed": [],
-  "unsealed": []
+  "date": "2026-09-22",
+  "sealed": [
+   "箭牌家居 001322"
+  ],
+  "unsealed": [
+   "胜利精密 002426",
+   "伟隆股份 002871",
+   "皖新传媒 601801",
+   "南方传媒 601900",
+   "比依股份 603215",
+   "龙旗科技 603341",
+   "安图生物 603658"
+  ]
  },
  "playbook": "playbook-202609.md",
  "kill_lines": {

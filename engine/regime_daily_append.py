@@ -141,7 +141,8 @@ def upsert_log(entry: dict) -> str:
 
 def coverage(day: str) -> float:
     """big_kcache 中当日 bar 覆盖率（2026-09-21 实锤：baostock 断链只更了 328/3377，
-    下游把 10 涨停当全天 → 垃圾 regime。低于 80% 拒绝写盘）。哨兵阈值 0.6（容错停牌/新退）。"""
+    下游把 10 涨停当全天 → 垃圾 regime。低于 80% 拒绝写盘——实盘完整覆盖天花板≈91%
+    （186 退市+停牌）。哨兵阈值防半更新/断链）。"""
     tot = hit = 0
     for f in KCACHE.glob("*.json"):
         if f.stem == "000001":
@@ -156,16 +157,38 @@ def coverage(day: str) -> float:
     return hit / tot if tot else 0.0
 
 
+def _intended_day() -> str:
+    """目标判定日=最近已收盘的交易日（2026-09-22 事故：kcache 1h 超时被杀在 90%，
+    19:35/19:45 下游 cron 拿日历尾 9/21 比对→95% 票已更到 9/22→闸误判 5% 覆盖率拒判。
+    日历要等 kcache 收尾 update_index 才含今天（鸡生蛋），所以：
+    今天是工作日且已收盘且日历未含今天 → 看今天覆盖率：够=今天（交易日），
+    不够但昨天够且相隔≤4天=假日回退昨天；都不够=今天（让闸报错）。"""
+    from datetime import date as _date, datetime, timedelta, timezone
+    bjt = datetime.now(timezone.utc) + timedelta(hours=8)
+    today = bjt.date().isoformat()
+    idx = json.loads((ROOT / "data/index_sh000001.json").read_text())
+    last = idx[-1]["date"]
+    if today <= last:
+        return last
+    if bjt.weekday() >= 5 or bjt.hour < 16:
+        return last
+    if coverage(today) >= 0.8:
+        return today
+    gap = (_date.fromisoformat(today) - _date.fromisoformat(last)).days
+    if coverage(last) >= 0.8 and gap <= 4:
+        return last  # 假日
+    return today  # 交易日但数据不全 → 闸会报
+
+
 def main():
     if len(sys.argv) > 1:
         days = sys.argv[1:]
     else:
-        idx = json.loads((ROOT / "data/index_sh000001.json").read_text())
-        days = [idx[-1]["date"]]
+        days = [_intended_day()]
     for day in days:
         cov = coverage(day)
-        if cov < 0.6:
-            print(f"🚨 {day}: big_kcache 覆盖率仅 {cov:.0%}（<60%），数据不全拒绝落盘——kcache 可能断链，速查")
+        if cov < 0.8:
+            print(f"🚨 {day}: big_kcache 覆盖率仅 {cov:.0%}（<80%），数据不全拒绝落盘——kcache 可能断链/被超时截断，速查")
             sys.exit(1)
         st = day_stats(day)
         if st is None:

@@ -122,15 +122,32 @@ def main():
     regime = lp.load_regime()
     idx = json.loads((ROOT / "data/index_sh000001.json").read_text())
     cal = [k['date'] for k in idx]
-    day = sys.argv[1] if len(sys.argv) > 1 else cal[-1]
-    # 覆盖率闸（2026-09-21 实锤：baostock 断链只更了 328/3377，不全数据会写出垃圾判定
-    # 并覆盖掉前一晚的正确状态——低于 60% 拒绝写 state，退出码 1 让 cron 报警。
-    # 只在生产路径（day=最新交易日）启用；历史日重判不受此限）
-    if day == cal[-1]:
+    day = sys.argv[1] if len(sys.argv) > 1 else None
+    if day is None:
+        # 目标日=最近已收盘的交易日（2026-09-22 事故同款修复：不能拿日历尾——日历要等
+        # kcache 收尾才含今天；今天已收盘的交易日→今天，假日→回退昨天）
+        from datetime import datetime as _dt, timedelta as _td, timezone as _tz
+        bjt = _dt.now(_tz.utc) + _td(hours=8)
+        today = bjt.date().isoformat()
+        last = cal[-1]
+        if today > last and bjt.weekday() < 5 and bjt.hour >= 16:
+            day = today
+        else:
+            day = last
+    # 覆盖率闸（2026-09-21 断链事故 + 2026-09-22 超时截断事故：<80% 拒绝写 state 并报警；
+    # 只在生产路径（day=最新交易日/今天）启用；历史日重判不受此限）
+    _latest = day >= cal[-1]
+    if _latest:
         _cov = sum(1 for d in stocks.values() if d['date'] and d['date'][-1] == day) / max(len(stocks), 1)
-        if _cov < 0.6:
-            print(f"🚨 X规则线 {day}: big_kcache 覆盖率仅 {_cov:.0%}（<60%），数据不全拒绝判定——kcache 可能断链，速查")
-            sys.exit(1)
+        if _cov < 0.8:
+            # 假日回退：今天覆盖不够但昨天够且相隔≤4天 → 非交易日，静默判昨天（不重报错）
+            _cov_last = sum(1 for d in stocks.values() if d['date'] and d['date'][-1] == cal[-1]) / max(len(stocks), 1)
+            from datetime import date as _d
+            if _cov_last >= 0.8 and (_d.fromisoformat(day) - _d.fromisoformat(cal[-1])).days <= 4 and day != cal[-1]:
+                day = cal[-1]
+            else:
+                print(f"🚨 X规则线 {day}: big_kcache 覆盖率仅 {_cov:.0%}（<80%），数据不全拒绝判定——kcache 可能断链/被超时截断，速查")
+                sys.exit(1)
     # 行业映射与名单
     mmap = json.loads((ROOT / "data/industry_map.json").read_text())
     code2ind = {str(k).zfill(6): v['industry'] for k, v in mmap.items() if isinstance(v, dict) and v.get('industry')}

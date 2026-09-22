@@ -295,7 +295,7 @@ def main():
             # 现改为从入场日 ei 起算：ei=si（收盘入场）/ei=si+1（次日开盘入场）。
             ei = si if r["claim"] in CLOSE_ENTRY_CLAIMS else si + 1
             for tag, off in [("r1", 1), ("r5", 5), ("r20", 20)]:
-                if r[tag] is None and ei + off < len(ks):
+                if r.get(tag) is None and ei + off < len(ks):  # 2026-09-22 修：旧登记记录缺 r5 键 → r[tag] KeyError 崩全盘（影子日更连错）
                     assert ei + off > ei, "出场日必须晚于入场日"
                     r[tag] = round(ks[ei + off]["close"] / e - 1 - FEE, 5)
                     filled += 1
@@ -308,7 +308,7 @@ def main():
         if r["entry"] is None:
             continue
         for tag in ("r1", "r5", "r20"):
-            v = r[tag]
+            v = r.get(tag)  # 旧记录可能缺键（2026-09-22 修，同上方回填）
             if v is None:
                 continue
             key = (r["claim"], r["tier"] or "-", tag)

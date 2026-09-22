@@ -20,3 +20,11 @@
 {"date": "2026-09-21", "code": "000069", "name": "华侨城A", "industry": "K70房地产业", "trigger_px": 1.94, "sealed": false, "close": 1.92, "ma60": 1.756, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
 {"date": "2026-09-21", "code": "000402", "name": "金融街", "industry": "K70房地产业", "trigger_px": 2.67, "sealed": true, "close": 2.77, "ma60": 2.484, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
 {"date": "2026-09-21", "code": "000790", "name": "华神科技", "industry": "C27医药制造业", "trigger_px": 4.27, "sealed": false, "close": 4.31, "ma60": 3.923, "pos": "MA60上", "regime_ok": true, "pos_ok": true}
+{"date": "2026-09-22", "code": "001322", "name": "箭牌家居", "industry": "C30非金属矿物制品业", "trigger_px": 6.7, "sealed": true, "close": 6.95, "ma60": 6.274, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-22", "code": "002426", "name": "胜利精密", "industry": "C39计算机、通信和其他电子设备制造业", "trigger_px": 2.8, "sealed": false, "close": 2.69, "ma60": 2.795, "pos": "MA60下", "regime_ok": false, "pos_ok": false}
+{"date": "2026-09-22", "code": "002871", "name": "伟隆股份", "industry": "C34通用设备制造业", "trigger_px": 19.03, "sealed": false, "close": 18.61, "ma60": 17.697, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-22", "code": "601801", "name": "皖新传媒", "industry": "R86新闻和出版业", "trigger_px": 5.85, "sealed": false, "close": 5.83, "ma60": 5.328, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-22", "code": "601900", "name": "南方传媒", "industry": "R86新闻和出版业", "trigger_px": 12.88, "sealed": false, "close": 12.68, "ma60": 11.716, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-22", "code": "603215", "name": "比依股份", "industry": "C38电气机械和器材制造业", "trigger_px": 15.26, "sealed": false, "close": 15.24, "ma60": 14.185, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-22", "code": "603341", "name": "龙旗科技", "industry": "C39计算机、通信和其他电子设备制造业", "trigger_px": 39.25, "sealed": false, "close": 39.3, "ma60": 37.866, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
+{"date": "2026-09-22", "code": "603658", "name": "安图生物", "industry": "C27医药制造业", "trigger_px": 34.47, "sealed": false, "close": 34.97, "ma60": 32.498, "pos": "MA60上", "regime_ok": false, "pos_ok": true}
