@@ -13,9 +13,9 @@
 {"date": "20260918", "code": "002138", "name": "顺络电子", "buy": 51.59, "kind": "trend-top3", "T0": 1.8, "T1": 3.45, "T0_high": 2.5}
 {"date": "20260918", "code": "000510", "name": "新金路", "buy": 18.78, "kind": "trend-top3", "T0": -0.96, "T1": -1.33, "T0_high": 1.7}
 {"date": "20260918", "code": "002971", "name": "和远气体", "buy": 40.8, "kind": "trend-top3", "T0": 4.61, "T1": 1.62, "T0_high": 4.61}
-{"date": "20260921", "code": "600183", "name": "生益科技", "buy": 147.73, "kind": "trend-top3"}
-{"date": "20260921", "code": "000636", "name": "风华高科", "buy": 60.17, "kind": "trend-top3"}
-{"date": "20260921", "code": "603386", "name": "骏亚科技", "buy": 18.08, "kind": "trend-top3"}
+{"date": "20260921", "code": "600183", "name": "生益科技", "buy": 147.73, "kind": "trend-top3", "T0": -0.99, "T1": -2.9, "T0_high": 1.53}
+{"date": "20260921", "code": "000636", "name": "风华高科", "buy": 60.17, "kind": "trend-top3", "T0": -1.53, "T1": -4.02, "T0_high": 2.63}
+{"date": "20260921", "code": "603386", "name": "骏亚科技", "buy": 18.08, "kind": "trend-top3", "T0": -0.33, "T1": 4.81, "T0_high": 1.22}
 {"date": "20260922", "code": "600176", "name": "中国巨石", "buy": 46.81, "kind": "trend-top3"}
 {"date": "20260922", "code": "605006", "name": "山东玻纤", "buy": 17.81, "kind": "trend-top3"}
 {"date": "20260922", "code": "601869", "name": "长飞光纤", "buy": 479.6, "kind": "trend-top3"}
