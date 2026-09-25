@@ -43,10 +43,10 @@ def main():
     lu, ld = reg.get("limit_ups", "?"), reg.get("limit_downs", "?")
 
     # 深档低位买入名单（与面板同函数，v2 口径：簇门=深档件(-25%)≥5，出手票=深跌件(≤-35%)）；deep_lastd=信号日（最近交易日）
-    deep_lastd, deep_list, deep_cluster = "?", [], 0
+    deep_lastd, deep_list, deep_cluster, deep_soil = "?", [], 0, True
     try:
         from dashboard_build import deep_low_scan
-        deep_lastd, deep_list, deep_cluster = deep_low_scan()
+        deep_lastd, deep_list, deep_cluster, deep_soil = deep_low_scan()
     except Exception:
         pass
     sig_date = datetime.date.fromisoformat(deep_lastd) if deep_lastd != "?" else None
@@ -128,13 +128,16 @@ def main():
         picks = "、".join(f'{nm} {c}({p:+.1f}%)' for c, p, nm in deep_list[:5])
         # 2026-09-22 v2 口径（解剖台双段铁证 #152）：簇门=深档件(收≤MA60×0.75)≥5，
         # 出手票=其中深跌件(收≤MA60×0.65)；裸底座主张已 DEAD，本口径=锐化后存活子集，不再挂底座状态。
-        if deep_cluster >= 5 and deep_list:
+        if deep_cluster >= 5 and deep_list and deep_soil:
             L.append(f'1. 深档低位·深跌件（{fmt(sig_date)} 跌停+深度≤-35% · 深档簇{deep_cluster}只 · '
                      f'出手件 T+10 61%/+8.65% · 19-22 +1.77%/23-26 +11.33% 双段正 · 最差批-26%优于旧T+5）：{picks}')
             L.append(f'   {fmt(today)} 9:32 竞价非一字跌停 → 开盘买（深度最深优先，最多5只分散）。'
                      f'出场：T+10 尾盘（2026-09-25 起，深档修复需 5-10 天，T+5 常割在修复中途）；一字跌停=作废')
             L.append('   持仓中强度分档（8年实测）：次日收 ≥+3% → T+5 期望 +11~15%/正收益 88% 拿满；'
                      '次日平淡±3% → +5.2%；【次日跌 ≥3% → 只剩 +1.5% → 提前离场】')
+        elif deep_cluster >= 5 and deep_list and not deep_soil:
+            L.append(f'1. 深档低位：{fmt(sig_date)} 深档簇{deep_cluster}只且有深跌件，但指数收在 MA20 上方=假恐慌 → 不出手'
+                     f'（土壤门 8 年实测：假恐慌批次 36%/-1.00% 有毒，真恐慌 63%/+7.62%；宁可错过）')
         elif deep_cluster >= 5:
             L.append(f'1. 深档低位：{fmt(sig_date)} 深档簇{deep_cluster}只≥5 但无一只深度≤-35% → 不出手'
                      f'（-35~-25% 浅带近段已死 51%/+0.30%，宁可错过）')

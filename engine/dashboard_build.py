@@ -279,9 +279,20 @@ def deep_low_scan():
             except Exception:
                 continue
         # 按深度最深排序（验证口径=depth 排序取前5；pct 仅展示）
-        return lastd, [(c, p, nm) for c, p, nm, _ in sorted(out, key=lambda x: x[3])], len(deep_events)
+        # 土壤门（2026-09-25 #183：假恐慌=指数收在 MA20 上方时深档批次 36%/-1.00% 有毒，压制）：
+        # 指数收盘 ≤ 其 MA20 才算「真恐慌」土壤，当日收盘可判，无未来函数。
+        soil_ok = True
+        try:
+            closes = [float(k["close"]) for k in idx if k.get("close") and k["date"] <= lastd][-20:]
+            if len(closes) == 20:
+                soil_ok = closes[-1] <= sum(closes) / 20
+        except Exception:
+            soil_ok = True  # 指数数据异常时不误伤（缺数据=放行并注记）
+        return (lastd,
+                [(c, p, nm) for c, p, nm, _ in sorted(out, key=lambda x: x[3])],
+                len(deep_events), soil_ok)
     except Exception:
-        return "?", [], 0
+        return "?", [], 0, True
 
 
 def kpi(name, pill, pill_cls, big, small, line):
@@ -305,7 +316,7 @@ def main():
     S = {"今日": [], "我的钱": [], "研究库": [], "证据库": []}
 
     # ══ 数据装载（全部只读）══
-    _deep_lastd, _deep, _deep_cluster = deep_low_scan()
+    _deep_lastd, _deep, _deep_cluster, _deep_soil = deep_low_scan()
     wp = jload(D / "watch_pool.json", {})
     rev = jload(D / "reversal_list.json", {})
     reg = None
@@ -480,12 +491,17 @@ def main():
 
     # 新信号 steps
     steps = []
-    if _deep and n_deep_cluster >= 5:
+    if _deep and n_deep_cluster >= 5 and _deep_soil:
         names = "、".join(f'{nm}({c},{p:+.1f}%)' for c, p, nm in _deep[:3])
         steps.append(step("1", "#edf5ee", "#1e7e34",
                           f'{fmt_d(buy_day)} 9:32 买 · {names}',
                           f'{fmt_d(sig_date)} 跌停+深度≤-35%（深档簇{n_deep_cluster}只 · 出手件 T+10 61%/+8.65%）。竞价不是一字跌停 → 开盘买 → '
                           f'<b>{fmt_d(sell_day)} 尾盘卖</b>。一字跌停 = 作废。'))
+    elif _deep and n_deep_cluster >= 5 and not _deep_soil:
+        steps.append(step("1", "#f7f6f3", "#9b9a97",
+                          '假恐慌压制 · 不出手',
+                          f'{fmt_d(sig_date)} 深档簇{n_deep_cluster}只且有深跌件，但指数收在 MA20 上方=假恐慌'
+                          f'（8 年实测假恐慌批次 36%/-1.00% 有毒）→ 宁可错过。'))
     elif n_deep_cluster >= 5:
         steps.append(step("1", "#f7f6f3", "#9b9a97",
                           f'{fmt_d(buy_day)} · 深档成簇但无深跌件，不出手',
