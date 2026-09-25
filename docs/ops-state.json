@@ -1,13 +1,13 @@
 {
  "version": 2,
- "built_at": "2026-09-25 11:21",
+ "built_at": "2026-09-25 12:40",
  "sig_date": "2026-09-24",
  "buy_day": "2026-09-25",
  "sell_day": "2026-09-28",
  "regime": {
   "date": "2026-09-24",
   "regime": "妖股期",
-  "limit_ups": 46,
+  "limit_ups": 47,
   "limit_downs": 15
  },
  "deep_low": [],
