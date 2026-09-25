@@ -1,19 +1,6 @@
 {
  "pool": [
   {
-   "code": "600776",
-   "name": "东方通信",
-   "entry_date": "2026-09-03",
-   "entry_close": 13.45,
-   "entry_low": 12.78,
-   "entry_vol": 46348148.0,
-   "volratio": 3.3,
-   "pct": 4.43,
-   "days": 14,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
    "code": "000811",
    "name": "冰轮环境",
    "entry_date": "2026-09-07",
@@ -22,7 +9,7 @@
    "entry_vol": 40657806.0,
    "volratio": 89.6,
    "pct": 4.64,
-   "days": 12,
+   "days": 13,
    "status": "观察中",
    "shrink": true
   },
@@ -35,7 +22,7 @@
    "entry_vol": 25177250.0,
    "volratio": 216.9,
    "pct": 5.23,
-   "days": 12,
+   "days": 13,
    "status": "观察中",
    "shrink": true
   },
@@ -48,7 +35,7 @@
    "entry_vol": 49175383.0,
    "volratio": 154.6,
    "pct": 6.6,
-   "days": 12,
+   "days": 13,
    "status": "观察中",
    "shrink": true
   },
@@ -61,7 +48,7 @@
    "entry_vol": 13110712.0,
    "volratio": 89.4,
    "pct": 1.9,
-   "days": 12,
+   "days": 13,
    "status": "观察中",
    "shrink": false
   },
@@ -74,7 +61,7 @@
    "entry_vol": 4256632.0,
    "volratio": 149.9,
    "pct": 4.69,
-   "days": 12,
+   "days": 13,
    "status": "观察中",
    "shrink": true
   },
@@ -87,7 +74,7 @@
    "entry_vol": 60950018.0,
    "volratio": 111.7,
    "pct": 6.96,
-   "days": 12,
+   "days": 13,
    "status": "观察中",
    "shrink": true
   },
@@ -100,7 +87,7 @@
    "entry_vol": 49084292.0,
    "volratio": 4.3,
    "pct": 4.9,
-   "days": 11,
+   "days": 12,
    "status": "观察中",
    "shrink": true
   },
@@ -113,9 +100,9 @@
    "entry_vol": 59350144.0,
    "volratio": 8.4,
    "pct": 2.51,
-   "days": 11,
+   "days": 12,
    "status": "观察中",
-   "shrink": true
+   "shrink": false
   },
   {
    "code": "002728",
@@ -126,7 +113,7 @@
    "entry_vol": 33727712.0,
    "volratio": 3.3,
    "pct": 5.63,
-   "days": 11,
+   "days": 12,
    "status": "观察中",
    "shrink": true
   },
@@ -139,7 +126,7 @@
    "entry_vol": 112704751.0,
    "volratio": 4.4,
    "pct": 6.21,
-   "days": 11,
+   "days": 12,
    "status": "观察中",
    "shrink": true
   },
@@ -152,7 +139,7 @@
    "entry_vol": 43375910.0,
    "volratio": 3.2,
    "pct": 3.8,
-   "days": 9,
+   "days": 10,
    "status": "观察中",
    "shrink": true
   },
@@ -165,7 +152,7 @@
    "entry_vol": 109599286.0,
    "volratio": 3.7,
    "pct": 2.26,
-   "days": 9,
+   "days": 10,
    "status": "观察中",
    "shrink": true
   },
@@ -178,20 +165,7 @@
    "entry_vol": 59402546.0,
    "volratio": 3.2,
    "pct": 2.97,
-   "days": 9,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "002132",
-   "name": "恒星科技",
-   "entry_date": "2026-09-10",
-   "entry_close": 4.34,
-   "entry_low": 4.14,
-   "entry_vol": 105447513.0,
-   "volratio": 4.1,
-   "pct": 3.58,
-   "days": 9,
+   "days": 10,
    "status": "观察中",
    "shrink": true
   },
@@ -204,20 +178,7 @@
    "entry_vol": 56850389.0,
    "volratio": 3.5,
    "pct": 2.02,
-   "days": 9,
-   "status": "观察中",
-   "shrink": false
-  },
-  {
-   "code": "002735",
-   "name": "王子新材",
-   "entry_date": "2026-09-10",
-   "entry_close": 12.5,
-   "entry_low": 11.61,
-   "entry_vol": 54216273.0,
-   "volratio": 4.1,
-   "pct": 6.11,
-   "days": 9,
+   "days": 10,
    "status": "观察中",
    "shrink": true
   },
@@ -230,20 +191,7 @@
    "entry_vol": 18867300.0,
    "volratio": 6.4,
    "pct": 4.86,
-   "days": 9,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "600582",
-   "name": "天地科技",
-   "entry_date": "2026-09-10",
-   "entry_close": 4.94,
-   "entry_low": 4.86,
-   "entry_vol": 61003448.0,
-   "volratio": 3.1,
-   "pct": 3.35,
-   "days": 9,
+   "days": 10,
    "status": "观察中",
    "shrink": true
   },
@@ -256,7 +204,7 @@
    "entry_vol": 24999553.0,
    "volratio": 3.8,
    "pct": 3.34,
-   "days": 8,
+   "days": 9,
    "status": "观察中",
    "shrink": true
   },
@@ -269,7 +217,7 @@
    "entry_vol": 13505145.0,
    "volratio": 4.0,
    "pct": 3.4,
-   "days": 8,
+   "days": 9,
    "status": "观察中",
    "shrink": true
   },
@@ -282,7 +230,7 @@
    "entry_vol": 30290700.0,
    "volratio": 4.5,
    "pct": 5.56,
-   "days": 7,
+   "days": 8,
    "status": "观察中",
    "shrink": true
   },
@@ -295,7 +243,7 @@
    "entry_vol": 44958011.0,
    "volratio": 4.3,
    "pct": 3.61,
-   "days": 7,
+   "days": 8,
    "status": "观察中",
    "shrink": true
   },
@@ -308,20 +256,7 @@
    "entry_vol": 129973091.0,
    "volratio": 3.9,
    "pct": 6.12,
-   "days": 7,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "600184",
-   "name": "光电股份",
-   "entry_date": "2026-09-14",
-   "entry_close": 20.58,
-   "entry_low": 19.8,
-   "entry_vol": 73494512.0,
-   "volratio": 3.4,
-   "pct": 3.0,
-   "days": 7,
+   "days": 8,
    "status": "观察中",
    "shrink": true
   },
@@ -334,7 +269,7 @@
    "entry_vol": 125428243.0,
    "volratio": 3.1,
    "pct": 6.72,
-   "days": 7,
+   "days": 8,
    "status": "观察中",
    "shrink": true
   },
@@ -347,7 +282,7 @@
    "entry_vol": 225719438.0,
    "volratio": 3.0,
    "pct": 1.36,
-   "days": 7,
+   "days": 8,
    "status": "观察中",
    "shrink": true
   },
@@ -360,7 +295,7 @@
    "entry_vol": 57480104.0,
    "volratio": 4.6,
    "pct": 4.95,
-   "days": 7,
+   "days": 8,
    "status": "观察中",
    "shrink": true
   },
@@ -373,7 +308,7 @@
    "entry_vol": 41446500.0,
    "volratio": 3.5,
    "pct": 4.8,
-   "days": 7,
+   "days": 8,
    "status": "观察中",
    "shrink": true
   },
@@ -386,20 +321,7 @@
    "entry_vol": 271044247.0,
    "volratio": 3.1,
    "pct": 5.48,
-   "days": 6,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "603000",
-   "name": "人民网",
-   "entry_date": "2026-09-15",
-   "entry_close": 17.23,
-   "entry_low": 16.92,
-   "entry_vol": 74906686.0,
-   "volratio": 3.1,
-   "pct": 4.87,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": true
   },
@@ -412,7 +334,7 @@
    "entry_vol": 11926603.0,
    "volratio": 3.2,
    "pct": 2.26,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": false
   },
@@ -425,7 +347,7 @@
    "entry_vol": 28856656.0,
    "volratio": 7.4,
    "pct": 7.48,
-   "days": 6,
+   "days": 7,
    "status": "观察中",
    "shrink": true
   },
@@ -438,7 +360,7 @@
    "entry_vol": 18349705.0,
    "volratio": 9.1,
    "pct": 5.82,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -451,7 +373,7 @@
    "entry_vol": 250806540.0,
    "volratio": 4.1,
    "pct": 6.09,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -464,7 +386,7 @@
    "entry_vol": 42694295.0,
    "volratio": 3.2,
    "pct": 4.86,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -477,7 +399,7 @@
    "entry_vol": 16149640.0,
    "volratio": 3.1,
    "pct": 2.14,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -490,7 +412,7 @@
    "entry_vol": 23477526.0,
    "volratio": 5.6,
    "pct": 3.42,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -503,7 +425,7 @@
    "entry_vol": 142221977.0,
    "volratio": 3.7,
    "pct": 5.76,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -516,7 +438,7 @@
    "entry_vol": 24047100.0,
    "volratio": 5.0,
    "pct": 2.08,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -529,7 +451,7 @@
    "entry_vol": 20203981.0,
    "volratio": 3.0,
    "pct": 3.76,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -542,7 +464,7 @@
    "entry_vol": 45352900.0,
    "volratio": 3.9,
    "pct": 5.18,
-   "days": 4,
+   "days": 5,
    "status": "观察中",
    "shrink": true
   },
@@ -555,22 +477,9 @@
    "entry_vol": 78666681.0,
    "volratio": 3.3,
    "pct": 2.99,
-   "days": 3,
+   "days": 4,
    "status": "观察中",
    "shrink": true
-  },
-  {
-   "code": "000710",
-   "name": "贝瑞基因",
-   "entry_date": "2026-09-18",
-   "entry_close": 9.05,
-   "entry_low": 8.69,
-   "entry_vol": 37754139.0,
-   "volratio": 4.5,
-   "pct": 5.97,
-   "days": 3,
-   "status": "观察中",
-   "shrink": false
   },
   {
    "code": "002685",
@@ -581,7 +490,7 @@
    "entry_vol": 92778147.0,
    "volratio": 4.5,
    "pct": 6.59,
-   "days": 3,
+   "days": 4,
    "status": "观察中",
    "shrink": true
   },
@@ -594,7 +503,7 @@
    "entry_vol": 43084723.0,
    "volratio": 4.6,
    "pct": 3.48,
-   "days": 3,
+   "days": 4,
    "status": "观察中",
    "shrink": true
   },
@@ -607,7 +516,7 @@
    "entry_vol": 38782905.0,
    "volratio": 5.0,
    "pct": 6.96,
-   "days": 3,
+   "days": 4,
    "status": "观察中",
    "shrink": true
   },
@@ -620,20 +529,7 @@
    "entry_vol": 41755120.0,
    "volratio": 7.1,
    "pct": 7.38,
-   "days": 3,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "603918",
-   "name": "金桥信息",
-   "entry_date": "2026-09-18",
-   "entry_close": 10.72,
-   "entry_low": 10.44,
-   "entry_vol": 23795822.0,
-   "volratio": 4.1,
-   "pct": 2.78,
-   "days": 3,
+   "days": 4,
    "status": "观察中",
    "shrink": true
   },
@@ -646,9 +542,9 @@
    "entry_vol": 49990789.0,
    "volratio": 3.1,
    "pct": 4.62,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "000066",
@@ -659,7 +555,7 @@
    "entry_vol": 143673104.0,
    "volratio": 3.1,
    "pct": 5.1,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": false
   },
@@ -672,33 +568,7 @@
    "entry_vol": 165623993.0,
    "volratio": 4.3,
    "pct": 4.92,
-   "days": 2,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "000790",
-   "name": "华神科技",
-   "entry_date": "2026-09-21",
-   "entry_close": 4.31,
-   "entry_low": 4.03,
-   "entry_vol": 54566281.0,
-   "volratio": 3.4,
-   "pct": 6.95,
-   "days": 2,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "001233",
-   "name": "海安集团",
-   "entry_date": "2026-09-21",
-   "entry_close": 48.97,
-   "entry_low": 45.89,
-   "entry_vol": 8047404.0,
-   "volratio": 6.8,
-   "pct": 7.44,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": true
   },
@@ -711,7 +581,7 @@
    "entry_vol": 39046056.0,
    "volratio": 3.5,
    "pct": 5.11,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": true
   },
@@ -724,35 +594,9 @@
    "entry_vol": 275125220.0,
    "volratio": 3.4,
    "pct": 5.0,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": false
-  },
-  {
-   "code": "002164",
-   "name": "宁波东力",
-   "entry_date": "2026-09-21",
-   "entry_close": 11.1,
-   "entry_low": 10.41,
-   "entry_vol": 18571323.0,
-   "volratio": 3.1,
-   "pct": 5.82,
-   "days": 2,
-   "status": "观察中",
-   "shrink": false
-  },
-  {
-   "code": "002226",
-   "name": "江南化工",
-   "entry_date": "2026-09-21",
-   "entry_close": 5.34,
-   "entry_low": 5.08,
-   "entry_vol": 71675944.0,
-   "volratio": 5.0,
-   "pct": 4.71,
-   "days": 2,
-   "status": "观察中",
-   "shrink": true
   },
   {
    "code": "002244",
@@ -763,7 +607,7 @@
    "entry_vol": 81613837.0,
    "volratio": 3.0,
    "pct": 6.8,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": true
   },
@@ -776,7 +620,7 @@
    "entry_vol": 160150025.0,
    "volratio": 3.4,
    "pct": 5.22,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": true
   },
@@ -789,7 +633,7 @@
    "entry_vol": 483399056.0,
    "volratio": 3.6,
    "pct": 6.77,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": true
   },
@@ -802,7 +646,7 @@
    "entry_vol": 35026290.0,
    "volratio": 3.3,
    "pct": 4.63,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": true
   },
@@ -815,7 +659,7 @@
    "entry_vol": 72774048.0,
    "volratio": 3.3,
    "pct": 4.55,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": true
   },
@@ -828,7 +672,7 @@
    "entry_vol": 52012071.0,
    "volratio": 5.6,
    "pct": 3.98,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": true
   },
@@ -841,7 +685,7 @@
    "entry_vol": 115620235.0,
    "volratio": 3.9,
    "pct": 6.06,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": false
   },
@@ -854,7 +698,7 @@
    "entry_vol": 14205709.0,
    "volratio": 3.9,
    "pct": 4.95,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": true
   },
@@ -867,7 +711,7 @@
    "entry_vol": 62930871.0,
    "volratio": 4.1,
    "pct": 4.64,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
    "shrink": true
   },
@@ -880,9 +724,9 @@
    "entry_vol": 45045305.0,
    "volratio": 3.3,
    "pct": 3.37,
-   "days": 2,
+   "days": 3,
    "status": "观察中",
-   "shrink": false
+   "shrink": true
   },
   {
    "code": "603016",
@@ -893,20 +737,7 @@
    "entry_vol": 10190354.0,
    "volratio": 3.2,
    "pct": 6.86,
-   "days": 2,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "002074",
-   "name": "国轩高科",
-   "entry_date": "2026-09-22",
-   "entry_close": 27.73,
-   "entry_low": 27.03,
-   "entry_vol": 67250517.0,
-   "volratio": 3.0,
-   "pct": 3.97,
-   "days": 1,
+   "days": 3,
    "status": "观察中",
    "shrink": true
   },
@@ -919,7 +750,7 @@
    "entry_vol": 218824616.0,
    "volratio": 3.9,
    "pct": 6.54,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -932,20 +763,7 @@
    "entry_vol": 33135997.0,
    "volratio": 3.2,
    "pct": 1.85,
-   "days": 1,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "002241",
-   "name": "歌尔股份",
-   "entry_date": "2026-09-22",
-   "entry_close": 24.64,
-   "entry_low": 24.0,
-   "entry_vol": 237107653.0,
-   "volratio": 3.1,
-   "pct": 3.53,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -958,7 +776,7 @@
    "entry_vol": 20422955.0,
    "volratio": 4.5,
    "pct": 6.9,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -971,7 +789,7 @@
    "entry_vol": 55572450.0,
    "volratio": 3.4,
    "pct": 4.06,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -984,20 +802,7 @@
    "entry_vol": 15892293.0,
    "volratio": 5.8,
    "pct": 2.11,
-   "days": 1,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "600619",
-   "name": "海立股份",
-   "entry_date": "2026-09-22",
-   "entry_close": 13.65,
-   "entry_low": 13.2,
-   "entry_vol": 36414988.0,
-   "volratio": 4.0,
-   "pct": 3.57,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -1010,9 +815,9 @@
    "entry_vol": 42706422.0,
    "volratio": 3.0,
    "pct": 2.83,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
-   "shrink": true
+   "shrink": false
   },
   {
    "code": "601236",
@@ -1023,20 +828,7 @@
    "entry_vol": 51234347.0,
    "volratio": 5.5,
    "pct": 3.22,
-   "days": 1,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "603137",
-   "name": "恒尚节能",
-   "entry_date": "2026-09-22",
-   "entry_close": 20.7,
-   "entry_low": 19.83,
-   "entry_vol": 22775816.0,
-   "volratio": 3.0,
-   "pct": 4.49,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -1049,7 +841,7 @@
    "entry_vol": 16802324.0,
    "volratio": 5.9,
    "pct": 4.09,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -1062,7 +854,7 @@
    "entry_vol": 25235220.0,
    "volratio": 3.8,
    "pct": 5.14,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -1075,20 +867,7 @@
    "entry_vol": 5786819.0,
    "volratio": 3.1,
    "pct": 3.39,
-   "days": 1,
-   "status": "观察中",
-   "shrink": true
-  },
-  {
-   "code": "603341",
-   "name": "龙旗科技",
-   "entry_date": "2026-09-22",
-   "entry_close": 39.3,
-   "entry_low": 37.88,
-   "entry_vol": 30414619.0,
-   "volratio": 5.7,
-   "pct": 6.13,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -1101,7 +880,7 @@
    "entry_vol": 18301899.0,
    "volratio": 3.3,
    "pct": 3.4,
-   "days": 1,
+   "days": 2,
    "status": "观察中",
    "shrink": true
   },
@@ -1114,20 +893,9 @@
    "entry_vol": 104631017.0,
    "volratio": 11.4,
    "pct": 5.37,
-   "days": 0,
-   "status": "观察中"
-  },
-  {
-   "code": "000555",
-   "name": "神州信息",
-   "entry_date": "2026-09-23",
-   "entry_close": 11.01,
-   "entry_low": 10.53,
-   "entry_vol": 57156243.0,
-   "volratio": 5.5,
-   "pct": 4.46,
-   "days": 0,
-   "status": "观察中"
+   "days": 1,
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "000877",
@@ -1138,8 +906,9 @@
    "entry_vol": 81232440.0,
    "volratio": 7.0,
    "pct": 6.78,
-   "days": 0,
-   "status": "观察中"
+   "days": 1,
+   "status": "观察中",
+   "shrink": true
   },
   {
    "code": "001216",
@@ -1150,8 +919,9 @@
    "entry_vol": 57037092.0,
    "volratio": 4.8,
    "pct": 6.95,
-   "days": 0,
-   "status": "观察中"
+   "days": 1,
+   "status": "观察中",
+   "shrink": true
   },
   {
    "code": "001268",
@@ -1162,8 +932,9 @@
    "entry_vol": 13758250.0,
    "volratio": 3.8,
    "pct": 2.26,
-   "days": 0,
-   "status": "观察中"
+   "days": 1,
+   "status": "观察中",
+   "shrink": true
   },
   {
    "code": "002646",
@@ -1174,20 +945,9 @@
    "entry_vol": 37847250.0,
    "volratio": 7.0,
    "pct": 3.97,
-   "days": 0,
-   "status": "观察中"
-  },
-  {
-   "code": "002757",
-   "name": "南兴股份",
-   "entry_date": "2026-09-23",
-   "entry_close": 20.28,
-   "entry_low": 19.86,
-   "entry_vol": 72172956.0,
-   "volratio": 4.0,
-   "pct": 2.11,
-   "days": 0,
-   "status": "观察中"
+   "days": 1,
+   "status": "观察中",
+   "shrink": true
   },
   {
    "code": "002951",
@@ -1198,8 +958,9 @@
    "entry_vol": 13218181.0,
    "volratio": 4.8,
    "pct": 3.57,
-   "days": 0,
-   "status": "观察中"
+   "days": 1,
+   "status": "观察中",
+   "shrink": false
   },
   {
    "code": "600326",
@@ -1210,8 +971,9 @@
    "entry_vol": 56914872.0,
    "volratio": 4.3,
    "pct": 5.25,
-   "days": 0,
-   "status": "观察中"
+   "days": 1,
+   "status": "观察中",
+   "shrink": true
   },
   {
    "code": "600884",
@@ -1222,8 +984,9 @@
    "entry_vol": 96379537.0,
    "volratio": 3.6,
    "pct": 5.86,
-   "days": 0,
-   "status": "观察中"
+   "days": 1,
+   "status": "观察中",
+   "shrink": true
   },
   {
    "code": "603040",
@@ -1234,20 +997,9 @@
    "entry_vol": 4758154.0,
    "volratio": 3.0,
    "pct": 3.66,
-   "days": 0,
-   "status": "观察中"
-  },
-  {
-   "code": "603125",
-   "name": "常青科技",
-   "entry_date": "2026-09-23",
-   "entry_close": 24.52,
-   "entry_low": 23.94,
-   "entry_vol": 12760909.0,
-   "volratio": 3.9,
-   "pct": 3.11,
-   "days": 0,
-   "status": "观察中"
+   "days": 1,
+   "status": "观察中",
+   "shrink": true
   },
   {
    "code": "603229",
@@ -1258,8 +1010,9 @@
    "entry_vol": 27888379.0,
    "volratio": 4.1,
    "pct": 3.58,
-   "days": 0,
-   "status": "观察中"
+   "days": 1,
+   "status": "观察中",
+   "shrink": true
   },
   {
    "code": "603826",
@@ -1270,8 +1023,9 @@
    "entry_vol": 30237904.0,
    "volratio": 3.1,
    "pct": 4.4,
-   "days": 0,
-   "status": "观察中"
+   "days": 1,
+   "status": "观察中",
+   "shrink": true
   },
   {
    "code": "605268",
@@ -1282,8 +1036,165 @@
    "entry_vol": 19368213.0,
    "volratio": 8.4,
    "pct": 4.66,
+   "days": 1,
+   "status": "观察中",
+   "shrink": true
+  },
+  {
+   "code": "002035",
+   "name": "华帝股份",
+   "entry_date": "2026-09-24",
+   "entry_close": 4.83,
+   "entry_low": 4.62,
+   "entry_vol": 48100224.0,
+   "volratio": 3.4,
+   "pct": 3.21,
    "days": 0,
-   "status": "观察中"
+   "status": "观察中",
+   "shrink": false
+  },
+  {
+   "code": "002342",
+   "name": "巨力索具",
+   "entry_date": "2026-09-24",
+   "entry_close": 7.89,
+   "entry_low": 7.48,
+   "entry_vol": 140044136.0,
+   "volratio": 3.8,
+   "pct": 4.64,
+   "days": 0,
+   "status": "观察中",
+   "shrink": false
+  },
+  {
+   "code": "002478",
+   "name": "常宝股份",
+   "entry_date": "2026-09-24",
+   "entry_close": 6.72,
+   "entry_low": 6.41,
+   "entry_vol": 37841632.0,
+   "volratio": 3.1,
+   "pct": 3.86,
+   "days": 0,
+   "status": "观察中",
+   "shrink": false
+  },
+  {
+   "code": "002638",
+   "name": "勤上股份",
+   "entry_date": "2026-09-24",
+   "entry_close": 4.93,
+   "entry_low": 4.64,
+   "entry_vol": 113653544.0,
+   "volratio": 3.7,
+   "pct": 4.01,
+   "days": 0,
+   "status": "观察中",
+   "shrink": false
+  },
+  {
+   "code": "002718",
+   "name": "友邦吊顶",
+   "entry_date": "2026-09-24",
+   "entry_close": 85.96,
+   "entry_low": 81.22,
+   "entry_vol": 2329605.0,
+   "volratio": 3.2,
+   "pct": 3.29,
+   "days": 0,
+   "status": "观察中",
+   "shrink": false
+  },
+  {
+   "code": "002879",
+   "name": "长缆科技",
+   "entry_date": "2026-09-24",
+   "entry_close": 17.92,
+   "entry_low": 16.41,
+   "entry_vol": 23038056.0,
+   "volratio": 3.4,
+   "pct": 6.35,
+   "days": 0,
+   "status": "观察中",
+   "shrink": false
+  },
+  {
+   "code": "002935",
+   "name": "天奥电子",
+   "entry_date": "2026-09-24",
+   "entry_close": 18.08,
+   "entry_low": 16.99,
+   "entry_vol": 30047476.0,
+   "volratio": 4.6,
+   "pct": 3.2,
+   "days": 0,
+   "status": "观察中",
+   "shrink": false
+  },
+  {
+   "code": "002967",
+   "name": "广电计量",
+   "entry_date": "2026-09-24",
+   "entry_close": 18.11,
+   "entry_low": 17.41,
+   "entry_vol": 11050814.0,
+   "volratio": 3.4,
+   "pct": 3.13,
+   "days": 0,
+   "status": "观察中",
+   "shrink": false
+  },
+  {
+   "code": "600006",
+   "name": "东风股份",
+   "entry_date": "2026-09-24",
+   "entry_close": 5.49,
+   "entry_low": 5.39,
+   "entry_vol": 61604880.0,
+   "volratio": 4.1,
+   "pct": 2.81,
+   "days": 0,
+   "status": "观察中",
+   "shrink": false
+  },
+  {
+   "code": "600831",
+   "name": "广电网络",
+   "entry_date": "2026-09-24",
+   "entry_close": 3.51,
+   "entry_low": 3.3,
+   "entry_vol": 63518335.0,
+   "volratio": 4.4,
+   "pct": 5.09,
+   "days": 0,
+   "status": "观察中",
+   "shrink": false
+  },
+  {
+   "code": "601777",
+   "name": "千里科技",
+   "entry_date": "2026-09-24",
+   "entry_close": 8.28,
+   "entry_low": 7.66,
+   "entry_vol": 53649645.0,
+   "volratio": 3.4,
+   "pct": 7.39,
+   "days": 0,
+   "status": "观察中",
+   "shrink": false
+  },
+  {
+   "code": "603937",
+   "name": "丽岛新材",
+   "entry_date": "2026-09-24",
+   "entry_close": 13.55,
+   "entry_low": 12.44,
+   "entry_vol": 27471652.0,
+   "volratio": 6.7,
+   "pct": 4.47,
+   "days": 0,
+   "status": "观察中",
+   "shrink": false
   }
  ],
  "graduated": [
@@ -2089,6 +2000,48 @@
    "status": "毕业",
    "shrink": false,
    "graduate_date": "2026-09-23"
+  },
+  {
+   "code": "000710",
+   "name": "贝瑞基因",
+   "entry_date": "2026-09-18",
+   "entry_close": 9.05,
+   "entry_low": 8.69,
+   "entry_vol": 37754139.0,
+   "volratio": 4.5,
+   "pct": 5.97,
+   "days": 4,
+   "status": "毕业",
+   "shrink": false,
+   "graduate_date": "2026-09-24"
+  },
+  {
+   "code": "000790",
+   "name": "华神科技",
+   "entry_date": "2026-09-21",
+   "entry_close": 4.31,
+   "entry_low": 4.03,
+   "entry_vol": 54566281.0,
+   "volratio": 3.4,
+   "pct": 6.95,
+   "days": 3,
+   "status": "毕业",
+   "shrink": true,
+   "graduate_date": "2026-09-24"
+  },
+  {
+   "code": "002164",
+   "name": "宁波东力",
+   "entry_date": "2026-09-21",
+   "entry_close": 11.1,
+   "entry_low": 10.41,
+   "entry_vol": 18571323.0,
+   "volratio": 3.1,
+   "pct": 5.82,
+   "days": 3,
+   "status": "毕业",
+   "shrink": false,
+   "graduate_date": "2026-09-24"
   }
  ],
  "ejected": [
@@ -5523,9 +5476,230 @@
    "days": 1,
    "status": "出局·破前低",
    "shrink": false
+  },
+  {
+   "code": "600776",
+   "name": "东方通信",
+   "entry_date": "2026-09-03",
+   "entry_close": 13.45,
+   "entry_low": 12.78,
+   "entry_vol": 46348148.0,
+   "volratio": 3.3,
+   "pct": 4.43,
+   "days": 15,
+   "status": "出局·超时",
+   "shrink": true
+  },
+  {
+   "code": "002132",
+   "name": "恒星科技",
+   "entry_date": "2026-09-10",
+   "entry_close": 4.34,
+   "entry_low": 4.14,
+   "entry_vol": 105447513.0,
+   "volratio": 4.1,
+   "pct": 3.58,
+   "days": 10,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "002735",
+   "name": "王子新材",
+   "entry_date": "2026-09-10",
+   "entry_close": 12.5,
+   "entry_low": 11.61,
+   "entry_vol": 54216273.0,
+   "volratio": 4.1,
+   "pct": 6.11,
+   "days": 10,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "600582",
+   "name": "天地科技",
+   "entry_date": "2026-09-10",
+   "entry_close": 4.94,
+   "entry_low": 4.86,
+   "entry_vol": 61003448.0,
+   "volratio": 3.1,
+   "pct": 3.35,
+   "days": 10,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "600184",
+   "name": "光电股份",
+   "entry_date": "2026-09-14",
+   "entry_close": 20.58,
+   "entry_low": 19.8,
+   "entry_vol": 73494512.0,
+   "volratio": 3.4,
+   "pct": 3.0,
+   "days": 8,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "603000",
+   "name": "人民网",
+   "entry_date": "2026-09-15",
+   "entry_close": 17.23,
+   "entry_low": 16.92,
+   "entry_vol": 74906686.0,
+   "volratio": 3.1,
+   "pct": 4.87,
+   "days": 7,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "603918",
+   "name": "金桥信息",
+   "entry_date": "2026-09-18",
+   "entry_close": 10.72,
+   "entry_low": 10.44,
+   "entry_vol": 23795822.0,
+   "volratio": 4.1,
+   "pct": 2.78,
+   "days": 4,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "001233",
+   "name": "海安集团",
+   "entry_date": "2026-09-21",
+   "entry_close": 48.97,
+   "entry_low": 45.89,
+   "entry_vol": 8047404.0,
+   "volratio": 6.8,
+   "pct": 7.44,
+   "days": 3,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "002226",
+   "name": "江南化工",
+   "entry_date": "2026-09-21",
+   "entry_close": 5.34,
+   "entry_low": 5.08,
+   "entry_vol": 71675944.0,
+   "volratio": 5.0,
+   "pct": 4.71,
+   "days": 3,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "002074",
+   "name": "国轩高科",
+   "entry_date": "2026-09-22",
+   "entry_close": 27.73,
+   "entry_low": 27.03,
+   "entry_vol": 67250517.0,
+   "volratio": 3.0,
+   "pct": 3.97,
+   "days": 2,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "002241",
+   "name": "歌尔股份",
+   "entry_date": "2026-09-22",
+   "entry_close": 24.64,
+   "entry_low": 24.0,
+   "entry_vol": 237107653.0,
+   "volratio": 3.1,
+   "pct": 3.53,
+   "days": 2,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "600619",
+   "name": "海立股份",
+   "entry_date": "2026-09-22",
+   "entry_close": 13.65,
+   "entry_low": 13.2,
+   "entry_vol": 36414988.0,
+   "volratio": 4.0,
+   "pct": 3.57,
+   "days": 2,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "603137",
+   "name": "恒尚节能",
+   "entry_date": "2026-09-22",
+   "entry_close": 20.7,
+   "entry_low": 19.83,
+   "entry_vol": 22775816.0,
+   "volratio": 3.0,
+   "pct": 4.49,
+   "days": 2,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "603341",
+   "name": "龙旗科技",
+   "entry_date": "2026-09-22",
+   "entry_close": 39.3,
+   "entry_low": 37.88,
+   "entry_vol": 30414619.0,
+   "volratio": 5.7,
+   "pct": 6.13,
+   "days": 2,
+   "status": "出局·破前低",
+   "shrink": true
+  },
+  {
+   "code": "000555",
+   "name": "神州信息",
+   "entry_date": "2026-09-23",
+   "entry_close": 11.01,
+   "entry_low": 10.53,
+   "entry_vol": 57156243.0,
+   "volratio": 5.5,
+   "pct": 4.46,
+   "days": 1,
+   "status": "出局·破前低",
+   "shrink": false
+  },
+  {
+   "code": "002757",
+   "name": "南兴股份",
+   "entry_date": "2026-09-23",
+   "entry_close": 20.28,
+   "entry_low": 19.86,
+   "entry_vol": 72172956.0,
+   "volratio": 4.0,
+   "pct": 2.11,
+   "days": 1,
+   "status": "出局·破前低",
+   "shrink": false
+  },
+  {
+   "code": "603125",
+   "name": "常青科技",
+   "entry_date": "2026-09-23",
+   "entry_close": 24.52,
+   "entry_low": 23.94,
+   "entry_vol": 12760909.0,
+   "volratio": 3.9,
+   "pct": 3.11,
+   "days": 1,
+   "status": "出局·破前低",
+   "shrink": false
   }
  ],
  "seeded": true,
- "updated": "2026-09-23",
+ "updated": "2026-09-24",
  "variant": "B_试盘宽容"
 }
