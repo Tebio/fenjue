@@ -317,7 +317,9 @@ def main():
     cal = [k["date"] for k in jload(D / "index_sh000001.json", [])]
     sig_date = _deep_lastd if _deep_lastd != "?" else (reg["date"] if reg else today)
     buy_day = next_cal_day(cal, sig_date)
-    sell_day = next_cal_day(cal, buy_day)
+    # 深档出场 T+10（2026-09-25 起，原为 T+1 近似显示/T+5 规则）：卖出日=买入后第 10 个交易日
+    _bi = cal.index(buy_day) if buy_day in cal else None
+    sell_day = cal[min(_bi + 10, len(cal) - 1)] if _bi is not None else next_cal_day(cal, buy_day)
 
     # 季节档
     _sm = jload(D / "seasonal_modulation.json", {})
@@ -482,7 +484,7 @@ def main():
         names = "、".join(f'{nm}({c},{p:+.1f}%)' for c, p, nm in _deep[:3])
         steps.append(step("1", "#edf5ee", "#1e7e34",
                           f'{fmt_d(buy_day)} 9:32 买 · {names}',
-                          f'{fmt_d(sig_date)} 跌停+深度≤-35%（深档簇{n_deep_cluster}只 · 出手件 T+5 68%/+11.95%）。竞价不是一字跌停 → 开盘买 → '
+                          f'{fmt_d(sig_date)} 跌停+深度≤-35%（深档簇{n_deep_cluster}只 · 出手件 T+10 61%/+8.65%）。竞价不是一字跌停 → 开盘买 → '
                           f'<b>{fmt_d(sell_day)} 尾盘卖</b>。一字跌停 = 作废。'))
     elif n_deep_cluster >= 5:
         steps.append(step("1", "#f7f6f3", "#9b9a97",
