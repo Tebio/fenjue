@@ -282,15 +282,20 @@ def deep_low_scan():
         # 土壤门（2026-09-25 #183：假恐慌=指数收在 MA20 上方时深档批次 36%/-1.00% 有毒，压制）：
         # 指数收盘 ≤ 其 MA20 才算「真恐慌」土壤，当日收盘可判，无未来函数。
         soil_ok = True
+        trend_ok = True
         try:
             closes = [float(k["close"]) for k in idx if k.get("close") and k["date"] <= lastd][-20:]
             if len(closes) == 20:
                 soil_ok = closes[-1] <= sum(closes) / 20
+                # 趋势门（2026-09-26 #199：指数20日跌>3%=真跌段 83%/+17%，平涨段 32%/-3.7% 有毒——比土壤门更锐）
+                _k = [k for k in idx if k.get("close") and k["date"] <= lastd]
+                if len(_k) >= 21:
+                    trend_ok = float(_k[-1]["close"]) / float(_k[-21]["close"]) - 1 <= -0.03
         except Exception:
-            soil_ok = True  # 指数数据异常时不误伤（缺数据=放行并注记）
+            soil_ok, trend_ok = True, True  # 指数数据异常时不误伤（缺数据=放行并注记）
         return (lastd,
                 [(c, p, nm) for c, p, nm, _ in sorted(out, key=lambda x: x[3])],
-                len(deep_events), soil_ok)
+                len(deep_events), soil_ok and trend_ok)  # 双门并集：任一不过=降权标注
     except Exception:
         return "?", [], 0, True
 
@@ -493,7 +498,7 @@ def main():
     steps = []
     if _deep and n_deep_cluster >= 5:
         names = "、".join(f'{nm}({c},{p:+.1f}%)' for c, p, nm in _deep[:3])
-        soil_tag = "" if _deep_soil else "（⚠️假恐慌批：降权别梭哈）"
+        soil_tag = "" if _deep_soil else "（⚠️土壤不佳批：降权别梭哈）"
         steps.append(step("1", "#edf5ee", "#1e7e34",
                           f'{fmt_d(buy_day)} 9:32 买 · {names}{soil_tag}',
                           f'{fmt_d(sig_date)} 跌停+深度≤-35%（深档簇{n_deep_cluster}只 · 出手件 T+10 61%/+8.65%）。竞价不是一字跌停 → 开盘买 → '
