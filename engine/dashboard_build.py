@@ -491,17 +491,13 @@ def main():
 
     # 新信号 steps
     steps = []
-    if _deep and n_deep_cluster >= 5 and _deep_soil:
+    if _deep and n_deep_cluster >= 5:
         names = "、".join(f'{nm}({c},{p:+.1f}%)' for c, p, nm in _deep[:3])
+        soil_tag = "" if _deep_soil else "（⚠️假恐慌批：降权别梭哈）"
         steps.append(step("1", "#edf5ee", "#1e7e34",
-                          f'{fmt_d(buy_day)} 9:32 买 · {names}',
+                          f'{fmt_d(buy_day)} 9:32 买 · {names}{soil_tag}',
                           f'{fmt_d(sig_date)} 跌停+深度≤-35%（深档簇{n_deep_cluster}只 · 出手件 T+10 61%/+8.65%）。竞价不是一字跌停 → 开盘买 → '
                           f'<b>{fmt_d(sell_day)} 尾盘卖</b>。一字跌停 = 作废。'))
-    elif _deep and n_deep_cluster >= 5 and not _deep_soil:
-        steps.append(step("1", "#f7f6f3", "#9b9a97",
-                          '假恐慌压制 · 不出手',
-                          f'{fmt_d(sig_date)} 深档簇{n_deep_cluster}只且有深跌件，但指数收在 MA20 上方=假恐慌'
-                          f'（8 年实测假恐慌批次 36%/-1.00% 有毒）→ 宁可错过。'))
     elif n_deep_cluster >= 5:
         steps.append(step("1", "#f7f6f3", "#9b9a97",
                           f'{fmt_d(buy_day)} · 深档成簇但无深跌件，不出手',
