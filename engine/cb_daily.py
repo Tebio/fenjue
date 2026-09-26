@@ -13,12 +13,15 @@ import requests
 ROOT = Path("/opt/data/fenjue")
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://finance.sina.com.cn/"}
 
-params = {"reportName": "RPT_BOND_CB_LIST", "columns": "ALL", "pageSize": "600",
-          "pageNumber": "1", "sortColumns": "PUBLIC_START_DATE", "sortTypes": "-1",
-          "source": "WEB", "client": "WEB"}
-d = requests.get("https://datacenter-web.eastmoney.com/api/data/v1/get",
-                 params=params, headers=HEADERS, timeout=20).json()
-rows = (d.get("result") or {}).get("data") or []
+rows = []
+for _page in (1, 2):  # 活跃债 ~320 只跨前两页（首页按发行日期排序漏尾部老债，实测 290/322）
+    params = {"reportName": "RPT_BOND_CB_LIST", "columns": "ALL", "pageSize": "600",
+              "pageNumber": str(_page), "sortColumns": "PUBLIC_START_DATE", "sortTypes": "-1",
+              "source": "WEB", "client": "WEB"}
+    d = requests.get("https://datacenter-web.eastmoney.com/api/data/v1/get",
+                     params=params, headers=HEADERS, timeout=20).json()
+    rows.extend((d.get("result") or {}).get("data") or [])
+    time.sleep(0.5)
 (ROOT / "data/cb_list.json").write_text(json.dumps(rows, ensure_ascii=False))
 active = [r for r in rows if not r.get("DELIST_DATE") and r.get("SECURITY_CODE")]
 print(f"活跃债 {len(active)}")

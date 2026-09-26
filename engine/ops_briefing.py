@@ -159,6 +159,18 @@ def main():
     if pool_names:
         L.append(f'2. 观察池临启动（触发制，不用盯）：{pool_names} 等')
         L.append('   只观察不挂单（G7容量死刑+当周8触发7亏实锤）：「它涨停+板块≥3只涨停」时雷达会报，但不排队')
+    # 低价转债池（2026-09-26 接线：cb_daily 16:05 落盘，≤105 债底压舱线 #179①）
+    try:
+        _cb = json.loads(open(D + "/cb_low_price.json").read())
+        if _cb.get("n", 0) > 0:
+            _names = "、".join(f'{p["name"]}({p["price"]:.1f})' for p in _cb["pool"][:6])
+            L.append(f'2b. 🧱 低价转债池（{_cb["date"]} 收盘≤105 共 {_cb["n"]} 只）：{_names}')
+            L.append('   债底线：T+120 72.9%/+7.79%、中位回撤仅 -3.6%（8年）。熊市压舱石，独立仓位长持，不跟深档同批。')
+        if _cb.get("redeem_alerts"):
+            L.append(f'   🚫 强赎预警（持债 T+1 内走）：' + "、".join(
+                f'{a["name"]}({a["code"]})' for a in _cb["redeem_alerts"][:5]))
+    except Exception:
+        pass
     # ⚔️ X规则线（xrules_daily 19:15 判定落盘，全保真口径）：T1-MEGA/X2/X3 状态一览
     try:
         _xs = json.loads(open(D + "/xrules_state.json").read())
