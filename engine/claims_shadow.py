@@ -21,7 +21,7 @@ FEE = 0.0015
 # FRONTRUN_V2（2026-09-12 注册）：首板+板块梯队≥3+市值20-400亿。
 # 入场口径=信号日收盘（打板成交假设，fill 率由影子前向中的封板时间另行定量），
 # 与框架默认的次日开盘不同——次日追是该主张内部已证伪的变体（-0.52%）。
-CLOSE_ENTRY_CLAIMS = {"FRONTRUN_FIRSTBOARD_V2", "WATCHPOOL_GRAD"}
+CLOSE_ENTRY_CLAIMS = {"FRONTRUN_FIRSTBOARD_V2", "WATCHPOOL_GRAD", "YAO_LAUNCH_FIRSTBOARD"}  # 2026-09-26 加 YAO_LAUNCH（打板口径）
 
 # 2026-09-19：注册表桥——夜间流水线新 PASS 组合进影子前向（L5）。
 # 通过 law_pipeline REGISTRY 检测器原样执行，禁止在 detect() 里重复实现（口径漂移风险）。
@@ -42,6 +42,9 @@ REGISTRY_SHADOW_CLAIMS = {
     "CROSS_LOW_3DOWN_OS20": "交叉_跌停低_三连阴_超跌20",
     "CROSS_LOW_LOSER250_BIGUPPER": "交叉_跌停低_输家250_避雷针低",
     "CROSS_LOW_TD9_GAPDOWN": "交叉_跌停低_TD9买入_缺口低开",
+    # 影子新线（2026-09-26 接线）：妖股启动期首板(#174/#175) + 主线深回踩双重超卖(#177)
+    "YAO_LAUNCH_FIRSTBOARD": "妖股启动期首板_v1",
+    "MAINLINE_DIP_RSI2": "主线深回踩_RSI2_v1",
     # 胜负解剖细分（2026-09-19，深度+恐慌强度分界）
     "COMP_LIMITDOWN_LOW_DEEP": "组合_跌停低_深跌",
     "COMP_LIMITDOWN_LOW_DEEP_LDC100": "组合_跌停低_深跌_跌停潮",

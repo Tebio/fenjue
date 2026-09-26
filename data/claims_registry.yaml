@@ -1368,3 +1368,27 @@ claims:
     34% 尾部），回封确认只在封住后买（尾部为零，代价=涨停价成本+回封瞬间成交假设）。上午回封 +2.11%/59% > 未炸板对照 +1.65%/56%——分歧转一致洗掉浮筹。分段：2025Q4
     +2.42/2026H1 +2.34/2026H2 +1.43（衰减中）；regime：主线+2.92>平淡+2.21>恐慌+2.13>妖股+1.50。残留：①成交假设（回封推进瞬间买入≈涨停价，m60
     bar 级可验证）②一年窗口 ③尾盘回封死（+0.46%/50%）必须限上午。影子接线：盘中 11:35/14:05 扫 m60 回封+实时封单强度，前向攒样本。
+- id: YAO_LAUNCH_FIRSTBOARD
+  statement: 妖股期段龄≤2（启动期）+首板(60日无板)+量比≥1.5(前20日基期)+梯队≥3，信号日收盘入（打板口径），T+1 开盘出
+  detector: law_pipeline REGISTRY 妖股启动期首板_v1
+  pos_direction: 妖股期启动段首板
+  control: position_matched
+  horizon: [1]
+  baseline_pp: {1: 1.51}
+  kill_line_pp: {1: 0.0}
+  grade: 候选L2（#174/#175：段龄1-2 close-entry T1 57.2%/+1.51%，三段 2019-21 +1.33/2022-24 +3.43/2025-26 +0.98 同正；红线：2026 年段已转负（42.1%/-0.37%）=出生在衰减期，影子 2026Q4 继续负即 DEAD；fill 率黑盒由影子前向定量）
+  created: '2026-09-26'
+  audit_every_days: 7
+  note: 2026-09-26 影子接线（claims_shadow REGISTRY 桥）。不进推送池。
+- id: MAINLINE_DIP_RSI2
+  statement: 主线期+MA60上+当日跌≥3%+RSI(2)<10（双重超卖），次日开盘入，收>MA5 出（10日时间止损）；影子按固定 horizon 记账
+  detector: law_pipeline REGISTRY 主线深回踩_RSI2_v1
+  pos_direction: 主线期强势回踩超卖
+  control: position_matched
+  horizon: [1, 5]
+  baseline_pp: {1: 0.63, 5: 1.12}
+  kill_line_pp: {1: 0.0, 5: 0.5}
+  grade: 候选L2（#177：2026 段 66.7%/+1.12%（n=1343，Connors 出场口径）；时代终审不过=2019-21 -1.24/2022-24 -0.43 双负，仅 2026 机制成立——影子滚动 20 笔胜率<55% 即死）
+  created: '2026-09-26'
+  audit_every_days: 7
+  note: 2026-09-26 影子接线（claims_shadow REGISTRY 桥）。不进推送池。

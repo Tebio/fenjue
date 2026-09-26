@@ -518,6 +518,7 @@ def _cradle_count_map(stocks):
 _XLADDER = None   # date -> industry -> 当日涨停家数（≥+9.8%，kcache 比率，复权安全）
 _XCAP = None      # code -> month(YYYY-MM) -> 流通市值(亿)
 _XREGIME = None   # date -> regime
+_XAGE = None      # date -> (regime, 段龄)（2026-09-26 影子接线新增）
 _IND = None       # code -> industry
 _XLOSERQ = None   # date -> 当日全市场250日回报的Q20边界（长周期反转横截面）
 _XFUND = None     # code -> date -> (peTTM, isST)；fund_cache baostock 日频（2026-09-18 夜间批立）
@@ -605,6 +606,17 @@ def build_xsection(stocks):
     _XLOSERQ = {dt: sorted(v)[int(len(v) * 0.2)] for dt, v in r250_by_date.items() if len(v) >= 500}
     _XCAP, _qs = load_cap_quintiles()
     _XREGIME = load_regime()
+    # 段龄（2026-09-26 影子接线）：从权威时间轴有序列表派生 date→(regime, 段内第几天)
+    global _XAGE
+    _tl = json.loads((ROOT / "data/regime_timeline_hcap.json").read_text())
+    _XAGE = {}
+    _cr, _ag = None, 0
+    for _x in _tl:
+        if _x["regime"] != _cr:
+            _cr, _ag = _x["regime"], 1
+        else:
+            _ag += 1
+        _XAGE[_x["date"]] = (_cr, _ag)
     _XFUND = _load_fund_xsection()
     _cradle_count_map(stocks)   # 妖股摇篮成簇横截面（必须在 _XCAP 就绪后——首版在头部调用致空表零信号）
 
@@ -780,6 +792,55 @@ def _watchpool_grad(d, i):
             continue
         return True
     return False
+
+
+def _rsi2(d, i):
+    """2 周期 RSI（Connors 口径：两日涨跌简单均值）——主线深回踩探测器用（#177）。"""
+    if i < 2 or d["c"][i - 1] <= 0 or d["c"][i - 2] <= 0:
+        return None
+    g = max(d["c"][i] - d["c"][i - 1], 0) + max(d["c"][i - 1] - d["c"][i - 2], 0)
+    l = max(d["c"][i - 1] - d["c"][i], 0) + max(d["c"][i - 2] - d["c"][i - 1], 0)
+    if l == 0:
+        return 100.0
+    return 100 - 100 / (1 + g / l)
+
+
+def _vr20(d, i):
+    """量比=当日量/前20日均量（与妖股启动期研究口径一致）。"""
+    base = d["v"][i - 20:i]
+    if len(base) < 20 or any(x <= 0 for x in base):
+        return None
+    mb = sum(base) / 20
+    return d["v"][i] / mb if mb > 0 else None
+
+
+def _yao_launch_firstboard(d, i):
+    """妖股启动期首板（#174/#175）：妖股期段龄≤2 + 首板(60日无板) + 量比≥1.5 + 梯队≥3。"""
+    if _XAGE is None or _XLADDER is None or i < 65:
+        return False
+    rg, ag = _XAGE.get(d["date"][i], (None, 99))
+    if rg != "妖股期" or ag > 2:
+        return False
+    if not _first_board60(d, i):
+        return False
+    vr = _vr20(d, i)
+    return vr is not None and vr >= 1.5 and _ladder(d, i) >= 3
+
+
+def _mainline_dip_rsi2(d, i):
+    """主线深回踩双重超卖（#177 最优解）：主线期 + MA60上 + 当日跌≥3% + RSI(2)<10。"""
+    if _XAGE is None or i < 65:
+        return False
+    rg, _ = _XAGE.get(d["date"][i], (None, 0))
+    if rg != "主线期":
+        return False
+    if d["c"][i - 1] <= 0 or d["c"][i] / d["c"][i - 1] - 1 > -0.03:
+        return False
+    ma = d["ma60"][i]
+    if not ma or d["c"][i] <= ma:
+        return False
+    r2 = _rsi2(d, i)
+    return r2 is not None and r2 < 10
 
 
 def _banlu_b5(d, i):
@@ -1308,6 +1369,9 @@ REGISTRY = {
                                           and _entry_wd(d, i) != 0),
     "banlu_b5_MA60上_避周二": lambda d, i: (d["ma60"][i] is not None and d["c"][i] > d["ma60"][i]
                                        and _banlu_b5(d, i) and _entry_wd(d, i) != 1),
+    # ---- 影子新线（2026-09-26 接线，#174/#177）----
+    "妖股启动期首板_v1": _yao_launch_firstboard,
+    "主线深回踩_RSI2_v1": _mainline_dip_rsi2,
     # ---- 2026-09-19 三条件以上穷举（BACKLOG#7，triples_exhaustive 252格→54 PASS 精编4条）----
     # 全表 data/triples_exhaustive_20260919.json；精编标准=G7 K1年化+均笔+非已注册重复。
     # TD9买入作确认层是本场最大发现（均笔3.2~3.8% vs 裸底座1.4%）。
