@@ -33,6 +33,9 @@ REGISTRY_SHADOW_CLAIMS = {
     "COMP_LIMITDOWN_LOW_BIGUPPER_SHRINK": "组合_跌停低_避雷针_缩量",
     "COMP_LIMITDOWN_LOW_LOSER250_OS20_XFUND": "组合_跌停低_输家_超跌20_剔亏ST",
     "COMP_LIMITDOWN_LOW_TD9": "组合_跌停低_TD9买入滤",
+    # 2026-09-26 新增影子：主线回踩 + 妖股启动期首板（#156/#170，漏挂会永远不触发）
+    "MAINLINE_DIP_RSI2": "主线深回踩_RSI2_v1",
+    "YAO_LAUNCH_FIRSTBOARD": "妖股启动期首板_v1",
     "COMP_LIMITDOWN_LOW_LOSER250_OS20_TD9": "组合_跌停低_输家_超跌20_TD9滤",
     # 全交叉矩阵幸存对（2026-09-19 cross_matrix 8 PASS）
     "CROSS_LOW_SHRINK_BIGUPPER": "交叉_跌停低_缩量_避雷针低",
