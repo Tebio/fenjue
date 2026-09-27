@@ -843,6 +843,36 @@ def _mainline_dip_rsi2(d, i):
     return r2 is not None and r2 < 10
 
 
+_XGOLD = None  # month -> set(codes)：券商金股缓存（2026-09-27 #208）
+
+
+def _load_gold():
+    """券商金股月度名单（iwencai 缓存，空月跳过）。懒加载。"""
+    global _XGOLD
+    if _XGOLD is None:
+        import glob as _g
+        import os as _os
+        _XGOLD = {}
+        for _fp in _g.glob(str(ROOT / "data/gold_stock_cache/*.json")):
+            _mo = _os.path.basename(_fp)[:-5]
+            _rows = json.loads(open(_fp).read())
+            if _rows:
+                _XGOLD[_mo] = {r["code"] for r in _rows}
+    return _XGOLD
+
+
+def _three_down_gold(d, i):
+    """三连阴+当月金股覆盖（#206/#208）：三连阴(三日连跌) + 当月券商金股名单在册。
+    三年段 57%/+3.86%（n=5268），金股覆盖自带确认属性，无需次日确认。"""
+    if i < 3:
+        return False
+    c, o = d["c"], d["o"]
+    if not (c[i] < c[i - 1] < c[i - 2] and c[i] < o[i] and c[i - 1] < o[i - 1] and c[i - 2] < o[i - 2]):
+        return False
+    gold = _load_gold()
+    return d["code"] in gold.get(d["date"][i][:7], set())
+
+
 def _banlu_b5(d, i):
     """半路板B5日K代理：盘中触+6%（h≥前收×1.06）+量比≥2+梯队≥2+60日无板+市值带+平淡/恐慌期"""
     if _XLADDER is None or _XREGIME is None or i < 61:
@@ -1371,6 +1401,7 @@ REGISTRY = {
                                        and _banlu_b5(d, i) and _entry_wd(d, i) != 1),
     # ---- 影子新线（2026-09-26 接线，#174/#177）----
     "妖股启动期首板_v1": _yao_launch_firstboard,
+    "三连阴_金股覆盖_v1": _three_down_gold,
     "主线深回踩_RSI2_v1": _mainline_dip_rsi2,
     # ---- 2026-09-19 三条件以上穷举（BACKLOG#7，triples_exhaustive 252格→54 PASS 精编4条）----
     # 全表 data/triples_exhaustive_20260919.json；精编标准=G7 K1年化+均笔+非已注册重复。

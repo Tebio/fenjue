@@ -33,9 +33,10 @@ REGISTRY_SHADOW_CLAIMS = {
     "COMP_LIMITDOWN_LOW_BIGUPPER_SHRINK": "组合_跌停低_避雷针_缩量",
     "COMP_LIMITDOWN_LOW_LOSER250_OS20_XFUND": "组合_跌停低_输家_超跌20_剔亏ST",
     "COMP_LIMITDOWN_LOW_TD9": "组合_跌停低_TD9买入滤",
-    # 2026-09-26 新增影子：主线回踩 + 妖股启动期首板（#156/#170，漏挂会永远不触发）
+    # 影子新线（2026-09-26 接线，#174/#177）：妖股启动期首板 + 主线深回踩
     "MAINLINE_DIP_RSI2": "主线深回踩_RSI2_v1",
     "YAO_LAUNCH_FIRSTBOARD": "妖股启动期首板_v1",
+    "THREE_DOWN_GOLD": "三连阴_金股覆盖_v1",  # 2026-09-27（#208）金股确认层影子
     "COMP_LIMITDOWN_LOW_LOSER250_OS20_TD9": "组合_跌停低_输家_超跌20_TD9滤",
     # 全交叉矩阵幸存对（2026-09-19 cross_matrix 8 PASS）
     "CROSS_LOW_SHRINK_BIGUPPER": "交叉_跌停低_缩量_避雷针低",
@@ -45,9 +46,6 @@ REGISTRY_SHADOW_CLAIMS = {
     "CROSS_LOW_3DOWN_OS20": "交叉_跌停低_三连阴_超跌20",
     "CROSS_LOW_LOSER250_BIGUPPER": "交叉_跌停低_输家250_避雷针低",
     "CROSS_LOW_TD9_GAPDOWN": "交叉_跌停低_TD9买入_缺口低开",
-    # 影子新线（2026-09-26 接线）：妖股启动期首板(#174/#175) + 主线深回踩双重超卖(#177)
-    "YAO_LAUNCH_FIRSTBOARD": "妖股启动期首板_v1",
-    "MAINLINE_DIP_RSI2": "主线深回踩_RSI2_v1",
     # 胜负解剖细分（2026-09-19，深度+恐慌强度分界）
     "COMP_LIMITDOWN_LOW_DEEP": "组合_跌停低_深跌",
     "COMP_LIMITDOWN_LOW_DEEP_LDC100": "组合_跌停低_深跌_跌停潮",

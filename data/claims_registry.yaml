@@ -1406,3 +1406,17 @@ claims:
   direction: negative
   created: 2026-09-26
   audit_every_days: 30
+- id: THREE_DOWN_GOLD
+  statement: 三连阴+当月券商金股覆盖（金股覆盖自带确认属性，T+1直接入无需次日确认）
+  detector: 三连阴_金股覆盖_v1
+  control: 三连阴裸策略同段（50%/+1.25%）
+  horizon:
+  - 20
+  baseline_pp:
+    20: 3.86
+  kill_line_pp:
+    20: 1.5
+  grade: 影子（2020-2022三年段57%/+3.86% n=5268，待2023-26配额段验证+前向影子）
+  direction: positive
+  created: 2026-09-27
+  audit_every_days: 30
