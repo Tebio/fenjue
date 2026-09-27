@@ -1420,3 +1420,31 @@ claims:
   direction: positive
   created: 2026-09-27
   audit_every_days: 30
+- id: GOLD_SOLO_FRESH_MONTHLY
+  statement: 每月第6交易日买当月「独家+年内首入」金股（T+20 出）：2020-2022 段 63%/+7.26pp 超额（前视审计通过，第6日=名单发布完毕的可执行时点）
+  detector: external:tmp/gold_deep_audit.py
+  control: 沪深300同期
+  horizon:
+  - 20
+  baseline_pp:
+    20: 7.26
+  kill_line_pp:
+    20: 2.0
+  grade: 候选（历史段三年验证+前视审计过；等 iwencai 配额补齐 2023-26 段做生死判决；配额每日 08:30 自动探测）
+  direction: positive
+  created: 2026-09-27
+  audit_every_days: 30
+- id: GOLD_REMOVAL_BLACKLIST
+  statement: 持仓票掉出月度金股名单=离场标注（被剔除 40%/-0.82pp vs 留榜 55%/+2.73pp，差 3.5pp）
+  detector: external:tmp/gold_three_digs.py
+  control: 留榜组
+  horizon:
+  - 20
+  baseline_pp:
+    20: -0.82
+  kill_line_pp:
+    20: 1.0
+  grade: 黑名单候选（持仓管理层，不作做空）
+  direction: negative
+  created: 2026-09-27
+  audit_every_days: 30
