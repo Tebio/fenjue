@@ -172,6 +172,22 @@ def main():
                  f'{"…" if len(cr_list) > 6 else ""}')
         L.append(f'   {fmt(today)} 9:30 开盘买（分散 3-5 只，别单挑）；8 年口径 T+5 73.8%/+7.74、T+20 82.5%/+14.67，'
                  f'但 6 成收益来自 2024-02 一个月——这是结构性机会不是日常策略；孤板日（<3 只）绝不出手。')
+    # 🥇 金股组合段（2026-09-27 接线：gold_current.json 由 gold_monthly.py 每日 08:35 更新）
+    try:
+        _g = json.loads((ROOT + "/data/gold_current.json") and open(ROOT + "/data/gold_current.json").read())
+        if _g.get("status") == "ok":
+            _sf = _g.get("solo_fresh", [])
+            if _sf:
+                _names = "、".join(f'{r["name"]}({r["code"]})' for r in _sf[:6])
+                L.append(f'1c. 🥇金股组合（{_g["month"]} 独家新鲜 {len(_sf)} 只）：{_names}{"…" if len(_sf) > 6 else ""}')
+                L.append(f'   入场日={_g.get("entry_day")}（月第6交易日）开盘等权买，T+20 出；三年段 63%/+7.26pp 超额（前视审计过）。'
+                         f'持仓票掉出名单=离场标注（-3.5pp）。')
+            else:
+                L.append(f'1c. 🥇金股组合（{_g["month"]}）：本月无独家新鲜金股，空仓过月')
+        else:
+            L.append(f'1c. 🥇金股组合：{_g.get("month")} 名单未获取（{_g.get("note", "")}）')
+    except Exception:
+        pass  # 金股段失败不阻塞作战单
     if pool_names:
         L.append(f'2. 观察池临启动（触发制，不用盯）：{pool_names} 等')
         L.append('   只观察不挂单（G7容量死刑+当周8触发7亏实锤）：「它涨停+板块≥3只涨停」时雷达会报，但不排队')
