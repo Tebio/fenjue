@@ -189,11 +189,27 @@ function render(d){
   window.scrollY=y;
 }
 function load(){
+  // 2026-09-27 修「一直在读时间」：周末/非交易日只加载一次不轮询；
+  // 交易日也先探 ops-state.json 的 built_at，没变就不整页重渲（消灭每分钟闪烁）
+  var b=bjt(),w=b.getDay();
+  if(w===0||w===6){return;}
   var x=new XMLHttpRequest();
-  x.open("GET","dashboard.json?t="+Date.now(),true);
+  x.open("GET","ops-state.json?t="+Date.now(),true);
   x.onreadystatechange=function(){
     if(x.readyState===4&&x.status===200){
-      try{render(JSON.parse(x.responseText));}catch(e){}
+      try{
+        var os=JSON.parse(x.responseText);
+        if(os.built_at===window._lastBuilt)return;
+        window._lastBuilt=os.built_at;
+      }catch(e){}
+      var x2=new XMLHttpRequest();
+      x2.open("GET","dashboard.json?t="+Date.now(),true);
+      x2.onreadystatechange=function(){
+        if(x2.readyState===4&&x2.status===200){
+          try{render(JSON.parse(x2.responseText));}catch(e){}
+        }
+      };
+      x2.send();
     }
   };
   x.send();

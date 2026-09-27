@@ -482,6 +482,40 @@ def main():
     if t1_alive:
         ghost.append(f'· 若你 {fmt_d(t1["date"])} 跟买了 <b>{"、".join(t1["buys"][:5])}</b>'
                      f' → <b>{fmt_d(t1_sell_day)} 尾盘卖</b>（T+1 到点必卖，无论盈亏）')
+    # 中线影子仓（2026-09-27 修「影子单只玩封板票」：深档 T+10/摇篮 T+20 的在途单也上墙）
+    try:
+        import datetime as _dt
+        _sh = D / "claims_shadow.jsonl"
+        if _sh.exists():
+            _open = []
+            for _l in _sh.read_text().splitlines():
+                _r = json.loads(_l)
+                if _r.get("entry") is not None and _r.get("r10") is None and _r.get("claim") in (
+                        "LIMITDOWN_LOW_DEEP35", "MAINLINE_DIP_RSI2", "YAO_LAUNCH_FIRSTBOARD",
+                        "THREE_DOWN_GOLD", "WATCHPOOL_GRAD", "FRONTRUN_FIRSTBOARD_V2"):
+                    _open.append(_r)
+            if _open:
+                _last_close = {}
+                for _r in _open[-60:]:
+                    _kc = D / "big_kcache" / f"{_r['code']}.json"
+                    if _kc.exists():
+                        try:
+                            _ks = json.loads(_kc.read_text())
+                            _last_close[_r["code"]] = _ks[-1]["close"]
+                        except Exception:
+                            pass
+                _by_claim = {}
+                for _r in _open[-60:]:
+                    _cur = _last_close.get(_r["code"])
+                    _pnl = f'{(_cur / _r["entry"] - 1) * 100:+.1f}%' if _cur else "?"
+                    _nm = {"LIMITDOWN_LOW_DEEP35": "深档T10", "MAINLINE_DIP_RSI2": "主线回踩",
+                           "YAO_LAUNCH_FIRSTBOARD": "启动期首板", "THREE_DOWN_GOLD": "三连阴金股",
+                           "WATCHPOOL_GRAD": "观察池毕业", "FRONTRUN_FIRSTBOARD_V2": "抢跑首板"}.get(_r["claim"], _r["claim"])
+                    _by_claim.setdefault(_nm, []).append(f'{_r["code"]}({_pnl})')
+                for _nm, _items in _by_claim.items():
+                    ghost.append(f'· 中线在途 <b>{_nm}</b>：{"、".join(_items[:6])}{"…" if len(_items) > 6 else ""}（到 T+10/T+20 才结算，别中途剁）')
+    except Exception:
+        pass
     if b5_am:
         ghost.append(f'· 若你 {fmt_d(b5_date)} 跟买了封板票 <b>{"、".join(b5_am)}</b>'
                      f' → <b>{fmt_d(buy_day)} 早盘找高点卖</b>（涨停隔夜+2.11%/65.2%）')
@@ -567,13 +601,38 @@ def main():
     # 市场状态
     if reg:
         st = reg["stats"]
+        # 环境快照行（2026-09-27 全面升级：env_state 一处出）
+        _env_html = ""
+        try:
+            from env_state import env_state as _env_fn, fmt_brief as _fmt_brief
+            _env_html = f'<div style="margin-top:8px;padding:7px 10px;background:#f7f6f3;border-radius:6px">🌡️ {esc(_fmt_brief(_env_fn(reg["date"])))}</div>'
+        except Exception:
+            pass
         S["今日"].append(card(f"市场状态 · {fmt_d(reg['date'])}", f"""
 <div class="statrow"><div><div class="big">{badge_regime(reg['regime'])}</div>
 <div class="muted">周期仪 · {esc(reg['date'])}</div></div>
 <div class="stat"><div class="num">{st['limit_ups']}<span class="muted"> / {st['limit_downs']}</span></div><div class="muted">涨停 / 跌停</div></div>
 <div class="stat"><div class="num">{pct(st['index_pct'])}</div><div class="muted">指数</div></div></div>
-<div class="muted" style="margin-top:10px">主线板块：{"、".join(f"{esc(n)}({c})" for n, c in st["top_sectors"][:4])} · 周期仪是油门不是方向盘：恐慌期=打板fill黄金期，主线期=红利拿稳别手痒</div>""",
+{_env_html}
+<div class="muted" style="margin-top:10px">主线板块：{"".join(f"{esc(n)}({c})" for n, c in st["top_sectors"][:4])} · 周期仪是油门不是方向盘：恐慌期=打板fill黄金期，主线期=红利拿稳别手痒</div>""",
                               "每日 15:40 盘后扫描", tab="今日"))
+
+    # 🥇 金股组合卡（2026-09-27 接线：data/gold_current.json 由 gold_monthly 每日 08:35 更新）
+    try:
+        _gc = json.loads((D / "gold_current.json").read_text()) if (D / "gold_current.json").exists() else None
+        if _gc:
+            if _gc.get("status") == "ok" and _gc.get("solo_fresh"):
+                _sf = _gc["solo_fresh"]
+                _rows = "".join(f'<tr><td>{esc(r["name"])}</td><td class="muted">{r["code"]}</td></tr>' for r in _sf[:8])
+                _body = (f'<div class="muted">本月独家+年内首入 {len(_sf)} 只 · 入场日 {_gc.get("entry_day")}（月第6交易日）· T+20 出 · 三年段 63%/+7.26pp 超额</div>'
+                         f'<table>{_rows}</table>')
+            elif _gc.get("status") == "ok":
+                _body = f'<div class="muted">{_gc.get("month")} 无独家新鲜金股，空仓过月。</div>'
+            else:
+                _body = f'<div class="muted">{_gc.get("month")} 名单未获取——{esc(_gc.get("note", ""))}</div>'
+            S["今日"].append(card("🥇 金股组合 · 月度低频", _body, "每月第6交易日入场 · iwencai 名单驱动", tab="今日"))
+    except Exception:
+        pass
 
     # 作战手册
     S["今日"].append(card("🎯 作战手册 · 2026-09 起",
