@@ -18,11 +18,13 @@ body{background:var(--bg);color:var(--text);font:14px/1.65 ui-sans-serif,-apple-
 .brand small{display:block;font-size:10px;letter-spacing:3px;color:var(--faint);font-weight:500;margin-top:2px}
 .clock{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
 .clock b{color:var(--text);font-size:15px}
-/* ── Market Regime 状态条（sticky） ── */
-.regimebar{position:sticky;top:0;z-index:10;background:var(--panel);border:1px solid var(--line2);border-radius:8px;
-  padding:9px 13px;margin:12px 0 6px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12.5px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.regimebar .rg{font-size:15px;font-weight:800;letter-spacing:1px}
-.chip{border:1px solid var(--line2);border-radius:5px;padding:1px 8px;font-size:11.5px;color:var(--muted);white-space:nowrap;background:var(--panel2)}
+/* ── Market Regime 状态条（不吸顶，随内容滚走；chips 单行紧凑，溢出横滑） ── */
+.regimebar{background:var(--panel2);border:1px solid var(--line);border-radius:8px;
+  padding:7px 11px;margin:10px 0 4px;display:flex;gap:6px;align-items:center;font-size:12px;
+  flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.regimebar::-webkit-scrollbar{display:none}
+.regimebar .rg{font-size:14px;font-weight:800;letter-spacing:1px;flex:none}
+.chip{border:1px solid var(--line2);border-radius:5px;padding:1px 7px;font-size:11px;color:var(--muted);white-space:nowrap;background:var(--panel);flex:none}
 .chip b{color:var(--text);font-weight:600}
 .chip.warn{border-color:var(--accent-dim);color:var(--warn);background:#fdf6ec}
 .chip.bad{border-color:#e5b8b2;color:#c0392b;background:#fdeceb}
