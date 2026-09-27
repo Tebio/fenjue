@@ -318,7 +318,7 @@ def step(no, bg, fg, title, desc):
 
 def main():
     today = datetime.date.today().isoformat()
-    S = {"今日": [], "我的钱": [], "研究库": [], "证据库": []}
+    S = {"今日": [], "我的钱": [], "研究库": [], "证据库": [], "影子": []}
 
     # ══ 数据装载（全部只读）══
     _deep_lastd, _deep, _deep_cluster, _deep_soil = deep_low_scan()
@@ -656,6 +656,39 @@ def main():
             S["今日"].append(card("🥇 金股组合 · 月度低频", _body, "每月第6交易日入场 · iwencai 名单驱动", tab="今日"))
     except Exception:
         pass
+
+    # 👻 影子战绩摘要卡（2026-09-27 用户令：影子单作为可切换菜单进主面板；全量明细在 shadow.html）
+    try:
+        _sh = D / "claims_shadow.jsonl"
+        if _sh.exists():
+            import statistics as _st
+            _lines = [json.loads(x) for x in _sh.read_text().splitlines()]
+            _per = {}
+            for _r in _lines:
+                _hz = {"LIMITDOWN_LOW_DEEP35": "r10", "YAO_LAUNCH_FIRSTBOARD": "r1",
+                       "MAINLINE_DIP_RSI2": "r5", "THREE_DOWN_GOLD": "r20"}.get(_r["claim"], "r5")
+                _v = _r.get(_hz) if _r.get(_hz) is not None else _r.get("r5")
+                _c = _per.setdefault(_r["claim"], [0, 0])
+                if _v is not None:
+                    _c[0] += 1
+                    _c[1] += _v
+            _top = sorted(((k, v) for k, v in _per.items() if v[0] >= 5), key=lambda kv: -kv[1][1])
+            _nm = {"LIMITDOWN_LOW_DEEP35": "深档低位T+10", "REVERSAL_OPEN_T1": "反转族T+1",
+                   "PANIC_DEPTH_DOSE": "恐慌剂量（分档·与反转族同批）", "LIMITDOWN_NEXT_DAY": "跌停次日接",
+                   "FRONTRUN_FIRSTBOARD_V2": "抢跑首板", "WATCHPOOL_GRAD": "观察池毕业",
+                   "YAO_LAUNCH_FIRSTBOARD": "妖股启动期首板", "MAINLINE_DIP_RSI2": "主线回踩",
+                   "THREE_DOWN_GOLD": "三连阴金股"}
+            _rows = "".join(
+                f'<tr><td>{_nm.get(k, k)}</td><td>{v[0]}</td>'
+                f'<td class="{"pos" if v[1] > 0 else "neg"}">{v[1] * 10000:+,.0f} 元</td></tr>'
+                for k, v in _top[:8])
+            S["影子"].append(card("👻 影子单战绩 · 摘要",
+                                  f'<table><tr><th>线</th><th>结算单</th><th>累计盈亏（每笔1万口径）</th></tr>{_rows}</table>'
+                                  f'<div class="muted" style="margin-top:8px">完整战绩+在途明细+真实组合口径（10万/5槽）→ '
+                                  f'<a href="shadow.html" style="color:#c0392b">影子单战绩页</a> · 反转族与恐慌剂量是同批事件的两个视图</div>',
+                                  "每交易日 19:00 影子盘日更", tab="影子"))
+    except Exception as _e:
+        print(f"[WARN] 影子卡构建失败: {_e}")
 
     # 作战手册
     S["今日"].append(card("🎯 作战手册 · 2026-09 起",
@@ -1203,13 +1236,13 @@ def main():
 选票方向：距60日高点最近者优先（恐慌中的相对强度）· 全部规则待影子盘前向判决，历史数字按乐观版理解。</div>""",
                                 "X3/X2/T1-MEGA/J5/红利做T + 禁令墙", collapsed=False, tab="研究库"))
 
-    body = "\n".join(h for tab in ("今日", "我的钱", "研究库", "证据库") for h in S[tab])
+    body = "\n".join(h for tab in ("今日", "我的钱", "研究库", "证据库", "影子") for h in S[tab])
     stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     # B 架构（2026-09-20）：数据/渲染分离——面板=静态壳+dashboard.json，60s自刷新，数据更新无需重建HTML
     dash = {"built_at": stamp, "sig_date": sig_date, "sig_fmt": fmt_d(sig_date),
             "buy_day": buy_day, "buy_fmt": fmt_d(buy_day),
             "tabs": ["今日", "我的钱", "研究库", "证据库"],
-            "cards": [{"tab": tab, "html": h} for tab in ("今日", "我的钱", "研究库", "证据库") for h in S[tab]]}
+            "cards": [{"tab": tab, "html": h} for tab in ("今日", "我的钱", "研究库", "证据库", "影子") for h in S[tab]]}
     (OUT.parent / "dashboard.json").write_text(json.dumps(dash, ensure_ascii=False))
     if "--legacy" in __import__("sys").argv:
         OUT.write_text(TPL.replace("__DATE__", today).replace("__BODY__", body)

@@ -66,6 +66,7 @@ details.card .cardbody{padding-top:12px}
 <button class="tabbtn" data-tab="我的钱">💰 我的钱</button>
 <button class="tabbtn" data-tab="研究库">🔬 研究库</button>
 <button class="tabbtn" data-tab="证据库">🗂️ 证据库</button>
+<button class="tabbtn" data-tab="影子">👻 影子</button>
 </div>
 <div id="dash"></div>
 <div class="foot">焚诀 Research Engine · 数据 dashboard.json 自动重建：09:40 竞价后 / 10:40 雷达后 / 13:35 午后 / 14:50 尾盘 / 15:20 收盘快报 / 15:50 反转名单 / 16:15 委托单后 / 19:20 晚间 / 20:40 数据齐 · 页面每 60 秒自刷新（交易日盘中报价 30 秒级）<br>
@@ -73,7 +74,7 @@ details.card .cardbody{padding-top:12px}
 </div>
 <script>
 (function(){
-var TABS=["今日","我的钱","研究库","证据库"];
+var TABS=["今日","我的钱","研究库","证据库","影子"];
 var btns=document.querySelectorAll(".tabbtn");
 var curTab="今日";
 function bjt(){var n=new Date();return new Date(n.getTime()+(n.getTimezoneOffset()+480)*60000);}

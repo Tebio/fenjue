@@ -1,13 +1,17 @@
-"""影子单战绩页（2026-09-27，用户令「单独搞个影子单页面」）——docs/shadow.html 静态页。
+"""影子单战绩页 v2（2026-09-27 深夜，用户四连问驱动）——docs/shadow.html 静态页。
 
-内容：
-1. 每条线的累计战绩（claims_shadow.jsonl 全史）：线名/单数/胜率/均笔/复利净值
-2. 在途持仓（entry 已填、未到结算期）：票名+入场日+买入价+现价+浮盈%
-3. 每日净值轨迹（按出场日归因的逐笔复利）
-零 JS 依赖（服务端渲染静态表）——面板 JS 事故的教训：能不动的别动。
+修正：
+1. 同事件重复登记标注：REVERSAL_OPEN_T1 与 PANIC_DEPTH_DOSE 是同批事件的两种口径
+   （跌≥3% 既触发反转族也按深度进剂量档）——合并展示，剂量线只给分档表。
+2. 「真实组合口径」段：5 万本金/5 槽/单仓 1 万，按时间顺序过账本——装不下的跳过，
+   回答「模拟 10W 能买这么多吗」（不能——测量口径≠组合口径，两个都给）。
+3. 复利连乘删除，改「累计盈亏（元，每笔固定 1 万）」。
+4. 持仓周期 T+N + 预计出场日列。
 """
+import bisect
 import json
 import statistics as st
+from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path("/opt/data/fenjue")
@@ -17,7 +21,7 @@ OUT = ROOT / "docs/shadow.html"
 CLAIM_NAMES = {
     "LIMITDOWN_LOW_DEEP35": "深档低位T+10",
     "REVERSAL_OPEN_T1": "反转族T+1",
-    "PANIC_DEPTH_DOSE": "恐慌剂量",
+    "PANIC_DEPTH_DOSE": "恐慌剂量（分档）",
     "LIMITDOWN_NEXT_DAY": "跌停次日接",
     "FRONTRUN_FIRSTBOARD_V2": "抢跑首板",
     "WATCHPOOL_GRAD": "观察池毕业",
@@ -27,6 +31,34 @@ CLAIM_NAMES = {
 }
 CLAIM_HORIZON = {"LIMITDOWN_LOW_DEEP35": "r10", "YAO_LAUNCH_FIRSTBOARD": "r1",
                  "MAINLINE_DIP_RSI2": "r5", "THREE_DOWN_GOLD": "r20"}
+# 同一批事件的重复登记（反转族与恐慌剂量同源于跌≥3%事件）
+DUP_NOTE = {"PANIC_DEPTH_DOSE": "与反转族同一批事件（深度分档视图），非独立交易"}
+
+
+def realistic_sim(events_by_day, days, capital=100000.0, slot=20000.0, max_pos=5):
+    """真实组合口径：5槽×2万，按时间序进场，装不下跳过。返回 (终值, 成交, 跳仓, 回撤)"""
+    cash, positions = capital, []
+    taken = skipped = 0
+    peak, mdd = capital, 0.0
+    for day in days:
+        for p in [p for p in positions if p["exit"] <= day]:
+            cash += p["amt"] * (1 + p["ret"])
+            positions.remove(p)
+        for ret, hn in events_by_day.get(day, []):
+            if len(positions) >= max_pos or cash < slot:
+                skipped += 1
+                continue
+            import bisect as _bs
+            j = _bs.bisect_left(days, day)
+            exit_day = days[min(j + hn, len(days) - 1)]
+            positions.append({"amt": slot, "ret": ret, "exit": exit_day})
+            cash -= slot
+            taken += 1
+        mv = cash + sum(p["amt"] for p in positions)
+        peak = max(peak, mv)
+        mdd = min(mdd, mv / peak - 1)
+    final = cash + sum(p["amt"] * (1 + p["ret"]) for p in positions)
+    return final, taken, skipped, mdd
 
 
 def main():
@@ -35,8 +67,8 @@ def main():
     lines = [json.loads(x) for x in (D / "claims_shadow.jsonl").read_text().splitlines()]
     idx = json.loads((D / "index_sh000001.json").read_text())
     last_day = idx[-1]["date"]
+    idx_dates = [r["date"] for r in idx]
 
-    # 现价（持仓浮盈用）
     last_px = {}
     for r in lines:
         if r.get("entry") is None:
@@ -49,15 +81,16 @@ def main():
             except Exception:
                 pass
 
-    # 每线战绩（用各线的主 horizon；没有的用 r5）
     per_claim = {}
     for r in lines:
         claim = r["claim"]
         hz = CLAIM_HORIZON.get(claim, "r5")
         v = r.get(hz) if r.get(hz) is not None else r.get("r5")
-        c = per_claim.setdefault(claim, {"done": [], "open": []})
+        c = per_claim.setdefault(claim, {"done": [], "open": [], "done_events": []})
         if v is not None:
             c["done"].append(v)
+            hold_n = int(CLAIM_HORIZON.get(claim, "r5")[1:])
+            c["done_events"].append((r.get("entry_date") or r["signal_date"], v, hold_n))
         elif r.get("entry") is not None:
             c["open"].append(r)
 
@@ -69,23 +102,32 @@ def main():
         nm = CLAIM_NAMES.get(claim, claim)
         hz = CLAIM_HORIZON.get(claim, "r5")
         hold_days = hz.replace("r", "T+")
+        dup = f'<br><span class="mut">{DUP_NOTE[claim]}</span>' if claim in DUP_NOTE else ""
         if dn:
             wr = sum(1 for x in dn if x > 0) / len(dn)
             avg = st.mean(dn)
-            pnl_yuan = sum(dn) * 10000  # 每笔1万本金的累计盈亏（元）——有界、诚实、可感知
+            pnl_yuan = sum(dn) * 10000
             total_pnl_yuan += pnl_yuan
             total_done += len(dn)
-            rows.append(f"<tr><td>{nm}</td><td>{len(dn)}</td><td>{wr * 100:.0f}%</td>"
+            rows.append(f"<tr><td>{nm}{dup}</td><td>{len(dn)}</td><td>{wr * 100:.0f}%</td>"
                         f"<td>{avg * 100:+.2f}%</td>"
                         f"<td class='{'pos' if pnl_yuan > 0 else 'neg'}'>{pnl_yuan:+,.0f} 元</td>"
                         f"<td>{hold_days}</td><td class='mut'>{len(c['open'])} 在途</td></tr>")
         elif c["open"]:
-            rows.append(f"<tr><td>{nm}</td><td colspan='4' class='mut'>影子期数据积累中（{len(c['open'])} 单在途）</td>"
+            rows.append(f"<tr><td>{nm}{dup}</td><td colspan='4' class='mut'>影子期数据积累中（{len(c['open'])} 单在途）</td>"
                         f"<td>{hold_days}</td><td class='mut'>{len(c['open'])} 在途</td></tr>")
 
-    # 在途明细（加预计出场日=入场日+持仓周期的交易日）
+    # ── 真实组合口径（10万/5槽/单仓2万，全部线混合按时间序） ──
+    events_by_day = defaultdict(list)
+    for claim, c in per_claim.items():
+        for day, v, hn in c["done_events"]:
+            events_by_day[day].append((v, hn))
+    days = sorted(events_by_day)
+    final, taken, skipped, mdd = realistic_sim(events_by_day, days)
+    real_ret = final / 100000 - 1
+
+    # 在途明细
     open_rows = []
-    idx_dates = [r["date"] for r in idx]
     for claim, c in sorted(per_claim.items()):
         nm = CLAIM_NAMES.get(claim, claim)
         hz = CLAIM_HORIZON.get(claim, "r5")
@@ -118,8 +160,11 @@ td,th{{padding:7px 9px;border-bottom:1px solid #ededeb;text-align:left}}
 <h1>👻 影子单战绩 · 截至 {last_day}</h1>
 <div class="note">影子单=系统假设「信号全跟」的纸面账户，费后净口径。<b>累计盈亏按「每笔固定 1 万本金」折算成元</b>——有界、诚实、可感知；高频线的单笔重叠不构成复利。
 <b>影子期的线（在途）还没足够结算单，别拿前几单论生死</b>——3-4 周后才轮到它们开口。</div>
-<h2>影子盘总账</h2>
-<div class="note" style="font-size:16px">从 9/11 起共结算 <b>{total_done}</b> 单，累计盈亏 <b class="{'pos' if total_pnl_yuan > 0 else 'neg'}">{total_pnl_yuan:+,.0f} 元</b>（每笔 1 万口径）。各线持仓周期不同（见表内 T+N），到点系统自动结算。</div>
+<h2>真实组合口径（10 万本金 · 5 槽 × 2 万 · 装不下就跳过）</h2>
+<div class="note" style="font-size:16px">全部线混合按时间序跑账本：终值 <b>{final:,.0f}</b>（{real_ret * 100:+.1f}%）· 成交 {taken} 笔 · <b>跳仓 {skipped} 笔（仓位满了装不下）</b> · 最大回撤 {mdd * 100:.1f}%。
+这才是「10 万块能买多少」的答案——事件洪流期大部分信号根本排不上队。</div>
+<h2>影子盘总账（测量口径：所有事件都记账）</h2>
+<div class="note" style="font-size:16px">从 9/11 起共结算 <b>{total_done}</b> 单，累计盈亏 <b class="{'pos' if total_pnl_yuan > 0 else 'neg'}">{total_pnl_yuan:+,.0f} 元</b>（每笔固定 1 万口径，非复利）。</div>
 <h2>各线累计战绩</h2>
 <table><tr><th>线</th><th>结算单数</th><th>胜率</th><th>均笔</th><th>累计盈亏</th><th>持仓</th><th>在途</th></tr>
 {"".join(rows) if rows else "<tr><td colspan=7 class='mut'>还没有结算单</td></tr>"}</table>
@@ -129,7 +174,7 @@ td,th{{padding:7px 9px;border-bottom:1px solid #ededeb;text-align:left}}
 <div class="note">← <a href="./">回操作台</a> · 本页静态生成，随每日影子盘日更刷新 · 研究辅助不是买卖指令</div>
 </body></html>"""
     OUT.write_text(html)
-    print(f"shadow.html built: {len(per_claim)} 线, {sum(len(c['open']) for c in per_claim.values())} 在途")
+    print(f"shadow.html v2 built: {len(per_claim)} 线, 组合口径 {final:,.0f}（跳仓 {skipped}）")
 
 
 if __name__ == "__main__":
