@@ -617,6 +617,58 @@ def main():
                                    "其余时间不操作。每个交易日 9:25 QQ 发「作战单」，与本页同源。"))
     S["今日"].append(card("📋 行动单", action_html,
                           f"数据截至 {fmt_d(sig_date)}收盘 · 执行日 {fmt_d(buy_day)}", tab="今日"))
+    # ⭐ 今日最重要的 3 件事（2026-09-27 v2 终端重构：决策先行——置顶，自动派生，没有就静默）
+    try:
+        _things = []
+        # 1. 持仓防线状态（最新收盘 vs watchlist 防线）
+        for _p in (jload(ROOT / "config/watchlist.json", {}).get("positions") or []):
+            _kc = D / "big_kcache" / f"{_p['code']}.json"
+            if not _kc.exists():
+                continue
+            _ks = json.loads(_kc.read_text())
+            _last = _ks[-1]["close"]
+            for _lv, _desc in (_p.get("levels") or {}).items():
+                _lv = float(_lv)
+                if any(k in _desc for k in ("止损", "防线", "作废", "低点")):
+                    _dist = (_last / _lv - 1) * 100
+                    if _dist < 0:
+                        _things.append((f'{_p["name"]} 破了{_desc}（{_lv}）',
+                                        f'现 {_last}，线下 {abs(_dist):.1f}%——照纪律：{_desc}。这不是建议，是规则的执行提醒。', "bad"))
+                        break
+                    elif _dist < 3:
+                        _things.append((f'{_p["name"]} 逼近{_desc}（{_lv}）',
+                                        f'现 {_last}，距防线仅 {_dist:.1f}%——明天开盘前想清楚：破了走不走。', "warn"))
+                        break
+        # 2. 今日新信号
+        if _deep and n_deep_cluster >= 5:
+            _things.append((f'深档低位成簇（{n_deep_cluster} 只）',
+                            f'{fmt_d(buy_day)} 9:32 开盘买深度前5，T+10 出。' + ("当前在毒气室格——降权或跳过。" if "毒气室" in str(locals().get("soil_tag", "")) else ""), "sig"))
+        if _gc_ok := ((D / "gold_current.json").exists() and
+                      json.loads((D / "gold_current.json").read_text()).get("status") == "ok"):
+            _g = json.loads((D / "gold_current.json").read_text())
+            if _g.get("entry_day") == str(buy_day):
+                _things.append((f'🥇 金股组合入场日（{_g["month"]}）',
+                                f'9:32 开盘等权买 {len(_g.get("solo_fresh", []))} 只独家新鲜金股，T+20 出。错过=等下月。', "sig"))
+        # 3. 影子在途大单
+        try:
+            _sh_lines = [json.loads(x) for x in (D / "claims_shadow.jsonl").read_text().splitlines()]
+            _opens = [r for r in _sh_lines if r.get("entry") is not None and r.get("r5") is None]
+            if _opens:
+                _things.append((f'影子盘在途 {len(_opens)} 单（新线影子期）',
+                                '中线单到 T+10/T+20 才结算，别中途剁；明细看「影子」tab 或战绩页。', "info"))
+        except Exception:
+            pass
+        if _things:
+            _t3 = "".join(
+                f'<div class="t3"><div class="rn">{i + 1}</div><div><div class="tt">{esc(t)}</div>'
+                f'<div class="dd">{esc(d)}</div></div></div>'
+                for i, (t, d, _) in enumerate(_things[:3]))
+            S["今日"].insert(0, card("⭐ 今日最重要的 3 件事",
+                                     _t3 + '<div class="muted" style="margin-top:8px">先知道发生了什么，再点进去看证据。</div>',
+                                     f"自动派生 · 数据截至 {fmt_d(sig_date)}收盘", tab="今日"))
+            S["今日"][0] = S["今日"][0].replace('class="card"', 'class="card top3"', 1)
+    except Exception as _e:
+        print(f"[WARN] top3 卡构建失败: {_e}")
     if xrules_html:
         S["今日"].append(card("⚔️ X规则线 · 每晚19:15保真判定", xrules_html, tab="今日"))
     S["今日"].append(card("🎯 X门距 · 明天有没有票的距离表", xgate_html, tab="今日"))
@@ -723,6 +775,63 @@ def main():
                          " ".join(flags) or '<span class="muted">区间内</span>'])
         S["我的钱"].append(card("持仓哨兵", table(["标的", "现价", "今日", "备注", "关键位"], rows),
                                 "config/watchlist.json · 越线自动标记", tab="我的钱"))
+    # 💼 Portfolio Cockpit（2026-09-27 v2 终端重构）：watchlist 持仓有 shares/cost 字段才全开，
+    # 否则显示引导卡。总资产/今日/本周/风险暴露条/持仓占比/Kill线接近警告。
+    try:
+        _positions = (watch or {}).get("positions") or []
+        _has_qty = all(p.get("shares") and p.get("cost") for p in _positions) if _positions else False
+        if _positions and _has_qty:
+            _tot = _today_pnl = 0.0
+            _week_pnl = 0.0
+            _rows = []
+            _warns = []
+            for p in _positions:
+                _kc = D / "big_kcache" / f"{p['code']}.json"
+                if not _kc.exists():
+                    continue
+                _ks = json.loads(_kc.read_text())
+                _last = _ks[-1]["close"]
+                _prev = _ks[-2]["close"] if len(_ks) > 1 else _last
+                _wk = _ks[-6]["close"] if len(_ks) > 5 else _prev
+                _mv = _last * float(p["shares"])
+                _tot += _mv
+                _today_pnl += (_last - _prev) * float(p["shares"])
+                _week_pnl += (_last - _wk) * float(p["shares"])
+                _rows.append((p, _last, _mv))
+                for _lv, _desc in (p.get("levels") or {}).items():
+                    _lv = float(_lv)
+                    if any(k in _desc for k in ("止损", "防线", "作废", "低点")):
+                        _dist = (_last / _lv - 1) * 100
+                        if _dist < 3:
+                            _warns.append(f'{p["name"]} 距{_desc}仅 {_dist:+.1f}%')
+            _today_pct = _today_pnl / _tot * 100 if _tot else 0
+            _week_pct = _week_pnl / _tot * 100 if _tot else 0
+            _alloc = "".join(f'<i style="width:{_mv / _tot * 100:.0f}%;background:{["#e08e3c", "#4ea876", "#7a8ab0", "#b06a6a"][_i % 4]}"></i>'
+                             for _i, (_, _, _mv) in enumerate(_rows))
+            _hold_rows = "".join(
+                f'<tr><td>{esc(p["name"])}</td><td>{_mv / _tot * 100:.0f}%</td>'
+                f'<td>{_last:.2f}</td><td class="{"pos" if _last >= float(p["cost"]) else "neg"}">{(_last / float(p["cost"]) - 1) * 100:+.1f}%</td></tr>'
+                for p, _last, _mv in _rows)
+            _warn_html = "".join(f'<div style="color:var(--warn)">⚠ {esc(w)}</div>' for w in _warns)
+            S["我的钱"].insert(0, card("💼 Portfolio Cockpit", f'''
+<div class="cockpit-nums">
+<div class="cn"><div class="lab">持仓市值</div><div class="val">¥{_tot:,.0f}</div></div>
+<div class="cn"><div class="lab">今日</div><div class="val" style="color:{"var(--up)" if _today_pct >= 0 else "var(--dn)"}">{_today_pct:+.2f}%</div></div>
+<div class="cn"><div class="lab">本周</div><div class="val" style="color:{"var(--up)" if _week_pct >= 0 else "var(--dn)"}">{_week_pct:+.2f}%</div></div>
+</div>
+<div class="alloc">{_alloc}</div>
+<div class="muted">{" · ".join(f"{esc(p['name'])} {_mv / _tot * 100:.0f}%" for p, _, _mv in _rows)}</div>
+{_warn_html}
+<table style="margin-top:10px"><tr><th>持仓</th><th>占比</th><th>现价</th><th>相对成本</th></tr>{_hold_rows}</table>''',
+                                       "watchlist.json 加 shares/cost 字段驱动", tab="我的钱"))
+        elif _positions:
+            S["我的钱"].insert(0, card("💼 Portfolio Cockpit",
+                                       '<div class="muted">把每只持仓的 <b>shares</b>（股数）和 <b>cost</b>（成本）填进 '
+                                       '<code>config/watchlist.json</code> 的 positions 里，这里就会变成真正的组合驾驶舱'
+                                       '（总资产/今日/本周/占比条/防线接近警告）。</div>',
+                                       "缺股数数据，未激活", tab="我的钱"))
+    except Exception as _e:
+        print(f"[WARN] cockpit 构建失败: {_e}")
     if watch:
         arows = []
         for a in watch.get("anchors", []):
@@ -1239,9 +1348,23 @@ def main():
     body = "\n".join(h for tab in ("今日", "我的钱", "研究库", "证据库", "影子") for h in S[tab])
     stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     # B 架构（2026-09-20）：数据/渲染分离——面板=静态壳+dashboard.json，60s自刷新，数据更新无需重建HTML
+    # v2（2026-09-27 终端重构）：dashboard.json 加 env 字段（regime 条数据源，env_state 一处出）
+    try:
+        from env_state import env_state as _env_fn
+        _e = _env_fn(sig_date)
+        env = {"regime": _e["regime"], "age": _e["age"], "seg_median": _e["seg_median"],
+               "next_top": _e["next_top"], "next_prob": _e["next_prob"],
+               "trend_gate": _e["trend_gate"], "margin_gate": _e["margin_gate"],
+               "quadrant": (_e["quadrant"] or "").replace("🟢", "").replace("🔴", ""),
+               "holiday": (f"{_e['holiday'][0]}{'前' if _e['holiday'][1] > 0 else '后'}{abs(_e['holiday'][1])}天"
+                           if _e["holiday"] else None),
+               "data_day": fmt_d(sig_date), "built_at": stamp}
+    except Exception:
+        env = None
     dash = {"built_at": stamp, "sig_date": sig_date, "sig_fmt": fmt_d(sig_date),
             "buy_day": buy_day, "buy_fmt": fmt_d(buy_day),
-            "tabs": ["今日", "我的钱", "研究库", "证据库"],
+            "env": env,
+            "tabs": ["今日", "我的钱", "研究库", "证据库", "影子"],
             "cards": [{"tab": tab, "html": h} for tab in ("今日", "我的钱", "研究库", "证据库", "影子") for h in S[tab]]}
     (OUT.parent / "dashboard.json").write_text(json.dumps(dash, ensure_ascii=False))
     if "--legacy" in __import__("sys").argv:

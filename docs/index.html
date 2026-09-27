@@ -3,64 +3,102 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>焚诀操作台</title>
+<title>焚诀 FENJUE · 操作台</title>
 <style>
-:root{--text:#37352f;--muted:#9b9a97;--bg:#fff;--divider:#ededeb;--soft:#f7f6f3}
+/* ── 焚诀 v2 · 研究终端（2026-09-27 重构：深色底+米白字+橙强调+细边框+高密度） ── */
+:root{--bg:#131315;--panel:#1a1a1e;--panel2:#1f1f24;--text:#e6e4dd;--muted:#8b897f;--faint:#5c5a54;
+  --line:#2a2a2e;--line2:#34343a;--accent:#e08e3c;--accent-dim:#7a5426;
+  --up:#e05a4d;--dn:#4ea876;--warn:#e0b03c}
 *{margin:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font:15px/1.7 ui-sans-serif,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-variant-numeric:tabular-nums}
-.wrap{max-width:820px;margin:0 auto;padding:40px 18px 80px}
-h1{font-size:24px;font-weight:700;letter-spacing:.5px}
-.sub{color:var(--muted);font-size:13px;margin-top:4px}
-.card{margin-top:26px}
-h2{font-size:16px;font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--divider);margin-bottom:12px}
-h3{font-size:15px}
-.hint{float:right;font-size:11px;font-weight:400;color:var(--muted);margin-top:3px}
-.rule{background:var(--soft);border-radius:6px;padding:10px 14px;font-size:12.5px;color:#6b6b66;margin-bottom:12px;line-height:1.7}
-.statrow{display:flex;gap:36px;align-items:flex-start;flex-wrap:wrap}
-.big{font-size:17px}
-.num{font-size:22px;font-weight:600}
-.muted{color:var(--muted);font-size:12.5px}
-.small{font-size:12px;color:var(--muted)}
-.badge{display:inline-block;padding:2px 10px;border-radius:4px;font-size:13px;font-weight:600}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;color:var(--muted);font-weight:500;font-size:12px;padding:4px 8px 4px 0;border-bottom:1px solid var(--divider);white-space:nowrap}
-td{padding:6px 8px 6px 0;border-bottom:1px solid var(--divider);vertical-align:top}
-tr:last-child td{border-bottom:none}
-details.card summary{font-size:15px;font-weight:600;padding-bottom:8px;border-bottom:1px solid var(--divider);cursor:pointer;list-style:none}
-details.card summary::before{content:"▸ ";color:var(--muted)}
-details.card[open] summary::before{content:"▾ "}
-details.card .cardbody{padding-top:12px}
-.tabbar{display:flex;gap:6px;margin-top:16px;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:9;border-bottom:1px solid var(--divider)}
-.tabbtn{border:1px solid var(--divider);background:var(--soft);color:var(--muted);border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer;font-weight:500;font-family:inherit}
-.tabbtn.active{background:var(--text);color:#fff;border-color:var(--text)}
+body{background:var(--bg);color:var(--text);font:14px/1.65 ui-sans-serif,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-variant-numeric:tabular-nums}
+.wrap{max-width:880px;margin:0 auto;padding:0 14px 70px}
+/* ── 顶部品牌+时钟 ── */
+.brandbar{display:flex;justify-content:space-between;align-items:baseline;padding:20px 2px 12px;border-bottom:1px solid var(--line)}
+.brand{font-size:19px;font-weight:800;letter-spacing:2px}
+.brand small{display:block;font-size:10px;letter-spacing:3px;color:var(--faint);font-weight:500;margin-top:2px}
+.clock{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.clock b{color:var(--text);font-size:15px}
+/* ── Market Regime 状态条（sticky） ── */
+.regimebar{position:sticky;top:0;z-index:10;background:var(--panel);border:1px solid var(--line2);border-radius:8px;
+  padding:9px 13px;margin:12px 0 6px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12.5px}
+.regimebar .rg{font-size:15px;font-weight:800;letter-spacing:1px}
+.chip{border:1px solid var(--line2);border-radius:5px;padding:1px 8px;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.chip b{color:var(--text);font-weight:600}
+.chip.warn{border-color:var(--accent-dim);color:var(--accent)}
+.chip.bad{border-color:#6e3535;color:#e08a80}
+.chip.good{border-color:#2e5443;color:#6fc79a}
+/* ── tab 终端导航 ── */
+.tabbar{display:flex;gap:5px;margin-top:10px;position:sticky;top:58px;background:var(--bg);padding:8px 0;z-index:9;border-bottom:1px solid var(--line)}
+.tabbtn{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:500;font-family:inherit}
+.tabbtn.active{background:var(--accent);color:#131315;border-color:var(--accent);font-weight:700}
 .card[data-tab]{display:none}
 .card[data-tab].showtab{display:block}
-.up{color:#c0392b}.dn{color:#0f7b3d}.ok{color:#0f7b3d;font-size:12px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:10px 0}
-.kpi{border:1px solid var(--divider);border-radius:10px;padding:11px 13px}
+/* ── 卡片 ── */
+.card{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card>h2{font-size:13.5px;font-weight:700;letter-spacing:1px;color:var(--text);padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:10px;text-transform:none}
+.hint{float:right;font-size:10.5px;font-weight:400;color:var(--faint);margin-top:3px;letter-spacing:0}
+.muted{color:var(--muted);font-size:12px}
+.small{font-size:11.5px;color:var(--muted)}
+.statrow{display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap}
+.big{font-size:16px}
+.num{font-size:21px;font-weight:700}
+.badge{display:inline-block;padding:2px 10px;border-radius:4px;font-size:13px;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;color:var(--faint);font-weight:500;font-size:11.5px;padding:4px 8px 4px 0;border-bottom:1px solid var(--line);white-space:nowrap;letter-spacing:.5px}
+td{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+details.card summary{font-size:13.5px;font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--line);cursor:pointer;list-style:none;letter-spacing:1px}
+details.card summary::before{content:"▸ ";color:var(--faint)}
+details.card[open] summary::before{content:"▾ "}
+details.card .cardbody{padding-top:12px}
+details.card{border:none;background:var(--panel)}
+/* ── KPI/行动 ── */
+.up{color:var(--up)}.dn{color:var(--dn)}.ok{color:var(--dn);font-size:12px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:9px;margin:10px 0}
+.kpi{border:1px solid var(--line);border-radius:7px;padding:10px 13px;background:var(--panel2)}
 .kpi-head{display:flex;justify-content:space-between;align-items:center;gap:6px}
-.kpi-name{font-weight:600;font-size:13px}
-.pill{font-size:11px;padding:1px 8px;border-radius:20px;font-weight:600;flex:none}
-.pill.ok{background:#e7f4ea;color:#1e7e34}
-.pill.wp{background:#fdf3e3;color:#9a6b1a}
-.kpi-big{font-size:21px;font-weight:800;margin-top:3px}
-.kpi-big small{font-size:11px;font-weight:400;color:var(--muted)}
-.kpi-line{font-size:11.5px;color:#73726e;margin-top:3px;line-height:1.5}
-.callout{display:flex;gap:11px;border-radius:8px;padding:11px 15px;margin:9px 0;font-size:13.5px;line-height:1.7}
+.kpi-name{font-weight:600;font-size:12.5px}
+.pill{font-size:10.5px;padding:1px 8px;border-radius:20px;font-weight:600;flex:none}
+.pill.ok{background:#1d3127;color:#6fc79a}
+.pill.wp{background:#3a2e17;color:#e0b03c}
+.kpi-big{font-size:20px;font-weight:800;margin-top:3px}
+.kpi-big small{font-size:10.5px;font-weight:400;color:var(--muted)}
+.kpi-line{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5}
+.callout{display:flex;gap:11px;border-radius:7px;padding:11px 15px;margin:9px 0;font-size:13px;line-height:1.7;border:1px solid var(--line)}
 .callout .ic{flex:none}
-.c-gray{background:var(--soft)}
-.c-yellow{background:#fdf3e0}
-.c-red{background:#fdeceb}
-.c-green{background:#edf5ee}
+.c-gray{background:var(--panel2)}
+.c-yellow{background:#2a2116;border-color:#4a3a1e}
+.c-red{background:#2c1a1a;border-color:#5c2b2b}
+.c-green{background:#17251e;border-color:#2e5443}
 .step{display:flex;gap:12px;margin:11px 0}
-.step .no{flex:none;width:24px;height:24px;border-radius:50%;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:3px}
-.step .t{font-weight:600;font-size:14.5px}
-.step .d{font-size:13px;color:#5c5a55}
-.tag{display:inline-block;font-size:11px;padding:0 7px;border-radius:4px;background:var(--soft);color:#73726e}
-.foot{margin-top:44px;padding-top:16px;border-top:1px solid var(--divider);color:var(--muted);font-size:12px;line-height:1.8}
+.step .no{flex:none;width:23px;height:23px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px;background:var(--panel2);border:1px solid var(--line2);color:var(--accent)}
+.step .t{font-weight:700;font-size:13.5px}
+.step .d{font-size:12.5px;color:var(--muted)}
+.tag{display:inline-block;font-size:10.5px;padding:0 7px;border-radius:4px;background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+.rule{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.7}
+.foot{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);color:var(--faint);font-size:11px;line-height:1.8}
+a{color:var(--accent)}
+/* ── 今日最重要的3件事（首屏决策卡） ── */
+.top3{border:1px solid var(--accent-dim);background:var(--panel)}
+.top3 .t3{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.top3 .t3:last-child{border-bottom:none}
+.top3 .rn{flex:none;width:22px;height:22px;border-radius:5px;background:var(--accent);color:#131315;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.top3 .tt{font-weight:700;font-size:13.5px}
+.top3 .dd{font-size:12px;color:var(--muted);line-height:1.6}
+/* ── Portfolio cockpit ── */
+.cockpit-nums{display:flex;gap:30px;flex-wrap:wrap;margin:6px 0 10px}
+.cockpit-nums .cn .lab{font-size:11px;color:var(--faint);letter-spacing:1px}
+.cockpit-nums .cn .val{font-size:20px;font-weight:800}
+.riskbar{height:7px;background:var(--panel2);border-radius:4px;border:1px solid var(--line);overflow:hidden;margin:5px 0 3px}
+.riskbar i{display:block;height:100%;background:var(--accent)}
+.alloc{display:flex;height:9px;border-radius:4px;overflow:hidden;border:1px solid var(--line);margin:5px 0 3px}
+.alloc i{display:block;height:100%}
 </style></head><body><div class="wrap">
-<h1>焚诀操作台</h1>
-<div class="sub" id="subline">加载中…</div>
+<div class="brandbar">
+  <div class="brand">焚诀<small>FENJUE RESEARCH ENGINE</small></div>
+  <div class="clock" id="clockbox"><b id="clock">--:--:--</b><br><span id="dateshow"></span></div>
+</div>
+<div class="regimebar" id="regimebar"><span class="chip">加载中…</span></div>
 <div class="tabbar" id="tabbar">
 <button class="tabbtn active" data-tab="今日">📋 今日</button>
 <button class="tabbtn" data-tab="我的钱">💰 我的钱</button>
@@ -69,7 +107,7 @@ details.card .cardbody{padding-top:12px}
 <button class="tabbtn" data-tab="影子">👻 影子</button>
 </div>
 <div id="dash"></div>
-<div class="foot">焚诀 Research Engine · 数据 dashboard.json 自动重建：09:40 竞价后 / 10:40 雷达后 / 13:35 午后 / 14:50 尾盘 / 15:20 收盘快报 / 15:50 反转名单 / 16:15 委托单后 / 19:20 晚间 / 20:40 数据齐 · 页面每 60 秒自刷新（交易日盘中报价 30 秒级）<br>
+<div class="foot">焚诀 Research Engine · 数据 dashboard.json 自动重建：09:40 竞价后 / 10:40 雷达后 / 13:35 午后 / 14:50 尾盘 / 15:20 收盘快报 / 15:50 反转名单 / 16:15 委托单后 / 19:20 晚间 / 20:40 数据齐 · 交易日才轮询（ops-state 变化才重渲）<br>
 非交易日不重建（显示最近交易日数据，版块日期戳为准）· 红涨绿跌 · 胜率均值均为净口径 · 所有策略结论带作废条件与 kill 线 · 研究辅助，不是买卖指令</div>
 </div>
 <script>
@@ -89,6 +127,15 @@ function show(tab){
 }
 btns.forEach(function(b){b.onclick=function(){show(b.getAttribute("data-tab"));};});
 try{curTab=localStorage.getItem("fj_tab")||"今日";}catch(e){}
+// ── 品牌时钟（1s） ──
+function clock(){
+  var b=bjt();
+  var el=document.getElementById("clock");
+  if(el)el.textContent=("0"+b.getHours()).slice(-2)+":"+("0"+b.getMinutes()).slice(-2)+":"+("0"+b.getSeconds()).slice(-2);
+  var ds=document.getElementById("dateshow");
+  if(ds)ds.textContent=b.getFullYear()+"."+("0"+(b.getMonth()+1)).slice(-2)+"."+("0"+b.getDate()).slice(-2)+" 周"+"日一二三四五六"[b.getDay()];
+}
+setInterval(clock,1000);clock();
 // ── 更新倒计时 ──
 var SLOTS=["09:40","10:40","13:35","14:50","15:20","15:50","16:15","19:20","20:40"];
 function next(){
@@ -162,38 +209,50 @@ function startLive(){
 // ── 时段指引 ──
 function nownow(){
   var el=document.getElementById("nownow");if(!el)return;
-  var el2=document.getElementById("nownow_card");  // 2026-09-27 修：行动卡里还有一个（重复id老bug——JS只更新第一个，另一个永远卡占位符）
+  var el2=document.getElementById("nownow_card");  // 2026-09-27 修：行动卡里还有一个（重复id老bug）
   var b2=bjt(),w=b2.getDay(),m=b2.getHours()*60+b2.getMinutes();
-  var msg,color="#37352f";
+  var msg,color="#e6e4dd";
   if(w===0||w===6){msg="📴 今天不开市。不用操作，想看就翻翻「研究库」。";}
   else if(m<565){msg="🌅 盘前：照「我的钱」页的银行委托单挂单。挂完收工。9:25 QQ 发作战单。";}
   else if(m<572){msg="⏳ 竞价中：别动手，等 9:32 确认。";}
-  else if(m<585){msg="🟢 买入窗口（9:32-9:45）：行动单有票才买，没票=今天不买。";color="#c0392b";}
+  else if(m<585){msg="🟢 买入窗口（9:32-9:45）：行动单有票才买，没票=今天不买。";color="#e05a4d";}
   else if(m<630){msg="🪑 窗口已过。别追，等雷达班。";}
   else if(m<885){msg="🪑 现在什么都不用干。QQ 不喊你=没事。盯盘不产生收益。";}
-  else if(m<900){msg="🔴 卖出窗口（14:45-15:00）：该卖的短线票现在卖，无论盈亏。";color="#0f7b3d";}
+  else if(m<900){msg="🔴 卖出窗口（14:45-15:00）：该卖的短线票现在卖，无论盈亏。";color="#4ea876";}
   else if(m<940){msg="📊 收盘了。等 19:05 权威周期轴+19:15 X规则线判定。";}
   else{msg="🌙 晚间：看「我的钱」页委托单，下个交易日 9:25 前照挂即可。";}
   el.textContent=msg;el.style.color=color;
   if(el2){el2.textContent=msg;el2.style.color=color;}
 }
-// ── 数据渲染（60s 自刷新，保 tab 与滚动）──
+// ── Regime 状态条渲染 ──
+function paintRegime(e){
+  var bar=document.getElementById("regimebar");
+  if(!bar||!e)return;
+  var qcls=e.quadrant&&e.quadrant.indexOf("毒气室")>=0?"bad":(e.quadrant&&e.quadrant.indexOf("黄金")>=0?"good":"");
+  bar.innerHTML='<span class="rg">'+e.regime+'</span>'
+    +'<span class="chip">段龄 <b>第'+e.age+'天</b>/中位'+e.seg_median+'天</span>'
+    +'<span class="chip">下阶段 <b>'+e.next_top+'</b> '+Math.round(e.next_prob*100)+'%</span>'
+    +'<span class="chip">趋势门 <b>'+e.trend_gate+'</b></span>'
+    +'<span class="chip">杠杆门 <b>'+e.margin_gate+'</b></span>'
+    +(e.holiday?'<span class="chip warn">'+e.holiday+'</span>':'')
+    +(e.quadrant?'<span class="chip '+qcls+'">深档 '+e.quadrant+'</span>':'')
+    +' <span class="chip" style="margin-left:auto">数据截至 <b>'+e.data_day+'</b> · 构建 '+e.built_at+'</span>';
+}
+// ── 数据渲染 ──
 function render(d){
   var y=window.scrollY;
   var el=document.getElementById("dash");
   var html="";
   for(var i=0;i<d.cards.length;i++)html+=d.cards[i].html;
   el.innerHTML=html;
-  document.getElementById("subline").innerHTML=
-    "数据截至 "+d.sig_fmt+"收盘 · 执行日 "+d.buy_fmt+" · 数据构建于 "+d.built_at+
-    ' · <span id="cd">…</span> · <span id="livepulse" style="color:#c0392b"></span> · <span id="nownow"></span>';
+  paintRegime(d.env);
+  document.getElementById("subline") && (document.getElementById("subline").innerHTML="");
   show(curTab);
   tick();nownow();startLive();
   window.scrollY=y;
 }
 function load(){
-  // 2026-09-27 修「一直在读时间」：周末只加载一次不轮询；交易日先探 ops-state.json
-  // 的 built_at，没变就不整页重渲。三修：_loadedOnce 显式标记（_firstLoad 的 !undefined 逻辑仍把周末首载挡了）
+  // 周末只加载一次不轮询；交易日先探 ops-state.json 的 built_at，没变不重渲
   var b=bjt(),w=b.getDay();
   if((w===0||w===6)&&window._loadedOnce){return;}
   window._loadedOnce=true;
