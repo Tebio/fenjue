@@ -505,15 +505,18 @@ def main():
                         except Exception:
                             pass
                 _by_claim = {}
+                _names = {str(s["code"]).zfill(6): s.get("name", "")
+                          for s in json.loads((D / "main_board_codes.json").read_text())["stocks"]}
                 for _r in _open[-60:]:
                     _cur = _last_close.get(_r["code"])
                     _pnl = f'{(_cur / _r["entry"] - 1) * 100:+.1f}%' if _cur else "?"
                     _nm = {"LIMITDOWN_LOW_DEEP35": "深档T10", "MAINLINE_DIP_RSI2": "主线回踩",
                            "YAO_LAUNCH_FIRSTBOARD": "启动期首板", "THREE_DOWN_GOLD": "三连阴金股",
                            "WATCHPOOL_GRAD": "观察池毕业", "FRONTRUN_FIRSTBOARD_V2": "抢跑首板"}.get(_r["claim"], _r["claim"])
-                    _by_claim.setdefault(_nm, []).append(f'{_r["code"]}({_pnl})')
+                    _by_claim.setdefault(_nm, []).append(f'{_names.get(_r["code"], _r["code"])}（买入以来{_pnl}）')
                 for _nm, _items in _by_claim.items():
                     ghost.append(f'· 中线在途 <b>{_nm}</b>：{"、".join(_items[:6])}{"…" if len(_items) > 6 else ""}（到 T+10/T+20 才结算，别中途剁）')
+                ghost.append('· 完整战绩（每线累计胜率/净值+在途明细）→ <a href="shadow.html" style="color:#c0392b">影子单战绩页</a>')
     except Exception:
         pass
     if b5_am:
@@ -1236,6 +1239,12 @@ def main():
     }
     (OUT.parent / "ops-state.json").write_text(json.dumps(ops, ensure_ascii=False, indent=1))
     print(f"built {OUT.parent / 'dashboard.json'} cards={len(dash['cards'])}（渲染壳=docs/index.html 静态，--legacy 才写整页）")
+    # 影子战绩页跟随面板重建（2026-09-27）
+    try:
+        import shadow_page
+        shadow_page.main()
+    except Exception as _e:
+        print(f"[WARN] shadow_page 构建失败: {_e}")
 
 
 TPL = """<!DOCTYPE html>

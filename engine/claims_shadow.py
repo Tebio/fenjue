@@ -319,7 +319,7 @@ def main():
         si = idx.get(r["signal_date"])
         if si is None or si + 1 >= len(ks):
             continue
-        if r["entry"] is None:
+        if r.get("entry") is None:
             if r["claim"] in CLOSE_ENTRY_CLAIMS:
                 # 信号日收盘入场（打板成交假设）；信号日一字全天（high==low）判不可成交
                 if ks[si]["high"] <= ks[si]["low"] and ks[si]["close"] > ks[si - 1]["close"]:
@@ -346,8 +346,8 @@ def main():
                     continue
                 r["entry"] = e
                 filled += 1
-        if r["entry"]:
-            e = r["entry"]
+        if r.get("entry"):
+            e = r.get("entry")
             # T+1 时序硬断言（2026-09-18 修）：出场日必须严格晚于入场日。
             # 旧实现用 off 从信号日 si 起算，open-entry 族（反转/跌停接）变成
             # 「当日开盘买 → 当日收盘卖」= T+0，物理不可能成交（A股 T+1）。
@@ -364,7 +364,7 @@ def main():
     import statistics as st
     summ = {}
     for r in lines:
-        if r["entry"] is None:
+        if r.get("entry") is None:
             continue
         for tag in ("r1", "r5", "r10", "r20"):
             v = r.get(tag)  # 旧记录可能缺键（2026-09-22 修，同上方回填）
