@@ -499,6 +499,16 @@ def main():
     if _deep and n_deep_cluster >= 5:
         names = "、".join(f'{nm}({c},{p:+.1f}%)' for c, p, nm in _deep[:3])
         soil_tag = "" if _deep_soil else "（⚠️土壤不佳批：降权别梭哈）"
+        # 四象限标注（2026-09-27 #210 用户批全面升级：趋势门×杠杆门，毒气室=趋势平涨×杠杆中段 29批 -7.2%/28%）
+        try:
+            from env_state import env_state as _env_fn
+            _quad = _env_fn(sig_date)["quadrant"]
+            if _quad == "🔴毒气室":
+                soil_tag = "（🔴毒气室批：趋势平涨×杠杆中段，历史 28%/-7.2%——节日窗或极端态才例外）"
+            elif _quad == "🟢黄金格":
+                soil_tag = "（🟢黄金格批：趋势跌×去杠杆，历史 94%/+19.4%）"
+        except Exception:
+            pass
         steps.append(step("1", "#edf5ee", "#1e7e34",
                           f'{fmt_d(buy_day)} 9:32 买 · {names}{soil_tag}',
                           f'{fmt_d(sig_date)} 跌停+深度≤-35%（深档簇{n_deep_cluster}只 · 出手件 T+10 61%/+8.65%）。竞价不是一字跌停 → 开盘买 → '

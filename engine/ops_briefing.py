@@ -92,6 +92,12 @@ def main():
     L = []
     L.append(f'📋 作战单 · 执行日 {fmt(today)}')
     L.append(f'数据截至 {fmt(sig_date) if sig_date else "?"}收盘 · {regime} · 涨停{lu}/跌停{ld}{boost}')
+    # 环境快照行（2026-09-27 全面升级：段龄+下阶段概率+三门+四象限+节日窗）
+    try:
+        from env_state import env_state, fmt_brief
+        L.append("🌡️ " + fmt_brief(env_state(sig_date)))
+    except Exception as _e:
+        print(f"[WARN] env_state 失败: {_e}", file=sys.stderr)
     L.append("")
 
     L.append("🏦 你的真实持仓（watchlist 账本）")
@@ -130,6 +136,16 @@ def main():
         # 出手票=其中深跌件(收≤MA60×0.65)；裸底座主张已 DEAD，本口径=锐化后存活子集，不再挂底座状态。
         if deep_cluster >= 5 and deep_list:
             soil_warn = "" if deep_soil else " ⚠️土壤不佳批（指数>MA20 或 20日无真实跌幅：历史平涨段批 32%/-3.7% 有毒，降权别梭哈）"
+            # 四象限标注（2026-09-27 #210 用户批全面升级）
+            try:
+                from env_state import env_state as _env_fn
+                _quad = _env_fn(sig_date)["quadrant"]
+                if _quad == "🔴毒气室":
+                    soil_warn = " 🔴毒气室批（趋势平涨×杠杆中段：历史 28%/-7.2%，仅节日窗/极端态例外）"
+                elif _quad == "🟢黄金格":
+                    soil_warn = " 🟢黄金格批（趋势跌×去杠杆：历史 94%/+19.4%）"
+            except Exception:
+                pass
             L.append(f'1. 深档低位·深跌件（{fmt(sig_date)} 跌停+深度≤-35% · 深档簇{deep_cluster}只 · '
                      f'出手件 T+10 61%/+8.65% · 19-22 +1.77%/23-26 +11.33% 双段正 · 最差批-26%优于旧T+5）：{picks}{soil_warn}')
             L.append(f'   {fmt(today)} 9:32 竞价非一字跌停 → 开盘买（深度最深优先，最多5只分散）。'
