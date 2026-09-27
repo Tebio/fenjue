@@ -530,6 +530,26 @@ def main():
 
     # 新信号 steps
     steps = []
+    # 🥇 金股组合行动步（2026-09-27 用户令「金股不加入行动单吗」）：名单 ok + 今天是入场日 → 买入指令
+    try:
+        _gcf = D / "gold_current.json"
+        if _gcf.exists():
+            _gc = json.loads(_gcf.read_text())
+            if _gc.get("status") == "ok" and _gc.get("solo_fresh"):
+                _ed = _gc.get("entry_day")
+                _sf = _gc["solo_fresh"]
+                _names = "、".join(f'{r["name"]}({r["code"]})' for r in _sf[:5])
+                if _ed == str(buy_day):
+                    steps.insert(0, step("0", "#fdf6e3", "#8a6d1f",
+                                         f'🥇 {fmt_d(buy_day)} 9:32 开盘买 · {_names}{"…" if len(_sf) > 5 else ""}',
+                                         f'{_gc["month"]} 金股组合（独家+年内首入 {len(_sf)} 只）· 月度低频：等权买入，'
+                                         f'T+20 开盘出（三年段 63%/+7.26pp 超额，前视审计过）。错过今日 = 等下月。'))
+                elif _ed and str(buy_day) < _ed:
+                    steps.append(step("🥇", "#f7f6f3", "#9b9a97",
+                                      f'金股组合入场日 {_ed}（未到）',
+                                      f'{_gc["month"]} 名单已就位 {len(_sf)} 只，入场日还没到，当天 9:32 会出现在行动单顶部。'))
+    except Exception:
+        pass
     if _deep and n_deep_cluster >= 5:
         names = "、".join(f'{nm}({c},{p:+.1f}%)' for c, p, nm in _deep[:3])
         soil_tag = "" if _deep_soil else "（⚠️土壤不佳批：降权别梭哈）"
