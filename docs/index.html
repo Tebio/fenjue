@@ -5,10 +5,10 @@
 <meta http-equiv="Pragma" content="no-cache">
 <title>焚诀 FENJUE · 操作台</title>
 <style>
-/* ── 焚诀 v2 · 研究终端（2026-09-27 重构：深色底+米白字+橙强调+细边框+高密度） ── */
-:root{--bg:#131315;--panel:#1a1a1e;--panel2:#1f1f24;--text:#e6e4dd;--muted:#8b897f;--faint:#5c5a54;
-  --line:#2a2a2e;--line2:#34343a;--accent:#e08e3c;--accent-dim:#7a5426;
-  --up:#e05a4d;--dn:#4ea876;--warn:#e0b03c}
+/* ── 焚诀 v2 · 浅色版（2026-09-27 用户裁「太黑了」：结构保留 v2，配色回浅色） ── */
+:root{--bg:#fafaf9;--panel:#ffffff;--panel2:#f7f6f3;--text:#37352f;--muted:#9b9a97;--faint:#b5b4ad;
+  --line:#ededeb;--line2:#e2e2de;--accent:#c0392b;--accent-dim:#e8c9c4;
+  --up:#c0392b;--dn:#0f7b3d;--warn:#9a6b1a}
 *{margin:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font:14px/1.65 ui-sans-serif,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-variant-numeric:tabular-nums}
 .wrap{max-width:880px;margin:0 auto;padding:0 14px 70px}
@@ -20,22 +20,22 @@ body{background:var(--bg);color:var(--text);font:14px/1.65 ui-sans-serif,-apple-
 .clock b{color:var(--text);font-size:15px}
 /* ── Market Regime 状态条（sticky） ── */
 .regimebar{position:sticky;top:0;z-index:10;background:var(--panel);border:1px solid var(--line2);border-radius:8px;
-  padding:9px 13px;margin:12px 0 6px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12.5px}
+  padding:9px 13px;margin:12px 0 6px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12.5px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
 .regimebar .rg{font-size:15px;font-weight:800;letter-spacing:1px}
-.chip{border:1px solid var(--line2);border-radius:5px;padding:1px 8px;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.chip{border:1px solid var(--line2);border-radius:5px;padding:1px 8px;font-size:11.5px;color:var(--muted);white-space:nowrap;background:var(--panel2)}
 .chip b{color:var(--text);font-weight:600}
-.chip.warn{border-color:var(--accent-dim);color:var(--accent)}
-.chip.bad{border-color:#6e3535;color:#e08a80}
-.chip.good{border-color:#2e5443;color:#6fc79a}
-/* ── tab 终端导航 ── */
+.chip.warn{border-color:var(--accent-dim);color:var(--warn);background:#fdf6ec}
+.chip.bad{border-color:#e5b8b2;color:#c0392b;background:#fdeceb}
+.chip.good{border-color:#b9d9c6;color:#0f7b3d;background:#edf5ee}
+/* ── tab 导航 ── */
 .tabbar{display:flex;gap:5px;margin-top:10px;position:sticky;top:58px;background:var(--bg);padding:8px 0;z-index:9;border-bottom:1px solid var(--line)}
-.tabbtn{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:500;font-family:inherit}
-.tabbtn.active{background:var(--accent);color:#131315;border-color:var(--accent);font-weight:700}
+.tabbtn{border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer;font-weight:500;font-family:inherit}
+.tabbtn.active{background:var(--text);color:#fff;border-color:var(--text);font-weight:700}
 .card[data-tab]{display:none}
 .card[data-tab].showtab{display:block}
 /* ── 卡片 ── */
 .card{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
-.card>h2{font-size:13.5px;font-weight:700;letter-spacing:1px;color:var(--text);padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:10px;text-transform:none}
+.card>h2{font-size:13.5px;font-weight:700;letter-spacing:1px;color:var(--text);padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:10px}
 .hint{float:right;font-size:10.5px;font-weight:400;color:var(--faint);margin-top:3px;letter-spacing:0}
 .muted{color:var(--muted);font-size:12px}
 .small{font-size:11.5px;color:var(--muted)}
@@ -44,7 +44,7 @@ body{background:var(--bg);color:var(--text);font:14px/1.65 ui-sans-serif,-apple-
 .num{font-size:21px;font-weight:700}
 .badge{display:inline-block;padding:2px 10px;border-radius:4px;font-size:13px;font-weight:700}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
-th{text-align:left;color:var(--faint);font-weight:500;font-size:11.5px;padding:4px 8px 4px 0;border-bottom:1px solid var(--line);white-space:nowrap;letter-spacing:.5px}
+th{text-align:left;color:var(--muted);font-weight:500;font-size:11.5px;padding:4px 8px 4px 0;border-bottom:1px solid var(--line);white-space:nowrap;letter-spacing:.5px}
 td{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);vertical-align:top}
 tr:last-child td{border-bottom:none}
 details.card summary{font-size:13.5px;font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--line);cursor:pointer;list-style:none;letter-spacing:1px}
@@ -59,17 +59,17 @@ details.card{border:none;background:var(--panel)}
 .kpi-head{display:flex;justify-content:space-between;align-items:center;gap:6px}
 .kpi-name{font-weight:600;font-size:12.5px}
 .pill{font-size:10.5px;padding:1px 8px;border-radius:20px;font-weight:600;flex:none}
-.pill.ok{background:#1d3127;color:#6fc79a}
-.pill.wp{background:#3a2e17;color:#e0b03c}
+.pill.ok{background:#e7f4ea;color:#1e7e34}
+.pill.wp{background:#fdf3e3;color:#9a6b1a}
 .kpi-big{font-size:20px;font-weight:800;margin-top:3px}
 .kpi-big small{font-size:10.5px;font-weight:400;color:var(--muted)}
 .kpi-line{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5}
 .callout{display:flex;gap:11px;border-radius:7px;padding:11px 15px;margin:9px 0;font-size:13px;line-height:1.7;border:1px solid var(--line)}
 .callout .ic{flex:none}
 .c-gray{background:var(--panel2)}
-.c-yellow{background:#2a2116;border-color:#4a3a1e}
-.c-red{background:#2c1a1a;border-color:#5c2b2b}
-.c-green{background:#17251e;border-color:#2e5443}
+.c-yellow{background:#fdf6e3;border-color:#ecdcb5}
+.c-red{background:#fdeceb;border-color:#f0c8c3}
+.c-green{background:#edf5ee;border-color:#c4dec9}
 .step{display:flex;gap:12px;margin:11px 0}
 .step .no{flex:none;width:23px;height:23px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px;background:var(--panel2);border:1px solid var(--line2);color:var(--accent)}
 .step .t{font-weight:700;font-size:13.5px}
@@ -82,7 +82,7 @@ a{color:var(--accent)}
 .top3{border:1px solid var(--accent-dim);background:var(--panel)}
 .top3 .t3{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
 .top3 .t3:last-child{border-bottom:none}
-.top3 .rn{flex:none;width:22px;height:22px;border-radius:5px;background:var(--accent);color:#131315;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.top3 .rn{flex:none;width:22px;height:22px;border-radius:5px;background:var(--accent);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
 .top3 .tt{font-weight:700;font-size:13.5px}
 .top3 .dd{font-size:12px;color:var(--muted);line-height:1.6}
 /* ── Portfolio cockpit ── */
