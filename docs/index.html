@@ -190,10 +190,10 @@ function render(d){
 }
 function load(){
   // 2026-09-27 修「一直在读时间」：周末只加载一次不轮询；交易日先探 ops-state.json
-  // 的 built_at，没变就不整页重渲。2026-09-27 二修：首次加载无条件执行（守卫曾把首载也挡了致卡「加载中」）
+  // 的 built_at，没变就不整页重渲。三修：_loadedOnce 显式标记（_firstLoad 的 !undefined 逻辑仍把周末首载挡了）
   var b=bjt(),w=b.getDay();
-  if((w===0||w===6)&&!window._firstLoad){return;}
-  window._firstLoad=false;
+  if((w===0||w===6)&&window._loadedOnce){return;}
+  window._loadedOnce=true;
   var _render_from=function(url){
     var x2=new XMLHttpRequest();
     x2.open("GET",url+"?t="+Date.now(),true);
