@@ -18,6 +18,12 @@ KC = ROOT / "data/big_kcache"
 SHADOW = ROOT / "data/claims_shadow.jsonl"
 SUMMARY = ROOT / "data/claims_shadow_summary.json"
 FEE = 0.0015
+# 2026-09-27 实证修复：cron wrapper 用 runpy.run_path 调用本文件时，脚本目录不进 sys.path
+# （实测 sys.path[0]=cwd），导致 _lp_universe() 里 import law_pipeline 静默失败、
+# 注册表桥整整一周没记过一条单。显式把 engine 塞进 sys.path。
+import sys as _sys
+if str(ROOT / "engine") not in _sys.path:
+    _sys.path.insert(0, str(ROOT / "engine"))
 # FRONTRUN_V2（2026-09-12 注册）：首板+板块梯队≥3+市值20-400亿。
 # 入场口径=信号日收盘（打板成交假设，fill 率由影子前向中的封板时间另行定量），
 # 与框架默认的次日开盘不同——次日追是该主张内部已证伪的变体（-0.52%）。
@@ -58,8 +64,6 @@ REGISTRY_SHADOW_CLAIMS = {
     "CROSS_GAPLOW_BIGUPPER_TD9": "交叉_缺口低开低_避雷针低_TD9买入",
     "CROSS_GAPLOW_BIGUPPER_XFUND": "交叉_缺口低开低_避雷针低_剔亏ST",
     "CROSS_GAPLOW_TD9_XFUND": "交叉_缺口低开低_TD9买入_剔亏ST",
-    "CROSS_TOUCH_OS20_TD9": "交叉_触板低_超跌20_TD9买入",
-    "CROSS_TOUCH_OS20_XFUND": "交叉_触板低_超跌20_剔亏ST",
 }
 
 _LP_CACHE = None
@@ -187,7 +191,10 @@ def detect(code, ks, i, ladder=None):
             hits.append(("WATCHPOOL_GRAD", None))
             break
     # 注册表桥（2026-09-19）：新 PASS 组合委托 law_pipeline REGISTRY 检测器判定
-    if REGISTRY_SHADOW_CLAIMS:
+    # 2026-09-27：默认不在主进程内联跑（双宇宙 OOM 教训），生产由 BRIDGE_ONLY 独立进程跑；
+    # 仅当显式 BRIDGE_INLINE=1（研究/调试场景）才在 detect() 内联执行。
+    import os as _os
+    if REGISTRY_SHADOW_CLAIMS and _os.environ.get("BRIDGE_INLINE") == "1":
         try:
             lp, lp_stocks, lp_idx = _lp_universe()
             d = lp_stocks.get(code)
@@ -201,14 +208,62 @@ def detect(code, ks, i, ladder=None):
                         print(f"[WARN] 注册表桥检测器不存在: {detname}")   # 红队M18：不再静默
                     except Exception as _e:
                         print(f"[WARN] 注册表桥 {claim} 异常: {_e}")
-        except Exception:
-            pass
+        except Exception as _e:
+            print(f"[WARN] 注册表桥整体异常（桥可能整体失效）: {type(_e).__name__} {_e}")  # 2026-09-27：静默 pass 曾致桥死一周无人知
     return hits
 
 
-def main():
-    stocks = load_stocks()
+def bridge_only(today):
+    """BRIDGE_ONLY 模式（2026-09-27，OOM 修复）：只跑注册表桥扫描，不载 cs 宇宙。
+
+    根因：主流程 load_stocks()（全量 dict 列表）+ _lp_universe()（lp 数组宇宙+横截面）
+    双宇宙同驻 → 15GB 机器 OOM（exit=137），桥自 9/19 起在 cron 里从没活过。
+    拆成两个进程顺序跑（wrapper 第二步 BRIDGE_ONLY=1），峰值内存减半。
+    登记的去重键与主流程一致（signal_date/claim/code），entry 由次日回填照常补。"""
     import os
+    lp, lp_stocks, lp_idx = _lp_universe()
+    if os.environ.get("SHADOW_DATE"):
+        import bisect as _bis
+        n_has = sum(1 for s in lp_stocks.values()
+                    if 0 <= _bis.bisect_left(s["date"], today) < s["n"]
+                    and s["date"][_bis.bisect_left(s["date"], today)] == today)
+        if n_has < 0.5 * len(lp_stocks):
+            print(f"[SILENT] bridge: {today} 不在 kcache（{n_has}/{len(lp_stocks)}）")
+            return
+    existing = set()
+    if SHADOW.exists():
+        for line in SHADOW.read_text().splitlines():
+            r = json.loads(line)
+            existing.add((r["signal_date"], r["claim"], r["code"]))
+    new = 0
+    with SHADOW.open("a") as f:
+        for code, d in lp_stocks.items():
+            j = lp_idx.get(code, {}).get(today)
+            if j is None:
+                continue
+            for claim, detname in REGISTRY_SHADOW_CLAIMS.items():
+                if (today, claim, code) in existing:
+                    continue
+                try:
+                    if lp.REGISTRY[detname](d, j):
+                        f.write(json.dumps({"signal_date": today, "claim": claim, "code": code,
+                                            "tier": None, "entry": None,
+                                            "r1": None, "r5": None, "r10": None, "r20": None},
+                                           ensure_ascii=False) + "\n")
+                        new += 1
+                except KeyError:
+                    print(f"[WARN] 桥检测器不存在: {detname}")
+                except Exception as _e:
+                    print(f"[WARN] 桥 {claim}@{code} 异常: {_e}")
+    print(f"bridge_only {today}: 新登记 {new} 条")
+
+
+def main():
+    import os
+    if os.environ.get("BRIDGE_ONLY"):
+        bridge_only(os.environ.get("SHADOW_DATE") or date.today().isoformat())
+        return
+    stocks = load_stocks()
     today = os.environ.get("SHADOW_DATE") or date.today().isoformat()  # SHADOW_DATE 供测试回填历史日
     last_max = max(ks[-1]["date"] for ks in stocks.values())
     if os.environ.get("SHADOW_DATE"):

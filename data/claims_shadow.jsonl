@@ -5592,3 +5592,16 @@
 {"signal_date": "2026-09-24", "claim": "PANIC_DEPTH_DOSE", "code": "600562", "tier": "-3~-5%", "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-24", "claim": "REVERSAL_OPEN_T1", "code": "600563", "tier": null, "entry": null, "r1": null, "r5": null, "r20": null}
 {"signal_date": "2026-09-24", "claim": "PANIC_DEPTH_DOSE", "code": "600563", "tier": "-3~-5%", "entry": null, "r1": null, "r5": null, "r20": null}
+{"signal_date": "2026-09-22", "claim": "CROSS_GAPLOW_BIGUPPER_XFUND", "code": "003013", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-22", "claim": "CROSS_LOW_3DOWN_OS20", "code": "600499", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-22", "claim": "CROSS_GAPLOW_3DOWN_XFUND", "code": "600499", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-22", "claim": "COMP_LIMITDOWN_LOW_DEEP", "code": "603226", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-22", "claim": "CROSS_LOW_3DOWN_OS20", "code": "000668", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-24", "claim": "COMP_LIMITDOWN_LOW_DEEP", "code": "603823", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-24", "claim": "CROSS_GAPLOW_3DOWN_XFUND", "code": "002625", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-24", "claim": "CROSS_GAPLOW_LOSER250_XFUND", "code": "002625", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-24", "claim": "YAO_LAUNCH_FIRSTBOARD", "code": "002413", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-24", "claim": "YAO_LAUNCH_FIRSTBOARD", "code": "000905", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-24", "claim": "YAO_LAUNCH_FIRSTBOARD", "code": "603767", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-24", "claim": "YAO_LAUNCH_FIRSTBOARD", "code": "605018", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
+{"signal_date": "2026-09-24", "claim": "YAO_LAUNCH_FIRSTBOARD", "code": "603970", "tier": null, "entry": null, "r1": null, "r5": null, "r10": null, "r20": null}
