@@ -189,27 +189,34 @@ function render(d){
   window.scrollY=y;
 }
 function load(){
-  // 2026-09-27 修「一直在读时间」：周末/非交易日只加载一次不轮询；
-  // 交易日也先探 ops-state.json 的 built_at，没变就不整页重渲（消灭每分钟闪烁）
+  // 2026-09-27 修「一直在读时间」：周末只加载一次不轮询；交易日先探 ops-state.json
+  // 的 built_at，没变就不整页重渲。2026-09-27 二修：首次加载无条件执行（守卫曾把首载也挡了致卡「加载中」）
   var b=bjt(),w=b.getDay();
-  if(w===0||w===6){return;}
+  if((w===0||w===6)&&!window._firstLoad){return;}
+  window._firstLoad=false;
+  var _render_from=function(url){
+    var x2=new XMLHttpRequest();
+    x2.open("GET",url+"?t="+Date.now(),true);
+    x2.onreadystatechange=function(){
+      if(x2.readyState===4&&x2.status===200){
+        try{render(JSON.parse(x2.responseText));}catch(e){}
+      }
+    };
+    x2.send();
+  };
   var x=new XMLHttpRequest();
   x.open("GET","ops-state.json?t="+Date.now(),true);
   x.onreadystatechange=function(){
-    if(x.readyState===4&&x.status===200){
-      try{
-        var os=JSON.parse(x.responseText);
-        if(os.built_at===window._lastBuilt)return;
-        window._lastBuilt=os.built_at;
-      }catch(e){}
-      var x2=new XMLHttpRequest();
-      x2.open("GET","dashboard.json?t="+Date.now(),true);
-      x2.onreadystatechange=function(){
-        if(x2.readyState===4&&x2.status===200){
-          try{render(JSON.parse(x2.responseText));}catch(e){}
-        }
-      };
-      x2.send();
+    if(x.readyState===4){
+      var changed=true;
+      if(x.status===200){
+        try{
+          var os=JSON.parse(x.responseText);
+          if(os.built_at&&os.built_at===window._lastBuilt){changed=false;}
+          else{window._lastBuilt=os.built_at;}
+        }catch(e){}
+      }
+      if(changed)_render_from("dashboard.json");
     }
   };
   x.send();
