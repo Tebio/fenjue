@@ -31,3 +31,6 @@ unified/
 data/cb_kcache/
 data/cb_m5/
 tmp/overnight/hook_secret
+data/research_reports_*.json
+data/org_survey_*.json
+data/fund_hold_cache/
