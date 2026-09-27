@@ -62,35 +62,49 @@ def main():
             c["open"].append(r)
 
     rows = []
+    total_pnl_yuan = 0.0
+    total_done = 0
     for claim, c in sorted(per_claim.items(), key=lambda kv: -len(kv[1]["done"])):
         dn = c["done"]
         nm = CLAIM_NAMES.get(claim, claim)
+        hz = CLAIM_HORIZON.get(claim, "r5")
+        hold_days = hz.replace("r", "T+")
         if dn:
             wr = sum(1 for x in dn if x > 0) / len(dn)
             avg = st.mean(dn)
-            nav = 1.0
-            for x in dn:
-                nav *= 1 + x
+            pnl_yuan = sum(dn) * 10000  # 每笔1万本金的累计盈亏（元）——有界、诚实、可感知
+            total_pnl_yuan += pnl_yuan
+            total_done += len(dn)
             rows.append(f"<tr><td>{nm}</td><td>{len(dn)}</td><td>{wr * 100:.0f}%</td>"
-                        f"<td>{avg * 100:+.2f}%</td><td>{(nav - 1) * 100:+.1f}%</td>"
-                        f"<td class='mut'>{len(c['open'])} 在途</td></tr>")
+                        f"<td>{avg * 100:+.2f}%</td>"
+                        f"<td class='{'pos' if pnl_yuan > 0 else 'neg'}'>{pnl_yuan:+,.0f} 元</td>"
+                        f"<td>{hold_days}</td><td class='mut'>{len(c['open'])} 在途</td></tr>")
         elif c["open"]:
-            rows.append(f"<tr><td>{nm}</td><td colspan='4' class='mut'>影子期数据积累中（前 {len(c['open'])} 单在途）</td>"
-                        f"<td class='mut'>{len(c['open'])} 在途</td></tr>")
+            rows.append(f"<tr><td>{nm}</td><td colspan='4' class='mut'>影子期数据积累中（{len(c['open'])} 单在途）</td>"
+                        f"<td>{hold_days}</td><td class='mut'>{len(c['open'])} 在途</td></tr>")
 
-    # 在途明细
+    # 在途明细（加预计出场日=入场日+持仓周期的交易日）
     open_rows = []
+    idx_dates = [r["date"] for r in idx]
     for claim, c in sorted(per_claim.items()):
         nm = CLAIM_NAMES.get(claim, claim)
+        hz = CLAIM_HORIZON.get(claim, "r5")
+        hold_n = int(hz[1:])
         for r in c["open"]:
             cur = last_px.get(r["code"])
             pnl = (cur / r["entry"] - 1) * 100 if cur else None
             cls = "pos" if (pnl or 0) > 0 else "neg"
+            exit_day = "?"
+            ed = r.get("entry_date")
+            if ed and ed in idx_dates:
+                j = idx_dates.index(ed)
+                exit_day = idx_dates[min(j + hold_n, len(idx_dates) - 1)] if j + hold_n < len(idx_dates) else f"约{hold_n}个交易日后"
             open_rows.append(
                 f"<tr><td>{names.get(r['code'], '?')}<span class='mut'> {r['code']}</span></td>"
                 f"<td>{nm}</td><td>{r['signal_date']}</td><td>{r['entry']:.2f}</td>"
                 f"<td>{cur if cur else '?'}</td>"
-                f"<td class='{cls}'>{f'{pnl:+.1f}%' if pnl is not None else '待回填'}</td></tr>")
+                f"<td class='{cls}'>{f'{pnl:+.1f}%' if pnl is not None else '待回填'}</td>"
+                f"<td class='mut'>{exit_day} 出</td></tr>")
 
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -102,14 +116,16 @@ td,th{{padding:7px 9px;border-bottom:1px solid #ededeb;text-align:left}}
 .note{{background:#f7f6f3;border-radius:8px;padding:10px 14px;font-size:13px;color:#73726e;line-height:1.7}}
 </style></head><body>
 <h1>👻 影子单战绩 · 截至 {last_day}</h1>
-<div class="note">影子单=系统假设「信号全跟」的纸面账户，费后净口径。胜率/均笔是单笔统计，复利净值是把每笔收益连乘（纸面满仓口径，仅作线间对比）。
+<div class="note">影子单=系统假设「信号全跟」的纸面账户，费后净口径。<b>累计盈亏按「每笔固定 1 万本金」折算成元</b>——有界、诚实、可感知；高频线的单笔重叠不构成复利。
 <b>影子期的线（在途）还没足够结算单，别拿前几单论生死</b>——3-4 周后才轮到它们开口。</div>
+<h2>影子盘总账</h2>
+<div class="note" style="font-size:16px">从 9/11 起共结算 <b>{total_done}</b> 单，累计盈亏 <b class="{'pos' if total_pnl_yuan > 0 else 'neg'}">{total_pnl_yuan:+,.0f} 元</b>（每笔 1 万口径）。各线持仓周期不同（见表内 T+N），到点系统自动结算。</div>
 <h2>各线累计战绩</h2>
-<table><tr><th>线</th><th>结算单数</th><th>胜率</th><th>均笔</th><th>复利净值</th><th>在途</th></tr>
-{"".join(rows) if rows else "<tr><td colspan=6 class='mut'>还没有结算单</td></tr>"}</table>
+<table><tr><th>线</th><th>结算单数</th><th>胜率</th><th>均笔</th><th>累计盈亏</th><th>持仓</th><th>在途</th></tr>
+{"".join(rows) if rows else "<tr><td colspan=7 class='mut'>还没有结算单</td></tr>"}</table>
 <h2>在途持仓（还没到结算日的单）</h2>
-<table><tr><th>票</th><th>线</th><th>信号日</th><th>买入价</th><th>现价</th><th>浮盈</th></tr>
-{"".join(open_rows) if open_rows else "<tr><td colspan=6 class='mut'>当前没有在途影子单</td></tr>"}</table>
+<table><tr><th>票</th><th>线</th><th>信号日</th><th>买入价</th><th>现价</th><th>浮盈</th><th>出场日</th></tr>
+{"".join(open_rows) if open_rows else "<tr><td colspan=7 class='mut'>当前没有在途影子单</td></tr>"}</table>
 <div class="note">← <a href="./">回操作台</a> · 本页静态生成，随每日影子盘日更刷新 · 研究辅助不是买卖指令</div>
 </body></html>"""
     OUT.write_text(html)

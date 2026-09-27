@@ -608,8 +608,8 @@ def main():
                       '（MA60 下方的半路板 submit 挂 2/6，已从推送剔除）'))
 
     action_html = (
-        '<div id="nownow" style="font-size:18px;font-weight:700;padding:13px 16px;'
-        'background:var(--soft);border-radius:8px;line-height:1.6;margin-bottom:12px">读取当前时间…</div>'
+        '<div id="nownow_card" style="font-size:18px;font-weight:700;padding:13px 16px;'
+        'background:var(--soft);border-radius:8px;line-height:1.6;margin-bottom:12px"></div>'
         + kpis
         + f'<h3 style="margin:16px 0 6px">{fmt_d(buy_day)} 要做的事 <span class="small">全部绝对日期，没有「今天/明天」</span></h3>'
         + real_callout + ghost_callout + "".join(steps)

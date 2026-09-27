@@ -161,6 +161,7 @@ function startLive(){
 // ── 时段指引 ──
 function nownow(){
   var el=document.getElementById("nownow");if(!el)return;
+  var el2=document.getElementById("nownow_card");  // 2026-09-27 修：行动卡里还有一个（重复id老bug——JS只更新第一个，另一个永远卡占位符）
   var b2=bjt(),w=b2.getDay(),m=b2.getHours()*60+b2.getMinutes();
   var msg,color="#37352f";
   if(w===0||w===6){msg="📴 今天不开市。不用操作，想看就翻翻「研究库」。";}
@@ -173,6 +174,7 @@ function nownow(){
   else if(m<940){msg="📊 收盘了。等 19:05 权威周期轴+19:15 X规则线判定。";}
   else{msg="🌙 晚间：看「我的钱」页委托单，下个交易日 9:25 前照挂即可。";}
   el.textContent=msg;el.style.color=color;
+  if(el2){el2.textContent=msg;el2.style.color=color;}
 }
 // ── 数据渲染（60s 自刷新，保 tab 与滚动）──
 function render(d){
