@@ -32,10 +32,17 @@ for line in Path("/opt/data/.env").read_text().splitlines():
         k, v = line.split("=", 1)
         env[k] = v
 
+class QuotaExhausted(Exception):
+    pass
+
+
 def fetch_month(mo):
     fp = CACHE / f"{mo}.json"
     if fp.exists():
-        return json.loads(fp.read_text())
+        cached = json.loads(fp.read_text())
+        if cached:  # 2026-09-27 修：空表=配额耗尽的毒缓存，视为未缓存重拉
+            return cached
+        fp.unlink()
     y, m = mo.split("-")
     out, page = [], 1
     while True:
@@ -45,7 +52,8 @@ def fetch_month(mo):
         try:
             d = json.loads(r.stdout)
         except Exception:
-            break
+            # 非 JSON = 配额耗尽/接口异常（纯文本提示）——宁可不缓存也绝不写空表毒缓存
+            raise QuotaExhausted(f"{mo}: {r.stdout[:80]}")
         rows = d.get("datas") or []
         for row in rows:
             code = str(row.get("股票代码") or "").split(".")[0].zfill(6)
@@ -60,14 +68,20 @@ def fetch_month(mo):
     fp.write_text(json.dumps(out, ensure_ascii=False))
     return out
 
+
 all_picks = {}
-for k, mo in enumerate(months):
-    rows = fetch_month(mo)
-    if rows:
-        all_picks[mo] = rows
-    if k % 12 == 0:
-        print(f"进度 {mo}，累计 {sum(len(v) for v in all_picks.values())} 条", flush=True)
-    time.sleep(3.0)
+try:
+    for k, mo in enumerate(months):
+        rows = fetch_month(mo)
+        if rows:
+            all_picks[mo] = rows
+        if k % 12 == 0:
+            print(f"进度 {mo}，累计 {sum(len(v) for v in all_picks.values())} 条", flush=True)
+        time.sleep(3.0)
+except QuotaExhausted as e:
+    print(f"QUOTA_EXHAUSTED @ {e}——已拉月份已落缓存，下次续跑自动断点续传")
+    import sys as _s
+    _s.exit(2)
 print(f"金股总记录 {sum(len(v) for v in all_picks.values())} 条，覆盖 {len(all_picks)} 个月", flush=True)
 json.dump(all_picks, open(ROOT / "data/gold_stock_picks_20260926.json", "w"), ensure_ascii=False)
 
