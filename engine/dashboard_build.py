@@ -836,6 +836,22 @@ def main():
                          " ".join(flags) or '<span class="muted">区间内</span>'])
         S["我的钱"].append(card("持仓哨兵", table(["标的", "现价", "今日", "备注", "关键位"], rows),
                                 "config/watchlist.json · 越线自动标记", tab="我的钱"))
+    # 📈 基本面速览（2026-09-28 用户令「要看基本面」：2026 中报营收/净利同比，东财业绩报表口径）
+    try:
+        _fund = json.loads((D / "fundamentals_2026h1.json").read_text()) if (D / "fundamentals_2026h1.json").exists() else None
+        if _fund:
+            _fund.sort(key=lambda r: -r["np_yoy"])
+            _frows = "".join(
+                f'<tr><td>{esc(r["name"])}</td><td>{r["rev_yoy"]:+.1f}%</td>'
+                f'<td class="{"pos" if r["np_yoy"] >= 8 else ""}">{r["np_yoy"]:+.1f}%</td>'
+                f'<td class="muted">{r["eps"]:.2f}</td></tr>' for r in _fund)
+            S["我的钱"].insert(0, card("📈 基本面速览 · 2026 中报",
+                                       f'<table><tr><th>标的</th><th>营收同比</th><th>净利同比</th><th>EPS</th></tr>{_frows}</table>'
+                                       f'<div class="muted" style="margin-top:6px">银行的真驱动是业绩不是图形——'
+                                       f'青岛/齐鲁净利 +18%/+16% 是业绩双雄；技术买点和业绩顶好不一定是同一只，两个轴都要看。</div>',
+                                       "东财业绩报表 · 半年报季更新", tab="我的钱"))
+    except Exception as _e:
+        print(f"[WARN] 基本面卡失败: {_e}")
     # 💼 Portfolio Cockpit（2026-09-27 v2 终端重构）：watchlist 持仓有 shares/cost 字段才全开，
     # 否则显示引导卡。总资产/今日/本周/风险暴露条/持仓占比/Kill线接近警告。
     try:
