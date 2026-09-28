@@ -700,7 +700,14 @@ def main():
                 _sf = _gc["solo_fresh"]
                 _rows = "".join(f'<tr><td>{esc(r["name"])}</td><td class="muted">{r["code"]}</td></tr>' for r in _sf[:8])
                 _body = (f'<div class="muted">本月独家+年内首入 {len(_sf)} 只 · 入场日 {_gc.get("entry_day")}（月第6交易日）· T+20 出 · 三年段 63%/+7.26pp 超额</div>'
-                         f'<table>{_rows}</table>')
+                         f'<table>{_rows}</table>'
+                         f'<div class="rule" style="margin-top:8px">玩法全规则（都经过交叉验证）：'
+                         f'①每月固定第 6 个交易日开盘等权买（名单发布完毕的可执行时点，前视审计过）'
+                         f'②只买「独家+年内首次入选」（新鲜度是 edge 本体：首入 +8.4pp &gt; 连4月 +1.1pp；独家 +6.0pp &gt; 抱团≥4家 +2.7pp）'
+                         f'③入场确认=技术强态（MA5 线上或 MACD 柱放大；弱态票当月不纳入——金股线强者恒强，与大盘均值回复相反）'
+                         f'④T+20 开盘机械出（峰值持有期）'
+                         f'⑤环境倾斜：加杠杆期（RZYE20日&gt;+7.3%）金股是主打线（78%/+16.7pp），去杠杆期让位恐慌家族'
+                         f'⑥离场信号：持仓票掉出下月名单=跑输 3.5pp 的离场标注</div>')
             elif _gc.get("status") == "ok":
                 _body = f'<div class="muted">{_gc.get("month")} 无独家新鲜金股，空仓过月。</div>'
             else:
