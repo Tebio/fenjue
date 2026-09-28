@@ -699,7 +699,27 @@ def main():
             if _gc.get("status") == "ok" and _gc.get("solo_fresh"):
                 _sf = _gc["solo_fresh"]
                 _rows = "".join(f'<tr><td>{esc(r["name"])}</td><td class="muted">{r["code"]}</td></tr>' for r in _sf[:8])
-                _body = (f'<div class="muted">本月独家+年内首入 {len(_sf)} 只 · 入场日 {_gc.get("entry_day")}（月第6交易日）· T+20 出 · 三年段 63%/+7.26pp 超额</div>'
+                # 当前时点动作判定（2026-09-28 用户令「买点卖点也没有」）
+                import datetime as _dt
+                _ed = _gc.get("entry_day") or ""
+                _idx = json.loads((D / "index_sh000001.json").read_text())
+                _idays = [r["date"] for r in _idx]
+                _today_s = sig_date
+                # 出场日=入场+20 交易日（日历不够长就按自然日近似 +28 天）
+                if _ed in _idays:
+                    _j = _idays.index(_ed)
+                    _sell = _idays[_j + 20] if _j + 20 < len(_idays) else (_dt.date.fromisoformat(_idays[-1]) + _dt.timedelta(days=28)).isoformat() + "（估）"
+                else:
+                    _sell = "?"
+                if _today_s < _ed:
+                    _act = f'🟢 入场日 {_ed}（未到）——当天 9:32 开盘等权买下面名单，{_sell} 开盘机械卖'
+                elif _sell != "?" and _today_s <= _sell:
+                    _act = (f'⏳ 本月窗口已过（入场日 {_ed}）：没在那天买的现在<b>不追</b>（金股线的钱是即时动量，等回踩=买输家）。'
+                            f'若 {_ed} 那天跟买了：{_sell} 开盘机械卖，不问盈亏')
+                else:
+                    _act = '⏳ 本月组合已到期——空仓等下月名单（每月第 6 交易日入场）'
+                _body = (f'<div style="background:#fdf6e3;border:1px solid #ecdcb5;border-radius:7px;padding:9px 12px;font-size:13px;margin-bottom:8px">{_act}</div>'
+                         f'<div class="muted">本月独家+年内首入 {len(_sf)} 只 · 入场日 {_ed}（月第6交易日）· T+20 出 · 三年段 63%/+7.26pp 超额</div>'
                          f'<table>{_rows}</table>'
                          f'<div class="rule" style="margin-top:8px">玩法全规则（都经过交叉验证）：'
                          f'①每月固定第 6 个交易日开盘等权买（名单发布完毕的可执行时点，前视审计过）'
