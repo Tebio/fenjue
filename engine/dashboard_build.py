@@ -698,14 +698,37 @@ def main():
         if _gc:
             if _gc.get("status") == "ok" and _gc.get("solo_fresh"):
                 _sf = _gc["solo_fresh"]
-                _rows = "".join(f'<tr><td>{esc(r["name"])}</td><td class="muted">{r["code"]}</td></tr>' for r in _sf[:8])
-                # 当前时点动作判定（2026-09-28 用户令「买点卖点也没有」）
-                import datetime as _dt
-                _ed = _gc.get("entry_day") or ""
+                # 逐票跟踪表（2026-09-28 用户令「每只票离买卖点多远没显示」）：
+                # 生产子集=独家新鲜+入场日技术强态（MA5线上/MACD柱放大），列：入场价/现价/浮盈/距卖出日
+                import bisect as _bs
                 _idx = json.loads((D / "index_sh000001.json").read_text())
                 _idays = [r["date"] for r in _idx]
+                _ed = _gc.get("entry_day") or ""
+                _lastd = _idays[-1]
+                _track = []
+                for _r in _sf:
+                    _code = _r["code"]
+                    _kc = D / "big_kcache" / f"{_code}.json"
+                    if not _kc.exists():
+                        continue
+                    try:
+                        _ks = json.loads(_kc.read_text())
+                        _i = _bs.bisect_left([k["date"] for k in _ks], _ed)
+                        if _i >= len(_ks) or _ks[_i]["date"] != _ed:
+                            continue
+                        _entry = _ks[_i]["open"]
+                        if _entry <= 0:
+                            continue
+                        _cur = _ks[-1]["close"]
+                        _track.append({"name": _r["name"], "code": _code, "entry": _entry,
+                                       "cur": _cur, "pnl": _cur / _entry - 1})
+                    except Exception:
+                        continue
+                _track.sort(key=lambda x: -x["pnl"])
+                _days_left = max(0, 20 - (_idays.index(_lastd) - _idays.index(_ed))) if (_ed in _idays) else None
+                # 当前时点动作判定（买入指令/不追/卖出日）
+                import datetime as _dt
                 _today_s = sig_date
-                # 出场日=入场+20 交易日（日历不够长就按自然日近似 +28 天）
                 if _ed in _idays:
                     _j = _idays.index(_ed)
                     _sell = _idays[_j + 20] if _j + 20 < len(_idays) else (_dt.date.fromisoformat(_idays[-1]) + _dt.timedelta(days=28)).isoformat() + "（估）"
@@ -718,9 +741,18 @@ def main():
                             f'若 {_ed} 那天跟买了：{_sell} 开盘机械卖，不问盈亏')
                 else:
                     _act = '⏳ 本月组合已到期——空仓等下月名单（每月第 6 交易日入场）'
+                _trows = "".join(
+                    f'<tr><td>{esc(t["name"])}</td><td class="muted">{t["entry"]:.2f}</td>'
+                    f'<td>{t["cur"]:.2f}</td>'
+                    f'<td class="{"pos" if t["pnl"] >= 0 else "neg"}">{t["pnl"] * 100:+.1f}%</td></tr>'
+                    for t in _track[:10])
+                _gain = sum(1 for t in _track if t["pnl"] > 0)
+                _track_html = (f'<table><tr><th>票</th><th>{_ed[5:]} 入价</th><th>现价</th><th>浮盈</th></tr>{_trows}</table>'
+                               f'<div class="muted" style="margin-top:4px">跟踪 {len(_track)} 只 · 浮盈 {_gain}/{len(_track)} '
+                               f'· 距机械卖出日（{_sell}）还剩 ~{_days_left} 个交易日</div>' if _track else "")
                 _body = (f'<div style="background:#fdf6e3;border:1px solid #ecdcb5;border-radius:7px;padding:9px 12px;font-size:13px;margin-bottom:8px">{_act}</div>'
                          f'<div class="muted">本月独家+年内首入 {len(_sf)} 只 · 入场日 {_ed}（月第6交易日）· T+20 出 · 三年段 63%/+7.26pp 超额</div>'
-                         f'<table>{_rows}</table>'
+                         f'{_track_html}'
                          f'<div class="rule" style="margin-top:8px">玩法全规则（都经过交叉验证）：'
                          f'①每月固定第 6 个交易日开盘等权买（名单发布完毕的可执行时点，前视审计过）'
                          f'②只买「独家+年内首次入选」（新鲜度是 edge 本体：首入 +8.4pp &gt; 连4月 +1.1pp；独家 +6.0pp &gt; 抱团≥4家 +2.7pp）'
