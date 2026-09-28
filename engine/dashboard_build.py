@@ -747,10 +747,12 @@ def main():
                     f'<td class="{"pos" if t["pnl"] >= 0 else "neg"}">{t["pnl"] * 100:+.1f}%</td></tr>'
                     for t in _track[:10])
                 _gain = sum(1 for t in _track if t["pnl"] > 0)
-                _track_html = (f'<table><tr><th>票</th><th>{_ed[5:]} 入价</th><th>现价</th><th>浮盈</th></tr>{_trows}</table>'
+                _track_html = (f'<div style="font-weight:700;font-size:13px;margin:8px 0 2px">📊 逐票跟踪（每日盘后刷新）</div>'
+                               f'<table><tr><th>票</th><th>{_ed[5:]} 入价</th><th>现价</th><th>浮盈</th></tr>{_trows}</table>'
                                f'<div class="muted" style="margin-top:4px">跟踪 {len(_track)} 只 · 浮盈 {_gain}/{len(_track)} '
                                f'· 距机械卖出日（{_sell}）还剩 ~{_days_left} 个交易日</div>' if _track else "")
-                _body = (f'<div style="background:#fdf6e3;border:1px solid #ecdcb5;border-radius:7px;padding:9px 12px;font-size:13px;margin-bottom:8px">{_act}</div>'
+                _body = (f'<div style="background:#fdf6e3;border:2px solid #c0392b;border-radius:7px;padding:11px 14px;font-size:14px;margin-bottom:10px">'
+                         f'<b style="font-size:15px">🎯 当前动作：</b>{_act}</div>'
                          f'<div class="muted">本月独家+年内首入 {len(_sf)} 只 · 入场日 {_ed}（月第6交易日）· T+20 出 · 三年段 63%/+7.26pp 超额</div>'
                          f'{_track_html}'
                          f'<div class="rule" style="margin-top:8px">玩法全规则（都经过交叉验证）：'
