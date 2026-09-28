@@ -1,6 +1,6 @@
 {
  "version": 2,
- "built_at": "2026-09-28 08:15",
+ "built_at": "2026-09-28 11:20",
  "sig_date": "2026-09-28",
  "buy_day": "2026-09-29",
  "sell_day": "2026-09-30",
@@ -31,15 +31,7 @@
    "window": "梯队≥3涨停+自身首板=触发"
   }
  ],
- "positions_alert": [
-  {
-   "code": "001299",
-   "name": "美能能源",
-   "flags": [
-    "✅过MA60修复确认"
-   ]
-  }
- ],
+ "positions_alert": [],
  "shadow_t1": null,
  "b5": {
   "date": "2026-09-24",
