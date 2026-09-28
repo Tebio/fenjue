@@ -725,6 +725,31 @@ def main():
                     except Exception:
                         continue
                 _track.sort(key=lambda x: -x["pnl"])
+                # 五轴徽章（2026-09-28 用户令「结合在一起看」）：新=年内首入 独=独家 强=技术强态 衰=业绩下滑 冷=低换手
+                try:
+                    _yj = json.loads((D / "yjbb_cache/20260630.json").read_text()) if (D / "yjbb_cache/20260630.json").exists() else []
+                    _np_map = {r["code"]: r["np_yoy"] for r in _yj if r.get("np_yoy") is not None}
+                    _turn = {}
+                    import glob as _g2
+                    for _fp in _g2.glob(str(D / "cap_hist/*.json")):
+                        _c = _fp.rsplit("/", 1)[-1][:-5]
+                        try:
+                            _rows2 = json.load(open(_fp))
+                            if _rows2:
+                                _turn[_c] = _rows2[-1][1]
+                        except Exception:
+                            pass
+                    for _t in _track:
+                        _bd = []
+                        _npy = _np_map.get(_t["code"])
+                        _tr = _turn.get(_t["code"])
+                        if _npy is not None and _npy < 0:
+                            _bd.append('衰')  # 业绩下滑=金股线反向加分
+                        if _tr is not None and _tr < 5:
+                            _bd.append('冷')  # 低换手=无人问津
+                        _t["badges"] = "".join(_bd)
+                except Exception:
+                    pass
                 _days_left = max(0, 20 - (_idays.index(_lastd) - _idays.index(_ed))) if (_ed in _idays) else None
                 # 当前时点动作判定（买入指令/不追/卖出日）
                 import datetime as _dt
@@ -744,11 +769,12 @@ def main():
                 _trows = "".join(
                     f'<tr><td>{esc(t["name"])}</td><td class="muted">{t["entry"]:.2f}</td>'
                     f'<td>{t["cur"]:.2f}</td>'
-                    f'<td class="{"pos" if t["pnl"] >= 0 else "neg"}">{t["pnl"] * 100:+.1f}%</td></tr>'
+                    f'<td class="{"pos" if t["pnl"] >= 0 else "neg"}">{t["pnl"] * 100:+.1f}%</td>'
+                    f'<td class="muted">{t.get("badges", "")}</td></tr>'
                     for t in _track[:10])
                 _gain = sum(1 for t in _track if t["pnl"] > 0)
                 _track_html = (f'<div style="font-weight:700;font-size:13px;margin:8px 0 2px">📊 逐票跟踪（每日盘后刷新）</div>'
-                               f'<table><tr><th>票</th><th>{_ed[5:]} 入价</th><th>现价</th><th>浮盈</th></tr>{_trows}</table>'
+                               f'<table><tr><th>票</th><th>{_ed[5:]} 入价</th><th>现价</th><th>浮盈</th><th>徽章</th></tr>{_trows}</table>'
                                f'<div class="muted" style="margin-top:4px">跟踪 {len(_track)} 只 · 浮盈 {_gain}/{len(_track)} '
                                f'· 距机械卖出日（{_sell}）还剩 ~{_days_left} 个交易日</div>' if _track else "")
                 _body = (f'<div style="background:#fdf6e3;border:2px solid #c0392b;border-radius:7px;padding:11px 14px;font-size:14px;margin-bottom:10px">'
@@ -761,7 +787,9 @@ def main():
                          f'③入场确认=技术强态（MA5 线上或 MACD 柱放大；弱态票当月不纳入——金股线强者恒强，与大盘均值回复相反）'
                          f'④T+20 开盘机械出（峰值持有期）'
                          f'⑤环境倾斜：加杠杆期（RZYE20日&gt;+7.3%）金股是主打线（78%/+16.7pp），去杠杆期让位恐慌家族'
-                         f'⑥离场信号：持仓票掉出下月名单=跑输 3.5pp 的离场标注</div>')
+                         f'⑥离场信号：持仓票掉出下月名单=跑输 3.5pp 的离场标注</div>'
+                         f'<div class="muted" style="margin-top:4px">徽章说明：<b>衰</b>=中报业绩下滑（金股+亏损组 63%/+5.5pp 比对照 +4.6pp——反向加分）· '
+                         f'<b>冷</b>=低换手&lt;5%（无人问津组 70%/+8.6pp）· 名单本身已含「新+独」两轴；徽章越多越肥。</div>')
             elif _gc.get("status") == "ok":
                 _body = f'<div class="muted">{_gc.get("month")} 无独家新鲜金股，空仓过月。</div>'
             else:
