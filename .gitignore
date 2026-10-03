@@ -34,3 +34,10 @@ tmp/overnight/hook_secret
 data/research_reports_*.json
 data/org_survey_*.json
 data/fund_hold_cache/
+data/margin_stock.db
+data/ann_stream/
+data/survey_records_*.jsonl
+data/earnings_express.jsonl
+data/holder_num_det.jsonl
+data/margin_daily.jsonl
+data/margin_detail.jsonl

@@ -81,6 +81,32 @@ def env_state(day=None):
     if trend_gate and margin_gate:
         quadrant = ("🟢黄金格" if trend_gate == "跌>3%" and margin_gate == "去杠杆" else
                     "🔴毒气室" if trend_gate == "平/涨" and margin_gate == "中段" else "🟡中间格")
+    # 期指贴水（第三传感器 2026-09-29，仅展示不作闸门）：IF 主力连续贴水在全史的分位
+    # 深贴水极值=对冲盘拥挤（独立数据源的真恐慌佐证）；换月接缝口径坑已记档，故只按分位展示
+    basis_pct = basis_rank = None
+    try:
+        from datetime import date as _date
+        fb = json.loads((D / "futures_basis.json").read_text())["IF"]["rows"]
+        ty = _date.fromisoformat(today)
+        if fb and abs((_date.fromisoformat(fb[-1]["date"]) - ty).days) <= 5:
+            bp = [r["basis_pct"] for r in fb]
+            basis_pct = fb[-1]["basis_pct"]
+            basis_rank = sum(1 for b in bp if b < basis_pct) / len(bp)
+    except Exception:
+        pass
+    # 市场温度（第四传感器 2026-09-29，终审过分年）：多头占比滚动250日分位
+    # 冰点≤10%分位=T+10 64%/+0.81；过热≥90%分位=T+10 42%/-0.41（减仓侧）
+    breadth_pct = breadth_rank = None
+    try:
+        bd = json.loads((D / "breadth_daily.json").read_text())
+        days = sorted(bd)
+        if days and days[-1] <= today:
+            bpcts = [bd[d2]["bull_pct"] for d2 in days]
+            win = bpcts[-250:]
+            breadth_pct = bpcts[-1]
+            breadth_rank = sum(1 for v in win if v < breadth_pct) / len(win)
+    except Exception:
+        pass
     return {
         "date": today, "regime": regime, "age": seg_age,
         "seg_median": SEG_MEDIAN_DAYS.get(regime, "?"),
@@ -89,6 +115,8 @@ def env_state(day=None):
         "trend_chg20": trend, "trend_gate": trend_gate,
         "margin_chg20": margin_chg, "margin_gate": margin_gate,
         "holiday": holiday, "quadrant": quadrant,
+        "basis_pct": basis_pct, "basis_rank": basis_rank,
+        "breadth_pct": breadth_pct, "breadth_rank": breadth_rank,
     }
 
 
@@ -99,8 +127,15 @@ def fmt_brief(e):
         name, delta = e["holiday"]
         hol = f" · {name}{'前' if delta > 0 else '后'}{abs(delta)}天"
     mc = f"{e['margin_chg20'] * 100:+.1f}%" if e["margin_chg20"] is not None else "?"
+    bs = ""
+    if e.get("basis_pct") is not None:
+        depth = "🔴极深" if e["basis_rank"] < 0.05 else ("🟠偏深" if e["basis_rank"] < 0.20 else "")
+        bs = f" | IF贴水{e['basis_pct']:+.1f}%({e['basis_rank'] * 100:.0f}%分位{depth})"
+    if e.get("breadth_pct") is not None:
+        hot = "🔴过热" if e["breadth_rank"] >= 0.90 else ("🟢冰点" if e["breadth_rank"] <= 0.10 else "")
+        bs += f" | 温度{e['breadth_pct'] * 100:.0f}%({e['breadth_rank'] * 100:.0f}%分位{hot})"
     return (f"{e['regime']}第{e['age']}天（段中位{e['seg_median']}天）→ 下阶段大概率 {e['next_top']}({e['next_prob'] * 100:.0f}%)"
-            f" | 趋势门{e['trend_gate']} 杠杆门{e['margin_gate']}({mc}){hol}"
+            f" | 趋势门{e['trend_gate']} 杠杆门{e['margin_gate']}({mc}){hol}{bs}"
             + (f" | 深档{e['quadrant']}" if e["quadrant"] else ""))
 
 

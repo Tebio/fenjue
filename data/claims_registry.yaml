@@ -1461,3 +1461,43 @@ claims:
   direction: negative
   created: 2026-09-27
   audit_every_days: 30
+- id: PEAD_LOW_POOL
+  statement: 60日内业绩预增(或扭亏/略增≥50)×距60日高≤-20%×流通市值<50亿的低位基本面池，T+5→T+60全horizon正漂移
+  detector: 预增低位池_v1
+  control: position_matched
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: 1.2
+    20: 3.27
+  kill_line_pp:
+    5: 0.0
+    20: 0.5
+  grade: 候选L2+（2026-10-03 submit 七闸全过；DSR≈0.006+容量年化4.9%回撤-35%=慢钱薄edge；名单制季节型，预告季（1/4/7/10月）外池子自然空窗属正常）
+  created: 2026-10-03
+  audit_every_days: 7
+  g7_槽10:
+    K1_年化%: 4.93
+    K1_均笔%: 0.16
+    K1_回撤%: -35.3
+    K1_笔数: 2875.67
+    K5_年化%: 6.73
+    K5_均笔%: 0.28
+    过G7: true
+    过G7_K5: true
+  note: '【2026-10-03 立项】8年 n=48230，全样本55.7%/+1.20% vs 随机46.9%/+0.11%（t=37.9）；位置匹配边际 T+5 +0.91pp / T+20 +2.01pp；四regime全正（恐慌+2.05最强）；衰减单调 T+1+0.18→T+60+6.08。披露季外（8-9月等）池空是结构不是故障，2026-09-30实测池空。'
+- id: INDEX_REBALANCE_FRONTRUN
+  statement: 中证(沪深300/500/1000)半年度调样公告(5/11月最后一个周五)后买入调入名单→生效日(6/12月第二个周五)收盘卖，抢跑被动盘，10交易日窗正超额
+  detector: 调样事件名单(data/index_rebalance_events.json, baostock历史成分diff+CNFIN公告解析重建15周期)
+  control: momentum_mcap_matched(动量±5pp+市值0.5-2x, 非调入票同窗)
+  horizon:
+  - 10
+  baseline_pp:
+    10: 1.83
+  kill_line_pp:
+    10: 0.0
+  grade: 候选L2（2026-10-03 事件研究；13周期12正，唯2024-11负(-1.98%)；衰减中：2019-2022段~+2.4pp→2023-2026段~+1.1pp=拥挤化迹象，须持续盯）
+  created: 2026-10-03
+  audit_every_days: 30
+  note: 一年两次的事件交易，非日常池；n=569(沪深300+中证500合并口径)；执行=公告次交易日开盘买/生效日收盘卖；中证1000仅3周期(CNFIN)+2.95%/65%(未动量匹配)；调出票反弹+1.7~3.1%噪声大不注册；2021两周期baostock成分数据缺失

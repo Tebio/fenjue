@@ -84,6 +84,21 @@ def main():
     state = {"month": mo, "status": "ok", "entry_day": entry_day,
              "total": len(rows), "solo_fresh": solo_fresh,
              "note": f"入场日={entry_day}（月第6交易日），独家+年内首入 {len(solo_fresh)} 只，T+20 出"}
+    # 月末预热：当月剩余交易日≤3 时顺带探下月名单（券商月末就发下月金股，缓存落盘供下月复用）
+    remaining = [d for d in idates if d.startswith(mo) and d >= today]
+    if len(remaining) <= 3:
+        y2, m2 = int(mo[:4]), int(mo[5:7]) + 1
+        if m2 > 12:
+            y2, m2 = y2 + 1, 1
+        nxt = f"{y2}-{m2:02d}"
+        nrows = fetch_month(nxt)
+        if nrows is None:
+            state["next_month_note"] = f"{nxt} 名单预热失败（配额耗尽/接口异常），明日重试"
+        elif not nrows:
+            state["next_month_note"] = f"{nxt} 名单尚未发布，每日重试"
+        else:
+            state["next_month_note"] = f"{nxt} 名单已预热 {len(nrows)} 条（缓存就绪，入场日=该月第6交易日）"
+        print(state["next_month_note"])
     OUT.write_text(json.dumps(state, ensure_ascii=False, indent=1))
     print(f"{mo}: 名单 {len(rows)} 条，生产组合 {len(solo_fresh)} 只（入场日 {entry_day}）")
 

@@ -43,6 +43,7 @@ REGISTRY_SHADOW_CLAIMS = {
     "MAINLINE_DIP_RSI2": "主线深回踩_RSI2_v1",
     "YAO_LAUNCH_FIRSTBOARD": "妖股启动期首板_v1",
     "THREE_DOWN_GOLD": "三连阴_金股覆盖_v1",  # 2026-09-27（#208）金股确认层影子
+    "PEAD_LOW_POOL": "预增低位池_v1",  # 2026-10-03 submit 7/7 PASS，名单制季节型（预告季外池空正常）
     "COMP_LIMITDOWN_LOW_LOSER250_OS20_TD9": "组合_跌停低_输家_超跌20_TD9滤",
     # 全交叉矩阵幸存对（2026-09-19 cross_matrix 8 PASS）
     "CROSS_LOW_SHRINK_BIGUPPER": "交叉_跌停低_缩量_避雷针低",

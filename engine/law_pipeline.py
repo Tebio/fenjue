@@ -923,6 +923,7 @@ def _pead_on(d, i, types, min_inc=None):
     ent = _pead_map().get(d["code"])
     if not ent:
         return False
+
     dts, metas = ent
     lo = d["date"][i - 1] if i >= 1 else ""
     hi = d["date"][i]
@@ -933,6 +934,39 @@ def _pead_on(d, i, types, min_inc=None):
             return True
         j += 1
     return False
+
+# ---- 2026-10-03 预增低位池（名单制两段式研究 submit 候选，namelist_screen_study_20261003）----
+# 结构：60自然日内有业绩预增/扭亏(或略增≥50%)公告 + 收盘距60日高≤-20% + 流通市值<50亿(PIT)。
+# 防前视三件套：①公告日期严格≤昨日（NOTICE_DATE 可能是信号日当天盘后披露，不许用）
+#              ②市值取「不晚于当日」的 cap_hist 日值（PIT）③入场=框架默认次日开盘。
+def _pead_low_screen(d, i):
+    ent = _pead_map().get(d["code"])
+    if not ent:
+        return False
+    dts, metas = ent
+    hi_d = d["date"][i - 1] if i >= 1 else ""
+    from datetime import date as _date, timedelta as _td
+    y, m, dd = map(int, d["date"][i].split("-"))
+    lo_d = str(_date(y, m, dd) - _td(days=60))
+    j = _bisect.bisect_left(dts, lo_d)
+    hit = False
+    while j < len(dts) and dts[j] <= hi_d:
+        t, inc = metas[j]
+        if t in ("预增", "扭亏") or (t == "略增" and inc is not None and inc >= 50):
+            hit = True
+            break
+        j += 1
+    if not hit:
+        return False
+    if i < 59:
+        return False
+    h60 = max(d["h"][i - 59:i + 1])
+    if h60 <= 0 or d["c"][i] / h60 - 1 > -0.20:
+        return False
+    cap = cap_at_date(_XCAP, d["code"], d["date"][i])
+    if cap is None or cap >= 50:
+        return False
+    return True
 
 def _entry_wd(d, i):
     """入场日（信号次日）的星期：0=周一 … 4=周五。i+1 越界返回 -1（不中过滤）。
@@ -1212,6 +1246,8 @@ REGISTRY = {
     "PEAD_预增50+": lambda d, i: _pead_on(d, i, {"预增"}, 50),
     "PEAD_强利好": lambda d, i: _pead_on(d, i, {"预增", "扭亏"}),
     "PEAD_强利空": lambda d, i: _pead_on(d, i, {"预减", "首亏"}),
+    # ---- 2026-10-03 预增低位池（名单制：预增60d×距60日高≤-20%×流通市值<50亿，T+20 慢钱线）----
+    "预增低位池_v1": _pead_low_screen,
     # ---- 2026-09-18：跌停接按 MA60 位置拆分（8年网格实测：MA60下 +1.94%/59.9% vs MA60上 -0.12%/44.7%）----
     "跌停接_MA60下": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
                                 and _limitdown(d, i)),
