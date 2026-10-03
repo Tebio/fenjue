@@ -1373,22 +1373,35 @@ claims:
   detector: law_pipeline REGISTRY 妖股启动期首板_v1
   pos_direction: 妖股期启动段首板
   control: position_matched
-  horizon: [1]
-  baseline_pp: {1: 1.51}
-  kill_line_pp: {1: 0.0}
-  grade: 候选L2（#174/#175：段龄1-2 close-entry T1 57.2%/+1.51%，三段 2019-21 +1.33/2022-24 +3.43/2025-26 +0.98 同正；红线：2026 年段已转负（42.1%/-0.37%）=出生在衰减期，影子 2026Q4 继续负即 DEAD；fill 率黑盒由影子前向定量）
+  horizon:
+  - 1
+  baseline_pp:
+    1: 1.51
+  kill_line_pp:
+    1: 0.0
+  grade: 候选L2（#174/#175：段龄1-2 close-entry T1 57.2%/+1.51%，三段 2019-21 +1.33/2022-24
+    +3.43/2025-26 +0.98 同正；红线：2026 年段已转负（42.1%/-0.37%）=出生在衰减期，影子 2026Q4 继续负即 DEAD；fill
+    率黑盒由影子前向定量）
   created: '2026-09-26'
   audit_every_days: 7
   note: 2026-09-26 影子接线（claims_shadow REGISTRY 桥）。不进推送池。
 - id: MAINLINE_DIP_RSI2
-  statement: 主线期+MA60上+当日跌≥3%+RSI(2)<10（双重超卖），次日开盘入，收>MA5 出（10日时间止损）；影子按固定 horizon 记账
+  statement: 主线期+MA60上+当日跌≥3%+RSI(2)<10（双重超卖），次日开盘入，收>MA5 出（10日时间止损）；影子按固定 horizon
+    记账
   detector: law_pipeline REGISTRY 主线深回踩_RSI2_v1
   pos_direction: 主线期强势回踩超卖
   control: position_matched
-  horizon: [1, 5]
-  baseline_pp: {1: 0.63, 5: 1.12}
-  kill_line_pp: {1: 0.0, 5: 0.5}
-  grade: 候选L2（#177：2026 段 66.7%/+1.12%（n=1343，Connors 出场口径）；时代终审不过=2019-21 -1.24/2022-24 -0.43 双负，仅 2026 机制成立——影子滚动 20 笔胜率<55% 即死）
+  horizon:
+  - 1
+  - 5
+  baseline_pp:
+    1: 0.63
+    5: 1.12
+  kill_line_pp:
+    1: 0.0
+    5: 0.5
+  grade: 候选L2（#177：2026 段 66.7%/+1.12%（n=1343，Connors 出场口径）；时代终审不过=2019-21 -1.24/2022-24
+    -0.43 双负，仅 2026 机制成立——影子滚动 20 笔胜率<55% 即死）
   created: '2026-09-26'
   audit_every_days: 7
   note: 2026-09-26 影子接线（claims_shadow REGISTRY 桥）。不进推送池。
