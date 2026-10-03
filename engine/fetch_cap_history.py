@@ -24,8 +24,6 @@ START, END = "2019-01-01", "2026-09-18"
 def main() -> None:
     todo = []
     for f in sorted(KC.glob("*.json")):
-        if f.stem == "000001":
-            continue
         if (OUT / f"{f.stem}.json").exists():
             continue
         todo.append(f.stem)
