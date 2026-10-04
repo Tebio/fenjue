@@ -11,8 +11,8 @@ import json, subprocess, time, sys, os
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'szse_rebalance_events.json')
 
 def curl(args):
-    r = subprocess.run(args, capture_output=True, text=True, timeout=40)
-    return r.stdout
+    r = subprocess.run(args, capture_output=True, timeout=40)
+    return r.stdout.decode('utf-8', 'replace')
 
 def szse_ann(se0, se1, ch=None, page=1):
     payload = {"seDate":[se0,se1],"pageSize":100,"pageNum":page}
