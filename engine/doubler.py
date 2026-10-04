@@ -43,8 +43,6 @@ def base_rate() -> dict:
     stats = defaultdict(list)
     files = sorted(KCACHE.glob("*.json"))
     for f in files:
-        if f.stem == "000001":
-            continue
         ks = json.loads(f.read_text())
         if len(ks) < 120:
             continue

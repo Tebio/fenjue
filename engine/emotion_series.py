@@ -17,8 +17,6 @@ KC = Path("/opt/data/fenjue/data/big_kcache")
 def main() -> None:
     daily = defaultdict(lambda: {"up": 0, "down": 0, "limit_up": [], "limit_down": 0, "amount": 0.0})
     for f in sorted(KC.glob("*.json")):
-        if f.stem == "000001":
-            continue
         ks = json.loads(f.read_text())
         for j in range(1, len(ks)):
             d = ks[j]["date"]

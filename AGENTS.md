@@ -628,3 +628,8 @@
 
 **242f. 深交所调样数据六路全灭+移交家里宽带（2026-10-03凌晨过夜批）**：①szse annList API=**本机IP网络层全封**（三个已知公告日带长退避重试全0条，与push2被拦同性质）；②cnindex download-adjustment端点死（全指数返回'文件不存在'）；③cnindex前端API猜不到+反爬挡headless；④akshare index_detail_hist_adjust_cni=包②已死；⑤HiThink(fuyao relay)无指数成分端点（404 route）；⑥baostock无深系指数。**移交方案=tmp/pull_szse_rebalance.py（家里宽带跑，产出szse_rebalance_events.json发回），沿用打板数据的分工模式；测试线束rebalance_merged.json格式+A窗脚本现成，名单到手30分钟出结果。**
 **过夜批其他成果**：000001 cap_hist补洞（fetch_cap_history.py里多年前硬编码`if f.stem=="000001": continue`被删——平安银行流通市值史静默缺失多年，1873行已补；对<50亿池/随机匹配研究无量级影响不改判）；转债12/20腾讯源补拉（剩8只强赎退市票各源无K线=真死数据）；cap_hist截断9只=长期停牌turn缺失维持已知限制。
+
+
+**242g. 硬编码排除项大清查+作战单脚本化（2026-10-03凌晨）**：
+①**'000001'跳过虫连窝端**：fetch_cap_history之外的9个文件(doubler/emotion_series/refetch_qfq/entryexit_matrix/regime_daily_append×2/dipbuy_backtest/ma_cycle_test/regime_backtest_hcap/regime_backtest)全部带同款`if f.stem=="000001": continue`——源自000001曾是上证指数代码的历史遗留，kcache宇宙里000001=平安银行(7-11元实测确认非指数)。**共10处全清，py_compile全过**。影响评估：平安银行=大盘蓝筹从不进低价/小市值池，对regime宽度影响~0.03pp，不改判任何历史结论；性质=数据卫生债销账。教训入库：**代码里任何硬编码股票代码=必须注释理由，否则后人当特性**。
+②**11-27调样作战单脚本化**：engine/rebalance_sheet.py——CNFIN找公告→AnnouncementLink提csindex id→queryAnnouncementById拿附件PDF→pypdf解析(调出/调入成对列)→作战单md+规模合理性校验(20-300)。**端到端冒烟过**：2026-05期解析沪深300调入19只=baostock成分diff的19只**完全吻合**(独立双源互验)。两个cron(43ad61eb27bb主班/22fc8ff5061b备份班)prompt已改为直接跑脚本判读[SKIP]/[OK]/[FAIL]，不再让agent即兴抓取。pypdf已入.venv。

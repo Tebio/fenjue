@@ -50,8 +50,6 @@ def main() -> None:
 
     day_boards, day_downs = {}, {}
     for f in sorted(KCACHE.glob("*.json")):
-        if f.stem == "000001":
-            continue
         ks = json.loads(f.read_text())
         for j in range(1, len(ks)):
             pc, tc = float(ks[j - 1]["close"]), float(ks[j]["close"])

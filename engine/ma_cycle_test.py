@@ -68,8 +68,6 @@ def main() -> None:
     sectors = load_sectors()
     stats = defaultdict(list)
     for f in sorted(KCACHE.glob("*.json")):
-        if f.stem == "000001":
-            continue
         ks = json.loads(f.read_text())
         if len(ks) < 250:
             continue

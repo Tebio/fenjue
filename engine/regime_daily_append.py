@@ -37,8 +37,6 @@ def day_stats(day: str) -> dict | None:
         names = {str(s["code"]).zfill(6): s.get("name", "")
                  for s in json.loads(nf.read_text()).get("stocks", [])}
     for f in sorted(KCACHE.glob("*.json")):
-        if f.stem == "000001":
-            continue
         try:
             ks = json.loads(f.read_text())
         except Exception:
@@ -145,8 +143,6 @@ def coverage(day: str) -> float:
     （186 退市+停牌）。哨兵阈值防半更新/断链）。"""
     tot = hit = 0
     for f in KCACHE.glob("*.json"):
-        if f.stem == "000001":
-            continue
         tot += 1
         try:
             ks = json.loads(f.read_text())

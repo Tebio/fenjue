@@ -62,8 +62,6 @@ def main() -> None:
     stats = defaultdict(list)
     stats_total = defaultdict(list)  # 不分段的总量矩阵
     for f in sorted(KCACHE.glob("*.json")):
-        if f.stem == "000001":
-            continue
         ks = json.loads(f.read_text())
         n = len(ks)
         if n < 120:

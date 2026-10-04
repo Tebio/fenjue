@@ -23,8 +23,6 @@ def is_raw(rows):
 def main() -> None:
     todo = []
     for f in sorted(KC.glob("*.json")):
-        if f.stem == "000001":
-            continue
         rows = json.loads(f.read_text())
         if rows and is_raw(rows):
             todo.append(f.stem)

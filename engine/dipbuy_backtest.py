@@ -30,8 +30,6 @@ def pct(a: float, b: float) -> float:
 def run() -> dict:
     stats = defaultdict(list)
     for f in sorted(KCACHE.glob("*.json")):
-        if f.stem == "000001":
-            continue
         ks = json.loads(f.read_text())
         n = len(ks)
         if n < 120:
