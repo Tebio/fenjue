@@ -1,14 +1,14 @@
 {
  "version": 2,
- "built_at": "2026-10-09 12:41",
+ "built_at": "2026-10-12 01:41",
  "sig_date": "2026-10-09",
  "buy_day": "2026-10-12",
  "sell_day": "2026-10-13",
  "regime": {
-  "date": "2026-10-08",
+  "date": "2026-10-09",
   "regime": "妖股期",
-  "limit_ups": 40,
-  "limit_downs": 14
+  "limit_ups": 65,
+  "limit_downs": 11
  },
  "deep_low": [],
  "focus": [
@@ -32,12 +32,7 @@
   }
  ],
  "positions_alert": [],
- "shadow_t1": {
-  "date": "2026-10-09",
-  "buys": [
-   "联创光电 600363"
-  ]
- },
+ "shadow_t1": null,
  "b5": {
   "date": "2026-10-09",
   "sealed": [

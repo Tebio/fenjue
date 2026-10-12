@@ -1,0 +1,673 @@
+# 焚诀 backlog（机器可读工作清单）
+#
+# 用途：接手 AI 的任务队列。挑 status=todo 且 depends_on 全 done 的条目，按 priority 排序开工。
+# 契约：没有对应 specs/<area>.md 的条目不许开工（先补 spec）。
+# 完成时：status→done，填 evidence（真实命令输出/文件路径），并在 AGENTS.md 追加新编号条目。
+#
+# schema:
+#   id          唯一编号（area-NN）
+#   title       一句话说清做什么
+#   area        SEC/PORT/TAX/MID/RISK/UI/DATA/PLAT/GOV/RES
+#   priority    P0(现在就在受伤) > P1(决定钱) > P2(工程/治理)
+#   status      todo | doing | blocked | done
+#   depends_on  前置条目 id 列表
+#   ledger_ref  AGENTS.md 中的来源编号
+#   inputs      开工需要的输入（文件/数据/脚本）
+#   outputs     交付物（文件/接口）
+#   acceptance  验收标准（可执行、可观察）
+#   effort_days 工时估算（人日）
+#   evidence    完成后填：实测证据
+version: 1
+updated: 2026-10-09
+spec_dir: docs/plan/specs
+
+items:
+
+  - id: PLAT-00
+    title: 契约冻结（INTERFACES/CONSTRAINTS/DECISIONS/VERIFY + plan_lint 跑绿）
+    area: PLAT
+    priority: P0
+    gate: G0
+    status: todo
+    depends_on: []
+    ledger_ref: "266 268"
+    inputs: ["docs/plan/START-HERE.md", "INTERFACES.md", "CONSTRAINTS.md", "DECISIONS.md", "VERIFY.md"]
+    outputs: ["六份契约文档就位", "docs/plan/tools/plan_lint.py 零错误", "scripts/verify.sh 可跑"]
+    acceptance: "plan_lint 退出码 0（悬空引用=0、P0 全有 spec、gate/依赖完整）；verify.sh 打印语法检查统计并如实 SKIP 未建项；故意加一个假 id 时 lint 必须报错"
+    effort_days: 1
+    evidence: null
+
+  # ── W0 个人量化适配（减法优先：先砍再补，见 README §7） ──────────────
+  - id: OPT-01
+    title: 注意力与 cron 减法审计（砍不产钱的自动化）
+    area: OPT
+    priority: P1
+    gate: G0
+    status: todo
+    depends_on: []
+    ledger_ref: "267"
+    inputs: ["cron jobs.json（63 个）", "scripts/ 目录", "executions.db"]
+    outputs: ["docs/plan/attention-budget.md（钱相关/研究相关 分类 + 可暂停清单）"]
+    acceptance: "输出全量 cron 分类表；给出可暂停清单（保留回滚，不删）；确认日常需人参与动作 <= 3 个（盘前确认/9:25 下单/盘后对账）"
+    effort_days: 1
+    evidence: null
+  - id: OPT-02
+    title: 复杂度上限制度（新增必退役 / cron 总数不增 / 模块行数上限）
+    area: OPT
+    priority: P2
+    gate: G0
+    status: todo
+    depends_on: [OPT-01]
+    ledger_ref: "267"
+    inputs: ["README §7.5", "现有 494 脚本与 63 cron"]
+    outputs: ["docs/plan/complexity-limits.md", "可选：CI 检查脚本"]
+    acceptance: "制度写入文档并被后续条目引用；新增线时必须同时给出退役对象或失效判据（在 backlog 里体现）"
+    effort_days: 0.5
+    evidence: null
+  - id: TAX-02
+    title: 税筹规则（持有期与红利税级挂钩，重算股息锚税后买入线）
+    area: TAX
+    priority: P2
+    gate: G1
+    status: todo
+    depends_on: [TAX-01]
+    ledger_ref: "263③ 267"
+    inputs: ["engine/console.py（股息锚价格带）", "dividend_cache.json", "taxfee.dividend_tax"]
+    outputs: ["税后买入线（含持有期假设）", "docs/research/dividend-aftertax.md"]
+    acceptance: "给出 4.5%/4.0%/3.0% 锚线在（不满1月/1月-1年/超1年）三档税后对应的价格带；明确满1年免税可作持有期规则"
+    effort_days: 1
+    evidence: null
+  - id: DOC-01
+    title: 交接手册与降级策略（离线 N 天怎么跑）
+    area: DOC
+    priority: P2
+    gate: G0
+    status: todo
+    depends_on: []
+    ledger_ref: "265⑭"
+    inputs: ["全部 cron 与脚本清单", "README §3 节奏日历"]
+    outputs: ["docs/plan/handover.md（最小维护模式 + 停哪些链 + 怎么恢复）"]
+    acceptance: "写明：离线 1 天/1 周/1 月三档分别停哪些 cron、保留哪些、恢复顺序；不需要用户在场也能执行的步骤"
+    effort_days: 1
+    evidence: null
+
+  # ── W9 安全与资产（P0：现在就在暴露） ────────────────────────────────
+  - id: SEC-01
+    title: 公开仓库剥离持仓与台账类文件
+    area: SEC
+    priority: P0
+    gate: G0
+    status: todo
+    depends_on: []
+    ledger_ref: "265①"
+    inputs: ["config/watchlist.json", "data/*ledger*.jsonl", "data/position*", ".gitignore"]
+    outputs: [".gitignore 规则", "私有目录 data/private/ 或私仓"]
+    acceptance: "公开仓库 git ls-files 不再含 watchlist.json / ledger / position 类文件；面板仍能构建（改读私有路径）"
+    effort_days: 0.5
+    evidence: null
+  - id: SEC-02
+    title: 备份与恢复演练（restore drill）
+    area: SEC
+    priority: P1
+    gate: G1
+    status: todo
+    depends_on: [SEC-01]
+    ledger_ref: "265②"
+    inputs: ["git 仓库", "/opt/data/backups", "NAS 卷清单"]
+    outputs: ["docs/plan/DR.md（恢复步骤+RTO/RPO）", "演练日志"]
+    acceptance: "在临时目录从备份恢复 big_kcache 子集 + engine + data 索引，跑通一次冒烟（py_compile + 一次回测），记录耗时"
+    effort_days: 1
+    evidence: null
+  - id: SEC-03
+    title: 凭证面盘点与轮换计划
+    area: SEC
+    priority: P2
+    gate: G1
+    status: todo
+    depends_on: []
+    ledger_ref: "265①"
+    inputs: [".env", "AstrBot cmd_config.json", ".hermes_secure/"]
+    outputs: ["docs/plan/credentials.md（分布/权限/轮换周期）"]
+    acceptance: "列出所有凭证位置与权限；标注哪些在明文配置里；给出轮换日历"
+    effort_days: 0.5
+    evidence: null
+
+  # ── W1 口径与账面（P0/P1：决定钱算得对不对） ──────────────────────────
+  - id: TAX-01
+    title: 费率与税费唯一真源 engine/taxfee/
+    area: TAX
+    priority: P0
+    gate: G1
+    status: todo
+    depends_on: []
+    ledger_ref: "263④"
+    inputs: ["entryexit_matrix.py:116 COST=0.15", "limitup_capture_t0.py:82 FEE_RT=0.001", "109 个含 0.15 的文件"]
+    outputs: ["engine/taxfee/__init__.py", "fee()/dividend_tax()/roundtrip_cost()", "tests/test_taxfee.py"]
+    acceptance: "含最低佣金 5 元与红利税税级（不满1月20%、1月到1年10%、超1年0%）的单测通过；输出与 limitup_capture_t0 的真实费目口径一致；列出待迁移文件清单"
+    effort_days: 1.5
+    evidence: null
+  - id: PORT-01
+    title: 统一组合账本 engine/portfolio/ledger.py
+    area: PORT
+    priority: P0
+    gate: G1
+    status: todo
+    depends_on: [TAX-01]
+    ledger_ref: "262①"
+    inputs: ["data/*_ledger.jsonl", "影子账本", "模拟脚本输出（pead_pool_sim 等）"]
+    outputs: ["engine/portfolio/ledger.py", "data/portfolio_nav.json", "tests/test_ledger.py"]
+    acceptance: "逐笔现金守恒断言通过（买入扣现金、卖出加现金、费用与税费走 taxfee）；4 线历史模拟可合并输出净值/逐年贡献/资金占用"
+    effort_days: 3
+    evidence: null
+  - id: PFX-01
+    title: 前复权口径修正（低价层判定改不复权价）
+    area: PORT
+    priority: P1
+    gate: G1
+    status: todo
+    depends_on: []
+    ledger_ref: "265③"
+    inputs: ["engine/pead_pool.py:124", "data/big_kcache_unadj/", "data/pead_events.json"]
+    outputs: ["修正后的排序键", "修正前后对比表（含 6.8% 误标复核）", "AGENTS.md 新编号"]
+    acceptance: "用不复权价重算 5 元低价标签；给出 #241e 低价切片在新口径下的 T+20 超额与胜率，标注方向是否改变"
+    effort_days: 1.5
+    evidence: null
+  - id: CASH-01
+    title: 现金类收益纳入账本（打新 + 逆回购/货基）
+    area: PORT
+    priority: P1
+    gate: G1
+    status: todo
+    depends_on: [PORT-01]
+    ledger_ref: "265④"
+    inputs: ["市值历史 cap_hist", "打新中签率假设", "逆回购利率序列"]
+    outputs: ["portfolio/cash_yield.py", "参数化假设文档"]
+    acceptance: "空仓期与持仓期现金收益进入净值；给出敏感性（打新中签率 0/0.5/1 倍；逆回购年化 1.5/2/3%）"
+    effort_days: 1
+    evidence: null
+  - id: PORT-02
+    title: 跨线资金冲突与优先级规则
+    area: PORT
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [PORT-01]
+    ledger_ref: "265⑩"
+    inputs: ["各线出票规则", "资金槽位"]
+    outputs: ["allocation_policy.md", "portfolio/allocator.py"]
+    acceptance: "同日多线出票时的分配有确定规则；回放 2026 历史给出冲突日清单与影响"
+    effort_days: 1
+    evidence: null
+  - id: PORT-03
+    title: 容量曲线（资金增长后的可行集）
+    area: PORT
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [PORT-01]
+    ledger_ref: "262G"
+    inputs: ["engine/capacity_audit.py", "成交额 ADV"]
+    outputs: ["capacity_curve.md"]
+    acceptance: "给出每条线在 20/50/100/200 万资金下的可执行槽位与收益衰减"
+    effort_days: 1
+    evidence: null
+
+  # ── W2 中台（P1：研究到账户的最后三公里） ────────────────────────────
+  - id: MID-01
+    title: 券商成交明细导入与逐笔对账 engine/recon/
+    area: MID
+    priority: P1
+    gate: G2
+    status: todo
+    depends_on: [TAX-01]
+    ledger_ref: "263⑤"
+    inputs: ["券商对账单 CSV（导出模板）", "影子账本", "ops_briefing_ledger.jsonl"]
+    outputs: ["engine/recon/import_broker.py", "engine/recon/reconcile.py", "data/recon_YYYYMMDD.json"]
+    acceptance: "对账报告含成交价 vs 信号价差异、应下未下、多下、费用差异、税费差异；差异按枚举归类；人工核对 1 周数据无误"
+    effort_days: 2.5
+    evidence: null
+  - id: MID-02
+    title: P&L 归因（alpha/beta/成本/滑点/漏单/择时）
+    area: MID
+    priority: P1
+    gate: G2
+    status: todo
+    depends_on: [MID-01, PORT-01, RISK-01]
+    ledger_ref: "263⑤"
+    inputs: ["recon 输出", "portfolio_nav", "指数序列"]
+    outputs: ["engine/portfolio/attribution.py", "月度归因报告"]
+    acceptance: "每笔与每日归因可加和回净值（残差小于 0.5%）；给出最近一个月各因子贡献拆解"
+    effort_days: 3
+    evidence: null
+  - id: MID-03
+    title: 人工偏离记录（未跟信号的行为留痕）
+    area: MID
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [MID-01]
+    ledger_ref: "265⑬"
+    inputs: ["信号清单", "实际成交"]
+    outputs: ["data/skip_log.jsonl（code/date/reason）"]
+    acceptance: "每个未跟信号必须落一条原因（资金不足/不认可/漏看/其他）；周报统计未跟率与后果"
+    effort_days: 0.5
+    evidence: null
+
+  # ── W3 风控（P1：决定这些线能不能一起上） ──────────────────────────
+  - id: RISK-01
+    title: 多线相关性矩阵与组合相关性实测
+    area: RISK
+    priority: P1
+    gate: G2
+    status: todo
+    depends_on: [PORT-01]
+    ledger_ref: "263① 265⑩"
+    inputs: ["4 线历史模拟日收益", "指数序列"]
+    outputs: ["engine/risk/correlation.py", "data/risk_corr.json"]
+    acceptance: "输出 4 线两两相关（全期 + rolling 60 日）与上证/小市值指数相关；明确指出分散幻觉是否存在（相关大于 0.6 即认定同因子）"
+    effort_days: 1.5
+    evidence: null
+  - id: RISK-02
+    title: 回撤预算与波动率目标（组合层）
+    area: RISK
+    priority: P1
+    gate: G2
+    status: todo
+    depends_on: [RISK-01]
+    ledger_ref: "263①"
+    inputs: ["组合净值序列", "各线波动"]
+    outputs: ["engine/risk/budget.py", "data/risk_budget.json"]
+    acceptance: "给定回撤预算（如 -15%）反推各线可用暴露；对 2022 与 2024-01 历史做约束回放，最大回撤不超预算"
+    effort_days: 2
+    evidence: null
+  - id: RISK-03
+    title: 压力测试（历史极端窗口）
+    area: RISK
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [RISK-01]
+    ledger_ref: "265⑩"
+    inputs: ["2022 微盘崩", "2024-01", "2019Q1 权重牛", "2026 妖股期"]
+    outputs: ["data/stress_report.json"]
+    acceptance: "四线在四个窗口的同时暴露与合计回撤量化；给出最坏同时触发的资金需求"
+    effort_days: 1.5
+    evidence: null
+  - id: RISK-04
+    title: 单线资金上限与敞口限额表
+    area: RISK
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [RISK-02]
+    ledger_ref: "263①"
+    inputs: ["容量曲线", "回撤预算"]
+    outputs: ["limits.md"]
+    acceptance: "每条线的最大槽位/最大单票/最大同时持仓有数字依据（非拍脑袋）"
+    effort_days: 0.5
+    evidence: null
+
+  # ── W8 前端（P1 便宜立刻有用） ───────────────────────────────────────
+  - id: UI-01
+    title: 净值 tearsheet（QuantStats/pyfolio）
+    area: UI
+    priority: P1
+    gate: G2
+    status: todo
+    depends_on: [PORT-01]
+    ledger_ref: "264C"
+    inputs: ["portfolio_nav", "各线影子账本"]
+    outputs: ["docs/tearsheet.html", "engine/report/tearsheet.py"]
+    acceptance: "生成含回撤曲线/Sortino/滚动指标/月度热力图的 HTML，一条命令可重跑"
+    effort_days: 0.5
+    evidence: null
+  - id: UI-02
+    title: MLflow 运行追踪（params/版本/产物）
+    area: UI
+    priority: P1
+    gate: G2
+    status: todo
+    depends_on: []
+    ledger_ref: "264C 263⑥"
+    inputs: ["现有研究/回测脚本"]
+    outputs: ["mlflow 本地服务 + 包装函数 engine/repro/track.py"]
+    acceptance: "至少 3 个脚本接入；UI 中能看到 params、代码版本、metrics、artifact"
+    effort_days: 1.5
+    evidence: null
+  - id: UI-03
+    title: 数据与管线健康看板（Grafana/Metabase）
+    area: UI
+    priority: P2
+    gate: G3
+    status: todo
+    depends_on: [DATA-01]
+    ledger_ref: "264C 263⑩"
+    inputs: ["DQ 断言输出", "cron 状态（executions.db）", "文件新鲜度"]
+    outputs: ["exporter 脚本", "看板 JSON"]
+    acceptance: "面板显示数据新鲜度、覆盖率、cron 失败、关键文件哈希；异常能告警"
+    effort_days: 1.5
+    evidence: null
+  - id: UI-04
+    title: 交互面板（现有四 Tab 之上的钻取）
+    area: UI
+    priority: P2
+    gate: G3
+    status: todo
+    depends_on: [UI-01]
+    ledger_ref: "264C"
+    inputs: ["docs/index.html 生成器", "console/app.py 半成品"]
+    outputs: ["Streamlit 或 htmx 补齐的路由"]
+    acceptance: "从净值与账本可点进明细（逐笔、逐线、逐日）；静态页仍可离线打开"
+    effort_days: 3
+    evidence: null
+
+  # ── W4 数据治理 ─────────────────────────────────────────────────────
+  - id: DATA-01
+    title: DQ 断言库（覆盖率/新鲜度/缺口/异常价/连续零成交）
+    area: DATA
+    priority: P1
+    gate: G1
+    status: todo
+    depends_on: []
+    ledger_ref: "261 263⑨"
+    inputs: ["big_kcache", "m60", "index_sh000001", "历史事故清单（#261）"]
+    outputs: ["engine/data/dq.py", "tests/test_dq.py"]
+    acceptance: "对每类断言有正反例测试；能复现 #261 的覆盖率 70% 场景并报警"
+    effort_days: 1.5
+    evidence: null
+  - id: DATA-02
+    title: 盘前数据完备性自检（扩展 cron_health_check）
+    area: DATA
+    priority: P1
+    gate: G1
+    status: todo
+    depends_on: [DATA-01]
+    ledger_ref: "263⑩"
+    inputs: ["scripts/cron_health_check.py", "关键文件清单"]
+    outputs: ["升级后的盘前自检 job"]
+    acceptance: "开盘前 10-15 分钟输出数据文件新鲜度+覆盖率+脚本可导入+日历尾部日期；全绿静默、异常推送"
+    effort_days: 1
+    evidence: null
+  - id: DATA-03
+    title: 数据源冗余与 failover
+    area: DATA
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [DATA-01]
+    ledger_ref: "263⑨ 265⑯"
+    inputs: ["baostock", "腾讯/新浪", "HiThink relay", "akshare"]
+    outputs: ["engine/data/sources.py（双源交叉+降级）"]
+    acceptance: "K线/行情/涨停池各有第二源；交叉不一致率有监控；主源挂掉能自动降级并留痕"
+    effort_days: 3
+    evidence: null
+  - id: DATA-04
+    title: PIT 数据快照与哈希（按日冻结关键文件）
+    area: DATA
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [DATA-01]
+    ledger_ref: "263⑥"
+    inputs: ["data 下关键 json"]
+    outputs: ["data/snapshots/YYYYMMDD.sha256"]
+    acceptance: "每日冻结关键文件哈希；任何结论可回溯到当日数据版本"
+    effort_days: 1
+    evidence: null
+  - id: DATA-05
+    title: 退市股幸存者偏差量化
+    area: DATA
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: []
+    ledger_ref: "265⑤"
+    inputs: ["退市股列表（baostock 可得部分）", "低位小市值类结论"]
+    outputs: ["docs/research/survivorship.md"]
+    acceptance: "给出幸存者偏差的上界估计与方向（如预增池 +1.20% 在含退市股后落在什么区间）"
+    effort_days: 2
+    evidence: null
+
+  # ── W5 平台化 ──────────────────────────────────────────────────────
+  - id: PLAT-01
+    title: 统计核心 research/ 抽取（HAC/日历时间/DSR/bootstrap/功效）
+    area: PLAT
+    priority: P1
+    gate: G1
+    status: todo
+    depends_on: []
+    ledger_ref: "263A 263②"
+    inputs: ["law_pipeline.py 的 HAC/日历时间/DSR 实现", "sector_vshape.py:38"]
+    outputs: ["engine/research/stats.py", "tests/test_stats.py"]
+    acceptance: "现有多脚本改为 import 同一实现；HAC/DSR 与旧实现数值一致（回归对照）；新增 block bootstrap 与功效函数"
+    effort_days: 2
+    evidence: null
+  - id: PLAT-02
+    title: 结论溯源 manifest（params_hash + 数据快照 + 代码版本）
+    area: PLAT
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [DATA-04]
+    ledger_ref: "263⑥"
+    inputs: ["全部研究脚本"]
+    outputs: ["engine/repro/manifest.py", "结果文件统一尾部字段"]
+    acceptance: "任一结果文件可读出产出它的参数集哈希、数据快照日、代码版本；旧结论可判定是否需重算"
+    effort_days: 1.5
+    evidence: null
+  - id: PLAT-03
+    title: 结论级脚本迁入 engine/（tmp 清理）
+    area: PLAT
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: []
+    ledger_ref: "262E"
+    inputs: ["/opt/data/tmp/limitdown_portfolio_sim.py", "pead_pool_sensitivity.py", "reversal_selection_diag.py", "zuxun1_split.py"]
+    outputs: ["engine/research/ 下的永久模块"]
+    acceptance: "四条结论脚本可在仓库内复跑并复现原文数字（正负 0.1pp 内）；tmp 只留探索"
+    effort_days: 2
+    evidence: null
+  - id: PLAT-04
+    title: 回归测试 / golden master（关键数字冻结）
+    area: PLAT
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [PLAT-01]
+    ledger_ref: "262C"
+    inputs: ["已注册线的关键结论数字"]
+    outputs: ["tests/golden/", "pytest 用例"]
+    acceptance: "改动核心库后若关键数字漂移超过 0.1pp 测试失败并打印差异"
+    effort_days: 2
+    evidence: null
+
+  - id: PLAT-05
+    title: 口径迁移台账（旧实现 -> 唯一真源的逐文件进度与差异）
+    area: PLAT
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [TAX-01, PLAT-01]
+    ledger_ref: "262C 263④"
+    inputs: ["grep -rl 0.15 engine/ scripts/（109 个文件）", "taxfee/", "research/stats.py"]
+    outputs: ["data/口径迁移台账.jsonl（文件/旧值/新值/差异pp/日期）"]
+    acceptance: "每个迁移文件都有对照记录；差异大于 0.1pp 的条目必须带解释字段；剩余未迁移文件清单可查"
+    effort_days: 1
+    evidence: null
+
+  # ── W6 治理 ────────────────────────────────────────────────────────
+  - id: GOV-01
+    title: registry 状态机（IDEA 到 DEAD）落地为代码
+    area: GOV
+    priority: P1
+    gate: G1
+    status: todo
+    depends_on: []
+    ledger_ref: "262D"
+    inputs: ["law_pipeline.REGISTRY（111 条函数）", "台账中的状态记录"]
+    outputs: ["engine/registry/state.py", "data/registry_state.json", "生产调用守卫"]
+    acceptance: "LIVE/ICU/DEAD 状态可查询；生产脚本调用非 LIVE 线会被拒绝并告警；111 条全部有初始状态"
+    effort_days: 2
+    evidence: null
+  - id: GOV-02
+    title: 退役判据自动化（滚动超额 t 与 Sharpe 阈值）
+    area: GOV
+    priority: P1
+    gate: G2
+    status: todo
+    depends_on: [GOV-01, PORT-01]
+    ledger_ref: "265⑫"
+    inputs: ["各线影子/模拟日收益"]
+    outputs: ["engine/registry/retire.py", "每日判定输出"]
+    acceptance: "滚动 60 日超额 t 小于 0 且 Sharpe 绝对值小于 0.3 持续 20 日则自动降 ICU；再 40 日则 DEAD 并通知"
+    effort_days: 1.5
+    evidence: null
+  - id: GOV-03
+    title: 变更流程与版本留档（LIVE 线改动必须样本外验证）
+    area: GOV
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [GOV-01, RES-01]
+    ledger_ref: "263② 265⑥"
+    inputs: ["变更提案模板"]
+    outputs: ["docs/plan/change-process.md", "registry 版本字段"]
+    acceptance: "至少一次真实参数变更走完流程并留档（提案到样本外验证到记录到版本号）"
+    effort_days: 1
+    evidence: null
+  - id: GOV-04
+    title: 结论层外部审查（季度）
+    area: GOV
+    priority: P2
+    gate: G3
+    status: todo
+    depends_on: []
+    ledger_ref: "265⑮"
+    inputs: ["已注册结论 + 证据 + 代码"]
+    outputs: ["外部审查记录（docs/reviews/）"]
+    acceptance: "每季度至少一次把结论（非代码）打包给外部复核，记录质疑与回应"
+    effort_days: 1
+    evidence: null
+  - id: GOV-05
+    title: 周报与月报模板（策略例会产物）
+    area: GOV
+    priority: P2
+    gate: G3
+    status: todo
+    depends_on: [PORT-01, RISK-01]
+    ledger_ref: "264A 节奏日历"
+    inputs: ["账本/风险/对账输出"]
+    outputs: ["engine/report/weekly.py", "templates/weekly.md"]
+    acceptance: "每周六自动产出各线 PnL、风险预算使用率、数据质量、异常与未跟信号清单"
+    effort_days: 1.5
+    evidence: null
+
+  # ── W7 研究补强 ────────────────────────────────────────────────────
+  - id: RES-01
+    title: 真 OOS holdout 制度（保留最近一段永不出现在研究中）
+    area: RES
+    priority: P1
+    gate: G1
+    status: todo
+    depends_on: []
+    ledger_ref: "265⑥"
+    inputs: ["全部研究脚本", "历史数据"]
+    outputs: ["docs/plan/holdout.md", "数据层 holdout 守卫"]
+    acceptance: "划定 holdout 区间（建议最近 6-12 个月）；研究脚本访问被守卫拒绝；holdout 只用于最终确认"
+    effort_days: 1
+    evidence: null
+  - id: RES-02
+    title: 试验登记（修正 DSR 的 trials 分母）
+    area: RES
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [GOV-01]
+    ledger_ref: "265⑦"
+    inputs: ["研究脚本", "REGISTRY"]
+    outputs: ["data/trials_log.jsonl", "DSR 重算"]
+    acceptance: "每次试探（含临时）自动入册；给出各线 DSR 在登记全部试探后的重算值"
+    effort_days: 1.5
+    evidence: null
+  - id: RES-03
+    title: 功效分析（小样本线的最小样本门槛）
+    area: RES
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [PLAT-01]
+    ledger_ref: "263②"
+    inputs: ["深档 63 笔/15 簇", "调样 n=569", "下修 n=155"]
+    outputs: ["docs/research/power.md"]
+    acceptance: "对每条小样本线给出在观测效应量下需要多少样本才显著；不达标者标注为证据不足"
+    effort_days: 1.5
+    evidence: null
+  - id: RES-04
+    title: block bootstrap 置信区间（按日期聚类）
+    area: RES
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [PLAT-01]
+    ledger_ref: "263②"
+    inputs: ["事件研究工具"]
+    outputs: ["engine/research/bootstrap.py"]
+    acceptance: "为至少 3 条注册线给出 CI；与 HAC t 值对照并解释差异"
+    effort_days: 1.5
+    evidence: null
+  - id: RES-05
+    title: alpha 衰减曲线与半衰期估计
+    area: RES
+    priority: P2
+    gate: G3
+    status: todo
+    depends_on: [PLAT-01]
+    ledger_ref: "265⑧"
+    inputs: ["各线逐期超额序列"]
+    outputs: ["data/alpha_decay.json"]
+    acceptance: "每线给出超额随时间衰减率与半衰期，附预计还能活多久的区间"
+    effort_days: 1.5
+    evidence: null
+  - id: RES-06
+    title: 成本 breakeven 曲线
+    area: RES
+    priority: P2
+    gate: G2
+    status: todo
+    depends_on: [PORT-01, TAX-01]
+    ledger_ref: "265⑨"
+    inputs: ["各线事件收益", "taxfee"]
+    outputs: ["data/breakeven.json"]
+    acceptance: "每线给出净收益归零时的单边成本阈值；与当前真实成本对比得出安全边际"
+    effort_days: 1
+    evidence: null
+
+# ── 明确不做（T3，避免为了像机构而浪费） ─────────────────────────────
+not_doing:
+  - id: NT-01
+    title: Barra 式因子风险模型 / 组合优化器 / 约束求解
+    reason: 资金规模几十万级加手工执行，ROI 为负（#263-C）
+  - id: NT-02
+    title: TWAP/VWAP 执行算法与平方根冲击成本模型
+    reason: 单笔金额小，滑点主要来自竞价与涨跌停，算法执行无收益（#263-C 与 #263⑦）
+  - id: NT-03
+    title: 做空/融券费率与可得性建模、杠杆与资金成本
+    reason: 不做空不加杠杆（#263-C）
+  - id: NT-04
+    title: 高频微结构 / 期权 / 跨市场套利
+    reason: 不在数据圈与能力圈（#263-C）
+  - id: NT-05
+    title: ML 挖技术因子
+    reason: 自家数据已反复证伪（单指标全平 #231、技术过滤全平 #241四件套②）
+  - id: NT-06
+    title: 整体搬迁到 Qlib/QuantConnect/聚宽/米筐
+    reason: 要重做数据层与 PIT 管线，仅换一个报告视图，ROI 为负（#264-D）
+  - id: NT-07
+    title: 机构式部门 / 例会 / 委员会 / 日报邮件
+    reason: >-
+      个人量化的瓶颈是注意力不是人力：部门与例会只带来机构的弊端（代理问题、委员会稀释 alpha、
+      流程惰性），拿不到机构资源。用「断言 + 限额 + 一页周报」替代，见 README §7（#267）
+  - id: NT-08
+    title: 杠杆 / 对冲掉自己的 beta
+    reason: 不用杠杆是天然免疫（LTCM/Archegos 式强制平仓）；beta 敞口用回撤预算与 regime 闸门管理，不用对冲工具（#267）
