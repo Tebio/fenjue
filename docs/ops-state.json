@@ -1,14 +1,14 @@
 {
  "version": 2,
- "built_at": "2026-10-12 11:21",
+ "built_at": "2026-10-12 12:41",
  "sig_date": "2026-10-12",
  "buy_day": "2026-10-13",
  "sell_day": "2026-10-14",
  "regime": {
-  "date": "2026-10-09",
+  "date": "2026-10-12",
   "regime": "妖股期",
-  "limit_ups": 65,
-  "limit_downs": 11
+  "limit_ups": 40,
+  "limit_downs": 26
  },
  "deep_low": [],
  "focus": [
@@ -42,9 +42,19 @@
  ],
  "shadow_t1": null,
  "b5": {
-  "date": "2026-10-09",
-  "sealed": [],
-  "unsealed": []
+  "date": "2026-10-12",
+  "sealed": [
+   "通达动力 002576",
+   "金自天正 600560",
+   "海欣股份 600851"
+  ],
+  "unsealed": [
+   "博菲电气 001255",
+   "一心堂 002727",
+   "名臣健康 002919",
+   "中恒集团 600252",
+   "丰山集团 603810"
+  ]
  },
  "playbook": "playbook-202609.md",
  "kill_lines": {
