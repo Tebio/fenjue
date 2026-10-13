@@ -185,7 +185,8 @@ def main():
             else:
                 L.append(f'1c. 🥇金股组合（{_g["month"]}）：本月无独家新鲜金股，空仓过月')
         else:
-            L.append(f'1c. 🥇金股组合：{_g.get("month")} 名单未获取（{_g.get("note", "")}）')
+            _why = "名单尚未发布" if _g.get("status") == "pending" else "名单未获取"
+            L.append(f'1c. 🥇金股组合：{_g.get("month")} {_why}（{_g.get("note", "")}）')
     except Exception:
         pass  # 金股段失败不阻塞作战单
     if pool_names:

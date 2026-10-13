@@ -14,6 +14,9 @@ import sys
 import time
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # 同目录模块（trade_calendar）
+import trade_calendar as tc
+
 ROOT = Path("/opt/data/fenjue")
 CACHE = ROOT / "data/gold_stock_cache"
 CLI = ROOT.parent / ".iwencai-skillhub/skills/hithink-insresearch-query/scripts/cli.py"
@@ -62,8 +65,13 @@ def main():
     idates = [r["date"] for r in idx]
     today = idates[-1]
     mo = today[:7]
-    month_days = [d for d in idates if d.startswith(mo)]
-    entry_day = month_days[5] if len(month_days) >= 6 else None
+    # 入场日走官方日历（含未来交易日）。2026-10-08 修：index_sh000001.json 由
+    # update_kcache 末尾写、尾部滞后一天，会把当月入场日拖到次日才标出来（10/15 变 10/16）。
+    # 日历不可用时退回旧口径（月内已知交易日够 6 个才算）。
+    entry_day = tc.entry_day(mo)
+    if entry_day is None:
+        month_days = [d for d in idates if d.startswith(mo)]
+        entry_day = month_days[5] if len(month_days) >= 6 else None
 
     rows = fetch_month(mo)
     if rows is None:
@@ -71,6 +79,15 @@ def main():
                  "note": "iwencai 配额耗尽，每日 08:30 自动重试；名单拿到前金股线不出票"}
         OUT.write_text(json.dumps(state, ensure_ascii=False, indent=1))
         print(f"{mo}: 配额耗尽（状态已落盘）")
+        return
+    if not rows:
+        # 名单尚未发布 ≠ 无独家新鲜（空仓过月）。2026-10-08 修：旧口径两种都写 ok，
+        # 作战单会说「本月无独家新鲜金股，空仓过月」——把「还没发」谎报成「本月空仓」。
+        state = {"month": mo, "status": "pending", "entry_day": entry_day, "total": 0,
+                 "solo_fresh": [],
+                 "note": f"iwencai 公告期查询 0 条，每日重试；入场日={entry_day}（月第6交易日）"}
+        OUT.write_text(json.dumps(state, ensure_ascii=False, indent=1))
+        print(f"{mo}: 名单尚未发布（入场日 {entry_day}）")
         return
     import collections
     cnt = collections.Counter(r["code"] for r in rows)
@@ -95,9 +112,9 @@ def main():
         if nrows is None:
             state["next_month_note"] = f"{nxt} 名单预热失败（配额耗尽/接口异常），明日重试"
         elif not nrows:
-            state["next_month_note"] = f"{nxt} 名单尚未发布，每日重试"
+            state["next_month_note"] = f"{nxt} 名单尚未发布，每日重试（入场日={tc.entry_day(nxt)}）"
         else:
-            state["next_month_note"] = f"{nxt} 名单已预热 {len(nrows)} 条（缓存就绪，入场日=该月第6交易日）"
+            state["next_month_note"] = f"{nxt} 名单已预热 {len(nrows)} 条（缓存就绪，入场日={tc.entry_day(nxt)}）"
         print(state["next_month_note"])
     OUT.write_text(json.dumps(state, ensure_ascii=False, indent=1))
     print(f"{mo}: 名单 {len(rows)} 条，生产组合 {len(solo_fresh)} 只（入场日 {entry_day}）")

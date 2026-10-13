@@ -79,8 +79,22 @@ def update_index(end):
 
 
 def main():
-    end = sys.argv[1] if len(sys.argv) > 1 else date.today().isoformat()
+    # 参数：可选 --shard i/n（分片跑）。动机（2026-10-09 实证）：全量日增量实测 3219s，
+    # 而 cron script 类 job 有 3600s 墙钟硬上限 → 只剩 6 分钟余量，数据源一慢当天主班+补跑
+    # 双双被砍，下游（regime 19:35 / X规则线 19:45）在全量跑完前开跑，必报覆盖率不足。
+    argv = list(sys.argv[1:])
+    shard = None
+    if "--shard" in argv:
+        i = argv.index("--shard")
+        _j, _n = argv[i + 1].split("/")
+        shard = (int(_j), int(_n))
+        argv = argv[:i] + argv[i + 2:]
+    end = argv[0] if argv else date.today().isoformat()
     files = sorted(KC.glob("*.json"))
+    if shard:
+        _j, _n = shard
+        files = [f for k, f in enumerate(files) if k % _n == _j]
+        print(f"shard {_j}/{_n}: 本轮覆盖 {len(files)} 只", flush=True)
     lg = bs.login()
     assert lg.error_code == "0", lg.error_msg
     updated = upto = seams = errors = 0

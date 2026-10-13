@@ -50,13 +50,34 @@ for k, r in enumerate(active):
 (ROOT / "data/cb_klines.json").write_text(json.dumps(klines, ensure_ascii=False))
 
 meta = {r["SECURITY_CODE"]: r for r in active}
-pool = []
+from datetime import date as _date, timedelta
+_ref = max(ks[-1]["date"] for ks in klines.values() if ks)
+_ref_dt = _date.fromisoformat(_ref)
+_fresh_floor = (_ref_dt - timedelta(days=10)).isoformat()
+
+
+def _alive(m, last):
+    """活跃闸门（2026-10-12 加）：①已到期摘牌（CEASE_DATE < 池基准日）②近 10 自然日无成交
+    ——缺这道闸，僵尸债会长期挂在「低价池」推给用户（实测 3 只池里 2 只是僵尸：
+    东时转债 4/08 已到期、中装转2 自 2025-09 起无 K 线，价格被冻结在旧值上）。"""
+    ce = str(m.get("CEASE_DATE") or "")[:10]
+    if ce and ce < _ref:
+        return False
+    return last["date"] >= _fresh_floor
+
+
+pool, dropped = [], []
 for code, ks in klines.items():
     if not ks:
         continue
     last = ks[-1]
     if 80 < last["close"] <= 105:
         m = meta.get(code, {})
+        if not _alive(m, last):
+            dropped.append({"code": code, "name": m.get("SECURITY_NAME_ABBR", ""),
+                            "price": last["close"], "last_bar": last["date"],
+                            "expire": str(m.get("CEASE_DATE") or "")[:10]})
+            continue
         pool.append({"code": code, "name": m.get("SECURITY_NAME_ABBR", ""),
                      "price": last["close"], "date": last["date"],
                      "stock": m.get("CONVERT_STOCK_CODE"), "rating": m.get("RATING"),
@@ -71,5 +92,8 @@ redeem_alerts = [{"code": m["SECURITY_CODE"], "name": m.get("SECURITY_NAME_ABBR"
                  if str(m.get("NOTICE_DATE_HS") or "")[:10] >= cutoff]
 (ROOT / "data/cb_low_price.json").write_text(json.dumps(
     {"date": klines and max(ks[-1]["date"] for ks in klines.values() if ks) or "?",
-     "n": len(pool), "pool": pool, "redeem_alerts": redeem_alerts}, ensure_ascii=False, indent=1))
-print(f"日K {len(klines)} 只；低价池(≤105) {len(pool)} 只；强赎预警 {len(redeem_alerts)} 只")
+     "n": len(pool), "pool": pool, "dropped_zombie": dropped, "redeem_alerts": redeem_alerts},
+    ensure_ascii=False, indent=1))
+print(f"日K {len(klines)} 只；低价池(≤105) {len(pool)} 只；剔除僵尸 {len(dropped)} 只；强赎预警 {len(redeem_alerts)} 只")
+if dropped:
+    print("  剔除明细: " + "; ".join(f"{d['name']}({d['code']}) 末bar{d['last_bar']} 到期{d['expire']}" for d in dropped))

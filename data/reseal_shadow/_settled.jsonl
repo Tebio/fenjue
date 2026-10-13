@@ -1,2 +1,15 @@
-{"signal_date": "2026-09-28", "code": "603278", "am_price": 9.9, "pm_price": 10.78, "entry": 10.72, "r1": null, "r5": null, "entry_date": "2026-09-29"}
-{"signal_date": "2026-09-29", "code": "002813", "am_price": 26.03, "pm_price": 26.38, "entry": null, "r1": null, "r5": null}
+{"signal_date": "2026-09-28", "code": "603278", "am_price": 9.9, "pm_price": 10.78, "entry": 10.72, "r1": -0.04348, "r5": null, "entry_date": "2026-09-29"}
+{"signal_date": "2026-09-29", "code": "002813", "am_price": 26.03, "pm_price": 26.38, "entry": 26.38, "r1": -0.0015, "r5": null, "entry_date": "2026-09-30"}
+{"signal_date": "2026-10-08", "code": "600400", "am_price": 3.58, "pm_price": 3.62, "entry": 3.7, "r1": 0.06066, "r5": null, "entry_date": "2026-10-09"}
+{"signal_date": "2026-10-09", "code": "600865", "am_price": 11.1, "pm_price": 11.51, "entry": 11.74, "r1": null, "r5": null, "entry_date": "2026-10-12"}
+{"signal_date": "2026-10-09", "code": "000420", "am_price": 3.68, "pm_price": 3.81, "entry": 4.1, "r1": null, "r5": null, "entry_date": "2026-10-12"}
+{"signal_date": "2026-10-09", "code": "002242", "am_price": 14.8, "pm_price": 15.13, "entry": 16.64, "r1": null, "r5": null, "entry_date": "2026-10-12"}
+{"signal_date": "2026-10-09", "code": "603155", "am_price": 15.02, "pm_price": 15.43, "entry": 15.71, "r1": null, "r5": null, "entry_date": "2026-10-12"}
+{"signal_date": "2026-10-09", "code": "002675", "am_price": 13.6, "pm_price": 13.89, "entry": 13.91, "r1": null, "r5": null, "entry_date": "2026-10-12"}
+{"signal_date": "2026-10-12", "code": "002264", "am_price": 7.99, "pm_price": 8.14, "entry": null, "r1": null, "r5": null}
+{"signal_date": "2026-10-12", "code": "600851", "am_price": 8.14, "pm_price": 8.6, "entry": null, "r1": null, "r5": null}
+{"signal_date": "2026-10-13", "code": "603980", "am_price": 10.43, "pm_price": 10.67, "entry": null, "r1": null, "r5": null}
+{"signal_date": "2026-10-13", "code": "600802", "am_price": 7.11, "pm_price": 7.16, "entry": null, "r1": null, "r5": null}
+{"signal_date": "2026-10-13", "code": "603956", "am_price": 8.01, "pm_price": 8.15, "entry": null, "r1": null, "r5": null}
+{"signal_date": "2026-10-13", "code": "600851", "am_price": 9.26, "pm_price": 9.46, "entry": null, "r1": null, "r5": null}
+{"signal_date": "2026-10-13", "code": "605577", "am_price": 19.37, "pm_price": 19.6, "entry": null, "r1": null, "r5": null}
