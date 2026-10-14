@@ -1,14 +1,14 @@
 {
  "version": 2,
- "built_at": "2026-10-14 11:21",
+ "built_at": "2026-10-14 12:41",
  "sig_date": "2026-10-14",
  "buy_day": "2026-10-15",
  "sell_day": "2026-10-16",
  "regime": {
-  "date": "2026-10-13",
-  "regime": "妖股期",
-  "limit_ups": 65,
-  "limit_downs": 12
+  "date": "2026-10-14",
+  "regime": "平淡期",
+  "limit_ups": 35,
+  "limit_downs": 13
  },
  "deep_low": [],
  "focus": [
@@ -48,9 +48,15 @@
   ]
  },
  "b5": {
-  "date": "2026-10-13",
+  "date": "2026-10-14",
   "sealed": [],
-  "unsealed": []
+  "unsealed": [
+   "佛山照明 000541",
+   "苏常柴A 000570",
+   "亚星化学 600319",
+   "福斯达 603173",
+   "七一二 603712"
+  ]
  },
  "playbook": "playbook-202609.md",
  "kill_lines": {
