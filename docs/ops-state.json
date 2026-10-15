@@ -1,14 +1,14 @@
 {
  "version": 2,
- "built_at": "2026-10-15 11:21",
+ "built_at": "2026-10-15 12:41",
  "sig_date": "2026-10-15",
  "buy_day": "2026-10-16",
  "sell_day": "2026-10-19",
  "regime": {
-  "date": "2026-10-14",
-  "regime": "平淡期",
-  "limit_ups": 35,
-  "limit_downs": 13
+  "date": "2026-10-15",
+  "regime": "恐慌期",
+  "limit_ups": 34,
+  "limit_downs": 29
  },
  "deep_low": [
   {
@@ -30,9 +30,14 @@
  ],
  "shadow_t1": null,
  "b5": {
-  "date": "2026-10-14",
-  "sealed": [],
-  "unsealed": []
+  "date": "2026-10-15",
+  "sealed": [
+   "上海雅仕 603329",
+   "众望布艺 605003"
+  ],
+  "unsealed": [
+   "城市传媒 600229"
+  ]
  },
  "playbook": "playbook-202609.md",
  "kill_lines": {
