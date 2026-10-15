@@ -44,3 +44,6 @@ data/margin_detail.jsonl
 
 # Oversized research artifact (468MB, exceeds GitHub 100MB limit)
 data/similarity_features.npz
+data/factor_census_base.npz
+data/factor_census_masks.npz
+data/similarity_gridscore.npz

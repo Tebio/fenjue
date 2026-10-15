@@ -1,0 +1,102 @@
+[
+ {
+  "name": "pv_corr_ov10@regime=妖股期",
+  "parent": "pv_corr_ov10",
+  "spec": [
+   "regime",
+   "妖股期"
+  ],
+  "t_NW_日级": 2.78,
+  "事件数": 232216
+ },
+ {
+  "name": "pv_corr_ov10@簇>=30",
+  "parent": "pv_corr_ov10",
+  "spec": [
+   "cluster",
+   ">=30"
+  ],
+  "t_NW_日级": 2.46,
+  "事件数": 576830
+ },
+ {
+  "name": "pv_corr_hv5@簇>=30",
+  "parent": "pv_corr_hv5",
+  "spec": [
+   "cluster",
+   ">=30"
+  ],
+  "t_NW_日级": 2.02,
+  "事件数": 578005
+ },
+ {
+  "name": "pv_corr_cv20@regime=妖股期",
+  "parent": "pv_corr_cv20",
+  "spec": [
+   "regime",
+   "妖股期"
+  ],
+  "t_NW_日级": 3.15,
+  "事件数": 232104
+ },
+ {
+  "name": "pv_corr_cv20@簇>=30",
+  "parent": "pv_corr_cv20",
+  "spec": [
+   "cluster",
+   ">=30"
+  ],
+  "t_NW_日级": 2.87,
+  "事件数": 573717
+ },
+ {
+  "name": "dvol_ratio20@regime=主线期",
+  "parent": "dvol_ratio20",
+  "spec": [
+   "regime",
+   "主线期"
+  ],
+  "t_NW_日级": 2.68,
+  "事件数": 33461
+ },
+ {
+  "name": "volcv20@簇>=30",
+  "parent": "volcv20",
+  "spec": [
+   "cluster",
+   ">=30"
+  ],
+  "t_NW_日级": 3.47,
+  "事件数": 574442
+ },
+ {
+  "name": "volcv20@regime=妖股期",
+  "parent": "volcv20",
+  "spec": [
+   "regime",
+   "妖股期"
+  ],
+  "t_NW_日级": 2.67,
+  "事件数": 232376
+ },
+ {
+  "name": "amihud20@regime=妖股期",
+  "parent": "amihud20",
+  "spec": [
+   "regime",
+   "妖股期"
+  ],
+  "t_NW_日级": 4.68,
+  "事件数": 232434
+ },
+ {
+  "name": "amihud20@簇>=30",
+  "parent": "amihud20",
+  "spec": [
+   "cluster",
+   ">=30"
+  ],
+  "t_NW_日级": 3.4,
+  "事件数": 574297
+ }
+]

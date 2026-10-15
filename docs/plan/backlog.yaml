@@ -146,6 +146,19 @@ items:
     acceptance: "含最低佣金 5 元与红利税税级（不满1月20%、1月到1年10%、超1年0%）的单测通过；输出与 limitup_capture_t0 的真实费目口径一致；列出待迁移文件清单"
     effort_days: 1.5
     evidence: null
+  - id: RES-08
+    title: 因子普查候选层影子观察（ivol20 + 量价背离族×妖股期三条）
+    area: RES
+    priority: P2
+    gate: G3
+    status: todo
+    depends_on: [GOV-01]
+    ledger_ref: "277"
+    inputs: ["engine/factor_census.py", "data/factor_census_masks.npz", "docs/factor-census-20261015.md"]
+    outputs: ["四条候选线的 20 交易日影子记录", "复审裁决（升级注册或销案）"]
+    acceptance: "影子期内 DSR 口径复审；仅作观察层，不得作独立触发、不进推送；ivol20 与三条妖股期条件线分别记账"
+    effort_days: 1
+    evidence: null
   - id: PORT-01
     title: 统一组合账本 engine/portfolio/ledger.py
     area: PORT
