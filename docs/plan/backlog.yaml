@@ -28,14 +28,14 @@ items:
     area: PLAT
     priority: P0
     gate: G0
-    status: todo
+    status: blocked
     depends_on: []
     ledger_ref: "266 268"
     inputs: ["docs/plan/START-HERE.md", "INTERFACES.md", "CONSTRAINTS.md", "DECISIONS.md", "VERIFY.md"]
     outputs: ["六份契约文档就位", "docs/plan/tools/plan_lint.py 零错误", "scripts/verify.sh 可跑"]
     acceptance: "plan_lint 退出码 0（悬空引用=0、P0 全有 spec、gate/依赖完整）；verify.sh 打印语法检查统计并如实 SKIP 未建项；故意加一个假 id 时 lint 必须报错"
     effort_days: 1
-    evidence: null
+    evidence: '2026-10-15 实测（卡 t_89f4c4bd）: verify.sh 全绿（plan_lint exit 0 / py_compile 137 files FAIL 0 / pytest+golden 如实 SKIP）; plan_lint 三条正反例已跑——假 id（两字母-两位数字形态）触发 [L1] 悬空引用 exit 1、删 PLAT-00 或 SEC-01 spec 触发 [L2] exit 1、还原后 exit 0; DECISIONS.md FROZEN=15 条且每条含反证条件。产出面（四份契约 + lint + verify.sh）已就位 → status 由 todo 改 blocked: 卡在 DECISIONS OPEN 的 O-01..O-08 需用户裁决，且本条目定义要求把裁决结果写进 AGENTS.md 新编号。'
 
   # ── W0 个人量化适配（减法优先：先砍再补，见 README §7） ──────────────
   - id: OPT-01
@@ -46,11 +46,11 @@ items:
     status: todo
     depends_on: []
     ledger_ref: "267"
-    inputs: ["cron jobs.json（63 个）", "scripts/ 目录", "executions.db"]
+    inputs: ["cron jobs.json（64 个，2026-10-15 实测）", "scripts/ 目录", "executions.db"]
     outputs: ["docs/plan/attention-budget.md（钱相关/研究相关 分类 + 可暂停清单）"]
     acceptance: "输出全量 cron 分类表；给出可暂停清单（保留回滚，不删）；确认日常需人参与动作 <= 3 个（盘前确认/9:25 下单/盘后对账）"
     effort_days: 1
-    evidence: null
+    evidence: '2026-10-15 实测（卡 t_89f4c4bd）: cron 总数 = 64（条目原写 63）——enabled 且 scheduled 的 58 个 last_status 全 ok、failure_streak 全 0; 未启用 6 个（博客夜间打磨 8-24 起停 completed / 盘后周期仪 10 日报到期自终止 / 盘中转折看门狗 paused 回滚保险 / 盘中雷达上午 paused 被 9:45 合并班取代 / 四周影子收官审计一次性 completed / 网易云搜索冷却复查一次性 completed）。可疑项已重跑核实: X规则线连续 5 日 silent 属设计静默（data/xrules_state.json 每日在写，10-15 regime=恐慌期、T1-MEGA fired=false 簇139<20）; 盘前 cron 自检 silent=全绿设计。落盘内容抽查: kcache 片0/2 1689 只、片1/2 1688 只、收尾班 updated=186 already_current=3191 errors=0 elapsed=559s（并集 3377）。'
   - id: OPT-02
     title: 复杂度上限制度（新增必退役 / cron 总数不增 / 模块行数上限）
     area: OPT
@@ -97,14 +97,14 @@ items:
     area: SEC
     priority: P0
     gate: G0
-    status: todo
+    status: blocked
     depends_on: []
     ledger_ref: "265①"
     inputs: ["config/watchlist.json", "data/*ledger*.jsonl", "data/position*", ".gitignore"]
     outputs: [".gitignore 规则", "私有目录 data/private/ 或私仓"]
     acceptance: "公开仓库 git ls-files 不再含 watchlist.json / ledger / position 类文件；面板仍能构建（改读私有路径）"
     effort_days: 0.5
-    evidence: null
+    evidence: '2026-10-15 实测（卡 t_89f4c4bd）: 仓库确为公开——curl -sI https://github.com/Tebio/fenjue 返回 HTTP 200 无鉴权; git ls-files 命中敏感面 config/watchlist.json、config/watchlist.json.orig-20261008、data/ops_briefing_ledger.jsonl、data/pead_pool_ledger.jsonl 均在库; 跟踪文件 33161（其中 data/ 32314）。status 由 todo 改 blocked: 处置方式取决于 DECISIONS O-01（整体转私仓 vs 只剥离文件），AI 不得自行决定。'
   - id: SEC-02
     title: 备份与恢复演练（restore drill）
     area: SEC
@@ -641,6 +641,19 @@ items:
     outputs: ["data/breakeven.json"]
     acceptance: "每线给出净收益归零时的单边成本阈值；与当前真实成本对比得出安全边际"
     effort_days: 1
+    evidence: null
+  - id: RES-07
+    title: 状态相似度定价面接入推送排序（信号层候选，非交易线）
+    area: RES
+    priority: P2
+    gate: G3
+    status: todo
+    depends_on: [GOV-01]
+    ledger_ref: "276"
+    inputs: ["engine/similarity_engine.py", "data/similarity_features.npz", "docs/similarity-engine-20261015.md"]
+    outputs: ["盘后评分服务（任意股票日→历史相似样本 T+5 期望分）", "推送排序 tie-break 接入点"]
+    acceptance: "任意给定股票日 1 秒内返回分位数分；与当日已有信号并排展示一个月影子期再评审；不得作独立触发"
+    effort_days: 2
     evidence: null
 
 # ── 明确不做（T3，避免为了像机构而浪费） ─────────────────────────────

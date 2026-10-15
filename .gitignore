@@ -41,3 +41,6 @@ data/earnings_express.jsonl
 data/holder_num_det.jsonl
 data/margin_daily.jsonl
 data/margin_detail.jsonl
+
+# Oversized research artifact (468MB, exceeds GitHub 100MB limit)
+data/similarity_features.npz
