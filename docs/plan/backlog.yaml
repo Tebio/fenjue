@@ -231,14 +231,14 @@ items:
     area: MID
     priority: P1
     gate: G2
-    status: todo
+    status: in_progress
     depends_on: [TAX-01]
     ledger_ref: "263⑤"
     inputs: ["券商对账单 CSV（导出模板）", "影子账本", "ops_briefing_ledger.jsonl"]
     outputs: ["engine/recon/import_broker.py", "engine/recon/reconcile.py", "data/recon_YYYYMMDD.json"]
     acceptance: "对账报告含成交价 vs 信号价差异、应下未下、多下、费用差异、税费差异；差异按枚举归类；人工核对 1 周数据无误"
     effort_days: 2.5
-    evidence: null
+    evidence: "AGENTS#285 v1 落地：docs/broker-trades-csv.md + engine/broker_reconcile.py（单文件实现导入+对账，路径按 I7 改 data/private/recon/），合成 10 笔四情形自测全绿；剩余=一周真实对账单人工核对 + 切 costs.py 口径 + partial_fill/tax_gap/position_gap 三枚举"
   - id: MID-02
     title: P&L 归因（alpha/beta/成本/滑点/漏单/择时）
     area: MID
