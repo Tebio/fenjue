@@ -159,6 +159,19 @@ items:
     acceptance: "影子期内 DSR 口径复审；仅作观察层，不得作独立触发、不进推送；ivol20 与三条妖股期条件线分别记账"
     effort_days: 1
     evidence: null
+  - id: RES-09
+    title: 股吧人气（群体情绪）前瞻观察层——每日采集 + 366 日后复审
+    area: RES
+    priority: P2
+    gate: G3
+    status: doing
+    depends_on: [GOV-01]
+    ledger_ref: "293"
+    inputs: ["engine/guba_rank_fetch.py", "engine/guba_sentiment_daily.py", "engine/guba_sentiment_verdict.py", "data/guba_rank/*", "data/private/guba_sentiment/*", "cron da8a6f94e6ab"]
+    outputs: ["每日 23:20 BJT 采集落盘（top100 快照 + intraday 留档 + 自选股 hisList）", "第二段样本（2027-10 起）后的复审裁决"]
+    acceptance: "采集连续无缺日（缺失即看门狗推送）；期间不作独立触发、不进推送、不进生产；复审须在 366 历日之外的新样本上重跑 engine/guba_sentiment_verdict.py 三闸"
+    effort_days: 0
+    evidence: "2026-10-16 卡 t_ab90bb3c：数据源核实（getHisList 366 历日=硬上限；top100 无历史须自攒；当日值盘中临时、23:00 定稿）+ 763,163 事件预登记 23 条假设三闸裁决 Harvey 存活 1/23（唯一 below60×热20% T+20 -0.811pp t=-3.14，加固后两段不同号 + 不重叠窗口仅 12 天 → 不给例外）；与既有通道相关 0.21~0.30（正相关，非反向剔除层）；雪球匿名端点判死（400/WAF，不吃用户 cookie）。cron da8a6f94e6ab 已上线"
   - id: PORT-01
     title: 统一组合账本 engine/portfolio/ledger.py
     area: PORT
