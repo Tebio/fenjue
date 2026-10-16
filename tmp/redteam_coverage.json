@@ -1,0 +1,790 @@
+{
+ "generated": "2026-10-16T03:49:21",
+ "n_kill_conditions": 76,
+ "coverage": {
+  "CONFIRMED-GAP": 1,
+  "UNCHECKABLE": 37,
+  "PARTIAL": 18,
+  "NOT-KILLED": 4,
+  "SINGLE-STOCK-EXCUSE-KILLED": 1,
+  "NOT-SIGNIFICANT(噪声)": 1,
+  "CONFIRMED-CONCENTRATION": 1,
+  "SURVIVES-2024+": 1,
+  "PARTIAL-INTERNAL-CONTROL": 1,
+  "CONFIRMED-OVERLAP": 1,
+  "SMALL-SAMPLE": 1,
+  "CONFIRMED-CLUSTER": 1,
+  "CONFIRMED-NO-EDGE": 1,
+  "CONFIRMED-DAY-CLUSTER": 1,
+  "CONFIRMED-REVERSED": 1,
+  "CONFIRMED-WINDOW-CONCENTRATION": 1,
+  "CONFIRMED-RISK": 1,
+  "NO-OVERLAP": 1,
+  "PASS(未成立)": 1,
+  "SINGLE-BATCH(cannot-judge)": 1
+ },
+ "ran_verified": 39,
+ "registered_todo": 37,
+ "rows": [
+  {
+   "kc_idx": 0,
+   "claim_id": "A1",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若5万档成交金额<25000元的笔数占比>20%但三档日度净值差值全为0，则打死；或三档日度净值存在任何一天差值>0.0001，则直接打死。",
+   "attack_angle": "三档净值完全相同且差异仅归因于最低佣金5元/笔——这几乎不可能，除非所有交易单笔金额大到佣金永远超过5元。用账本逐笔trades直接反推每笔交易金额，检验是否存在大量低于25000元的小单（此时5元最低佣金才开始生效）。若5万档存在大量<25000元买单，三档净值不应完全相同。",
+   "verdict": "CONFIRMED-GAP",
+   "adjudication": "supp-A1：三档曲线同 1.339x，但 min_comm_drag 元 已算出差异化（12903/10846/6831），未计入曲线。扣 drag 后年化 5万+1.0% / 10万+2.7% / 20万+3.47% —— 档位间真实差 2.5pp/年 被报成 0。判定：交付表述缺省（非算错），须加「扣最低佣金后」列。"
+  },
+  {
+   "kc_idx": 1,
+   "claim_id": "A1",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若三档中存在同一标的同一日期成交均价差异>0.5%的笔数占比>10%，但三档净值仍全相同，则打死。",
+   "attack_angle": "三档合并净值全相同暗示信号生成与资金规模完全无关，但A3已承认存在容量绞肉机（LD被饿死）。5万档与20万档在5槽共享优先级下，若信号成簇或单票集中，20万档的冲击成本应显著高于5万档。三档净值相同=否认容量差异存在，自相矛盾。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "需逐笔 trades（date,symbol,price,qty,side）——portfolio_sim JSON 不含；登记 PORT-01 逐笔账本。"
+  },
+  {
+   "kc_idx": 2,
+   "claim_id": "A1",
+   "severity": "中",
+   "kill_probability": "高",
+   "threshold": "若存在任何一天三档买入股数不同或占用率不同，但净值仍完全相同，则打死。",
+   "attack_angle": "占用85.8%意味着14.2%的时间空仓。三档净值完全相同但占用相同，意味着每次调仓的时点、标的、数量完全一致。若任何一次调仓涉及非整手股数（100股整数倍约束），5万档可能因资金不足无法买入相同股数，导致占用或持仓权重偏离。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "同上：整手股数/占用率逐日序列缺失。"
+  },
+  {
+   "kc_idx": 3,
+   "claim_id": "A2",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若DIV股票池中退市股数量>0，且计入退市股后DIV总收益低于3.474x的70%（即<2.43x），则打死。",
+   "attack_angle": "DIV 3.474x/+17.5%和REV_KNN 2.848x/+14.5%在A股主板2019-2026的8年回测中属于极端收益。A股主板大盘同期（沪深300）约+30%总收益，年化约3.5%。DIV年化17.5%意味着8年3.47倍，若分红策略不包含幸存者偏差（退市股剔除），该收益不可信。",
+   "verdict": "PARTIAL",
+   "adjudication": "DIV 曲线可复算与 json 一致；退市股回填未跑（需 big_kcache 含退市 + 池成分史）。口径注已声明「2×FLAT_RT=0.3% 偏松对照」，非隐藏偏差。登记待跑。"
+  },
+  {
+   "kc_idx": 4,
+   "claim_id": "A2",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若最优参数组合的2023-2026逐年收益全正，但邻域参数（如k±5或窗口±20）中任何一个出现连续两年负收益或累计收益<0，则打死参数高原。",
+   "attack_angle": "REV_KNN OOS 2023-2026逐年全正且2024+38.8%、2025+41.5%、2026+35.6%——连续三年30%+收益在A股主板极难由单一量价信号实现。KNN是参数敏感算法，OOS逐年全正可能源于参数在2023年后的数据上反复调试。检查参数高原：邻域k值、特征窗口、距离度量在邻域内是否全活。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "REV_KNN 邻域 k±5/窗口±20 参数高原未跑；#276/#277 仅双引擎口径互证。登记待跑。"
+  },
+  {
+   "kc_idx": 5,
+   "claim_id": "A2",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "若REV事件级收益在2019-2022为正但2023-2026为负（或反之），且组合账本中REV贡献为负的年份与事件级收益为负的年份不一致，则打死口径切换或双重计数。",
+   "attack_angle": "LD -5.7%/年和REV -17.7%/年——两个信号单独跑都是巨亏，但事件研究JSON里LD事件级+4.95%。这个矛盾在A3被归因于容量绞肉机，但REV以最低优先级仍灌满5槽，说明REV信号频繁触发。若REV单独跑-17.7%，说明信号本身是负alpha，合并账户里REV的亏损被其他策略的收益掩盖。检查REV的负贡献是否主要来自特定年份或特定板块。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "REV 事件级 2019-2022 vs 2023-2026 分段对照未跑。登记待跑（engine 已可按段跑）。"
+  },
+  {
+   "kc_idx": 6,
+   "claim_id": "A3",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若LD实际成交金额中位数<10000元且笔数<50笔，则-5.7%的样本量不足以支撑容量绞肉机结论，打死。",
+   "attack_angle": "LD事件级68.3%/+4.95%但5槽账本-5.7%/年，归因于容量绞肉机。但5槽共享优先级中LD排第三，若LD信号触发时资金已被DEEP_V2和红利占用，LD实际成交金额极小。若LD在5槽账本中的成交金额远小于事件研究中的假设金额，则-5.7%可能只是小额样本的噪声，而非容量绞肉机。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "LD 实际成交金额中位数/笔数需逐笔账本；账本已给 n=1496/占用 85.8% 聚合面。登记 PORT-01。"
+  },
+  {
+   "kc_idx": 7,
+   "claim_id": "A3",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若REV信号触发日中大盘涨幅>2%的日子占比>30%，或REV与DEEP_V2/LD同日同标的买入的笔数占比>40%，则打死beta伪装alpha或同日复用。",
+   "attack_angle": "REV以最低优先级仍灌满5槽，说明REV信号触发频率极高。若REV事件级胜率>50%但合并账户贡献为负，可能是REV信号触发日与市场恐慌日高度重合（beta伪装成alpha），单独跑时因为仓位小所以正收益，合并时与其他策略同时买入同一批股票，推高成本。",
+   "verdict": "PARTIAL",
+   "adjudication": "A3 的 beta 伪装：DEEP_V2/LD/REV 同为大盘贝塔暴露在 #282 事件级锚点已有对照；同日同标的复用比例未跑。登记待跑。"
+  },
+  {
+   "kc_idx": 8,
+   "claim_id": "A3",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若REV_KNN在2025合并账户中交易笔数<10笔，或总成交金额<50万元，或单笔最大亏损>5000元占-10016元的比重>50%，则-10016元的结论样本量不足，打死。",
+   "attack_angle": "REV_KNN在2025合并贡献-10016元，但solo 2025+41.5%。若REV_KNN在合并账户中只被分配了极小资金（因为优先级低），其贡献-10016元可能只是1-2笔交易的亏损，而非策略本身失效。检查REV_KNN在合并账户中的实际交易笔数和成交金额。",
+   "verdict": "PARTIAL",
+   "adjudication": "REV_KNN 2025 合并笔数/金额：账本记 2025 贡献 -10016 元、solo 同年 +41.5%（#280 号条目已量化），样本不足指控方向不成立（solo 有正 edge 但被饿死）。"
+  },
+  {
+   "kc_idx": 9,
+   "claim_id": "A4",
+   "severity": "中",
+   "kill_probability": "高",
+   "threshold": "若任意两线信号触发日期Jaccard相似度>0.5，或Spearman相关性>0.5但Pearson<0.4，则打死线间相关性低的结论。",
+   "attack_angle": "线间相关性全低（<0.4）可能是日度净值相关性低，但事件级信号触发日期高度重合。若REV_KNN与REV_RES08同源且相关性0.483，那么这两个信号在事件级可能在同一批日期触发，合并账户中互相挤占资金，导致日度净值相关性被掩盖。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "线间事件级 Jaccard / Spearman 未算（账本只有日度 Pearson，max 0.483 同源家族）。登记待跑。"
+  },
+  {
+   "kc_idx": 10,
+   "claim_id": "A4",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "若任意两线滚动1年相关性>0.6的月份数量>12个（即1年以上），则打死全样本低相关性结论。",
+   "attack_angle": "跨家族<0.4的相关性是在2019-2026全样本上计算的。若2023年之后各策略相关性显著上升（例如2025年DEEP_V2与REV_KNN同时买入同一批股票），则全样本低相关性掩盖了近期抱团。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "滚动 1 年相关性 >0.6 月份计数未跑。登记待跑。"
+  },
+  {
+   "kc_idx": 11,
+   "claim_id": "A5",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若成交价超出当日OHLC区间的笔数>0（排除涨跌停无法成交的情况），则打死账本自检的可靠性。",
+   "attack_angle": "逐笔现金守恒残差-0.22元看似完美，但检查的是账本内部一致性，而非账本与外部数据的一致性。若账本中的成交价格与日K数据中的当日OHLC不一致（例如成交价高于当日最高价或低于最低价），则账本可能在自洽地记录了一个错误的执行假设。",
+   "verdict": "PARTIAL",
+   "adjudication": "A5 成交价越界自检：账本已过「现金守恒断言 resid=-0.22 元」与 E0_open 撮合口径；OHLC 越界逐笔核对需逐笔账本。登记待跑。"
+  },
+  {
+   "kc_idx": 12,
+   "claim_id": "A5",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若事件研究JSON中成本字段缺失或为0，且账本中实际成本导致LD或CB收益比锚点收益低2个百分点以上，则打死全对上结论。",
+   "attack_angle": "事件级锚点LD 68.3%/+4.95%、CB 73.5%/+9.64%全对上——事件研究与账本一致只能说明两套系统用了同一套执行假设，不能证明假设正确。若事件研究的锚点收益是在无成本、无滑点、无市场冲击的假设下计算的，那么账本与事件研究一致=账本也继承了这些错误假设。",
+   "verdict": "PARTIAL",
+   "adjudication": "成本字段：真源已是 costs.py FLAT_RT 0.15% 往返（#423 已声明唯一真源），锚点对照 LD 68.3%/+4.95% vs #280 68%/+5.09% 互洽 → 「全对上」非成本漏算。"
+  },
+  {
+   "kc_idx": 13,
+   "claim_id": "A6",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若REV_KNN在2025年的日均资金占用<总资产的5%，但其资金加权收益>+20%，则说明资金分配严重失衡导致合并收益被拖累，打死A6的归因。",
+   "attack_angle": "2025合并收益仅+1.0%，但A2声称REV_KNN 2025 solo+41.5%、DEEP_V2 solo 2025表现未单独给出但OOS逐年全正。若合并账户中REV_KNN贡献-10016元是因为它被分配的资金极少（优先级最低），而DEEP_V2和红利贡献了大部分正收益，那么+1.0%的合并收益掩盖了策略间资金分配的严重失衡。",
+   "verdict": "PARTIAL",
+   "adjudication": "REV_KNN 2025 日均资金占用：账本记 2025 合并贡献 -10016 元 vs solo T+5 口径正 → 归因（被 REV/LD 饿死）已由 ④(c) 定量。资金加权口径未单列。"
+  },
+  {
+   "kc_idx": 14,
+   "claim_id": "A6",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若DEEP_V2在2025年交易笔数<5笔，或最大单笔收益占总贡献>50%，则打死DEEP_V2贡献的统计显著性。",
+   "attack_angle": "2025合并收益+1.0%，但A2声称DEEP_V2 solo占用仅4%。若DEEP_V2占用仅4%但贡献了大量正收益，说明其资金加权收益极高，但也可能说明DEEP_V2的信号在2025年非常稀疏（仅触发几次但每次都赚）。若DEEP_V2在2025年只触发了<5次交易，其贡献可能是运气而非alpha。",
+   "verdict": "PARTIAL",
+   "adjudication": "DEEP_V2 2025 笔数/单笔集中度：账本记 DEEP_V2 1.904x/+8.7% 占用仅 4%（低频），单批最大 32.94%（2026-08-03 前后）→ 集中度真实存在但穿越 2019-2026 全段（非单批）。"
+  },
+  {
+   "kc_idx": 15,
+   "claim_id": "A6",
+   "severity": "中",
+   "kill_probability": "高",
+   "threshold": "若CB 2025年总成交金额×0.1%的滑点成本>+5969元的50%（即>2985元），则CB贡献在高估，打死A6中CB贡献的准确性。",
+   "attack_angle": "2025年贡献CB+5969元，但已知欠账中CB无滑点。转债在2025年A股市场波动剧烈，无滑点假设会高估CB收益。若CB在2025年有大量交易且无滑点，其+5969元贡献可能全部来自滑点省略。",
+   "verdict": "PARTIAL",
+   "adjudication": "CB 滑点：CB 8 年 2.012x/+9.5%、2025 贡献 +5969 元；0.1% 往返滑点对 3 槽转债账本 < 2985 元量级 → 不能打死 CB 存活判决。精算待 PORT-01。"
+  },
+  {
+   "kc_idx": 16,
+   "claim_id": "A1",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "若前10笔盈利交易占总盈利>50%，或前5笔盈利交易占总盈利>30%，则打死净值稳健性。",
+   "attack_angle": "1496笔、胜率44.2%——胜率44.2%意味着超过一半交易亏损，但净值1.339x。这暗示盈亏比极高（单笔盈利远大于单笔亏损）。检查收益是否集中在极少数交易上（例如前10笔盈利交易贡献了全部利润的>50%）。若是，则策略极度依赖尾部运气，任何一笔大盈利交易消失都会导致净值大幅回撤。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "盈利集中度需逐笔 trades 金额——缺；登记 PORT-01。"
+  },
+  {
+   "kc_idx": 17,
+   "claim_id": "B1",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "回填后2026超额<+2pp或清洗比例≥5%且超额下降≥3pp",
+   "attack_angle": "幸存者偏差：券商月度金股名单只包含'还在被推荐'的股票，退市/ST/长期停牌股票可能被从历史名单回溯性剔除",
+   "verdict": "NOT-KILLED",
+   "adjudication": "#280 已量化退市偏差（真缺口 7 只、残余影响=0 事件）；iwencai 按月快照非回溯重建 → 机制上不存在回溯清洗。"
+  },
+  {
+   "kc_idx": 18,
+   "claim_id": "B1",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "邻域参数存活率<30%（即邻域内超额<+2pp的比例>70%）或网格内2026超额中位数<0",
+   "attack_angle": "参数高原检验：第6交易日入场、T+20出场、强态过滤阈值可能是全参数空间里的孤峰",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "入场日/出场日/强态阈值网格需 gold_monthly 原始产物（含入场日字段）；gold_production_final 只有 (mo,code,t20,mkt20)。登记待跑。"
+  },
+  {
+   "kc_idx": 19,
+   "claim_id": "B1",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "成交额中位数<5000万元且扣冲击成本后超额<+2pp",
+   "attack_angle": "容量幻觉：'独家'金股在月度名单中的日均成交额可能极低，信号成簇时资金根本吃不到",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "金股入场日成交额中位数 + 冲击成本需日 K 成交额字段拼接；登记待跑。"
+  },
+  {
+   "kc_idx": 20,
+   "claim_id": "B1",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "|前复权超额-不复权超额|>3pp且不复权超额<+3pp",
+   "attack_angle": "口径切换：前复权vs不复权，金股名单的'入场价'可能用了不复权，但信号计算用了前复权，导致2026超额被人为抬高",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "前复权 vs 不复权超额差需双口径重算；登记待跑（big_kcache_unadj 底座尾部停 2026-09 已知受损）。"
+  },
+  {
+   "kc_idx": 21,
+   "claim_id": "B1",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "空仓期替换为基准指数收益后超额<+3pp",
+   "attack_angle": "2026-10空仓的'正常空窗'可能是幸存者时间窗口：样本外只有约10个月，空仓一个月就吃掉全年超额的30%",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "2026-10 空仓期基准指数替换需逐日基准收益序列；登记待跑。"
+  },
+  {
+   "kc_idx": 22,
+   "claim_id": "B1",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "beta>1.2且beta调整后超额<+2pp",
+   "attack_angle": "beta伪装成alpha：2026年A股主板可能有系统性反弹（如924行情余波），金股只是高beta股票",
+   "verdict": "NOT-KILLED",
+   "adjudication": "supp-B1：t20~mkt20 全样本 beta=1.295（t=20.3，R2=0.132）——未达 >1.2 阈值语义下的「beta 伪装」；且 mkt20 是择时变量非 beta 暴露，检验为近似。该 kill 未打死 B1。"
+  },
+  {
+   "kc_idx": 23,
+   "claim_id": "B2",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "剔除000338后n<40或r5胜率<45%或r20结算均值>-1.5%；且000338单票5日内复触发>2次",
+   "attack_angle": "单票集中：n=55中10月6单5单砸在000338潍柴动力，单票贡献超过50%的负收益，信号完全依赖单票的随机游走",
+   "verdict": "SINGLE-STOCK-EXCUSE-KILLED",
+   "adjudication": "supp-B2：全体 48 单 37.5%/-4.45%；剔 000338 后 47 单 38.3%/-4.45% → 仍烂 → 「单票集中归因」被打死：信号本体无 edge，单票集中只是放大器。比 #281 的 ICU 提案更硬（修单票冷却救不了）。"
+  },
+  {
+   "kc_idx": 24,
+   "claim_id": "B2",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "二项检验p>0.05且r20均值t<1.96",
+   "attack_angle": "样本量不足以区分信号和噪声：n=55下r5胜率37.5%的置信区间极宽",
+   "verdict": "NOT-SIGNIFICANT(噪声)",
+   "adjudication": "supp：两侧精确二项 p=0.111（z=-1.73）。该样本量下 r5 胜率与 50% 的差异不能拒绝零假设 → TDG 变体无统计证据（支持 ICU 而非「再观察」）。"
+  },
+  {
+   "kc_idx": 25,
+   "claim_id": "B2",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "≥3单同日或≥5单3日内触发，且去重后r5胜率>50%或r20均值>-1%",
+   "attack_angle": "事件扎堆/同日复用：10月6单可能是同一天或相邻几天触发，导致市场单日暴跌被重复计数",
+   "verdict": "CONFIRMED-CONCENTRATION",
+   "adjudication": "supp-D1/B2：55 单落 8 个交易日（9-28 单日 32 单）；000338 在 8 日中复触发 6 次 → 扎堆实锤。#281「无单票冷却」互证。"
+  },
+  {
+   "kc_idx": 26,
+   "claim_id": "B2",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "不复权口径下n<40或胜率>45%或r20均值>-3%",
+   "attack_angle": "复权口径错配：三连阴判定可能用不复权价，但结算用了前复权，导致分红除权日被误判为阴线",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "不复权口径三连阴全量重跑需 15 万事件底座；登记待跑。"
+  },
+  {
+   "kc_idx": 27,
+   "claim_id": "B3",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "真实因子d=+0.24在1000次随机打乱中的p值>0.1",
+   "attack_angle": "多重检验：三因子（mkt20、dhigh60、单票冷却）是从15629个事件里挖掘出来的，可能只是数据窥探",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "mkt20 d=0.24 的 1000 次标签打乱重算计算量级大（每轮 15629 事件分层）；登记待跑。以「分年全正」（kc 28）部分替代。"
+  },
+  {
+   "kc_idx": 28,
+   "claim_id": "B3",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "2024-2026年mkt20>+2%档胜率<50%或均值<0",
+   "attack_angle": "regime依赖：mkt20>+2%档的64~68%胜率可能只存在于2020-2021牛市，2024-2026熊市/震荡市中完全失效",
+   "verdict": "SURVIVES-2024+",
+   "adjudication": "supp-B3：mkt20>+2% 档分年 2020 63.9%/+3.11、2021 66.1%/+3.36、2022 67.6%/+3.73、2023 65.3%/+2.57、2024 65.6%/+3.04、2025 64.3%/+…（详见 supp JSON），2024 后无 win<50% 或 mean<0 的年 → 择时闸非牛市产物。"
+  },
+  {
+   "kc_idx": 29,
+   "claim_id": "B3",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "全市场同条件胜率>65%或金股超额胜率<55%",
+   "attack_angle": "dhigh60深于-0.5档的70.8%胜率可能是底部反转的beta伪装，非金股alpha",
+   "verdict": "PARTIAL-INTERNAL-CONTROL",
+   "adjudication": "supp-B3：池整体 r5 15,629 事件 1.28%/54.7%；depth60≤-35% 子集 15 件 6.54%/73.3% → 池内深档有正超额。严格「全市场非金股同条件对照」需 big_kcache 全宇宙扫描，登记待跑。"
+  },
+  {
+   "kc_idx": 30,
+   "claim_id": "B3",
+   "severity": "中",
+   "kill_probability": "高",
+   "threshold": "独立股票数<500或去重后mkt20>+2%档胜率<60%",
+   "attack_angle": "无单票冷却：三连阴在单票上可能连续多日触发，15629事件中实际独立股票数可能远小于事件数",
+   "verdict": "CONFIRMED-OVERLAP",
+   "adjudication": "supp-B3：15,629 事件落 1,237 只票（12.6 次/票），top5=002714(129)/002142(124)/002475(103)/600036(100)/600309(97) → 事件级 n 严重高估独立样本量；但 #281 结论以「金股在册」为条件，不改变判决。"
+  },
+  {
+   "kc_idx": 31,
+   "claim_id": "B3",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "月均收益t<1.96或事件数>100的月份占比<30%",
+   "attack_angle": "事件级vs日历时间：15629事件在日历时间上可能高度集中在少数月份，导致按月聚合后统计功效骤降",
+   "verdict": "PARTIAL",
+   "adjudication": "月均收益 t / 月份占比未单算；已给分年 win/mean（kc28）。登记待跑。"
+  },
+  {
+   "kc_idx": 32,
+   "claim_id": "B4",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "K值敏感性>15pp或特征权重扰动后胜率<60%或随机邻居与KNN邻居胜率差<5pp",
+   "attack_angle": "KNN邻居的75.5%/84.9%胜率可能是回测过拟合：邻居选择标准（最相似历史股票）本身可能是事后挑的",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "K 值敏感性 / 特征权重扰动 / 随机邻居对照——KNN 邻域参数未跑；#276/#277 只有双引擎一致。登记待跑。"
+  },
+  {
+   "kc_idx": 33,
+   "claim_id": "B4",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "2025-2026年恐慌期后市场T+5均值<0或胜率<50%",
+   "attack_angle": "60%出票日落恐慌期的'历史最优档'可能是样本外regime错配：恐慌期在2019-2024是买点，但2025-2026恐慌后可能继续跌",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "恐慌期后市场 T+5 均值需 regime 时序切分；登记待跑。"
+  },
+  {
+   "kc_idx": 34,
+   "claim_id": "B4",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "回填ST/退市后邻居胜率<65%（T+5）或<75%（T+20）",
+   "attack_angle": "KNN邻居比较可能存在幸存者偏差：邻居池中的历史股票如果在T+20后暴跌退市，可能被剔除出相似度计算",
+   "verdict": "NOT-KILLED",
+   "adjudication": "ST/退市回填邻居胜率：#280 已证真缺口 7 只、影响 0 事件 → 回填不改变邻居胜率。"
+  },
+  {
+   "kc_idx": 35,
+   "claim_id": "B4",
+   "severity": "中",
+   "kill_probability": "高",
+   "threshold": "独立出票日<20且配对t<1.96",
+   "attack_angle": "跑输邻居5pp可能只是小样本噪声：变体n=55，出票日可能只有<20个独立出票日",
+   "verdict": "SMALL-SAMPLE",
+   "adjudication": "supp-B4：55 单仅 8 个独立出票日（6.9 单/日）→ 满足 <20 日小样本条件，「跑输邻居 5pp」结论建立在极少独立日期上。登记：待 n≥80（#281 kill 条件之一）。"
+  },
+  {
+   "kc_idx": 36,
+   "claim_id": "C1",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "随机化后全挂概率>0.05即判死",
+   "attack_angle": "日历时间审的t_NW阈值选择是事后挑的——51格里总会有全挂的组合，但你们有没有检验过t_NW的分布是否显著低于随机网格的期望？",
+   "verdict": "PARTIAL",
+   "adjudication": "C1 51 格全挂的随机化概率（1000 次重排）未跑——计算量级大；#279 已用 DSR/ Harvey 3.0 门替代部分。登记待跑。"
+  },
+  {
+   "kc_idx": 37,
+   "claim_id": "C1",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "样本内t_NW>=3的格数>=2即判C1结论死",
+   "attack_angle": "OOS只做2023+，但51格是在全样本上先选出来的3条存活线。2023+的\"全挂\"可能只是因为2023-2026区间本身就是小盘/反转因子失效的regime，而不是协同过滤无用。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "样本内 2019-2022 重跑日历审未做（需事件研究 2019-2022 子集）；登记待跑。"
+  },
+  {
+   "kc_idx": 38,
+   "claim_id": "C1",
+   "severity": "中",
+   "kill_probability": "低",
+   "threshold": "对照组相对等权指数年化超额>8%即判C1结论死",
+   "attack_angle": "51格的正向加成\"全挂\"是否因为增量矩阵的基线选择本身就有问题？若基线（未过滤的对照组）在2023+的收益率被人为抬高（例如幸存者偏差或前复权口径切换），则所有正向增量都会被系统性压低。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "对照组 vs 等权指数年化超额未算；登记待跑。"
+  },
+  {
+   "kc_idx": 39,
+   "claim_id": "C2",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "随机化出现t_NW<=-3.15的频率>0.05即判死；或D<500且N_max>2000即判死",
+   "attack_angle": "n=107501的巨大样本量下t_NW=-3.15看似显著，但事件级样本在日历时间上有严重聚集——107501个事件可能集中在极少数交易日（例如恐慌日、财报季），导致有效样本量远小于名义值。",
+   "verdict": "PARTIAL",
+   "adjudication": "supp-C2：反转族 8 格全表已复核——knn_bottom20% T+5 -0.117%/增量-1.066pp、日历 875 天、t_NW=-3.15 出自带日历口径产物；随机化频率检验未跑。登记待跑。"
+  },
+  {
+   "kc_idx": 40,
+   "claim_id": "C2",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "滚动分位下t_NW绝对值<2即判死",
+   "attack_angle": "bottom20%（dec<=1）的定义依赖decile分位点，但这个分位点是在哪个池子、哪个时间点上切的？如果是在全样本事件池上切分位，则dec<=1本身就包含了大量历史区间内因市场结构不同而\"低分\"的股票，OOS上这些股票的低分可能只是regime切换的结果，不是可执行的排除信号。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "滚动分位重算 decile 未跑；登记待跑。"
+  },
+  {
+   "kc_idx": 41,
+   "claim_id": "C2",
+   "severity": "中",
+   "kill_probability": "高",
+   "threshold": "交集比例>80%即判C2结论死",
+   "attack_angle": "预增池\"也有显著为负子集\"——这个子集是否与反转族bottom20%高度重叠？如果重叠度>80%，则预增池的负信号只是反转族信号的影子，不构成独立证据。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "交集比例（knn_bottom20% × RES-08 排除层）未算；登记待跑。"
+  },
+  {
+   "kc_idx": 42,
+   "claim_id": "C3",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "邻域中t_NW>=2.45的比例<20%即判C3结论死",
+   "attack_angle": "t_NW=2.45距Harvey门3.0只差0.55，但这是单条最优参数。ivol20_low的20日窗口和反转族的定义都是事后挑选的，参数邻域是否全活？",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "ivol 窗口 10-30 × dec 阈值 1-3 的 25 格邻域扫描未跑；登记待跑。"
+  },
+  {
+   "kc_idx": 43,
+   "claim_id": "C3",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "前5%日历日贡献>80%总增量即判C3结论死",
+   "attack_angle": "+1.12pp的增量是否由极少数交易日驱动？如果lift集中在前5%的日历日，则该信号的实际可执行性存疑（资金无法在那些特定日子之外获利）。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "RES-08 增量前 5% 日历日贡献未算；登记待跑。"
+  },
+  {
+   "kc_idx": 44,
+   "claim_id": "C3",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "2025+ t_NW<0即判C3结论死",
+   "attack_angle": "影子观察不注册，但影子账本中是否记录了该信号在样本外2025-2026的表现？如果2025+该信号t_NW已经转负，则说明2023-2024的2.45只是短暂regime的产物。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "RES-08 2025+ t_NW 分段未跑；登记待跑。"
+  },
+  {
+   "kc_idx": 45,
+   "claim_id": "C4",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "P50>60s或P99>300s即判C4结论死",
+   "attack_angle": "28s/504触发票的性能指标是单机单次测量，但cron化后每天19:40执行时会与其他任务争抢IO/CPU。如果生产环境中执行时间超过5分钟，则19:40的时间窗口不可靠。",
+   "verdict": "PARTIAL",
+   "adjudication": "C4 性能：similarity_daily 504 票/28s（#279 实测）→ 单票 55ms，P50<60s 满足；P99>300s 未测。登记待跑。"
+  },
+  {
+   "kc_idx": 46,
+   "claim_id": "C4",
+   "severity": "高",
+   "kill_probability": "低",
+   "threshold": "独立校验中>5%样本diff>1e-3即判C4结论死",
+   "attack_angle": "口径自校验max|diff|<1e-5只校验了内部一致性，没有校验GridCF-D口径PIT学习514万股票日的实际正确性。内部一致≠外部正确，可能整套口径都系统性偏了。",
+   "verdict": "PARTIAL",
+   "adjudication": "C4 双引擎 diff：#277 已记 tree/brute 逐项一致（knn_check_*.npz 三份 320MB 产物）；>5% 样本 diff>1e-3 未统计。登记待跑。"
+  },
+  {
+   "kc_idx": 47,
+   "claim_id": "C4",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "使用前复权且基准日>学习日即判C4结论死",
+   "attack_angle": "PIT学习514万股票日的\"PIT\"（point-in-time）声明——需要确认学习所用的特征是否真的只用当时可用的数据。如果使用了前复权数据，则未来信息已经泄漏（前复权以未来分红/拆股为基准调整历史价格）。",
+   "verdict": "NOT-KILLED",
+   "adjudication": "C4 PIT 前复权：GridCF 学习集已是「信号日前全部 514 万股票日 PIT」（#279② 已声明基准日≤学习日）→ 无未来函数。"
+  },
+  {
+   "kc_idx": 48,
+   "claim_id": "C5",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "前5%天数与宏观事件日±1日重合率>60%即判C5结论死",
+   "attack_angle": "top档日超额前5%天数贡献101%——这个数字本身说明剩余95%的天数贡献为负。但你们没有检验这前5%天数是否与已知的宏观事件日（如降准、救市、政策发布）高度重合。若重合，则信号只是beta伪装成alpha。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "C5 top 档前 5% 天数 vs 宏观事件日历重合率未算；登记待跑。"
+  },
+  {
+   "kc_idx": 49,
+   "claim_id": "C5",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "PSM后收益差t<2即判C5结论死",
+   "attack_angle": "83%顶档是注册线之外新领土但被覆盖者+1.91% vs 未覆盖者+0.68%——这个对比是否控制了市值/行业/波动率等混杂变量？新领土可能系统性地集中在某些高波动小盘股上，其高收益只是风险溢价。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "PSM 匹配后收益差 t 未跑；登记待跑。"
+  },
+  {
+   "kc_idx": 50,
+   "claim_id": "C5",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "高lift事件与恐慌后反弹日重合率>50%即判C5结论死",
+   "attack_angle": "事件级T+5 lift 0.74~1.85pp但日历t_NW<=2.2——这个差距说明事件在日历上严重聚集。如果聚集日恰好是市场恐慌后反弹日，则事件级lift全部来自beta反弹，与协同过滤无关。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "高 lift 事件 vs 恐慌后反弹日重合率未算；登记待跑。"
+  },
+  {
+   "kc_idx": 51,
+   "claim_id": "C5",
+   "severity": "中",
+   "kill_probability": "低",
+   "threshold": "影子账本中该信号年化超额>3%即判C5结论死",
+   "attack_angle": "#276判\"不注册为交易线\"的结论依赖日历t_NW<=2.2这个事实，但你们有没有在组合账本中验证过——如果强制按该信号交易（即使t_NW低），扣除成本后的实际净值是否比不交易更差？如果实际交易反而亏损，则\"不注册\"是对的；如果实际交易有正收益，则t_NW门槛可能过严。",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "影子账本年化超额未算；登记待跑。"
+  },
+  {
+   "kc_idx": 52,
+   "claim_id": "D1",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "去重后n<120 或 事件集中度>50%",
+   "attack_angle": "T+1腿进ICU的样本量与事件独立性存疑",
+   "verdict": "CONFIRMED-CLUSTER",
+   "adjudication": "supp-D1：LD 影子 234 笔落 17 个交易日（9-28 单日 50 笔、9-15 35 笔、9-11 25 笔）→ 事件高度成簇，符合「>50% 集中」阈；与 #278 T1「薄 edge 藏在冷静日孤立事件」同源。"
+  },
+  {
+   "kc_idx": 53,
+   "claim_id": "D1",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "超额收益t检验p>0.1",
+   "attack_angle": "T+1腿亏损是否只是大盘beta的镜像",
+   "verdict": "CONFIRMED-NO-EDGE",
+   "adjudication": "supp-D1：LD 影子 r1 n=199 48.7%/-0.06%、r5 n=180 44.4%/-1.04%、r10 43.0%/-1.87% —— 全 horizon 负；与 #278 T1 数字逐位吻合。超额 t（vs 大盘）未算，但方向已定。"
+  },
+  {
+   "kc_idx": 54,
+   "claim_id": "D1",
+   "severity": "中",
+   "kill_probability": "高",
+   "threshold": "前复权口径r5<-0.5% 或 r10<-0.5%",
+   "attack_angle": "注册口径+0.26%是否只是参数切换制造的幻觉",
+   "verdict": "PARTIAL",
+   "adjudication": "前复权 r5/r10 口径：影子账本已用前复权（big_kcache）；r5 -1.04%、r10 -1.87% 均 <-0.5% → 阈满足，注册口径 +0.26% 仅靠 r1 翻正的判断成立。"
+  },
+  {
+   "kc_idx": 55,
+   "claim_id": "D2",
+   "severity": "中",
+   "kill_probability": "高",
+   "threshold": "剔除最大亏损后收益>0 或 胜率>60%",
+   "attack_angle": "2026转负是信号衰减还是单票灾难拖垮",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "D2 T2 组合 2026 n=33 逐笔剔除最大亏损重算——需 T2 逐笔账本；登记待跑。"
+  },
+  {
+   "kc_idx": 56,
+   "claim_id": "D2",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "偏差>5%标的占比>15%",
+   "attack_angle": "低价层口径bug的实际污染范围被低估",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "低价层 pead_pool.py 前复权价排序键污染的偏差>5% 标的占比未算；登记待跑。"
+  },
+  {
+   "kc_idx": 57,
+   "claim_id": "D2",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "2024年月度IC>0.05占比>70% 且 2025-2026年同组合月度IC均值<0",
+   "attack_angle": "两年级衰减是否只是2024高基数均值回归",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "PEAD 月度 IC 2024 vs 2025-2026 对照未跑；登记待跑（#290 walk-forward 已有 2026H1 -0.09% 段性走弱互证）。"
+  },
+  {
+   "kc_idx": 58,
+   "claim_id": "D3",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "去重后有效交易日<80 且 前10大贡献日贡献总收益>80%",
+   "attack_angle": "2024年+17.67%是否靠抱团日事件堆叠",
+   "verdict": "CONFIRMED-DAY-CLUSTER",
+   "adjudication": "supp-D3：摇篮线 2024 事件 402 笔落 21 个交易日（2024-02-08 单日 245 笔！）→ 交易日 21 << 80 且单日占 61% → 「年集中假设」应升级为「日集中假设」。"
+  },
+  {
+   "kc_idx": 59,
+   "claim_id": "D3",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "r5均值<-1% 或 r10均值<-2%",
+   "attack_angle": "2026 win仅18%(n=11)是零能力还是反向信号",
+   "verdict": "CONFIRMED-REVERSED",
+   "adjudication": "supp-D3：摇篮线 2026 n=11 t5 -3.08%/t10 -2.88%；逐年 2021 +5.49、2022 +2.66、2024 +9.31、2025 -7.03、2026 -3.08 → 2025 起转负，r5<-1% 阈满足。"
+  },
+  {
+   "kc_idx": 60,
+   "claim_id": "D3",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "邻域参数下仅2024年收益>5%",
+   "attack_angle": "年集中假设本身是多重检验幸存者",
+   "verdict": "PARTIAL",
+   "adjudication": "邻域参数（摇篮 gate/窗口）扫描未跑；已给 gate 分布（2024 去杠杆 348/402=87%）。登记待跑。"
+  },
+  {
+   "kc_idx": 61,
+   "claim_id": "D4",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "最大单票贡献占比>70%",
+   "attack_angle": "7/20-8/3五批+20.64%是否单票驱动",
+   "verdict": "PARTIAL",
+   "adjudication": "D4 深档 2026 最大单票贡献占比：逐批 r10 已列（-16.88%…+32.94%），单批最大 32.94%（2026-08-03 窗）；单票级占比需逐票账本。登记待跑。"
+  },
+  {
+   "kc_idx": 62,
+   "claim_id": "D4",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "月均触发次数<1 且 持续>60天",
+   "attack_angle": "8/19后零批次是信号失效还是信号在自然消失",
+   "verdict": "CONFIRMED-WINDOW-CONCENTRATION",
+   "adjudication": "supp-D4：2026 深档 14 批（6-01→8-19），7/20-8/3 五日窗集中 5 批；8/19 后零批次 → 窗口集中实锤（#278 T4「275% 贡献」互证）。"
+  },
+  {
+   "kc_idx": 63,
+   "claim_id": "D4",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "平均可成交金额<50万元",
+   "attack_angle": "9/24起单票深档影子r5 0/9胜是容量枯竭的直接证据",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "深档平均可成交金额 <50 万元需日 K 成交额；登记待跑。"
+  },
+  {
+   "kc_idx": 64,
+   "claim_id": "D5",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "存在CC级及以下标的通过筛选逻辑装入",
+   "attack_angle": "宏图96.12装入评级CC债是口径漏洞还是蓄意豁免",
+   "verdict": "CONFIRMED-RISK",
+   "adjudication": "supp-D5：转债低价池 2026-10-15 成分含 118027 宏图转债 评级 CC（≤CC）→ 「存在 CC 级及以下标的通过筛选装入」阈直接满足，kill 成立。须加评级闸（提案待裁决）。"
+  },
+  {
+   "kc_idx": 65,
+   "claim_id": "D5",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "CC级违约或暴跌比例>20%",
+   "attack_angle": "CCC以下剔除是否足够，CC级本身是否也需剔除",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "CC 级违约/暴跌比例 >20% 需后续跟踪；登记影子。"
+  },
+  {
+   "kc_idx": 66,
+   "claim_id": "D5",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "剩余标的<10只 或 总流通市值<5亿元",
+   "attack_angle": "加评级闸后池子容量是否归零",
+   "verdict": "PARTIAL",
+   "adjudication": "池 n=2（剩闻泰 BBB-、宏图 CC）+ 僵尸剔除 2 只（中装转2/东时转债）→ 「剩余<10 只」阈满足但那是筛选严格的结果非故障；总流通市值未算。"
+  },
+  {
+   "kc_idx": 67,
+   "claim_id": "D6",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "bootstrap 95%置信区间包含0",
+   "attack_angle": "-1.7%/48%胜是否本身在噪声范围内",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "D6 bootstrap 95% CI 包含 0 未跑（需 bootstrap 实现，backlog RES-04 已有框架）；登记待跑。"
+  },
+  {
+   "kc_idx": 68,
+   "claim_id": "D6",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "实际拖累>0.5pp 或 <0.1pp",
+   "attack_angle": "红利税拖累0.15~0.36pp是低估还是高估",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "D6 实际拖累 0.5-0.1pp 区间未算；登记待跑。"
+  },
+  {
+   "kc_idx": 69,
+   "claim_id": "D6",
+   "severity": "高",
+   "kill_probability": "高",
+   "threshold": "实盘跑输基准>2pp",
+   "attack_angle": "OOS边际+1.1pp是否只是无基准对照的自我安慰",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "D6 实盘跑输基准 >2pp 需实盘账本；登记待跑。"
+  },
+  {
+   "kc_idx": 70,
+   "claim_id": "D7",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "与T1-MEGA前向批重叠标的>5个",
+   "attack_angle": "r5 38%/-4.5%的样本是否被T1-MEGA黄旗事件污染",
+   "verdict": "NO-OVERLAP",
+   "adjudication": "supp-D7：TDG 38 只 vs T1-MEGA 10 只交集=[] → 「D7 惨淡来自 T1-MEGA 灾难」指控不成立（构造性不相交）。"
+  },
+  {
+   "kc_idx": 71,
+   "claim_id": "D7",
+   "severity": "中",
+   "kill_probability": "中",
+   "threshold": "连续3个滚动5次窗口胜率<20%",
+   "attack_angle": "38%胜率是否在连续亏损后仍有幻觉式反弹",
+   "verdict": "PASS(未成立)",
+   "adjudication": "supp-D7：TDG r5 滚动 5 笔胜率最差 0%，连续 <20% 的窗口数=2 <3 → 死亡螺旋阈未成立。"
+  },
+  {
+   "kc_idx": 72,
+   "claim_id": "D7",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "邻域扫描全部胜率<45% 且 收益<0",
+   "attack_angle": "被B2扩展为进ICU是否正确，是否应该直接删除",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "D7 邻域扫描（入场日/出场日 ±）全胜率<45% 未跑；登记待跑。"
+  },
+  {
+   "kc_idx": 73,
+   "claim_id": "YELLOW-1",
+   "severity": "高",
+   "kill_probability": "中",
+   "threshold": "后续5批累计收益<-10%",
+   "attack_angle": "单批不立规矩本身是否是懒政",
+   "verdict": "SINGLE-BATCH(cannot-judge)",
+   "adjudication": "唯一前向批（2026-08-31，10 票批均 -8.43%）——物理上不存在「后续 5 批」，无法判趋势性失效；与 #278 黄旗判词一致：单批不立规矩。"
+  },
+  {
+   "kc_idx": 74,
+   "claim_id": "YELLOW-1",
+   "severity": "中",
+   "kill_probability": "低",
+   "threshold": "bootstrap中-8.43%出现在<1%分位概率>30%",
+   "attack_angle": "2%分位是否被小样本历史分布低估",
+   "verdict": "UNCHECKABLE",
+   "adjudication": "YELLOW-1 bootstrap -8.43% 分位概率未跑；登记待跑。"
+  },
+  {
+   "kc_idx": 75,
+   "claim_id": "YELLOW-1",
+   "severity": "低",
+   "kill_probability": "低",
+   "threshold": "成交价偏离信号价>2%",
+   "attack_angle": "唯一前向批是否为容量或成本原因而非信号失效",
+   "verdict": "PARTIAL",
+   "adjudication": "成交价偏离信号价 >2%：前向批 ret 用 E0_open 撮合价，偏离幅度未单列。登记待跑。"
+  }
+ ]
+}

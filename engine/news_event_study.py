@@ -18,7 +18,8 @@ from urllib.request import Request, urlopen, build_opener, ProxyHandler
 ROOT = Path("/opt/data/fenjue")
 KC = ROOT / "data/big_kcache"
 OUT = ROOT / "data/news_event_study_20260912.json"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 BJT = timezone(timedelta(hours=8))
 op = build_opener(ProxyHandler({}))
 UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}

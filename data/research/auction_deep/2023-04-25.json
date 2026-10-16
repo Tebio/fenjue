@@ -1,0 +1,45 @@
+{
+ "date": "2023-04-25",
+ "source": "iwencai_per_stock_auction",
+ "n": 4,
+ "items": [
+  {
+   "code": "000620",
+   "name": "盈新发展",
+   "date": "2023-04-25",
+   "found": true,
+   "auction_price": 1.68,
+   "auction_volume": 1348400.0,
+   "auction_amount": 2265312.0,
+   "auction_pct": -0.1016,
+   "unmatched_volume": -74685316.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  },
+  {
+   "code": "000918",
+   "date": "2023-04-25",
+   "found": false
+  },
+  {
+   "code": "600466",
+   "date": "2023-04-25",
+   "found": false
+  },
+  {
+   "code": "000540",
+   "date": "2023-04-25",
+   "found": false
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T09:00:48+08:00",
+  "data_snapshot": "2023-04-25",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

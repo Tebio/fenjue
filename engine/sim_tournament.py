@@ -20,7 +20,8 @@ D = ROOT + "/data"
 START = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--start=")), "2024-08-26")
 NO_M60 = "--no-m60" in sys.argv
 LONG_MODE = START < "2024-01-01"  # 8年模式剔股息组（2026息率选2019篮子=未来函数）
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 CAPITAL = 100000.0
 
 sys.path.insert(0, ROOT + "/engine")

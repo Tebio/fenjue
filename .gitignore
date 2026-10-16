@@ -47,3 +47,9 @@ data/similarity_features.npz
 data/factor_census_base.npz
 data/factor_census_masks.npz
 data/similarity_gridscore.npz
+
+# Over GitHub 100MB hard limit (100.01MB) — keep on disk, not in git
+data/guba_sentiment_events_20261016.npz
+
+# Private assets (broker trades, reconcile reports, real holdings — INTERFACES I7)
+data/private/

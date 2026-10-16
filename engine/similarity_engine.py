@@ -42,6 +42,7 @@ FEE = 0.0015
 REGIMES = ["平淡期", "妖股期", "恐慌期", "主线期"]
 NCONT, NDIM = 11, 15
 KNN_K = 2000
+KNN_ENGINE = "tree"   # KNN 引擎开关：brute(暴力/原始) | tree(sklearn KD/Ball树) | numba(njit合并)；三引擎同结果对拍见 #279（2万点：tree 770s < numba 890s < brute 952s，高负载）
 GRID_MIN_N = 200      # 格内最小学习样本数（不足回退上层）
 HORIZONS = (1, 5, 20)
 FEATURE_NAMES = ["depth60", "dhigh60", "ret60", "ret20", "ret5", "day_pct",
@@ -288,23 +289,27 @@ def _grid_predict(F, R, li, ti, use_regime=True):
     return pred
 
 
-# ---------------- KNN 引擎（抽样验证用） ----------------
+# ---------------- KNN 引擎（brute/tree/numba 三实现，同结果对拍 #279） ----------------
 
-def _standardize(Xl, Xt):
-    ql = np.nanpercentile(Xl, 1, axis=0)
-    qh = np.nanpercentile(Xl, 99, axis=0)
-    mu = np.nanmean(Xl, axis=0)
-    sd = np.nanstd(Xl, axis=0)
-    sd[sd == 0] = 1
-    lo, hi = (ql - mu) / sd, (qh - mu) / sd
-    return np.clip((Xl - mu) / sd, lo, hi), np.clip((Xt - mu) / sd, lo, hi)
+def _fill_from_neighbors(out, s, bd, bi, Rl):
+    """三引擎共享的邻居加权后处理（口径唯一真源）：w=1/(1+d²/NDIM) 加权 T+1/5/20。
+    bd=平方距离（float32，可含 argpartition 乱序），bi=学习集行号。"""
+    w = 1.0 / (1.0 + np.maximum(bd, 0) / NDIM)
+    for hi in range(3):
+        rn = Rl[bi, hi]
+        mm = np.isfinite(rn)
+        ws = (w * mm).sum(1)
+        out[s:s + len(bd), hi] = np.where(ws > 1e-6, (w * np.where(mm, rn, 0)).sum(1) / np.maximum(ws, 1e-12), np.nan)
+    out[s:s + len(bd), 3] = np.sqrt(np.maximum(bd, 0)).mean(1) / NDIM
 
 
-def _knn_predict_pruned(Xl, Rl, Xt):
+def _knn_predict_pruned(Xl, Rl, Xt, return_nb=False):
     """精确 top-K + 阈值剪枝：首块建立每行第 K 小距离门槛，后续块只合并越过门槛的少数候选。"""
     K = min(KNN_K, len(Xl))
     nl2 = (Xl ** 2).sum(1)
     out = np.full((len(Xt), 4), np.nan, dtype=np.float32)
+    NB = (np.full((len(Xt), K), np.inf, dtype=np.float32),
+          np.zeros((len(Xt), K), dtype=np.int32)) if return_nb else None
     B, LB = 512, 65536
     t0 = time.time()
     for s in range(0, len(Xt), B):
@@ -328,16 +333,128 @@ def _knn_predict_pruned(Xl, Rl, Xt):
                 alli = np.concatenate([bi[r], ci + t])
                 k = np.argpartition(alld, K)[:K]
                 bd[r], bi[r] = alld[k], alli[k]
-        w = 1.0 / (1.0 + np.maximum(bd, 0) / NDIM)
-        for hi in range(3):
-            rn = Rl[bi, hi]
-            mm = np.isfinite(rn)
-            ws = (w * mm).sum(1)
-            out[s:s + B, hi] = np.where(ws > 1e-6, (w * np.where(mm, rn, 0)).sum(1) / np.maximum(ws, 1e-12), np.nan)
-        out[s:s + B, 3] = np.sqrt(np.maximum(bd, 0)).mean(1) / NDIM
+        _fill_from_neighbors(out, s, bd, bi, Rl)
+        if return_nb:
+            NB[0][s:s + B], NB[1][s:s + B] = bd, bi
         if (s // B) % 50 == 0:
             print(f"    knn {s}/{len(Xt)} {time.time()-t0:.0f}s", flush=True)
-    return out
+    return (out, NB) if return_nb else out
+
+
+# --- numba 版：距离块仍走 numpy BLAS（数值与暴力版逐位同源），只把阈值合并 python 循环 njit 化 ---
+try:
+    from numba import njit, prange
+    _HAS_NUMBA = True
+except ImportError:
+    _HAS_NUMBA = False
+
+if _HAS_NUMBA:
+    @njit(parallel=True, cache=True)
+    def _merge_topk_njit(bd, bi, d, offset):
+        """逐块合并：收集本块 < 当前第 K 门槛的候选，与现有 top-K 拼接后 argsort 取前 K。
+        与暴力版逐块 argpartition 合并同为精确 top-K（结果集一致，并列距离才可能有界差）。
+        首版「每次插入重算 max」是 O(cnt×K)，实测比暴力还慢（1119s vs 952s），已改。
+        行内临时数组（prange 每行一份，~1.3MB/行），避免大块常驻缓冲。"""
+        n, K = bd.shape
+        LB = d.shape[1]
+        for r in prange(n):
+            thr = bd[r, 0]
+            for k in range(1, K):
+                if bd[r, k] > thr:
+                    thr = bd[r, k]
+            cnt = 0
+            tmp_d = np.empty(LB, dtype=np.float32)
+            tmp_i = np.empty(LB, dtype=np.int32)
+            for j in range(LB):
+                dj = d[r, j]
+                if dj < thr:
+                    tmp_d[cnt] = dj
+                    tmp_i[cnt] = j + offset
+                    cnt += 1
+            if cnt == 0:
+                continue
+            cat_d = np.empty(K + cnt, dtype=np.float32)
+            cat_i = np.empty(K + cnt, dtype=np.int32)
+            for k in range(K):
+                cat_d[k] = bd[r, k]
+                cat_i[k] = bi[r, k]
+            for k in range(cnt):
+                cat_d[K + k] = tmp_d[k]
+                cat_i[K + k] = tmp_i[k]
+            order = np.argsort(cat_d)
+            for k in range(K):
+                bd[r, k] = cat_d[order[k]]
+                bi[r, k] = cat_i[order[k]]
+
+
+def _knn_predict_numba(Xl, Rl, Xt, return_nb=False):
+    """numba 引擎：首块 argpartition 建门槛（同暴力版），后续块 _merge_topk_njit 合并。"""
+    if not _HAS_NUMBA:
+        raise RuntimeError("numba 未安装")
+    K = min(KNN_K, len(Xl))
+    nl2 = (Xl ** 2).sum(1)
+    out = np.full((len(Xt), 4), np.nan, dtype=np.float32)
+    NB = (np.full((len(Xt), K), np.inf, dtype=np.float32),
+          np.zeros((len(Xt), K), dtype=np.int32)) if return_nb else None
+    B, LB = 512, 65536
+    t0 = time.time()
+    for s in range(0, len(Xt), B):
+        blk = Xt[s:s + B]
+        bd = np.full((len(blk), K), np.inf, dtype=np.float32)
+        bi = np.zeros((len(blk), K), dtype=np.int32)
+        first = True
+        for t in range(0, len(Xl), LB):
+            L = Xl[t:t + LB]
+            d = ((blk ** 2).sum(1)[:, None] + nl2[t:t + LB][None, :] - 2 * blk @ L.T).astype(np.float32)
+            if first:
+                kth = np.argpartition(d, K, axis=1)[:, :K]
+                bd = np.take_along_axis(d, kth, 1)
+                bi = np.take_along_axis(np.broadcast_to(np.arange(t, t + len(L), dtype=np.int32), d.shape), kth, 1)
+                first = False
+                continue
+            _merge_topk_njit(bd, bi, d, t)
+        _fill_from_neighbors(out, s, bd, bi, Rl)
+        if return_nb:
+            NB[0][s:s + B], NB[1][s:s + B] = bd, bi
+        if (s // B) % 50 == 0:
+            print(f"    knn-numba {s}/{len(Xt)} {time.time()-t0:.0f}s", flush=True)
+    return (out, NB) if return_nb else out
+
+
+def _knn_predict_tree(Xl, Rl, Xt, algorithm="auto", return_nb=False):
+    """树版引擎：sklearn NearestNeighbors（KD/Ball 由 algorithm 控制），精确欧氏 top-K。
+    返回的欧氏距离平方后与暴力版 d² 同口径进 _fill_from_neighbors。"""
+    from sklearn.neighbors import NearestNeighbors
+    K = min(KNN_K, len(Xl))
+    nn = NearestNeighbors(n_neighbors=K, algorithm=algorithm, n_jobs=-1)
+    nn.fit(Xl)
+    out = np.full((len(Xt), 4), np.nan, dtype=np.float32)
+    NB = (np.full((len(Xt), K), np.inf, dtype=np.float32),
+          np.zeros((len(Xt), K), dtype=np.int32)) if return_nb else None
+    B = 4096
+    t0 = time.time()
+    for s in range(0, len(Xt), B):
+        dist, idx = nn.kneighbors(Xt[s:s + B])
+        bd = (dist ** 2).astype(np.float32)
+        bi = idx.astype(np.int32)
+        _fill_from_neighbors(out, s, bd, bi, Rl)
+        if return_nb:
+            NB[0][s:s + len(bd)], NB[1][s:s + len(bd)] = bd, bi
+        if (s // B) % 10 == 0:
+            print(f"    knn-tree[{algorithm}] {s}/{len(Xt)} {time.time()-t0:.0f}s", flush=True)
+    return (out, NB) if return_nb else out
+
+
+KNN_ENGINES = {"brute": _knn_predict_pruned, "numba": _knn_predict_numba, "tree": _knn_predict_tree}
+
+def _standardize(Xl, Xt):
+    ql = np.nanpercentile(Xl, 1, axis=0)
+    qh = np.nanpercentile(Xl, 99, axis=0)
+    mu = np.nanmean(Xl, axis=0)
+    sd = np.nanstd(Xl, axis=0)
+    sd[sd == 0] = 1
+    lo, hi = (ql - mu) / sd, (qh - mu) / sd
+    return np.clip((Xl - mu) / sd, lo, hi), np.clip((Xt - mu) / sd, lo, hi)
 
 
 # ---------------- 评估公共段 ----------------
@@ -456,8 +573,10 @@ def evaluate_grid():
     print(f"[grid] ALL DONE elapsed={time.time()-t0:.0f}s")
 
 
-def evaluate_knn_sample():
-    """KNN 欧氏引擎抽样验证：方向 A 抽 20 万测试行，学习集 1/4 等距抽样（61 万点密度足够）。"""
+def evaluate_knn_sample(engine=None):
+    """KNN 欧氏引擎抽样验证：方向 A 抽 20 万测试行，学习集 1/4 等距抽样（61 万点密度足够）。
+    engine: brute|tree|numba，默认读 KNN_ENGINE 开关。"""
+    engine = engine or KNN_ENGINE
     t0 = time.time()
     F, R, didx, eidx, flags, ind, day_pct, calendar = _load_all()
     uni5 = _prep(F, didx, ind, day_pct, eidx, R)
@@ -467,18 +586,77 @@ def evaluate_knn_sample():
     ti_all = np.where(didx >= sp)[0]
     rng = np.random.default_rng(11)
     ti = np.sort(ti_all[rng.choice(len(ti_all), min(200000, len(ti_all)), replace=False)])
-    print(f"[knn] learn={len(li)} test={len(ti)}", flush=True)
+    print(f"[knn:{engine}] learn={len(li)} test={len(ti)}", flush=True)
     Xl, Xt = _standardize(F[li, :NCONT], F[ti, :NCONT])
     Xl = np.concatenate([Xl, F[li, NCONT:]], 1)
     Xt = np.concatenate([Xt, F[ti, NCONT:]], 1)
-    pred = _knn_predict_pruned(Xl, R[li], Xt)
-    res = {"learn_n": int(len(li)), "test_n": int(len(ti)), "耗时s": int(time.time() - t0)}
+    pred = KNN_ENGINES[engine](Xl, R[li], Xt)
+    res = {"learn_n": int(len(li)), "test_n": int(len(ti)), "耗时s": int(time.time() - t0),
+           "engine": engine}
     res, p5m, r5m, thr, m = _report_block(res, pred, R[ti], eidx[ti], F[ti, 0], uni5)
     res["重叠审计_top10%"] = _overlap_block(p5m, r5m, thr, fg[ti][m])
     out = json.loads(open(OUT_JSON).read()) if OUT_JSON.exists() else {"directions": {}}
-    out["directions"]["knn_A抽样20万"] = res
+    out["directions"][f"knn_A抽样20万_{engine}"] = res
     _save(out)
-    print(f"[knn] DONE elapsed={time.time()-t0:.0f}s")
+    print(f"[knn:{engine}] DONE elapsed={time.time()-t0:.0f}s")
+
+
+def _knn_sample_mats(n_test, seed=11):
+    """方向 A 同口径取学习/测试矩阵（对拍与基准共用，保证同一批查询点）。"""
+    F, R, didx, eidx, flags, ind, day_pct, calendar = _load_all()
+    sp = bisect.bisect_left(calendar, "2023-01-01")
+    li = np.where(didx < sp)[0][::4]
+    ti_all = np.where(didx >= sp)[0]
+    rng = np.random.default_rng(seed)
+    ti = np.sort(ti_all[rng.choice(len(ti_all), min(n_test, len(ti_all)), replace=False)])
+    Xl, Xt = _standardize(F[li, :NCONT], F[ti, :NCONT])
+    Xl = np.concatenate([Xl, F[li, NCONT:]], 1)
+    Xt = np.concatenate([Xt, F[ti, NCONT:]], 1)
+    return Xl, R[li], Xt
+
+
+def knn_check(n_test=20000):
+    """三引擎同参数对拍（#279 验收）：同一批查询点，top-K 重合度 + 预测值最大差 + 各自耗时。
+    内存纪律：每引擎的 (out,bd,bi) 算完即落盘 scratch npz 并释放，不同时驻留多引擎结果
+    （15GB 机器多卡并发实证 OOM 过一回）。"""
+    import gc
+    scratch = Path("/opt/data/cache/scratch")
+    t0 = time.time()
+    Xl, Rl, Xt = _knn_sample_mats(n_test)
+    print(f"[check] learn={len(Xl)} test={len(Xt)} load={time.time()-t0:.0f}s", flush=True)
+    ela = {}
+    prev = json.loads(open(OUT_JSON).read()).get("directions", {}).get("knn_三引擎对拍", {}) if OUT_JSON.exists() else {}
+    for eng in ("brute", "numba", "tree"):
+        fp = scratch / f"knn_check_{eng}.npz"
+        if fp.exists() and np.load(fp)["bi"].shape[0] == n_test:   # 断点续跑：同规模旧结果直接复用
+            ela[eng] = prev.get("耗时s", {}).get(eng)
+            print(f"[check] {eng} reuse {fp.name} ({ela[eng]}s)", flush=True)
+            continue
+        ta = time.time()
+        out_e, nb = KNN_ENGINES[eng](Xl, Rl, Xt, return_nb=True)
+        np.savez(fp, out=out_e, bd=nb[0], bi=nb[1])
+        del out_e, nb
+        gc.collect()
+        ela[eng] = round(time.time() - ta, 1)
+        print(f"[check] {eng} done {ela[eng]}s", flush=True)
+    zb = np.load(scratch / "knn_check_brute.npz")
+    ob, bib = zb["out"], zb["bi"]
+    K = min(KNN_K, len(Xl))
+    rep = {"learn_n": int(len(Xl)), "test_n": int(len(Xt)), "K": K, "耗时s": ela}
+    for name in ("numba", "tree"):
+        z2 = np.load(scratch / f"knn_check_{name}.npz")
+        ov = np.array([len(set(a.tolist()) & set(b.tolist())) for a, b in zip(bib, z2["bi"])])
+        rep[f"topK重合_{name}"] = {"mean%": round(100 * float(ov.mean()) / K, 4),
+                                   "min%": round(100 * float(ov.min()) / K, 4)}
+        d = np.abs(ob[:, :3].astype(float) - z2["out"][:, :3].astype(float))
+        rep[f"预测最大差_{name}"] = float(np.nanmax(d))
+        rep[f"预测均方根差_{name}"] = float(np.sqrt(np.nanmean(d ** 2)))
+        del z2
+        gc.collect()
+    print(json.dumps(rep, ensure_ascii=False, indent=1))
+    out = json.loads(open(OUT_JSON).read()) if OUT_JSON.exists() else {"directions": {}}
+    out["directions"]["knn_三引擎对拍"] = rep
+    _save(out)
 
 
 if __name__ == "__main__":
@@ -488,4 +666,6 @@ if __name__ == "__main__":
     elif cmd == "grid":
         evaluate_grid()
     elif cmd == "knn":
-        evaluate_knn_sample()
+        evaluate_knn_sample(sys.argv[2] if len(sys.argv) > 2 else None)
+    elif cmd == "knn_check":
+        knn_check(int(sys.argv[2]) if len(sys.argv) > 2 else 20000)

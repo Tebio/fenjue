@@ -36,8 +36,9 @@ def _entry_px(d, i, entry):
     return d["o"][i + 1]
 
 
-def marginals(det, stocks, control, horizons, entry="next_open"):
-    """返回 {h: (全量边际pp, 滚动边际pp, 滚动事件数)}"""
+def marginals_ex(det, stocks, control, horizons, entry="next_open"):
+    """富口径版：返回 {h: dict(full_pp, full_win, ctl_win, roll_pp, roll_win, roll_n, cutoff)}。
+    与 marginals() 同一扫描（line_health.py 复用，防两处实现漂移）；win=信号胜率（r>0 占比）。"""
     rnd = random.Random(7)
     sig = {h: ([], []) for h in horizons}  # h -> ([日期], [收益])
     ctl = {h: [] for h in horizons}
@@ -81,13 +82,29 @@ def marginals(det, stocks, control, horizons, entry="next_open"):
         if len(rs) < 30 or len(ctl[h]) < 30:
             continue
         full_pp = 100 * (st.mean(rs) - st.mean(ctl[h]))
+        full_win = 100 * sum(1 for r in rs if r > 0) / len(rs)
+        ctl_win = 100 * sum(1 for r in ctl[h] if r > 0) / len(ctl[h])
         if cutoff:
             idx = [j for j, dt in enumerate(ds) if dt >= cutoff]
-            roll_pp = 100 * (st.mean([rs[j] for j in idx]) - st.mean([ctl[h][j] for j in idx])) if len(idx) >= 30 else None
+            if len(idx) >= 30:
+                roll_pp = 100 * (st.mean([rs[j] for j in idx]) - st.mean([ctl[h][j] for j in idx]))
+                roll_win = 100 * sum(1 for j in idx if rs[j] > 0) / len(idx)
+            else:
+                roll_pp, roll_win = None, None
         else:
-            roll_pp, idx = full_pp, list(range(len(rs)))
-        out[h] = (round(full_pp, 2), None if roll_pp is None else round(roll_pp, 2), len(idx))
+            roll_pp, roll_win, idx = full_pp, full_win, list(range(len(rs)))
+        out[h] = {"full_pp": round(full_pp, 2), "full_win": round(full_win, 1),
+                  "ctl_win": round(ctl_win, 1),
+                  "roll_pp": None if roll_pp is None else round(roll_pp, 2),
+                  "roll_win": None if roll_win is None else round(roll_win, 1),
+                  "roll_n": len(idx), "cutoff": cutoff}
     return out
+
+
+def marginals(det, stocks, control, horizons, entry="next_open"):
+    """返回 {h: (全量边际pp, 滚动边际pp, 滚动事件数)}（兼容包装，实现在 marginals_ex）"""
+    return {h: (v["full_pp"], v["roll_pp"], v["roll_n"]) for h, v in
+            marginals_ex(det, stocks, control, horizons, entry).items()}
 
 
 def transit(state, verdict):

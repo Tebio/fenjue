@@ -16,7 +16,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SHADOW = ROOT / "data/claims_shadow.jsonl"
 SUMMARY = ROOT / "data/claims_shadow_summary.json"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 CLOSE_ENTRY_CLAIMS = {"FRONTRUN_FIRSTBOARD_V2", "WATCHPOOL_GRAD"}
 
 

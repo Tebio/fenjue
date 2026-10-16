@@ -1,0 +1,30 @@
+{
+ "date": "2020-03-24",
+ "source": "iwencai_per_stock_auction",
+ "n": 1,
+ "items": [
+  {
+   "code": "002353",
+   "name": "杰瑞股份",
+   "date": "2020-03-24",
+   "found": true,
+   "auction_price": 23.68,
+   "auction_volume": 233200.0,
+   "auction_amount": null,
+   "auction_pct": 0.0273,
+   "unmatched_volume": -131754.0,
+   "unmatched_amount": null,
+   "abnormal_type": "竞价砸盘",
+   "auction_rating": "偏空"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:56:59+08:00",
+  "data_snapshot": "2020-03-24",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

@@ -1,0 +1,31 @@
+{
+ "date": "2023-04-28",
+ "source": "iwencai_per_stock_auction",
+ "n": 3,
+ "items": [
+  {
+   "code": "000540",
+   "date": "2023-04-28",
+   "found": false
+  },
+  {
+   "code": "600766",
+   "date": "2023-04-28",
+   "found": false
+  },
+  {
+   "code": "600077",
+   "date": "2023-04-28",
+   "found": false
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T09:01:41+08:00",
+  "data_snapshot": "2023-04-28",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

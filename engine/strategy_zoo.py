@@ -10,7 +10,8 @@ import json, glob, random, statistics as st
 from pathlib import Path
 
 KC = Path("/opt/data/fenjue/data/big_kcache")
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 OUT = Path("/opt/data/fenjue/data/strategy_zoo_20260911.json")
 random.seed(42)
 

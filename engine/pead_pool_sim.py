@@ -16,7 +16,8 @@ sys.path.insert(0, os.path.join(ROOT, 'engine'))
 import pead_pool as pp   # 复用 pead_map/cap_at(带缓存)
 
 START, END = '2019-01-02', '2026-09-30'
-SLOT, SLOTS, FEE_RT = 20000.0, 5, 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+SLOT, SLOTS, FEE_RT = 20000.0, 5, FLAT_RT
 HOLD_DAYS = 20
 
 # ---- 数据预载（一次性构建索引）----

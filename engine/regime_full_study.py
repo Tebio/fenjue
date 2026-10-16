@@ -13,7 +13,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 import law_pipeline as lp
 
 ROOT = Path(__file__).resolve().parent.parent
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 SIGS = ["跌停接_MA60下", "组合_跌停低_三连阴", "组合_跌停低_长周期_超跌20", "组合_跌停低_深跌_跌停潮",
         "组合_缺口低开_低位阳线", "组合_触板未封_低位", "强势股回踩MA5", "强势股回踩MA10",
         "反转族_T-1大跌", "金叉_MACD", "TD9买入"]

@@ -22,7 +22,8 @@ spec.loader.exec_module(lp)
 
 ROOT = Path("/opt/data/fenjue")
 FUND = ROOT / "data/fund_cache"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 HORIZON = 5
 FACTORS = ["peTTM", "pbMRQ", "psTTM", "turn", "cap"]
 # fund_cache 行格式（fetch_fundamentals.py FIELDS）：

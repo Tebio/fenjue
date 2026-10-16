@@ -15,7 +15,8 @@ from pathlib import Path
 
 ROOT = Path("/opt/data/fenjue")
 HT, KC, CAP = ROOT/"data/hithink", ROOT/"data/big_kcache", ROOT/"data/cap_hist"
-NET_FEE = 0.15  # T1_oc 净口径扣费
+from costs import FLAT_RT_PCT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+NET_FEE = FLAT_RT_PCT  # T1_oc 净口径扣费
 
 _kcache, _cap = {}, {}
 

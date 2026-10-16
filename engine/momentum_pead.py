@@ -14,7 +14,8 @@ from collections import defaultdict
 
 ROOT = "/opt/data/fenjue"
 D = ROOT + "/data"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 
 stocks = {}
 for f in glob.glob(f"{D}/big_kcache/*.json"):

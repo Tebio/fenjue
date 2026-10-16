@@ -1,0 +1,59 @@
+{
+ "date": "2022-04-29",
+ "source": "iwencai_per_stock_auction",
+ "n": 5,
+ "items": [
+  {
+   "code": "000585",
+   "date": "2022-04-29",
+   "found": false
+  },
+  {
+   "code": "603996",
+   "date": "2022-04-29",
+   "found": false
+  },
+  {
+   "code": "603157",
+   "date": "2022-04-29",
+   "found": false
+  },
+  {
+   "code": "002316",
+   "name": "亚联发展",
+   "date": "2022-04-29",
+   "found": true,
+   "auction_price": 2.74,
+   "auction_volume": 1774300.0,
+   "auction_amount": 4861582.0,
+   "auction_pct": -0.0897,
+   "unmatched_volume": -23601.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看多"
+  },
+  {
+   "code": "600318",
+   "name": "新力金融",
+   "date": "2022-04-29",
+   "found": true,
+   "auction_price": 6.35,
+   "auction_volume": 618600.0,
+   "auction_amount": 3928110.0,
+   "auction_pct": 0.00316,
+   "unmatched_volume": -47100.0,
+   "unmatched_amount": null,
+   "abnormal_type": "竞价砸盘",
+   "auction_rating": "偏空"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:59:36+08:00",
+  "data_snapshot": "2022-04-29",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

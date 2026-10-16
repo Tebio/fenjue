@@ -1,0 +1,26 @@
+{
+ "date": "2020-04-30",
+ "source": "iwencai_per_stock_auction",
+ "n": 2,
+ "items": [
+  {
+   "code": "600074",
+   "date": "2020-04-30",
+   "found": false
+  },
+  {
+   "code": "002740",
+   "date": "2020-04-30",
+   "found": false
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:57:10+08:00",
+  "data_snapshot": "2020-04-30",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

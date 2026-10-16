@@ -27,7 +27,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 import law_pipeline as lp
 
 ROOT = Path("/opt/data/fenjue")
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 HORIZONS = [1, 2, 3, 5, 10, 20]
 MIN_N = 200
 

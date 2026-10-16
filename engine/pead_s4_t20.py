@@ -11,6 +11,7 @@ import time
 
 sys.path.insert(0, "/opt/data/fenjue/engine")
 import law_pipeline as lp
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
 
 VARIANTS = ["PEAD_首亏", "PEAD_扭亏", "PEAD_预增50"]
 
@@ -38,7 +39,7 @@ def main():
                 if lp._epx(d, i) <= 0 or not det(d, i):
                     continue
                 y = d["date"][i][:4]
-                yearly.setdefault(y, []).append(d["c"][i + 20] / lp._epx(d, i) - 1 - 0.0015)
+                yearly.setdefault(y, []).append(d["c"][i + 20] / lp._epx(d, i) - 1 - FLAT_RT)
         ys = {y: f"{sum(1 for x in v if x > 0) / len(v) * 100:.0f}%/{sum(v) / len(v) * 100:+.2f}%(n={len(v)})"
               for y, v in sorted(yearly.items())}
         print(f"  逐年T+20: {ys}", flush=True)

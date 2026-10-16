@@ -1,0 +1,45 @@
+{
+ "_meta": {
+  "built": "2026-10-16 01:25",
+  "task": "t_05a4241d / AGENTS #279③",
+  "口径": "日历时间超额序列, horizon=5, fee=0.0015, next_open; 手写nw_t vs statsmodels HAC(maxlags=5)"
+ },
+ "lines": {
+  "跌停接_MA60下": {
+   "事件数": 14545,
+   "天数": 1054,
+   "t_手写_raw": -2.3606,
+   "t_手写_生产取整": -2.4,
+   "t_statsmodels": -2.3606,
+   "se_statsmodels": 0.002086239323543049,
+   "cov_kwds": "{'use_t': False, 'adjust_df': False, 'maxlags': 5, 'weights_func': <function weights_bartlett at 0x733e6c7e2de0>, 'use_correction': False, 'description': 'Standard Errors are heteroscedasticity and autocorrelation robust (HAC) using 5 lags and without small sample correction'}",
+   "差异%": 0.0,
+   "判定": "PASS(≤10%)",
+   "耗时s": 8
+  },
+  "反转族_MA60下": {
+   "事件数": 292683,
+   "天数": 1791,
+   "t_手写_raw": -7.4674,
+   "t_手写_生产取整": -7.5,
+   "t_statsmodels": -7.4674,
+   "se_statsmodels": 0.000815220757745409,
+   "cov_kwds": "{'use_t': False, 'adjust_df': False, 'maxlags': 5, 'weights_func': <function weights_bartlett at 0x733e6c7e2de0>, 'use_correction': False, 'description': 'Standard Errors are heteroscedasticity and autocorrelation robust (HAC) using 5 lags and without small sample correction'}",
+   "差异%": 0.0,
+   "判定": "PASS(≤10%)",
+   "耗时s": 2
+  },
+  "预增低位池_v1": {
+   "事件数": 50838,
+   "天数": 1587,
+   "t_手写_raw": 0.9669,
+   "t_手写_生产取整": 1.0,
+   "t_statsmodels": 0.9669,
+   "se_statsmodels": 0.0010178759866412996,
+   "cov_kwds": "{'use_t': False, 'adjust_df': False, 'maxlags': 5, 'weights_func': <function weights_bartlett at 0x733e6c7e2de0>, 'use_correction': False, 'description': 'Standard Errors are heteroscedasticity and autocorrelation robust (HAC) using 5 lags and without small sample correction'}",
+   "差异%": 0.0,
+   "判定": "PASS(≤10%)",
+   "耗时s": 26
+  }
+ }
+}

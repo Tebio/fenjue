@@ -21,7 +21,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 import law_pipeline as lp
 
 ROOT = Path("/opt/data/fenjue")
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 HORIZONS = [1, 2, 3, 5, 10, 20]
 # 默认受试=注册表里已过的组合类主张（单底座/死信号不重复测——底座裸跑的周一交互已含在组合里）
 DEFAULT = ["组合_跌停低_长周期_超跌20", "组合_跌停低_三连阴", "组合_跌停低_缩量_剔亏ST",

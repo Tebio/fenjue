@@ -49,7 +49,10 @@ def build_events():
     return {k: sorted(v) for k, v in ev.items()}
 
 
-def midpoint_split(stocks, events, horizon=5, fee=0.0015):
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+
+
+def midpoint_split(stocks, events, horizon=5, fee=FLAT_RT):
     """窗内中点分段（1年深数据的时效替代检验）。"""
     idx = {}
     for code, d in stocks.items():

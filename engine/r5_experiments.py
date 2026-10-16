@@ -7,7 +7,8 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path("/opt/data/fenjue")
-FEE = 0.15
+from costs import FLAT_RT_PCT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT_PCT
 
 # ── 行业映射（板块联动用）──
 imap = json.load(open(ROOT / "data" / "industry_map.json"))

@@ -1,0 +1,44 @@
+{
+ "date": "2022-11-01",
+ "source": "iwencai_per_stock_auction",
+ "n": 2,
+ "items": [
+  {
+   "code": "002585",
+   "name": "双星新材",
+   "date": "2022-11-01",
+   "found": true,
+   "auction_price": 11.05,
+   "auction_volume": 7261433.0,
+   "auction_amount": 80238835.0,
+   "auction_pct": -0.057969999999999994,
+   "unmatched_volume": 379467.0,
+   "unmatched_amount": null,
+   "abnormal_type": "急速上涨",
+   "auction_rating": "看多"
+  },
+  {
+   "code": "601677",
+   "name": "明泰铝业",
+   "date": "2022-11-01",
+   "found": true,
+   "auction_price": 13.66,
+   "auction_volume": 1252400.0,
+   "auction_amount": 17107784.0,
+   "auction_pct": -0.05007,
+   "unmatched_volume": 107600.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "偏空"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T09:00:24+08:00",
+  "data_snapshot": "2022-11-01",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

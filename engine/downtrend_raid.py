@@ -31,7 +31,8 @@ from pathlib import Path
 ROOT = Path("/opt/data/fenjue")
 KC = ROOT / "data/big_kcache"
 CAPD = ROOT / "data/cap_hist"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 START = 65
 HORIZONS = [1, 2, 3, 5, 10, 20]
 

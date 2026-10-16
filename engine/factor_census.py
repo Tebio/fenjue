@@ -40,7 +40,8 @@ BASE_NPZ = ROOT / "data/factor_census_base.npz"       # 十分档id+收益矩阵
 MASK_NPZ = ROOT / "data/factor_census_masks.npz"      # 送审尾部 mask（submit 用）
 KNN_NPZ = ROOT / "data/similarity_gridscore.npz"      # F25 打分矩阵（knnscore 产）
 OUT_JSON = ROOT / "data/factor_census_20261015.json"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 HORIZONS = (1, 5, 20)
 NW_MIN_T = 3.0
 # 初筛阈值（预登记）

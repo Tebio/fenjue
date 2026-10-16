@@ -1144,6 +1144,34 @@ def _gap_down(d, i):
     return d["o"][i]/d["c"][i-1] - 1 <= -0.03
 
 
+def _gap_below(d, i, thr):
+    """T+1 开盘跳空 ≤ thr（9:25 竞价撮合价已知，PIT 安全）。
+    注意：这是「信号日收盘可知 → 次日开盘确认」的入场时点条件，不是信号日可见；
+    研究框架里入场本来就是 o[i+1]，此处只做入场时的条件过滤（与 _gap_down 的
+    信号日低开不同）。用于隔夜效应卡的叠加层（AGENTS #291）。"""
+    if i + 1 >= d["n"] or d["c"][i] <= 0 or d["o"][i + 1] <= 0:
+        return False
+    return d["o"][i + 1] / d["c"][i] - 1 <= thr
+
+
+def _gap_above(d, i, thr):
+    """T+1 开盘跳空 > thr（同上，入场时点条件）。"""
+    if i + 1 >= d["n"] or d["c"][i] <= 0 or d["o"][i + 1] <= 0:
+        return False
+    return d["o"][i + 1] / d["c"][i] - 1 > thr
+
+
+def _demo_deep_core(d, i):
+    """深档低位 v2 出手票核心件（不含次日 gap）：≤-9.5% 且 收≤MA60 且 收≤MA60×0.65。
+    簇门（当日全库 -25% 口径深档件 ≥5）在 AGENTS #152 已实证为必要结构，
+    此处仅是 detector 单票侧核心；完整簇门见 dashboard_build.deep_low_scan。"""
+    ma = d["ma60"][i]
+    if i < 1 or d["c"][i-1] <= 0 or ma is None or ma <= 0:
+        return False
+    return (d["c"][i] / d["c"][i-1] - 1 <= -0.095 and d["c"][i] <= ma
+            and d["c"][i] <= ma * 0.65)
+
+
 # ---- 2026-09-21 反复票白名单×回调（用户立项：recurring winners 盲点，110只反复票咱家只覆盖2只）----
 # 白名单=「近20交易日大涨日(≥+9.5%)≥3次」（严格无前视，i 时点只看 <i 的历史）。
 # 假设：反复票是有资金持续运作的题材载体，其回调接 vs 全市场同形态回调接存在白名单边际。
@@ -1460,6 +1488,26 @@ REGISTRY = {
     "PEAD_首亏": lambda d, i: _pead(d, i, {"首亏"}),
     "PEAD_预增50_低位": lambda d, i: _pead(d, i, {"预增"}, min_inc=50, pos="low"),
     "PEAD_预增50_高位": lambda d, i: _pead(d, i, {"预增"}, min_inc=50, pos="high"),
+    # ---- 2026-10-16 隔夜效应卡（t_9e69cd05）：9:25 竞价 gap 叠加层 ----
+    # 依据 engine/overnight_close_entry.py（8 年全宇宙 ①：隔夜 -5.4bp/日 vs 盘中 +11.4bp/日；
+    # ②T 尾盘买在 DEEP/LD/REV 三线全败，配对差 -0.44~-5.72pp，置换 p=0；见 AGENTS #291）。
+    # 决策：出场臂维持 T+1 开盘买不改；叠加候选只在 OPEN 臂上——gap 在 9:25 已知（PIT 安全）。
+    # 单调性实测（LD T+5 净）：gap≤-5% 74.8%/+8.35%、≤-3% 71.0%/+6.18%、≤0 69.2%/+4.85%、
+    # 剔>+1% 69.5%/+4.69%、>+4% 39%/-1.23%（高开接力=负）。
+    "跌停接_MA60下_gap≤-3": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                     and _limitdown(d, i) and _gap_below(d, i, -0.03)),
+    "跌停接_MA60下_gap≤-5": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                     and _limitdown(d, i) and _gap_below(d, i, -0.05)),
+    "跌停接_MA60下_gap≤0": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                    and _limitdown(d, i) and _gap_below(d, i, 0.0)),
+    "跌停接_MA60下_gap>+1": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                     and _limitdown(d, i) and _gap_above(d, i, 0.01)),
+    "深档低位_缺口≤-2": lambda d, i: (_demo_deep_core(d, i)
+                                 and _gap_below(d, i, -0.02)),
+    "反转族_MA60下_gap≤-3": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                     and _reversal(d, i) and _gap_below(d, i, -0.03)),
+    "反转族_MA60下_gap>+1": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
+                                     and _reversal(d, i) and _gap_above(d, i, 0.01)),
 }
 
 

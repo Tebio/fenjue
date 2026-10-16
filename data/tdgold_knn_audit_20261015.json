@@ -27,5 +27,63 @@
    "恐慌期": 0.267,
    "主线期": 0.175
   }
+ },
+ "C_2023_25": {
+  "n_pairs": 3000,
+  "matched": 2981,
+  "miss": 19,
+  "knn_r1_mean": -0.00108,
+  "knn_r1_win": 0.2603,
+  "real_r1_mean": 0.00312,
+  "real_r1_win": 0.4951,
+  "real_r1_n": 2981,
+  "knn_r5_mean": 0.00037,
+  "knn_r5_win": 0.4874,
+  "real_r5_mean": 0.01386,
+  "real_r5_win": 0.5495,
+  "real_r5_n": 2981,
+  "knn_r20_mean": 0.00607,
+  "knn_r20_win": 0.6978,
+  "real_r20_mean": 0.02974,
+  "real_r20_win": 0.5599,
+  "real_r20_n": 2981,
+  "feat_depth60": -0.009,
+  "feat_ret20": -0.0151,
+  "feat_volr5": 0.9457,
+  "feat_regime": {
+   "平淡期": 0.531,
+   "妖股期": 0.283,
+   "恐慌期": 0.169,
+   "主线期": 0.017
+  }
+ },
+ "D_2020_22": {
+  "n_pairs": 3000,
+  "matched": 2955,
+  "miss": 45,
+  "knn_r1_mean": -4e-05,
+  "knn_r1_win": 0.3871,
+  "real_r1_mean": 0.00531,
+  "real_r1_win": 0.5283,
+  "real_r1_n": 2955,
+  "knn_r5_mean": 0.00217,
+  "knn_r5_win": 0.579,
+  "real_r5_mean": 0.01896,
+  "real_r5_win": 0.5651,
+  "real_r5_n": 2955,
+  "knn_r20_mean": 0.00769,
+  "knn_r20_win": 0.7299,
+  "real_r20_mean": 0.04109,
+  "real_r20_win": 0.5675,
+  "real_r20_n": 2955,
+  "feat_depth60": -0.0083,
+  "feat_ret20": -0.019,
+  "feat_volr5": 0.9822,
+  "feat_regime": {
+   "平淡期": 0.25,
+   "妖股期": 0.491,
+   "恐慌期": 0.22,
+   "主线期": 0.039
+  }
  }
 }

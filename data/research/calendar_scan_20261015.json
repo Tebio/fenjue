@@ -1,0 +1,724 @@
+{
+ "_meta": {
+  "generated_at": "2026-10-16T11:30:55.952959+08:00",
+  "owner": "engine.calendar_scan",
+  "data_snapshot": "2026-10-15",
+  "inputs": [
+   "data/big_kcache",
+   "engine/law_pipeline.load_universe"
+  ],
+  "params_hash": "perms1000_seed20261016_nw10",
+  "hypotheses": 14,
+  "preregistered": true
+ },
+ "calendar": [
+  "2019-01-02",
+  "2026-10-15"
+ ],
+ "universe_n": 3335,
+ "results": {
+  "moon_full_pm2": {
+   "window_days": 322,
+   "full": {
+    "diff_bp": 10.26,
+    "t_nw": 1.29,
+    "n_win": 322,
+    "win_mean_bp": 13.88,
+    "rest_mean_bp": 3.62
+   },
+   "front": {
+    "diff_bp": 15.48,
+    "t_nw": 1.78,
+    "n_win": 165,
+    "win_mean_bp": 19.65,
+    "rest_mean_bp": 4.17
+   },
+   "recent": {
+    "diff_bp": 4.36,
+    "t_nw": 0.27,
+    "n_win": 81,
+    "win_mean_bp": 11.0,
+    "rest_mean_bp": 6.64
+   },
+   "by_year": {
+    "2019": 5.2,
+    "2020": 27.7,
+    "2021": 1.2,
+    "2022": 27.5,
+    "2023": 20.9,
+    "2024": -43.8,
+    "2025": 30.5,
+    "2026": 11.5
+   },
+   "perm": {
+    "p2": 0.2348,
+    "pct": 0.89,
+    "pl_mean_bp": -0.38,
+    "pl_sd_bp": 8.68
+   }
+  },
+  "moon_new_pm2": {
+   "window_days": 307,
+   "full": {
+    "diff_bp": -2.96,
+    "t_nw": -0.35,
+    "n_win": 307,
+    "win_mean_bp": 2.9,
+    "rest_mean_bp": 5.85
+   },
+   "front": {
+    "diff_bp": 4.74,
+    "t_nw": 0.41,
+    "n_win": 156,
+    "win_mean_bp": 10.78,
+    "rest_mean_bp": 6.04
+   },
+   "recent": {
+    "diff_bp": -20.27,
+    "t_nw": -1.34,
+    "n_win": 78,
+    "win_mean_bp": -9.65,
+    "rest_mean_bp": 10.63
+   },
+   "by_year": {
+    "2019": -18.4,
+    "2020": -4.8,
+    "2021": 26.4,
+    "2022": 16.7,
+    "2023": -4.5,
+    "2024": -0.6,
+    "2025": -13.1,
+    "2026": -30.2
+   },
+   "perm": {
+    "p2": 0.7393,
+    "pct": 0.396,
+    "pl_mean_bp": -0.62,
+    "pl_sd_bp": 8.57
+   }
+  },
+  "lunar_1": {
+   "window_days": 98,
+   "full": {
+    "diff_bp": -7.35,
+    "t_nw": -0.47,
+    "n_win": 97,
+    "win_mean_bp": -1.6,
+    "rest_mean_bp": 5.75
+   },
+   "front": {
+    "diff_bp": -12.73,
+    "t_nw": -0.47,
+    "n_win": 50,
+    "win_mean_bp": -5.28,
+    "rest_mean_bp": 7.45
+   },
+   "by_year": {
+    "2019": null,
+    "2020": null,
+    "2021": null,
+    "2022": null,
+    "2023": null,
+    "2024": null,
+    "2025": null,
+    "2026": null
+   },
+   "perm": {
+    "p2": 0.6583,
+    "pct": 0.194,
+    "pl_mean_bp": 6.11,
+    "pl_sd_bp": 16.09
+   }
+  },
+  "lunar_15": {
+   "window_days": 97,
+   "full": {
+    "diff_bp": 15.48,
+    "t_nw": 1.39,
+    "n_win": 96,
+    "win_mean_bp": 20.06,
+    "rest_mean_bp": 4.58
+   },
+   "front": {
+    "diff_bp": 21.29,
+    "t_nw": 1.85,
+    "n_win": 49,
+    "win_mean_bp": 27.01,
+    "rest_mean_bp": 5.72
+   },
+   "by_year": {
+    "2019": null,
+    "2020": null,
+    "2021": null,
+    "2022": null,
+    "2023": null,
+    "2024": null,
+    "2025": null,
+    "2026": null
+   },
+   "perm": {
+    "p2": 0.3866,
+    "pct": 0.707,
+    "pl_mean_bp": 6.17,
+    "pl_sd_bp": 16.47
+   }
+  },
+  "term5": {
+   "window_days": 936,
+   "full": {
+    "diff_bp": -1.28,
+    "t_nw": -0.2,
+    "n_win": 935,
+    "win_mean_bp": 4.73,
+    "rest_mean_bp": 6.01
+   },
+   "front": {
+    "diff_bp": -14.76,
+    "t_nw": -1.68,
+    "n_win": 482,
+    "win_mean_bp": -0.63,
+    "rest_mean_bp": 14.12
+   },
+   "recent": {
+    "diff_bp": 15.68,
+    "t_nw": 1.42,
+    "n_win": 240,
+    "win_mean_bp": 15.29,
+    "rest_mean_bp": -0.39
+   },
+   "by_year": {
+    "2019": 4.4,
+    "2020": -23.3,
+    "2021": -7.4,
+    "2022": -32.9,
+    "2023": 3.6,
+    "2024": 17.8,
+    "2025": 19.6,
+    "2026": 11.0
+   },
+   "perm": {
+    "p2": 0.8591,
+    "pct": 0.317,
+    "pl_mean_bp": 1.85,
+    "pl_sd_bp": 6.57
+   }
+  },
+  "tom": {
+   "window_days": 373,
+   "full": {
+    "diff_bp": 22.02,
+    "t_nw": 2.36,
+    "n_win": 373,
+    "win_mean_bp": 23.04,
+    "rest_mean_bp": 1.02
+   },
+   "front": {
+    "diff_bp": 34.58,
+    "t_nw": 2.59,
+    "n_win": 189,
+    "win_mean_bp": 34.65,
+    "rest_mean_bp": 0.07
+   },
+   "recent": {
+    "diff_bp": 6.44,
+    "t_nw": 0.43,
+    "n_win": 97,
+    "win_mean_bp": 12.52,
+    "rest_mean_bp": 6.08
+   },
+   "by_year": {
+    "2019": 21.9,
+    "2020": 38.0,
+    "2021": 24.3,
+    "2022": 53.9,
+    "2023": 33.4,
+    "2024": -8.0,
+    "2025": 1.2,
+    "2026": 10.7
+   },
+   "perm": {
+    "p2": 0.011,
+    "pct": 0.991,
+    "pl_mean_bp": 2.59,
+    "pl_sd_bp": 8.38
+   }
+  },
+  "tom_end": {
+   "window_days": 94,
+   "full": {
+    "diff_bp": 15.02,
+    "t_nw": 0.78,
+    "n_win": 94,
+    "win_mean_bp": 19.64,
+    "rest_mean_bp": 4.62
+   },
+   "front": {
+    "diff_bp": -2.49,
+    "t_nw": -0.1,
+    "n_win": 48,
+    "win_mean_bp": 4.43,
+    "rest_mean_bp": 6.92
+   },
+   "by_year": {
+    "2019": null,
+    "2020": null,
+    "2021": null,
+    "2022": null,
+    "2023": null,
+    "2024": null,
+    "2025": null,
+    "2026": null
+   },
+   "perm": {
+    "p2": 0.4146,
+    "pct": 0.673,
+    "pl_mean_bp": 7.44,
+    "pl_sd_bp": 16.2
+   }
+  },
+  "tom_start": {
+   "window_days": 282,
+   "full": {
+    "diff_bp": 22.74,
+    "t_nw": 2.18,
+    "n_win": 281,
+    "win_mean_bp": 24.73,
+    "rest_mean_bp": 1.98
+   },
+   "front": {
+    "diff_bp": 45.63,
+    "t_nw": 3.54,
+    "n_win": 143,
+    "win_mean_bp": 45.71,
+    "rest_mean_bp": 0.08
+   },
+   "recent": {
+    "diff_bp": 17.77,
+    "t_nw": 1.19,
+    "n_win": 72,
+    "win_mean_bp": 22.5,
+    "rest_mean_bp": 4.73
+   },
+   "by_year": {
+    "2019": 44.3,
+    "2020": 65.7,
+    "2021": 19.4,
+    "2022": 53.3,
+    "2023": 20.6,
+    "2024": -55.5,
+    "2025": 15.6,
+    "2026": 19.5
+   },
+   "perm": {
+    "p2": 0.02,
+    "pct": 0.983,
+    "pl_mean_bp": 4.18,
+    "pl_sd_bp": 9.09
+   }
+  },
+  "lunar_both": {
+   "window_days": 194,
+   "full": {
+    "diff_bp": 4.24,
+    "t_nw": 0.39,
+    "n_win": 193,
+    "win_mean_bp": 9.18,
+    "rest_mean_bp": 4.94
+   },
+   "front": {
+    "diff_bp": 4.35,
+    "t_nw": 0.29,
+    "n_win": 99,
+    "win_mean_bp": 10.7,
+    "rest_mean_bp": 6.36
+   },
+   "recent": {
+    "diff_bp": -10.79,
+    "t_nw": -0.64,
+    "n_win": 50,
+    "win_mean_bp": -2.31,
+    "rest_mean_bp": 8.48
+   },
+   "by_year": {
+    "2019": null,
+    "2020": null,
+    "2021": null,
+    "2022": null,
+    "2023": null,
+    "2024": null,
+    "2025": null,
+    "2026": null
+   },
+   "perm": {
+    "p2": 0.7672,
+    "pct": 0.399,
+    "pl_mean_bp": 6.84,
+    "pl_sd_bp": 11.4
+   }
+  },
+  "weekday_0": {
+   "window_days": 370,
+   "full": {
+    "diff_bp": 14.45,
+    "t_nw": 1.36,
+    "n_win": 370,
+    "win_mean_bp": 16.99,
+    "rest_mean_bp": 2.54
+   },
+   "front": {
+    "diff_bp": 20.26,
+    "t_nw": 1.36,
+    "n_win": 190,
+    "win_mean_bp": 23.1,
+    "rest_mean_bp": 2.83
+   },
+   "recent": {
+    "diff_bp": 17.47,
+    "t_nw": 1.04,
+    "n_win": 95,
+    "win_mean_bp": 21.41,
+    "rest_mean_bp": 3.95
+   },
+   "by_year": {
+    "2019": 24.9,
+    "2020": 23.7,
+    "2021": 25.0,
+    "2022": 6.6,
+    "2023": 20.9,
+    "2024": -20.5,
+    "2025": 28.4,
+    "2026": 3.1
+   },
+   "perm": {
+    "p2": 0.0699,
+    "pct": 0.96,
+    "pl_mean_bp": 0.39,
+    "pl_sd_bp": 7.91
+   }
+  },
+  "weekday_1": {
+   "window_days": 381,
+   "full": {
+    "diff_bp": 7.82,
+    "t_nw": 1.09,
+    "n_win": 381,
+    "win_mean_bp": 11.61,
+    "rest_mean_bp": 3.79
+   },
+   "front": {
+    "diff_bp": 6.69,
+    "t_nw": 0.61,
+    "n_win": 195,
+    "win_mean_bp": 12.14,
+    "rest_mean_bp": 5.46
+   },
+   "recent": {
+    "diff_bp": 9.61,
+    "t_nw": 0.93,
+    "n_win": 98,
+    "win_mean_bp": 15.03,
+    "rest_mean_bp": 5.43
+   },
+   "by_year": {
+    "2019": 20.9,
+    "2020": 26.2,
+    "2021": -15.3,
+    "2022": -5.9,
+    "2023": -1.8,
+    "2024": 9.3,
+    "2025": 9.3,
+    "2026": 22.5
+   },
+   "perm": {
+    "p2": 0.3087,
+    "pct": 0.85,
+    "pl_mean_bp": -0.16,
+    "pl_sd_bp": 7.69
+   }
+  },
+  "weekday_2": {
+   "window_days": 382,
+   "full": {
+    "diff_bp": -1.9,
+    "t_nw": -0.27,
+    "n_win": 381,
+    "win_mean_bp": 3.86,
+    "rest_mean_bp": 5.76
+   },
+   "front": {
+    "diff_bp": -0.35,
+    "t_nw": -0.04,
+    "n_win": 196,
+    "win_mean_bp": 6.52,
+    "rest_mean_bp": 6.87
+   },
+   "recent": {
+    "diff_bp": 16.56,
+    "t_nw": 1.38,
+    "n_win": 99,
+    "win_mean_bp": 20.55,
+    "rest_mean_bp": 3.99
+   },
+   "by_year": {
+    "2019": -4.8,
+    "2020": -16.9,
+    "2021": 2.1,
+    "2022": 18.5,
+    "2023": -9.5,
+    "2024": -32.0,
+    "2025": 9.7,
+    "2026": 23.4
+   },
+   "perm": {
+    "p2": 0.7912,
+    "pct": 0.411,
+    "pl_mean_bp": -0.2,
+    "pl_sd_bp": 7.31
+   }
+  },
+  "weekday_3": {
+   "window_days": 383,
+   "full": {
+    "diff_bp": -10.38,
+    "t_nw": -1.34,
+    "n_win": 383,
+    "win_mean_bp": -2.9,
+    "rest_mean_bp": 7.48
+   },
+   "front": {
+    "diff_bp": -16.55,
+    "t_nw": -1.82,
+    "n_win": 198,
+    "win_mean_bp": -6.38,
+    "rest_mean_bp": 10.17
+   },
+   "recent": {
+    "diff_bp": -22.08,
+    "t_nw": -1.74,
+    "n_win": 99,
+    "win_mean_bp": -10.21,
+    "rest_mean_bp": 11.87
+   },
+   "by_year": {
+    "2019": -38.6,
+    "2020": -8.8,
+    "2021": -4.6,
+    "2022": -14.3,
+    "2023": -8.3,
+    "2024": 44.3,
+    "2025": -14.2,
+    "2026": -44.5
+   },
+   "perm": {
+    "p2": 0.1768,
+    "pct": 0.078,
+    "pl_mean_bp": 0.01,
+    "pl_sd_bp": 7.72
+   }
+  },
+  "weekday_4": {
+   "window_days": 370,
+   "full": {
+    "diff_bp": -9.85,
+    "t_nw": -1.61,
+    "n_win": 370,
+    "win_mean_bp": -2.55,
+    "rest_mean_bp": 7.31
+   },
+   "front": {
+    "diff_bp": -9.58,
+    "t_nw": -1.1,
+    "n_win": 192,
+    "win_mean_bp": -0.89,
+    "rest_mean_bp": 8.69
+   },
+   "recent": {
+    "diff_bp": -21.78,
+    "t_nw": -1.84,
+    "n_win": 94,
+    "win_mean_bp": -10.19,
+    "rest_mean_bp": 11.59
+   },
+   "by_year": {
+    "2019": -3.4,
+    "2020": -24.4,
+    "2021": -6.1,
+    "2022": -4.5,
+    "2023": -1.1,
+    "2024": -0.8,
+    "2025": -33.2,
+    "2026": -4.2
+   },
+   "perm": {
+    "p2": 0.2258,
+    "pct": 0.108,
+    "pl_mean_bp": -0.04,
+    "pl_sd_bp": 7.74
+   }
+  }
+ },
+ "term_detail": {
+  "小寒": {
+   "n": 8,
+   "mean_bp": -4.2,
+   "med_bp": -16.7,
+   "win%": 38.0
+  },
+  "大寒": {
+   "n": 8,
+   "mean_bp": -42.5,
+   "med_bp": -10.1,
+   "win%": 38.0
+  },
+  "立春": {
+   "n": 8,
+   "mean_bp": 55.0,
+   "med_bp": 50.5,
+   "win%": 88.0
+  },
+  "雨水": {
+   "n": 8,
+   "mean_bp": 71.3,
+   "med_bp": 47.2,
+   "win%": 88.0
+  },
+  "惊蛰": {
+   "n": 8,
+   "mean_bp": 5.0,
+   "med_bp": 12.8,
+   "win%": 50.0
+  },
+  "春分": {
+   "n": 8,
+   "mean_bp": -13.4,
+   "med_bp": -10.0,
+   "win%": 50.0
+  },
+  "清明": {
+   "n": 8,
+   "mean_bp": -17.8,
+   "med_bp": -18.4,
+   "win%": 25.0
+  },
+  "谷雨": {
+   "n": 8,
+   "mean_bp": -74.5,
+   "med_bp": -26.3,
+   "win%": 25.0
+  },
+  "立夏": {
+   "n": 8,
+   "mean_bp": 25.8,
+   "med_bp": 39.2,
+   "win%": 75.0
+  },
+  "小满": {
+   "n": 8,
+   "mean_bp": -20.0,
+   "med_bp": -23.2,
+   "win%": 38.0
+  },
+  "芒种": {
+   "n": 8,
+   "mean_bp": -7.4,
+   "med_bp": -3.7,
+   "win%": 50.0
+  },
+  "夏至": {
+   "n": 8,
+   "mean_bp": 2.1,
+   "med_bp": 11.0,
+   "win%": 62.0
+  },
+  "小暑": {
+   "n": 8,
+   "mean_bp": 8.7,
+   "med_bp": 6.3,
+   "win%": 75.0
+  },
+  "大暑": {
+   "n": 8,
+   "mean_bp": -3.0,
+   "med_bp": 18.5,
+   "win%": 62.0
+  },
+  "立秋": {
+   "n": 8,
+   "mean_bp": 11.3,
+   "med_bp": 21.2,
+   "win%": 62.0
+  },
+  "处暑": {
+   "n": 8,
+   "mean_bp": 3.4,
+   "med_bp": -5.5,
+   "win%": 50.0
+  },
+  "白露": {
+   "n": 8,
+   "mean_bp": -7.8,
+   "med_bp": -19.7,
+   "win%": 38.0
+  },
+  "秋分": {
+   "n": 8,
+   "mean_bp": -31.3,
+   "med_bp": -72.1,
+   "win%": 12.0
+  },
+  "寒露": {
+   "n": 8,
+   "mean_bp": 14.5,
+   "med_bp": 13.9,
+   "win%": 62.0
+  },
+  "霜降": {
+   "n": 7,
+   "mean_bp": 7.4,
+   "med_bp": -13.1,
+   "win%": 43.0
+  },
+  "立冬": {
+   "n": 7,
+   "mean_bp": 21.4,
+   "med_bp": 27.7,
+   "win%": 86.0
+  },
+  "小雪": {
+   "n": 7,
+   "mean_bp": -5.4,
+   "med_bp": -20.9,
+   "win%": 29.0
+  },
+  "大雪": {
+   "n": 7,
+   "mean_bp": -1.7,
+   "med_bp": -12.1,
+   "win%": 43.0
+  },
+  "冬至": {
+   "n": 7,
+   "mean_bp": -9.9,
+   "med_bp": -10.0,
+   "win%": 29.0
+  }
+ },
+ "weekday_detail": {
+  "Mon": {
+   "mean_bp": 16.99
+  },
+  "Tue": {
+   "mean_bp": 11.61
+  },
+  "Wed": {
+   "mean_bp": 3.86
+  },
+  "Thu": {
+   "mean_bp": -2.9
+  },
+  "Fri": {
+   "mean_bp": -2.55
+  }
+ },
+ "survivors": []
+}

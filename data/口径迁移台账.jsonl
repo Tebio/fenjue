@@ -1,0 +1,93 @@
+{"_meta": {"date": "2026-10-16", "by": "t_72f416d8", "source": "costs.py TAX-01", "converted": 65, "pending": 14, "false_positive": 13, "ts": "2026-10-16T10:54:40+08:00"}}
+{"file": "engine/allocation_sim.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/allregime_allx_study.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/auction_confirm_backtest.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/bank_newhigh_study.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/banlu_backtest.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/candle_research.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/cross_matrix.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/deep_low_shadow_recheck.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/delist_bias_study.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/dividend_anchor_oos.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/dividend_core_satellite.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/dividend_sim.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/dividend_sim_unadj.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/downtrend_raid.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/dsr_recount.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/dual_cannon_study.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT (+成本压力tuple)", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/exec_timing_m60.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/exit_rule_grid.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/explain_card.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/factor_census.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/frontrun_intersection.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/fundamental_commonality.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/good_regime_playbook.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/hold_dynamic.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/holding_research.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/hot_regime_scan.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/intraday_panic_grid.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/lhb_follow_study.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/mainline_dynamic.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/minute_entry_timing.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/momentum_pead.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/monday_combo.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/news_event_study.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/nshape_study.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/pick_ranker.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/psy_laws.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/psy_laws2.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/qpack2.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/qpack3.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/regime_full_study.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/research_queue_20260919.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/s10_retest.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/s3_combo.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/shadow_rebuild.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/sim_audit.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/sim_play.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/sim_retest_t1.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/sim_tournament.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/strategy_zoo.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/style_switch.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/triples_exhaustive.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/winloss_autopsy.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/winner_anatomy.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/y2026_check.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/zhaban_backtest.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/zhaban_features.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/zhaban_m60_fill.py", "action": "converted", "old": "FEE = 0.0015", "new": "FEE = FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/entryexit_matrix.py", "action": "converted", "old": "COST = 0.15 (pct)", "new": "costs 常量", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/r5_experiments.py", "action": "converted", "old": "FEE = 0.15 (pct)", "new": "costs 常量", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/seat_gene.py", "action": "converted", "old": "NET_FEE = 0.15 (pct)", "new": "costs 常量", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/pead_pool_sim.py", "action": "converted", "old": "FEE_RT multi-assign", "new": "costs 常量", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/hac_crosscheck.py", "action": "converted", "old": "FEE multi-assign", "new": "costs 常量", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/seat_gene_gates.py", "action": "converted", "old": "fee default param", "new": "costs 常量", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/pead_s4_t20.py", "action": "converted", "old": "inline - 0.0015", "new": "FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/broker_reconcile.py", "action": "converted", "old": "assumed_rate/default=0.0015 x3", "new": "FLAT_RT", "diff_pp": 0.0, "date": "2026-10-16", "note": "字面量→同值常量，对拍逐位一致"}
+{"file": "engine/law_pipeline.py", "action": "pending_engine", "old": "FEES=[0.0015,0.003,0.005] + fee=0.0015 默认参数×3", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "注册证伪引擎（只读状态），111 条 REGISTRY 全走它；建议下一波专门对拍"}
+{"file": "engine/fjcore.py", "action": "pending_engine", "old": "FEE = 0.0015", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "门面层，消费方多；随引擎层一起迁"}
+{"file": "engine/similarity_engine.py", "action": "pending_engine", "old": "FEE = 0.0015", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "被生产 similarity_daily 复用；随引擎层一起迁"}
+{"file": "engine/claims_shadow.py", "action": "pending_prod", "old": "FEE = 0.0015", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "影子账本生产（banlu_daily 等 6 处 import）"}
+{"file": "engine/claims_audit.py", "action": "pending_prod", "old": "FEE = 0.0015", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "周审计 cron"}
+{"file": "engine/zhaban_daily.py", "action": "pending_prod", "old": "FEE = 0.0015", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "炸板日更生产"}
+{"file": "engine/similarity_daily.py", "action": "pending_prod", "old": "FEE = 0.0015", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "相似度日更生产"}
+{"file": "engine/watch_pool.py", "action": "pending_prod", "old": "- 0.15（行内）", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "watch_pool 生产"}
+{"file": "engine/dashboard_build.py", "action": "pending_prod", "old": "页脚文案 0.15%", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "面板文案，无数值计算"}
+{"file": "/opt/data/scripts/reversal_daily.py", "action": "pending_prod", "old": "0.15 口径", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "生产扫描器"}
+{"file": "/opt/data/scripts/stock_radar.py", "action": "pending_prod", "old": "0.15 口径", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "生产雷达"}
+{"file": "/opt/data/scripts/stock_tailscan_1430.py", "action": "pending_prod", "old": "0.15 口径", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "生产尾盘扫描"}
+{"file": "/opt/data/scripts/reseal_settle.py", "action": "pending_prod", "old": "0.15 口径", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "回封结算生产"}
+{"file": "engine/feedback.py", "action": "pending_frozen", "old": "(exitp-entry)/entry*100 - 0.15（行内）", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "V3 反馈引擎，冻结线；解冻时迁"}
+{"file": "engine/scoring/scorer.py", "action": "false_positive", "old": "0.15 = expectation 权重", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "非费用，冻结线"}
+{"file": "engine/execution/planner.py", "action": "false_positive", "old": "0.15 = 仓位比例", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "非费用，冻结线"}
+{"file": "engine/macro_industry.py", "action": "false_positive", "old": "±0.15 = 产业映射调整", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "非费用，冻结线"}
+{"file": "engine/env_state.py", "action": "false_positive", "old": "0.15 = regime 转移概率", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "非费用"}
+{"file": "engine/unadj_kcache_pull.py", "action": "false_positive", "old": "SLEEP = 0.15（秒）", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "非费用"}
+{"file": "engine/downtrend_raid3.py", "action": "false_positive", "old": "-0.15 = 深度分档边界", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "非费用"}
+{"file": "engine/downtrend_raid7.py", "action": "false_positive", "old": "-0.15 = 深度分档边界", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "非费用"}
+{"file": "engine/holding_research.py:133", "action": "false_positive", "old": "-0.15 = 深跌阈值", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "非费用（FEE 已迁）"}
+{"file": "engine/winner_anatomy.py:126", "action": "false_positive", "old": ">-0.15 = 距高分档", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "非费用（FEE 已迁）"}
+{"file": "engine/hithink_sectors.py", "action": "false_positive", "old": "注释提及 0.0015", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "纯文本"}
+{"file": "engine/pead_s4.py", "action": "false_positive", "old": "docstring 提及 0.15%", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "纯文本"}
+{"file": "engine/smallcap_research.py", "action": "false_positive", "old": "docstring 提及 0.15%", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "纯文本"}
+{"file": "engine/broker_reconcile.py:325", "action": "false_positive", "old": "合成 CSV 内 0.15 元过户费", "new": null, "diff_pp": null, "date": "2026-10-16", "note": "测试数据非口径"}

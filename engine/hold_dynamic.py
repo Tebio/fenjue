@@ -20,7 +20,8 @@ ROOT = "/opt/data/fenjue"
 D = ROOT + "/data"
 FILL = "--fill" in sys.argv
 START = "2024-08-26" if FILL else "2019-01-03"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 CAPITAL = 100000.0
 
 sys.path.insert(0, ROOT + "/engine")

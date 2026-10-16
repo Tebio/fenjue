@@ -1,0 +1,86 @@
+{
+ "date": "2022-04-26",
+ "source": "iwencai_per_stock_auction",
+ "n": 5,
+ "items": [
+  {
+   "code": "002529",
+   "name": "海源复材",
+   "date": "2022-04-26",
+   "found": true,
+   "auction_price": 10.73,
+   "auction_volume": 52600.0,
+   "auction_amount": 564398.0,
+   "auction_pct": -0.0009299999999999999,
+   "unmatched_volume": -33300.0,
+   "unmatched_amount": null,
+   "abnormal_type": null,
+   "auction_rating": null
+  },
+  {
+   "code": "603138",
+   "name": "海量数据",
+   "date": "2022-04-26",
+   "found": true,
+   "auction_price": 11.67,
+   "auction_volume": null,
+   "auction_amount": 276579.0,
+   "auction_pct": -0.00256,
+   "unmatched_volume": 400.0,
+   "unmatched_amount": null,
+   "abnormal_type": null,
+   "auction_rating": null
+  },
+  {
+   "code": "603026",
+   "name": "石大胜华",
+   "date": "2022-04-26",
+   "found": true,
+   "auction_price": 90.48,
+   "auction_volume": 37100.0,
+   "auction_amount": 3356808.0,
+   "auction_pct": 0.00133,
+   "unmatched_volume": -35900.0,
+   "unmatched_amount": null,
+   "abnormal_type": null,
+   "auction_rating": null
+  },
+  {
+   "code": "002309",
+   "name": "中利集团",
+   "date": "2022-04-26",
+   "found": true,
+   "auction_price": 3.98,
+   "auction_volume": 185300.0,
+   "auction_amount": 737494.0,
+   "auction_pct": -0.01241,
+   "unmatched_volume": -200100.0,
+   "unmatched_amount": null,
+   "abnormal_type": null,
+   "auction_rating": null
+  },
+  {
+   "code": "002829",
+   "name": "星网宇达",
+   "date": "2022-04-26",
+   "found": true,
+   "auction_price": 22.7,
+   "auction_volume": 13200.0,
+   "auction_amount": 299640.0,
+   "auction_pct": 0.01114,
+   "unmatched_volume": -3000.0,
+   "unmatched_amount": null,
+   "abnormal_type": "涨停试盘",
+   "auction_rating": "-"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:58:56+08:00",
+  "data_snapshot": "2022-04-26",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

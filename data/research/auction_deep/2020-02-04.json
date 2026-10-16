@@ -1,0 +1,58 @@
+{
+ "date": "2020-02-04",
+ "source": "iwencai_per_stock_auction",
+ "n": 3,
+ "items": [
+  {
+   "code": "603012",
+   "name": "创力集团",
+   "date": "2020-02-04",
+   "found": true,
+   "auction_price": 6.58,
+   "auction_volume": 902000.0,
+   "auction_amount": null,
+   "auction_pct": -0.0999,
+   "unmatched_volume": -3368900.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  },
+  {
+   "code": "002205",
+   "name": "国统股份",
+   "date": "2020-02-04",
+   "found": true,
+   "auction_price": 10.71,
+   "auction_volume": 278900.0,
+   "auction_amount": null,
+   "auction_pct": -0.1,
+   "unmatched_volume": -37200.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  },
+  {
+   "code": "002634",
+   "name": "*ST棒杰",
+   "date": "2020-02-04",
+   "found": true,
+   "auction_price": 4.5,
+   "auction_volume": 1802000.0,
+   "auction_amount": null,
+   "auction_pct": -0.1,
+   "unmatched_volume": 774500.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:56:53+08:00",
+  "data_snapshot": "2020-02-04",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

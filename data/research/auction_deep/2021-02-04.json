@@ -1,0 +1,68 @@
+{
+ "date": "2021-02-04",
+ "source": "iwencai_per_stock_auction",
+ "n": 5,
+ "items": [
+  {
+   "code": "600198",
+   "name": "大唐电信",
+   "date": "2021-02-04",
+   "found": true,
+   "auction_price": 4.67,
+   "auction_volume": 18141676.0,
+   "auction_amount": null,
+   "auction_pct": -0.06972,
+   "unmatched_volume": 1121024.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看多"
+  },
+  {
+   "code": "000523",
+   "name": "红棉股份",
+   "date": "2021-02-04",
+   "found": true,
+   "auction_price": 2.02,
+   "auction_volume": 597762.0,
+   "auction_amount": null,
+   "auction_pct": -0.02416,
+   "unmatched_volume": 146238.0,
+   "unmatched_amount": null,
+   "abnormal_type": "急速上涨",
+   "auction_rating": "-"
+  },
+  {
+   "code": "600191",
+   "name": "华资实业",
+   "date": "2021-02-04",
+   "found": true,
+   "auction_price": 3.17,
+   "auction_volume": 230500.0,
+   "auction_amount": null,
+   "auction_pct": -0.09942999999999999,
+   "unmatched_volume": -21457559.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  },
+  {
+   "code": "002776",
+   "date": "2021-02-04",
+   "found": false
+  },
+  {
+   "code": "600695",
+   "date": "2021-02-04",
+   "found": false
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:58:27+08:00",
+  "data_snapshot": "2021-02-04",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

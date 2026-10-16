@@ -11,7 +11,8 @@ import json, glob, os, statistics as st
 
 KC = "/opt/data/fenjue/data/big_kcache"
 HI = "/opt/data/fenjue/data/hithink"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 SIGNAL_DAYS = ["2026-09-11", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17"]
 
 

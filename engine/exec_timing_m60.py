@@ -21,7 +21,8 @@ from pathlib import Path
 ROOT = Path("/opt/data/fenjue")
 KC = ROOT / "data/big_kcache"
 M60 = ROOT / "data/m60_cache"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 OUT = ROOT / "data/exec_timing_m60_20260912.json"
 SPLIT = "2025-06-30"
 SEED = 20260912

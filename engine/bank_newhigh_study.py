@@ -22,7 +22,8 @@ from pathlib import Path
 ROOT = Path("/opt/data/fenjue")
 sys.path.insert(0, "/opt/data/python-libs")
 KC = ROOT / "data/big_kcache"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 HORIZONS = (5, 20, 60)
 CACHE_UNIV = ROOT / "data/bank_universe.json"
 

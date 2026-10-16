@@ -1,0 +1,40 @@
+{
+ "date": "2021-01-29",
+ "source": "iwencai_per_stock_auction",
+ "n": 3,
+ "items": [
+  {
+   "code": "600086",
+   "date": "2021-01-29",
+   "found": false
+  },
+  {
+   "code": "603032",
+   "name": "德新科技",
+   "date": "2021-01-29",
+   "found": true,
+   "auction_price": 7.74,
+   "auction_volume": 713300.0,
+   "auction_amount": null,
+   "auction_pct": -0.1,
+   "unmatched_volume": -1854078.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  },
+  {
+   "code": "600291",
+   "date": "2021-01-29",
+   "found": false
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:57:50+08:00",
+  "data_snapshot": "2021-01-29",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

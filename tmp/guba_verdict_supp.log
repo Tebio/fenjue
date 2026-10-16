@@ -1,0 +1,73 @@
+{
+ "cell": "below60×热20% T+20 (open 口径)",
+ "segments": {
+  "H1": {
+   "n": 18213,
+   "mean_pp": 0.1961,
+   "win": 0.4017,
+   "t_nw": -0.83,
+   "days": 120
+  },
+  "H2": {
+   "n": 26652,
+   "mean_pp": -1.4989,
+   "win": 0.3787,
+   "t_nw": -4.74,
+   "days": 102
+  },
+  "Q1": {
+   "n": 8993,
+   "mean_pp": 0.2304,
+   "win": 0.3994,
+   "t_nw": -0.37,
+   "days": 60
+  },
+  "Q2": {
+   "n": 9220,
+   "mean_pp": 0.1626,
+   "win": 0.4039,
+   "t_nw": -0.9,
+   "days": 60
+  },
+  "Q3": {
+   "n": 13240,
+   "mean_pp": -1.6642,
+   "win": 0.3999,
+   "t_nw": -5.89,
+   "days": 60
+  },
+  "Q4": {
+   "n": 13412,
+   "mean_pp": -1.3356,
+   "win": 0.3577,
+   "t_nw": -2.29,
+   "days": 42
+  }
+ },
+ "all_segments_same_sign": false,
+ "placebo_within_day_rank_shuffle": {
+  "n_perm": 1000,
+  "seed": 20261016,
+  "obs_mean_pp": -0.8108,
+  "perm_mean_pp": 0.1406,
+  "perm_p_left(负尾)": 0.0,
+  "perm_p_two_sided": 0.0
+ },
+ "non_overlapping_T20": {
+  "n": 2189,
+  "mean_pp": -1.5928,
+  "win": 0.37,
+  "t_nw": null,
+  "days": 12
+ },
+ "deep_low_overlap": {
+  "note": "深档 v2 事件清单未找到专用产物时留空"
+ },
+ "_meta": {
+  "generated_at": "2026-10-16T04:50:16+08:00",
+  "data_snapshot": "2026-10-15",
+  "owner": "engine.guba_sentiment_verdict_supp",
+  "elapsed_s": 65.8
+ }
+}
+updated /opt/data/fenjue/data/guba_sentiment_verdict_20261016.json

@@ -1,0 +1,30 @@
+{
+ "date": "2021-07-27",
+ "source": "iwencai_per_stock_auction",
+ "n": 1,
+ "items": [
+  {
+   "code": "002607",
+   "name": "中公教育",
+   "date": "2021-07-27",
+   "found": true,
+   "auction_price": 13.06,
+   "auction_volume": 871500.0,
+   "auction_amount": 11381790.0,
+   "auction_pct": -0.02972,
+   "unmatched_volume": 53300.0,
+   "unmatched_amount": null,
+   "abnormal_type": "竞价抢筹",
+   "auction_rating": "混战"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:58:40+08:00",
+  "data_snapshot": "2021-07-27",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

@@ -1,0 +1,30 @@
+{
+ "date": "2021-01-06",
+ "source": "iwencai_per_stock_auction",
+ "n": 1,
+ "items": [
+  {
+   "code": "000007",
+   "name": "全新好",
+   "date": "2021-01-06",
+   "found": true,
+   "auction_price": 5.3,
+   "auction_volume": 712000.0,
+   "auction_amount": null,
+   "auction_pct": -0.06028000000000001,
+   "unmatched_volume": -338300.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "偏空"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:57:25+08:00",
+  "data_snapshot": "2021-01-06",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

@@ -1,0 +1,30 @@
+{
+ "date": "2024-02-01",
+ "source": "iwencai_per_stock_auction",
+ "n": 1,
+ "items": [
+  {
+   "code": "603363",
+   "name": "傲农生物",
+   "date": "2024-02-01",
+   "found": true,
+   "auction_price": 4.02,
+   "auction_volume": 71700.0,
+   "auction_amount": 288234.0,
+   "auction_pct": -0.10067,
+   "unmatched_volume": -17104427.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T09:01:44+08:00",
+  "data_snapshot": "2024-02-01",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

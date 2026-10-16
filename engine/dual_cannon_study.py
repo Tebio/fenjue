@@ -35,7 +35,8 @@ ROOT = Path("/opt/data/fenjue")
 KC = ROOT / "data/big_kcache"
 CAPH = ROOT / "data/cap_hist"
 TIMELINE = ROOT / "data/regime_timeline_hcap.json"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 HORIZONS = (1, 2, 3, 5, 10, 20)
 HMAX = max(HORIZONS)
 SMALL_N = 300
@@ -394,7 +395,7 @@ def main():
         # 成本压力
         e5 = [x[2] for x in a["ev5"] if x[2] is not None]
         r["成本压力"] = {f"{f*100:.2f}%": stat([x + FEE - f for x in e5])
-                       for f in (0.0015, 0.003, 0.005)}
+                       for f in (FLAT_RT, 0.003, 0.005)}
         # 位置匹配（T+30，与对照口径一致）
         if len(a["sig30"]) >= 30 and len(a["ctl30"]) >= 30:
             r["位置匹配边际pp_T30"] = round(100 * (st.mean(a["sig30"]) - st.mean(a["ctl30"])), 2)

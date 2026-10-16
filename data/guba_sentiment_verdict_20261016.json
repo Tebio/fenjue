@@ -1,0 +1,1114 @@
+{
+ "window": [
+  "2025-10-16",
+  "2026-10-15"
+ ],
+ "n_events": 763163,
+ "n_days": 241,
+ "history_depth_limit": "东财 getHisList yearType=5 上限 366 历日（实测 yearType=3/4/5/6/10 全 366，yearType=1 仅 182，无更长档）",
+ "prereg_hypotheses": 23,
+ "gate": "|t_NW|>=3.0 (Harvey, 23 正式假设) + 两段同号 + 日内 rank 洗牌置换 p<=0.05",
+ "harvey_survivors_open_caliber": [
+  {
+   "bucket": "below60×热20%",
+   "T": 20,
+   "open": {
+    "n": 44865,
+    "mean_pp": -0.8108,
+    "win": 0.388,
+    "t_nw": -3.14,
+    "days": 222
+   },
+   "direction": "负向(反向)"
+  }
+ ],
+ "rows": [
+  {
+   "bucket": "D9热端",
+   "T": 5,
+   "open": {
+    "n": 74518,
+    "mean_pp": -0.3598,
+    "win": 0.4152,
+    "t_nw": -1.09,
+    "days": 237
+   },
+   "close": {
+    "n": 75171,
+    "mean_pp": -0.4042,
+    "win": 0.4116,
+    "t_nw": -1.15,
+    "days": 237
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "D9热端",
+   "T": 10,
+   "open": {
+    "n": 72954,
+    "mean_pp": -0.7565,
+    "win": 0.3905,
+    "t_nw": -1.37,
+    "days": 232
+   },
+   "close": {
+    "n": 73591,
+    "mean_pp": -0.7931,
+    "win": 0.388,
+    "t_nw": -1.42,
+    "days": 232
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "top100",
+   "T": 5,
+   "open": {
+    "n": 19717,
+    "mean_pp": -0.6601,
+    "win": 0.4064,
+    "t_nw": -1.33,
+    "days": 237
+   },
+   "close": {
+    "n": 20036,
+    "mean_pp": 0.0206,
+    "win": 0.4248,
+    "t_nw": 0.02,
+    "days": 237
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "top100",
+   "T": 10,
+   "open": {
+    "n": 19307,
+    "mean_pp": -1.2778,
+    "win": 0.3732,
+    "t_nw": -1.71,
+    "days": 232
+   },
+   "close": {
+    "n": 19619,
+    "mean_pp": -0.5847,
+    "win": 0.3897,
+    "t_nw": -0.78,
+    "days": 232
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "top100",
+   "T": 20,
+   "open": {
+    "n": 18452,
+    "mean_pp": -2.2819,
+    "win": 0.335,
+    "t_nw": -2.15,
+    "days": 222
+   },
+   "close": {
+    "n": 18753,
+    "mean_pp": -1.5774,
+    "win": 0.349,
+    "t_nw": -1.49,
+    "days": 222
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "D0冷端",
+   "T": 5,
+   "open": {
+    "n": 75146,
+    "mean_pp": 0.1918,
+    "win": 0.4635,
+    "t_nw": 1.29,
+    "days": 237
+   },
+   "close": {
+    "n": 75154,
+    "mean_pp": 0.284,
+    "win": 0.4754,
+    "t_nw": 1.88,
+    "days": 237
+   },
+   "survive_harvey": false,
+   "direction": "正向(动量)"
+  },
+  {
+   "bucket": "D0冷端",
+   "T": 10,
+   "open": {
+    "n": 73555,
+    "mean_pp": 0.4288,
+    "win": 0.4691,
+    "t_nw": 1.82,
+    "days": 232
+   },
+   "close": {
+    "n": 73563,
+    "mean_pp": 0.5218,
+    "win": 0.4779,
+    "t_nw": 2.2,
+    "days": 232
+   },
+   "survive_harvey": false,
+   "direction": "正向(动量)"
+  },
+  {
+   "bucket": "D0冷端",
+   "T": 20,
+   "open": {
+    "n": 70352,
+    "mean_pp": 0.8225,
+    "win": 0.4714,
+    "t_nw": 2.26,
+    "days": 222
+   },
+   "close": {
+    "n": 70355,
+    "mean_pp": 0.9191,
+    "win": 0.4767,
+    "t_nw": 2.53,
+    "days": 222
+   },
+   "survive_harvey": false,
+   "direction": "正向(动量)"
+  },
+  {
+   "bucket": "rank>3000",
+   "T": 10,
+   "open": {
+    "n": 257646,
+    "mean_pp": 0.355,
+    "win": 0.4573,
+    "t_nw": 1.79,
+    "days": 232
+   },
+   "close": {
+    "n": 257672,
+    "mean_pp": 0.4169,
+    "win": 0.4624,
+    "t_nw": 2.11,
+    "days": 232
+   },
+   "survive_harvey": false,
+   "direction": "正向(动量)"
+  },
+  {
+   "bucket": "rank>3000",
+   "T": 20,
+   "open": {
+    "n": 246711,
+    "mean_pp": 0.5999,
+    "win": 0.4506,
+    "t_nw": 1.9,
+    "days": 222
+   },
+   "close": {
+    "n": 246730,
+    "mean_pp": 0.6609,
+    "win": 0.4537,
+    "t_nw": 2.1,
+    "days": 222
+   },
+   "survive_harvey": false,
+   "direction": "正向(动量)"
+  },
+  {
+   "bucket": "below60×热20%",
+   "T": 5,
+   "open": {
+    "n": 48044,
+    "mean_pp": -0.3077,
+    "win": 0.4207,
+    "t_nw": -1.72,
+    "days": 237
+   },
+   "close": {
+    "n": 48199,
+    "mean_pp": -0.3837,
+    "win": 0.4166,
+    "t_nw": -2.08,
+    "days": 237
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "below60×热20%",
+   "T": 10,
+   "open": {
+    "n": 46902,
+    "mean_pp": -0.52,
+    "win": 0.4083,
+    "t_nw": -2.1,
+    "days": 232
+   },
+   "close": {
+    "n": 47051,
+    "mean_pp": -0.5964,
+    "win": 0.4054,
+    "t_nw": -2.35,
+    "days": 232
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "below60×热20%",
+   "T": 20,
+   "open": {
+    "n": 44865,
+    "mean_pp": -0.8108,
+    "win": 0.388,
+    "t_nw": -3.14,
+    "days": 222
+   },
+   "close": {
+    "n": 45013,
+    "mean_pp": -0.8866,
+    "win": 0.3855,
+    "t_nw": -3.45,
+    "days": 222
+   },
+   "survive_harvey": true,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "above60×冷20%",
+   "T": 5,
+   "open": {
+    "n": 38248,
+    "mean_pp": 0.2971,
+    "win": 0.4788,
+    "t_nw": -0.68,
+    "days": 237
+   },
+   "close": {
+    "n": 38250,
+    "mean_pp": 0.371,
+    "win": 0.489,
+    "t_nw": -0.32,
+    "days": 237
+   },
+   "survive_harvey": false,
+   "direction": "正向(动量)"
+  },
+  {
+   "bucket": "above60×冷20%",
+   "T": 10,
+   "open": {
+    "n": 36764,
+    "mean_pp": 0.6247,
+    "win": 0.4849,
+    "t_nw": -0.33,
+    "days": 232
+   },
+   "close": {
+    "n": 36766,
+    "mean_pp": 0.6969,
+    "win": 0.4911,
+    "t_nw": -0.15,
+    "days": 232
+   },
+   "survive_harvey": false,
+   "direction": "正向(动量)"
+  },
+  {
+   "bucket": "above60×冷20%",
+   "T": 20,
+   "open": {
+    "n": 33368,
+    "mean_pp": 0.6761,
+    "win": 0.4589,
+    "t_nw": 0.03,
+    "days": 222
+   },
+   "close": {
+    "n": 33370,
+    "mean_pp": 0.7464,
+    "win": 0.4639,
+    "t_nw": 0.16,
+    "days": 222
+   },
+   "survive_harvey": false,
+   "direction": "正向(动量)"
+  },
+  {
+   "bucket": "5日飙升≥500",
+   "T": 1,
+   "open": {
+    "n": 126391,
+    "mean_pp": -0.0226,
+    "win": 0.4465,
+    "t_nw": -0.75,
+    "days": 241
+   },
+   "close": {
+    "n": 126650,
+    "mean_pp": 0.0916,
+    "win": 0.4513,
+    "t_nw": 3.68,
+    "days": 241
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "5日飙升≥500",
+   "T": 5,
+   "open": {
+    "n": 124237,
+    "mean_pp": 0.041,
+    "win": 0.4372,
+    "t_nw": 1.05,
+    "days": 237
+   },
+   "close": {
+    "n": 124484,
+    "mean_pp": 0.1517,
+    "win": 0.4414,
+    "t_nw": 2.66,
+    "days": 237
+   },
+   "survive_harvey": false,
+   "direction": "正向(动量)"
+  },
+  {
+   "bucket": "5日暴跌≥500",
+   "T": 1,
+   "open": {
+    "n": 164498,
+    "mean_pp": -0.0363,
+    "win": 0.444,
+    "t_nw": -1.25,
+    "days": 241
+   },
+   "close": {
+    "n": 164510,
+    "mean_pp": -0.0163,
+    "win": 0.4463,
+    "t_nw": -0.65,
+    "days": 241
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "5日暴跌≥500",
+   "T": 5,
+   "open": {
+    "n": 161311,
+    "mean_pp": -0.0282,
+    "win": 0.4345,
+    "t_nw": 0.28,
+    "days": 237
+   },
+   "close": {
+    "n": 161323,
+    "mean_pp": -0.0064,
+    "win": 0.438,
+    "t_nw": 0.47,
+    "days": 237
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "vr_Q3×热度_Q3",
+   "T": 5,
+   "open": {
+    "n": 116808,
+    "mean_pp": -0.2438,
+    "win": 0.418,
+    "t_nw": -1.59,
+    "days": 237
+   },
+   "close": {
+    "n": 117176,
+    "mean_pp": -0.3924,
+    "win": 0.4099,
+    "t_nw": -2.49,
+    "days": 237
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "r20_Q3×热度_Q3",
+   "T": 5,
+   "open": {
+    "n": 134512,
+    "mean_pp": -0.1327,
+    "win": 0.4241,
+    "t_nw": -0.7,
+    "days": 237
+   },
+   "close": {
+    "n": 135163,
+    "mean_pp": -0.2206,
+    "win": 0.4178,
+    "t_nw": -1.03,
+    "days": 237
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  },
+  {
+   "bucket": "pct_Q3×热度_Q3",
+   "T": 5,
+   "open": {
+    "n": 126178,
+    "mean_pp": -0.1205,
+    "win": 0.4254,
+    "t_nw": -0.87,
+    "days": 237
+   },
+   "close": {
+    "n": 126435,
+    "mean_pp": -0.0612,
+    "win": 0.4231,
+    "t_nw": -0.56,
+    "days": 237
+   },
+   "survive_harvey": false,
+   "direction": "负向(反向)"
+  }
+ ],
+ "segments_half": {
+  "D9热端|T5": {
+   "H1(前半年)": {
+    "n": 37783,
+    "mean_pp": -0.1572,
+    "win": 0.4138,
+    "t_nw": -0.56,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 36735,
+    "mean_pp": -0.5682,
+    "win": 0.4168,
+    "t_nw": -0.94,
+    "days": 117
+   }
+  },
+  "D9热端|T10": {
+   "H1(前半年)": {
+    "n": 37783,
+    "mean_pp": -0.2962,
+    "win": 0.3926,
+    "t_nw": -0.7,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 35171,
+    "mean_pp": -1.251,
+    "win": 0.3881,
+    "t_nw": -1.2,
+    "days": 112
+   }
+  },
+  "top100|T5": {
+   "H1(前半年)": {
+    "n": 9994,
+    "mean_pp": -0.4886,
+    "win": 0.4011,
+    "t_nw": -0.96,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 9723,
+    "mean_pp": -0.8363,
+    "win": 0.4118,
+    "t_nw": -0.98,
+    "days": 117
+   }
+  },
+  "top100|T10": {
+   "H1(前半年)": {
+    "n": 9994,
+    "mean_pp": -0.9447,
+    "win": 0.3676,
+    "t_nw": -1.35,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 9313,
+    "mean_pp": -1.6352,
+    "win": 0.3793,
+    "t_nw": -1.2,
+    "days": 112
+   }
+  },
+  "top100|T20": {
+   "H1(前半年)": {
+    "n": 9994,
+    "mean_pp": -1.0983,
+    "win": 0.3431,
+    "t_nw": -1.47,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 8458,
+    "mean_pp": -3.6805,
+    "win": 0.3255,
+    "t_nw": -1.77,
+    "days": 102
+   }
+  },
+  "D0冷端|T5": {
+   "H1(前半年)": {
+    "n": 38141,
+    "mean_pp": 0.095,
+    "win": 0.4384,
+    "t_nw": 0.66,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 37005,
+    "mean_pp": 0.2915,
+    "win": 0.4894,
+    "t_nw": 1.12,
+    "days": 117
+   }
+  },
+  "D0冷端|T10": {
+   "H1(前半年)": {
+    "n": 38133,
+    "mean_pp": 0.218,
+    "win": 0.4343,
+    "t_nw": 1.04,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 35422,
+    "mean_pp": 0.6556,
+    "win": 0.5064,
+    "t_nw": 1.52,
+    "days": 112
+   }
+  },
+  "D0冷端|T20": {
+   "H1(前半年)": {
+    "n": 38116,
+    "mean_pp": 0.4076,
+    "win": 0.4282,
+    "t_nw": 1.52,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 32236,
+    "mean_pp": 1.313,
+    "win": 0.5223,
+    "t_nw": 1.85,
+    "days": 102
+   }
+  },
+  "rank>3000|T10": {
+   "H1(前半年)": {
+    "n": 130226,
+    "mean_pp": 0.0788,
+    "win": 0.4193,
+    "t_nw": 0.47,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 127420,
+    "mean_pp": 0.6372,
+    "win": 0.4961,
+    "t_nw": 1.8,
+    "days": 112
+   }
+  },
+  "rank>3000|T20": {
+   "H1(前半年)": {
+    "n": 130195,
+    "mean_pp": 0.0606,
+    "win": 0.4021,
+    "t_nw": 0.21,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 116516,
+    "mean_pp": 1.2026,
+    "win": 0.5048,
+    "t_nw": 2.09,
+    "days": 102
+   }
+  },
+  "below60×热20%|T5": {
+   "H1(前半年)": {
+    "n": 18227,
+    "mean_pp": 0.0524,
+    "win": 0.4272,
+    "t_nw": -0.56,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 29817,
+    "mean_pp": -0.5278,
+    "win": 0.4168,
+    "t_nw": -1.71,
+    "days": 117
+   }
+  },
+  "below60×热20%|T10": {
+   "H1(前半年)": {
+    "n": 18224,
+    "mean_pp": 0.1006,
+    "win": 0.4178,
+    "t_nw": -0.6,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 28678,
+    "mean_pp": -0.9144,
+    "win": 0.4023,
+    "t_nw": -2.28,
+    "days": 112
+   }
+  },
+  "below60×热20%|T20": {
+   "H1(前半年)": {
+    "n": 18213,
+    "mean_pp": 0.1961,
+    "win": 0.4017,
+    "t_nw": -0.83,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 26652,
+    "mean_pp": -1.4989,
+    "win": 0.3787,
+    "t_nw": -4.74,
+    "days": 102
+   }
+  },
+  "above60×冷20%|T5": {
+   "H1(前半年)": {
+    "n": 21803,
+    "mean_pp": 0.097,
+    "win": 0.4489,
+    "t_nw": 0.39,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 16445,
+    "mean_pp": 0.5624,
+    "win": 0.5184,
+    "t_nw": -0.98,
+    "days": 117
+   }
+  },
+  "above60×冷20%|T10": {
+   "H1(前半年)": {
+    "n": 21799,
+    "mean_pp": 0.263,
+    "win": 0.4482,
+    "t_nw": 0.71,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 14965,
+    "mean_pp": 1.1514,
+    "win": 0.5385,
+    "t_nw": -0.65,
+    "days": 112
+   }
+  },
+  "above60×冷20%|T20": {
+   "H1(前半年)": {
+    "n": 21791,
+    "mean_pp": 0.1179,
+    "win": 0.4152,
+    "t_nw": 0.61,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 11577,
+    "mean_pp": 1.7267,
+    "win": 0.5411,
+    "t_nw": -0.24,
+    "days": 102
+   }
+  },
+  "5日飙升≥500|T1": {
+   "H1(前半年)": {
+    "n": 62566,
+    "mean_pp": -0.0329,
+    "win": 0.4388,
+    "t_nw": -1.17,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 63825,
+    "mean_pp": -0.0125,
+    "win": 0.454,
+    "t_nw": -0.2,
+    "days": 121
+   }
+  },
+  "5日飙升≥500|T5": {
+   "H1(前半年)": {
+    "n": 62558,
+    "mean_pp": -0.032,
+    "win": 0.417,
+    "t_nw": 0.08,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 61679,
+    "mean_pp": 0.1151,
+    "win": 0.4578,
+    "t_nw": 1.34,
+    "days": 117
+   }
+  },
+  "5日暴跌≥500|T1": {
+   "H1(前半年)": {
+    "n": 81073,
+    "mean_pp": -0.0431,
+    "win": 0.4349,
+    "t_nw": -0.88,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 83425,
+    "mean_pp": -0.0297,
+    "win": 0.4528,
+    "t_nw": -0.92,
+    "days": 121
+   }
+  },
+  "5日暴跌≥500|T5": {
+   "H1(前半年)": {
+    "n": 81065,
+    "mean_pp": -0.038,
+    "win": 0.4186,
+    "t_nw": 0.65,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 80246,
+    "mean_pp": -0.0182,
+    "win": 0.4507,
+    "t_nw": -0.28,
+    "days": 117
+   }
+  },
+  "vr_Q3×热度_Q3|T5": {
+   "H1(前半年)": {
+    "n": 59845,
+    "mean_pp": -0.1245,
+    "win": 0.4134,
+    "t_nw": -0.82,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 56963,
+    "mean_pp": -0.3692,
+    "win": 0.4229,
+    "t_nw": -1.38,
+    "days": 117
+   }
+  },
+  "r20_Q3×热度_Q3|T5": {
+   "H1(前半年)": {
+    "n": 70582,
+    "mean_pp": 0.1288,
+    "win": 0.4286,
+    "t_nw": 0.69,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 63930,
+    "mean_pp": -0.4215,
+    "win": 0.4192,
+    "t_nw": -1.17,
+    "days": 117
+   }
+  },
+  "pct_Q3×热度_Q3|T5": {
+   "H1(前半年)": {
+    "n": 64916,
+    "mean_pp": -0.0315,
+    "win": 0.4205,
+    "t_nw": -0.28,
+    "days": 120
+   },
+   "H2(后半年)": {
+    "n": 61262,
+    "mean_pp": -0.2147,
+    "win": 0.4306,
+    "t_nw": -0.85,
+    "days": 117
+   }
+  }
+ },
+ "placebo_within_day_rank_shuffle": {
+  "n_perm": 1000,
+  "seed": 20261016,
+  "obs_mean_pp": {
+   "top100_T5": -0.3598,
+   "top100_T10": -0.7565
+  },
+  "perm_p_two_sided": {
+   "top100_T5": 0.0,
+   "top100_T10": 0.0
+  }
+ },
+ "dsr": {
+  "D9热端|T5": {
+   "days": 237,
+   "sr_daily": -0.1363,
+   "DSR(trials=23)": 0.0,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "D9热端|T10": {
+   "days": 232,
+   "sr_daily": -0.1978,
+   "DSR(trials=23)": 0.0,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "top100|T5": {
+   "days": 237,
+   "sr_daily": -0.158,
+   "DSR(trials=23)": 0.0,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "top100|T10": {
+   "days": 232,
+   "sr_daily": -0.2322,
+   "DSR(trials=23)": 0.0,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "top100|T20": {
+   "days": 222,
+   "sr_daily": -0.3107,
+   "DSR(trials=23)": 0.0,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "D0冷端|T5": {
+   "days": 237,
+   "sr_daily": 0.1494,
+   "DSR(trials=23)": 0.638,
+   "DSR(trials=7491+23)": 0.07
+  },
+  "D0冷端|T10": {
+   "days": 232,
+   "sr_daily": 0.2522,
+   "DSR(trials=23)": 0.96,
+   "DSR(trials=7491+23)": 0.471
+  },
+  "D0冷端|T20": {
+   "days": 222,
+   "sr_daily": 0.3413,
+   "DSR(trials=23)": 0.999,
+   "DSR(trials=7491+23)": 0.876
+  },
+  "rank>3000|T10": {
+   "days": 232,
+   "sr_daily": 0.2559,
+   "DSR(trials=23)": 0.978,
+   "DSR(trials=7491+23)": 0.574
+  },
+  "rank>3000|T20": {
+   "days": 222,
+   "sr_daily": 0.2925,
+   "DSR(trials=23)": 0.997,
+   "DSR(trials=7491+23)": 0.819
+  },
+  "below60×热20%|T5": {
+   "days": 237,
+   "sr_daily": -0.2109,
+   "DSR(trials=23)": 0.0,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "below60×热20%|T10": {
+   "days": 232,
+   "sr_daily": -0.2803,
+   "DSR(trials=23)": 0.0,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "below60×热20%|T20": {
+   "days": 222,
+   "sr_daily": -0.4356,
+   "DSR(trials=23)": 0.0,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "above60×冷20%|T5": {
+   "days": 237,
+   "sr_daily": -0.0634,
+   "DSR(trials=23)": 0.002,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "above60×冷20%|T10": {
+   "days": 232,
+   "sr_daily": -0.0428,
+   "DSR(trials=23)": 0.004,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "above60×冷20%|T20": {
+   "days": 222,
+   "sr_daily": 0.0026,
+   "DSR(trials=23)": 0.027,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "5日飙升≥500|T1": {
+   "days": 241,
+   "sr_daily": -0.0502,
+   "DSR(trials=23)": 0.003,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "5日飙升≥500|T5": {
+   "days": 237,
+   "sr_daily": 0.0776,
+   "DSR(trials=23)": 0.229,
+   "DSR(trials=7491+23)": 0.005
+  },
+  "5日暴跌≥500|T1": {
+   "days": 241,
+   "sr_daily": -0.0815,
+   "DSR(trials=23)": 0.001,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "5日暴跌≥500|T5": {
+   "days": 237,
+   "sr_daily": 0.0259,
+   "DSR(trials=23)": 0.061,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "vr_Q3×热度_Q3|T5": {
+   "days": 237,
+   "sr_daily": -0.1797,
+   "DSR(trials=23)": 0.0,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "r20_Q3×热度_Q3|T5": {
+   "days": 237,
+   "sr_daily": -0.0895,
+   "DSR(trials=23)": 0.0,
+   "DSR(trials=7491+23)": 0.0
+  },
+  "pct_Q3×热度_Q3|T5": {
+   "days": 237,
+   "sr_daily": -0.0868,
+   "DSR(trials=23)": 0.0,
+   "DSR(trials=7491+23)": 0.0
+  }
+ },
+ "sample_independence": {
+  "top100": {
+   "n_events": 20362,
+   "n_stocks": 2337,
+   "n_days": 241,
+   "events_per_stock": 8.7,
+   "top5_stock_share": 0.0359
+  },
+  "D9热端": {
+   "n_events": 76436,
+   "n_stocks": 2901,
+   "n_days": 241,
+   "events_per_stock": 26.3,
+   "top5_stock_share": 0.0158
+  },
+  "below60×热20%": {
+   "n_events": 49192,
+   "n_stocks": 2596,
+   "n_days": 241,
+   "events_per_stock": 18.9,
+   "top5_stock_share": 0.0226
+  }
+ },
+ "_meta": {
+  "generated_at": "2026-10-16T04:41:53+08:00",
+  "data_snapshot": "2026-10-15",
+  "inputs": [
+   "data/guba_sentiment_events_20261016.npz"
+  ],
+  "owner": "engine.guba_sentiment_verdict",
+  "note": "口径 open=信号日(23:00 公布)次日开盘买→T+h 收盘卖, 超额剔当日全宇宙等权均值; close=当日收盘买(含前视上界)",
+  "elapsed_s": 102.3
+ },
+ "survivor_hardening": {
+  "cell": "below60×热20% T+20 (open 口径)",
+  "segments": {
+   "H1": {
+    "n": 18213,
+    "mean_pp": 0.1961,
+    "win": 0.4017,
+    "t_nw": -0.83,
+    "days": 120
+   },
+   "H2": {
+    "n": 26652,
+    "mean_pp": -1.4989,
+    "win": 0.3787,
+    "t_nw": -4.74,
+    "days": 102
+   },
+   "Q1": {
+    "n": 8993,
+    "mean_pp": 0.2304,
+    "win": 0.3994,
+    "t_nw": -0.37,
+    "days": 60
+   },
+   "Q2": {
+    "n": 9220,
+    "mean_pp": 0.1626,
+    "win": 0.4039,
+    "t_nw": -0.9,
+    "days": 60
+   },
+   "Q3": {
+    "n": 13240,
+    "mean_pp": -1.6642,
+    "win": 0.3999,
+    "t_nw": -5.89,
+    "days": 60
+   },
+   "Q4": {
+    "n": 13412,
+    "mean_pp": -1.3356,
+    "win": 0.3577,
+    "t_nw": -2.29,
+    "days": 42
+   }
+  },
+  "all_segments_same_sign": false,
+  "placebo_within_day_rank_shuffle": {
+   "n_perm": 1000,
+   "seed": 20261016,
+   "obs_mean_pp": -0.8108,
+   "perm_mean_pp": 0.1406,
+   "perm_p_left(负尾)": 0.0,
+   "perm_p_two_sided": 0.0
+  },
+  "non_overlapping_T20": {
+   "n": 2189,
+   "mean_pp": -1.5928,
+   "win": 0.37,
+   "t_nw": null,
+   "days": 12
+  },
+  "deep_low_overlap": {
+   "note": "深档 v2 事件清单未找到专用产物时留空"
+  },
+  "_meta": {
+   "generated_at": "2026-10-16T04:50:16+08:00",
+   "data_snapshot": "2026-10-15",
+   "owner": "engine.guba_sentiment_verdict_supp",
+   "elapsed_s": 65.8
+  }
+ }
+}

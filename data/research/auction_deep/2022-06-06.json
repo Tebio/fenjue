@@ -1,0 +1,41 @@
+{
+ "date": "2022-06-06",
+ "source": "iwencai_per_stock_auction",
+ "n": 5,
+ "items": [
+  {
+   "code": "600870",
+   "date": "2022-06-06",
+   "found": false
+  },
+  {
+   "code": "002147",
+   "date": "2022-06-06",
+   "found": false
+  },
+  {
+   "code": "002473",
+   "date": "2022-06-06",
+   "found": false
+  },
+  {
+   "code": "600146",
+   "date": "2022-06-06",
+   "found": false
+  },
+  {
+   "code": "002770",
+   "date": "2022-06-06",
+   "found": false
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T09:00:15+08:00",
+  "data_snapshot": "2022-06-06",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

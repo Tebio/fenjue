@@ -1,0 +1,1421 @@
+{
+ "_meta": {
+  "version": "line_health/1.0 (2026-10-15, t_6f42f1a1)",
+  "built_at": "2026-10-16T09:27:46+00:00",
+  "date": "2026-10-16",
+  "method": "rolling 250 trading days, same code as claims_audit.marginals_ex",
+  "discipline": "proposals only, no auto state change (#278)"
+ },
+ "lines": {
+  "HIGH_UPPER_DISTRIBUTION": {
+   "id": "HIGH_UPPER_DISTRIBUTION",
+   "status": "CANDIDATE",
+   "detector": "避雷针_高位",
+   "external": false,
+   "horizon": [
+    20
+   ],
+   "statement": "高位避雷针=出货形态（T+1正→T+20负的递减签名）",
+   "horizons": {
+    "20": {
+     "full_pp": -1.39,
+     "full_win": 41.2,
+     "ctl_win": 48.0,
+     "roll_pp": -2.78,
+     "roll_win": 38.6,
+     "roll_n": 14550,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.2,
+     "baseline_pp": -0.48,
+     "direction": "neg",
+     "margin_pp": 2.98,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "LIMITDOWN_NEXT_DAY": {
+   "id": "LIMITDOWN_NEXT_DAY",
+   "status": "CANDIDATE",
+   "detector": "跌停次日接_剔一字",
+   "external": false,
+   "horizon": [
+    1
+   ],
+   "statement": "跌停次日接 T+1腿 +0.26%仍活（T+5腿 2026-09-12 m60研究判死禁用至审计恢复；历史T+5 +2.",
+   "shadow": {
+    "window_n": 20,
+    "horizons": {},
+    "last_date": "2026-10-15"
+   },
+   "horizons": {
+    "1": {
+     "full_pp": 0.77,
+     "full_win": 52.7,
+     "ctl_win": 46.8,
+     "roll_pp": 0.17,
+     "roll_win": 48.4,
+     "roll_n": 4277,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 0.76,
+     "direction": "pos",
+     "margin_pp": 0.17,
+     "ok": true,
+     "near": true
+    }
+   },
+   "score": 85,
+   "grade": "healthy"
+  },
+  "MONDAY_EFFECT": {
+   "id": "MONDAY_EFFECT",
+   "status": "CANDIDATE",
+   "detector": "external:engine/factor_research.py",
+   "external": true,
+   "horizon": [],
+   "statement": "周一效应：周一日均+0.169%/60.8%（含退市股口径）；⚠分年不稳：2024 -0.142%/45.5%负、202",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  },
+  "TURNOVER_MAX_BLACKLIST": {
+   "id": "TURNOVER_MAX_BLACKLIST",
+   "status": "CANDIDATE",
+   "detector": "external:engine/factor_research.py",
+   "external": true,
+   "horizon": [],
+   "statement": "高换手20%与彩票型20%组 91个月累计跑输-54.0%/-56.1%（含退市股，回避即相对收益）",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  },
+  "PANIC_DEPTH_DOSE": {
+   "id": "PANIC_DEPTH_DOSE",
+   "status": "CANDIDATE",
+   "detector": "恐慌深度_≤-9.5",
+   "external": false,
+   "horizon": [
+    1
+   ],
+   "statement": "反转族/跌停接=恐慌深度单因子连续谱：T+1净额与同日超额随跌幅单调放大（-3~-5:+0.03 → ≤-9.5:+1.",
+   "shadow": {
+    "window_n": 20,
+    "horizons": {},
+    "last_date": "2026-10-15"
+   },
+   "horizons": {
+    "1": {
+     "full_pp": 1.12,
+     "full_win": 54.2,
+     "ctl_win": 46.5,
+     "roll_pp": 0.34,
+     "roll_win": 48.0,
+     "roll_n": 4636,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 1.14,
+     "direction": "pos",
+     "margin_pp": 0.34,
+     "ok": true,
+     "near": true
+    }
+   },
+   "score": 85,
+   "grade": "healthy"
+  },
+  "FRONTRUN_FIRSTBOARD_V2": {
+   "id": "FRONTRUN_FIRSTBOARD_V2",
+   "status": "CANDIDATE",
+   "detector": "frontrun_v2",
+   "external": false,
+   "horizon": [
+    1,
+    5
+   ],
+   "statement": "首板+板块梯队>=3+市值20-400亿，首板当日收盘上车（打板成交口径），T+1/T+5相对位置匹配对照有正边际",
+   "shadow": {
+    "window_n": 20,
+    "horizons": {
+     "r1": {
+      "n": 20,
+      "mean_pp": 0.69,
+      "win": 60.0
+     },
+     "r5": {
+      "n": 19,
+      "mean_pp": -3.62,
+      "win": 21.1
+     },
+     "r10": {
+      "n": 8,
+      "mean_pp": -9.03,
+      "win": 25.0
+     }
+    },
+    "last_date": "2026-10-13"
+   },
+   "horizons": {
+    "1": {
+     "full_pp": 2.0,
+     "full_win": 59.4,
+     "ctl_win": 45.2,
+     "roll_pp": 1.03,
+     "roll_win": 52.7,
+     "roll_n": 1716,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 2.06,
+     "direction": "pos",
+     "margin_pp": 1.03,
+     "ok": true,
+     "near": false
+    },
+    "5": {
+     "full_pp": 1.93,
+     "full_win": 49.1,
+     "ctl_win": 46.4,
+     "roll_pp": 0.78,
+     "roll_win": 45.9,
+     "roll_n": 1716,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 2.21,
+     "direction": "pos",
+     "margin_pp": 0.78,
+     "ok": true,
+     "near": false
+    }
+   },
+   "shadow_divergence": [
+    {
+     "h": 5,
+     "shadow_mean_pp": -3.62,
+     "shadow_n": 19,
+     "baseline_pp": 2.21
+    }
+   ],
+   "score": 80,
+   "grade": "healthy"
+  },
+  "WATCHPOOL_GRAD": {
+   "id": "WATCHPOOL_GRAD",
+   "status": "CANDIDATE",
+   "detector": "watchpool_grad",
+   "external": false,
+   "horizon": [
+    1,
+    5
+   ],
+   "statement": "放量异动观察池毕业（入池后首板当日收盘上车），T+1/T+5相对位置匹配对照有正边际",
+   "shadow": {
+    "window_n": 20,
+    "horizons": {
+     "r1": {
+      "n": 19,
+      "mean_pp": -1.0,
+      "win": 42.1
+     },
+     "r5": {
+      "n": 6,
+      "mean_pp": -5.98,
+      "win": 16.7
+     }
+    },
+    "last_date": "2026-10-15"
+   },
+   "horizons": {
+    "1": {
+     "full_pp": 1.78,
+     "full_win": 55.1,
+     "ctl_win": 46.5,
+     "roll_pp": 1.01,
+     "roll_win": 49.3,
+     "roll_n": 369,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 1.73,
+     "direction": "pos",
+     "margin_pp": 1.01,
+     "ok": true,
+     "near": false
+    },
+    "5": {
+     "full_pp": 1.06,
+     "full_win": 44.3,
+     "ctl_win": 46.5,
+     "roll_pp": 0.69,
+     "roll_win": 43.6,
+     "roll_n": 369,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 0.97,
+     "direction": "pos",
+     "margin_pp": 0.69,
+     "ok": true,
+     "near": false
+    }
+   },
+   "shadow_divergence": [
+    {
+     "h": 1,
+     "shadow_mean_pp": -1.0,
+     "shadow_n": 19,
+     "baseline_pp": 1.73
+    },
+    {
+     "h": 5,
+     "shadow_mean_pp": -5.98,
+     "shadow_n": 6,
+     "baseline_pp": 0.97
+    }
+   ],
+   "score": 80,
+   "grade": "healthy"
+  },
+  "BANLU_B5": {
+   "id": "BANLU_B5",
+   "status": "CANDIDATE",
+   "detector": "banlu_b5_MA60上",
+   "external": false,
+   "horizon": [
+    1
+   ],
+   "statement": "半路板（+6%市价触发）+量比≥2+梯队≥2+60日首板+市值20-400亿+平淡/恐慌期+**收盘价在 MA60 上方",
+   "horizons": {
+    "1": {
+     "full_pp": 7.86,
+     "full_win": 60.1,
+     "ctl_win": 5.7,
+     "roll_pp": 7.45,
+     "roll_win": 55.9,
+     "roll_n": 1652,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 7.44,
+     "direction": "pos",
+     "margin_pp": 7.45,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "ZHABAN_SHALLOW_RULE": {
+   "id": "ZHABAN_SHALLOW_RULE",
+   "status": "CANDIDATE",
+   "detector": "external:engine/zhaban_features.py",
+   "external": true,
+   "horizon": [],
+   "statement": "炸板浅炸规则：昨涨停+今开≥5%+今开幅度6~7%+首30分钟量能比<1.0，挂+7%限价买→T+1收盘，每信号期望+2",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  },
+  "COMP_LIMITDOWN_LOW_LOSER250_OS20": {
+   "id": "COMP_LIMITDOWN_LOW_LOSER250_OS20",
+   "status": "CANDIDATE",
+   "detector": "组合_跌停低_长周期_超跌20",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "跌停×MA60下 + 250日输家 + 60日超跌≥20% → 本批 T+5 均值与边际最高",
+   "horizons": {
+    "5": {
+     "full_pp": 6.1,
+     "full_win": 71.0,
+     "ctl_win": 48.4,
+     "roll_pp": 0.13,
+     "roll_win": 51.2,
+     "roll_n": 166,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 5.94,
+     "direction": "pos",
+     "margin_pp": 0.13,
+     "ok": true,
+     "near": true
+    },
+    "20": {
+     "full_pp": 12.71,
+     "full_win": 75.3,
+     "ctl_win": 47.9,
+     "roll_pp": 1.66,
+     "roll_win": 56.0,
+     "roll_n": 166,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 12.68,
+     "direction": "pos",
+     "margin_pp": 1.16,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 85,
+   "grade": "healthy"
+  },
+  "COMP_LIMITDOWN_LOW_3DOWN": {
+   "id": "COMP_LIMITDOWN_LOW_3DOWN",
+   "status": "CANDIDATE",
+   "detector": "组合_跌停低_三连阴",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "跌停×MA60下 且 当日为三连阴 → 本批胜率最高",
+   "horizons": {
+    "5": {
+     "full_pp": 5.77,
+     "full_win": 74.8,
+     "ctl_win": 50.2,
+     "roll_pp": 1.7,
+     "roll_win": 60.4,
+     "roll_n": 598,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 5.8,
+     "direction": "pos",
+     "margin_pp": 1.7,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 13.9,
+     "full_win": 78.8,
+     "ctl_win": 51.4,
+     "roll_pp": 8.96,
+     "roll_win": 73.4,
+     "roll_n": 598,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 13.77,
+     "direction": "pos",
+     "margin_pp": 8.46,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "COMP_TOUCH_NOT_SEAL_LOW": {
+   "id": "COMP_TOUCH_NOT_SEAL_LOW",
+   "status": "CANDIDATE",
+   "detector": "组合_触板未封_低位",
+   "external": false,
+   "horizon": [
+    5
+   ],
+   "statement": "触板未封 且 收盘≤MA60 → 弱势修复格",
+   "horizons": {
+    "5": {
+     "full_pp": 1.21,
+     "full_win": 52.4,
+     "ctl_win": 49.1,
+     "roll_pp": 0.54,
+     "roll_win": 47.2,
+     "roll_n": 1942,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 1.31,
+     "direction": "pos",
+     "margin_pp": 0.54,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "CROSS_LOW_3DOWN_LOSER250": {
+   "id": "CROSS_LOW_3DOWN_LOSER250",
+   "status": "CANDIDATE",
+   "detector": "交叉_跌停低_三连阴_输家250",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "跌停×MA60下 + 三连阴×输家250（全交叉矩阵消融幸存：优于两单件各自）",
+   "shadow": {
+    "window_n": 2,
+    "horizons": {
+     "r1": {
+      "n": 2,
+      "mean_pp": 7.03,
+      "win": 100.0
+     },
+     "r5": {
+      "n": 2,
+      "mean_pp": 7.95,
+      "win": 100.0
+     }
+    },
+    "last_date": "2026-09-28"
+   },
+   "horizons": {
+    "5": {
+     "full_pp": 7.17,
+     "full_win": 76.0,
+     "ctl_win": 45.8,
+     "roll_pp": 0.52,
+     "roll_win": 54.0,
+     "roll_n": 50,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 8.62,
+     "direction": "pos",
+     "margin_pp": 0.52,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 16.42,
+     "full_win": 79.1,
+     "ctl_win": 44.8,
+     "roll_pp": 3.45,
+     "roll_win": 56.0,
+     "roll_n": 50,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 15.67,
+     "direction": "pos",
+     "margin_pp": 2.95,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "CROSS_LOW_3DOWN_OS20": {
+   "id": "CROSS_LOW_3DOWN_OS20",
+   "status": "CANDIDATE",
+   "detector": "交叉_跌停低_三连阴_超跌20",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "跌停×MA60下 + 三连阴×超跌20（全交叉矩阵消融幸存：优于两单件各自）",
+   "shadow": {
+    "window_n": 20,
+    "horizons": {
+     "r1": {
+      "n": 18,
+      "mean_pp": 1.02,
+      "win": 50.0
+     },
+     "r5": {
+      "n": 16,
+      "mean_pp": -8.55,
+      "win": 12.5
+     }
+    },
+    "last_date": "2026-10-15"
+   },
+   "horizons": {
+    "5": {
+     "full_pp": 5.93,
+     "full_win": 75.7,
+     "ctl_win": 50.0,
+     "roll_pp": 1.46,
+     "roll_win": 60.2,
+     "roll_n": 561,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 7.06,
+     "direction": "pos",
+     "margin_pp": 1.46,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 14.55,
+     "full_win": 80.2,
+     "ctl_win": 50.2,
+     "roll_pp": 9.55,
+     "roll_win": 74.9,
+     "roll_n": 561,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 14.83,
+     "direction": "pos",
+     "margin_pp": 9.05,
+     "ok": true,
+     "near": false
+    }
+   },
+   "shadow_divergence": [
+    {
+     "h": 5,
+     "shadow_mean_pp": -8.55,
+     "shadow_n": 16,
+     "baseline_pp": 7.06
+    }
+   ],
+   "score": 80,
+   "grade": "healthy"
+  },
+  "COMP_LIMITDOWN_LOW_DEEP": {
+   "id": "COMP_LIMITDOWN_LOW_DEEP",
+   "status": "CANDIDATE",
+   "detector": "组合_跌停低_深跌",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "跌停×MA60下 且 距MA60≤-25%（深跌）",
+   "shadow": {
+    "window_n": 5,
+    "horizons": {
+     "r1": {
+      "n": 4,
+      "mean_pp": 1.63,
+      "win": 75.0
+     },
+     "r5": {
+      "n": 3,
+      "mean_pp": -8.28,
+      "win": 0.0
+     }
+    },
+    "last_date": "2026-10-14"
+   },
+   "horizons": {
+    "5": {
+     "full_pp": 10.9,
+     "full_win": 86.1,
+     "ctl_win": 50.0,
+     "roll_pp": 3.07,
+     "roll_win": 61.8,
+     "roll_n": 351,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 8.0,
+     "direction": "pos",
+     "margin_pp": 3.07,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 23.34,
+     "full_win": 90.6,
+     "ctl_win": 52.6,
+     "roll_pp": 12.54,
+     "roll_win": 81.2,
+     "roll_n": 351,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 15.0,
+     "direction": "pos",
+     "margin_pp": 12.04,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "COMP_LIMITDOWN_LOW_DEEP_LDC100": {
+   "id": "COMP_LIMITDOWN_LOW_DEEP_LDC100",
+   "status": "CANDIDATE",
+   "detector": "组合_跌停低_深跌_跌停潮",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "深跌 + 当日全市场跌停≥100（恐慌成簇）",
+   "horizons": {
+    "5": {
+     "full_pp": 12.74,
+     "full_win": 91.6,
+     "ctl_win": 49.3,
+     "roll_pp": 2.6,
+     "roll_win": 67.1,
+     "roll_n": 246,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 8.0,
+     "direction": "pos",
+     "margin_pp": 2.6,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 28.31,
+     "full_win": 97.4,
+     "ctl_win": 51.6,
+     "roll_pp": 15.58,
+     "roll_win": 92.3,
+     "roll_n": 246,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 15.0,
+     "direction": "pos",
+     "margin_pp": 15.08,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "COMP_LIMITDOWN_LOW_3DOWN_DEEP": {
+   "id": "COMP_LIMITDOWN_LOW_3DOWN_DEEP",
+   "status": "CANDIDATE",
+   "detector": "组合_跌停低_三连阴_深跌",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "三连阴 + 深跌（距MA60≤-25%）",
+   "shadow": {
+    "window_n": 1,
+    "horizons": {
+     "r1": {
+      "n": 1,
+      "mean_pp": 8.28,
+      "win": 100.0
+     },
+     "r5": {
+      "n": 1,
+      "mean_pp": -5.45,
+      "win": 0.0
+     }
+    },
+    "last_date": "2026-09-30"
+   },
+   "horizons": {
+    "5": {
+     "full_pp": 11.08,
+     "full_win": 90.0,
+     "ctl_win": 50.7,
+     "roll_pp": 4.87,
+     "roll_win": 75.1,
+     "roll_n": 193,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 11.07,
+     "direction": "pos",
+     "margin_pp": 4.87,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 25.81,
+     "full_win": 95.1,
+     "ctl_win": 51.3,
+     "roll_pp": 18.91,
+     "roll_win": 92.2,
+     "roll_n": 193,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 25.83,
+     "direction": "pos",
+     "margin_pp": 18.41,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "CROSS_GAPLOW_3DOWN_TD9": {
+   "id": "CROSS_GAPLOW_3DOWN_TD9",
+   "status": "CANDIDATE",
+   "detector": "交叉_缺口低开低_三连阴_TD9买入",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "缺口低开×MA60下底座 + 三连阴_TD9买入（第二底座全交叉幸存）",
+   "shadow": {
+    "window_n": 5,
+    "horizons": {
+     "r1": {
+      "n": 1,
+      "mean_pp": 7.5,
+      "win": 100.0
+     },
+     "r5": {
+      "n": 1,
+      "mean_pp": 6.28,
+      "win": 100.0
+     }
+    },
+    "last_date": "2026-10-15"
+   },
+   "horizons": {
+    "5": {
+     "full_pp": 5.01,
+     "full_win": 72.3,
+     "ctl_win": 47.9,
+     "roll_pp": 2.88,
+     "roll_win": 70.4,
+     "roll_n": 108,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 2.0,
+     "direction": "pos",
+     "margin_pp": 2.88,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 9.22,
+     "full_win": 72.1,
+     "ctl_win": 48.2,
+     "roll_pp": 4.84,
+     "roll_win": 68.5,
+     "roll_n": 108,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 4.0,
+     "direction": "pos",
+     "margin_pp": 4.34,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "CROSS_GAPLOW_3DOWN_XFUND": {
+   "id": "CROSS_GAPLOW_3DOWN_XFUND",
+   "status": "DECAYING",
+   "detector": "交叉_缺口低开低_三连阴_剔亏ST",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "缺口低开×MA60下底座 + 三连阴_剔亏ST（第二底座全交叉幸存）",
+   "shadow": {
+    "window_n": 19,
+    "horizons": {
+     "r1": {
+      "n": 10,
+      "mean_pp": -0.81,
+      "win": 50.0
+     },
+     "r5": {
+      "n": 10,
+      "mean_pp": -3.87,
+      "win": 50.0
+     },
+     "r10": {
+      "n": 1,
+      "mean_pp": -13.65,
+      "win": 0.0
+     }
+    },
+    "last_date": "2026-10-15"
+   },
+   "horizons": {
+    "5": {
+     "full_pp": 2.93,
+     "full_win": 66.9,
+     "ctl_win": 50.7,
+     "roll_pp": 1.35,
+     "roll_win": 62.7,
+     "roll_n": 402,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 2.0,
+     "direction": "pos",
+     "margin_pp": 1.35,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 4.99,
+     "full_win": 63.9,
+     "ctl_win": 51.2,
+     "roll_pp": -0.87,
+     "roll_win": 53.0,
+     "roll_n": 402,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 4.0,
+     "direction": "pos",
+     "margin_pp": -1.37,
+     "ok": false,
+     "near": false
+    }
+   },
+   "shadow_divergence": [
+    {
+     "h": 5,
+     "shadow_mean_pp": -3.87,
+     "shadow_n": 10,
+     "baseline_pp": 2.0
+    }
+   ],
+   "score": 25,
+   "grade": "critical"
+  },
+  "CROSS_TOUCH_OS20_TD9": {
+   "id": "CROSS_TOUCH_OS20_TD9",
+   "status": "CANDIDATE",
+   "detector": "交叉_触板低_超跌20_TD9买入",
+   "external": true,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "触板未封×低位 + 超跌20 + TD9买入",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  },
+  "CROSS_TOUCH_OS20_XFUND": {
+   "id": "CROSS_TOUCH_OS20_XFUND",
+   "status": "CANDIDATE",
+   "detector": "交叉_触板低_超跌20_剔亏ST",
+   "external": true,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "触板未封×低位 + 超跌20 + 剔亏ST",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  },
+  "COMP_TOUCH_TD9_XFUND_OS20": {
+   "id": "COMP_TOUCH_TD9_XFUND_OS20",
+   "status": "CANDIDATE",
+   "detector": "组合_触板低_TD9买_剔亏ST_超跌20",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "触板未封×低位 + TD9买入 + 剔亏ST + 超跌20（触板底座四条件穷举最优）",
+   "horizons": {
+    "5": {
+     "full_pp": 5.35,
+     "full_win": 65.9,
+     "ctl_win": 47.7,
+     "roll_pp": 3.21,
+     "roll_win": 50.5,
+     "roll_n": 97,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 6.19,
+     "direction": "pos",
+     "margin_pp": 3.21,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 11.51,
+     "full_win": 73.6,
+     "ctl_win": 51.2,
+     "roll_pp": 6.94,
+     "roll_win": 69.1,
+     "roll_n": 97,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 11.37,
+     "direction": "pos",
+     "margin_pp": 6.44,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "REVERSAL_PANIC50": {
+   "id": "REVERSAL_PANIC50",
+   "status": "CANDIDATE",
+   "detector": "反转族_跌停潮50",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "反转族（T-1大跌≥3%）× 当日全市场跌停≥50（恐慌强度复活门——大赢票解剖唯一「大赢↑且大输不升」过滤器）",
+   "horizons": {
+    "5": {
+     "full_pp": 1.65,
+     "full_win": 63.3,
+     "ctl_win": 49.7,
+     "roll_pp": 0.57,
+     "roll_win": 58.8,
+     "roll_n": 15119,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 1.49,
+     "direction": "pos",
+     "margin_pp": 0.57,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 5.39,
+     "full_win": 66.2,
+     "ctl_win": 51.7,
+     "roll_pp": 3.56,
+     "roll_win": 66.4,
+     "roll_n": 15119,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 4.32,
+     "direction": "pos",
+     "margin_pp": 3.06,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "DEMON_CRADLE_CLUSTER": {
+   "id": "DEMON_CRADLE_CLUSTER",
+   "status": "CANDIDATE",
+   "detector": "妖股摇篮_成簇",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "首板（60日无板后首板）× 板日缩量<1.5 × PIT市值<50亿 × 距60日高≤-25% × 当日全市场同类信号≥",
+   "horizons": {
+    "5": {
+     "full_pp": 7.43,
+     "full_win": 73.0,
+     "ctl_win": 49.9,
+     "roll_pp": 0.52,
+     "roll_win": 51.0,
+     "roll_n": 51,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 6.92,
+     "direction": "pos",
+     "margin_pp": 0.52,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 12.32,
+     "full_win": 82.0,
+     "ctl_win": 53.7,
+     "roll_pp": 0.92,
+     "roll_win": 60.8,
+     "roll_n": 51,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 12.89,
+     "direction": "pos",
+     "margin_pp": 0.42,
+     "ok": true,
+     "near": true
+    }
+   },
+   "score": 85,
+   "grade": "healthy"
+  },
+  "PEAD_NOTICE_T20": {
+   "id": "PEAD_NOTICE_T20",
+   "status": "CANDIDATE",
+   "detector": "PEAD_首亏/PEAD_扭亏（REGISTRY）",
+   "external": true,
+   "horizon": [
+    20
+   ],
+   "statement": "业绩预告公告后漂移：T+1~T+10 全灭（六变体七闸全 REJECT），T+20 首亏 57.2%/+3.22%（t=",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  },
+  "LIMITDOWN_LOW_DEEP35": {
+   "id": "LIMITDOWN_LOW_DEEP35",
+   "status": "CANDIDATE",
+   "detector": "组合_跌停低_深跌（-25% 底座）的子集；生产实现在 dashboard_build.deep_low_scan v2",
+   "external": true,
+   "horizon": [
+    10
+   ],
+   "statement": "深档低位 v2 生产口径（2026-09-22 起生效，2026-09-25 出场改 T+10）：跌停(≤-9.5%)且",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  },
+  "RESEAL_CONFIRM_AM": {
+   "id": "RESEAL_CONFIRM_AM",
+   "status": "CANDIDATE",
+   "detector": "涨停池数据（炸板次数+最后封板时间）；生产实现=m60 bar 级回封识别+实时封单强度",
+   "external": true,
+   "horizon": [
+    1
+   ],
+   "statement": "回封确认买入（上午段）：当日炸板≥1 且最后封板时间≤11:30（分歧转一致确认），回封推进行情中以涨停价入场，次日开盘",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  },
+  "YAO_LAUNCH_FIRSTBOARD": {
+   "id": "YAO_LAUNCH_FIRSTBOARD",
+   "status": "CANDIDATE",
+   "detector": "妖股启动期首板_v1",
+   "external": false,
+   "horizon": [
+    1
+   ],
+   "statement": "妖股期段龄≤2（启动期）+首板(60日无板)+量比≥1.5(前20日基期)+梯队≥3，信号日收盘入（打板口径），T+1 ",
+   "shadow": {
+    "window_n": 5,
+    "horizons": {
+     "r1": {
+      "n": 5,
+      "mean_pp": -1.66,
+      "win": 40.0
+     },
+     "r5": {
+      "n": 5,
+      "mean_pp": -4.65,
+      "win": 0.0
+     }
+    },
+    "last_date": "2026-09-24"
+   },
+   "horizons": {
+    "1": {
+     "full_pp": 0.82,
+     "full_win": 57.9,
+     "ctl_win": 49.9,
+     "roll_pp": -0.94,
+     "roll_win": 39.4,
+     "roll_n": 94,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 1.51,
+     "direction": "pos",
+     "margin_pp": -0.94,
+     "ok": false,
+     "near": false
+    }
+   },
+   "shadow_divergence": [
+    {
+     "h": 1,
+     "shadow_mean_pp": -1.66,
+     "shadow_n": 5,
+     "baseline_pp": 1.51
+    }
+   ],
+   "score": 45,
+   "grade": "weak"
+  },
+  "MAINLINE_DIP_RSI2": {
+   "id": "MAINLINE_DIP_RSI2",
+   "status": "CANDIDATE",
+   "detector": "主线深回踩_RSI2_v1",
+   "external": false,
+   "horizon": [
+    1,
+    5
+   ],
+   "statement": "主线期+MA60上+当日跌≥3%+RSI(2)<10（双重超卖），次日开盘入，收>MA5 出（10日时间止损）；影子按固",
+   "horizons": {
+    "1": {
+     "roll_pp": null,
+     "note": "样本<30，本轮无滚动值"
+    },
+    "5": {
+     "roll_pp": null,
+     "note": "样本<30，本轮无滚动值"
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "LHB_LISTING_REVERSE": {
+   "id": "LHB_LISTING_REVERSE",
+   "status": "CANDIDATE",
+   "detector": "external:tmp/lhb_event_study.py",
+   "external": true,
+   "horizon": [
+    20
+   ],
+   "statement": "龙虎榜上榜=能见度顶点事件（上榜后T+20全桶负漂移-2~-3%，与席位方向无关）",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  },
+  "GOLD_SOLO_FRESH_MONTHLY": {
+   "id": "GOLD_SOLO_FRESH_MONTHLY",
+   "status": "CANDIDATE",
+   "detector": "external:tmp/gold_deep_audit.py",
+   "external": true,
+   "horizon": [
+    20
+   ],
+   "statement": "每月第6交易日买当月「独家+年内首入」金股（T+20 出）：2020-2022 段 63%/+7.26pp 超额（前视审",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  },
+  "GOLD_REMOVAL_BLACKLIST": {
+   "id": "GOLD_REMOVAL_BLACKLIST",
+   "status": "CANDIDATE",
+   "detector": "external:tmp/gold_three_digs.py",
+   "external": true,
+   "horizon": [
+    20
+   ],
+   "statement": "持仓票掉出月度金股名单=离场标注（被剔除 40%/-0.82pp vs 留榜 55%/+2.73pp，差 3.5pp）",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  },
+  "PEAD_LOW_POOL": {
+   "id": "PEAD_LOW_POOL",
+   "status": "CANDIDATE",
+   "detector": "预增低位池_v1",
+   "external": false,
+   "horizon": [
+    5,
+    20
+   ],
+   "statement": "60日内业绩预增(或扭亏/略增≥50)×距60日高≤-20%×流通市值<50亿的低位基本面池，T+5→T+60全hori",
+   "horizons": {
+    "5": {
+     "full_pp": 1.01,
+     "full_win": 58.1,
+     "ctl_win": 50.6,
+     "roll_pp": 1.55,
+     "roll_win": 65.2,
+     "roll_n": 3441,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.0,
+     "baseline_pp": 1.2,
+     "direction": "pos",
+     "margin_pp": 1.55,
+     "ok": true,
+     "near": false
+    },
+    "20": {
+     "full_pp": 2.14,
+     "full_win": 60.8,
+     "ctl_win": 53.3,
+     "roll_pp": 4.88,
+     "roll_win": 72.1,
+     "roll_n": 3441,
+     "cutoff": "2025-09-26",
+     "kill_pp": 0.5,
+     "baseline_pp": 3.27,
+     "direction": "pos",
+     "margin_pp": 4.38,
+     "ok": true,
+     "near": false
+    }
+   },
+   "score": 100,
+   "grade": "healthy"
+  },
+  "INDEX_REBALANCE_FRONTRUN": {
+   "id": "INDEX_REBALANCE_FRONTRUN",
+   "status": "CANDIDATE",
+   "detector": "调样事件名单(data/index_rebalance_events.json, baostock历史成分diff+CNFIN公告解析重建15周期)",
+   "external": true,
+   "horizon": [
+    10
+   ],
+   "statement": "中证(沪深300/500/1000)半年度调样公告(5/11月最后一个周五)后买入调入名单→生效日(6/12月第二个周五",
+   "note": "外部背书线：滚动 edge 不复跑，只跟踪影子/自有数据"
+  }
+ },
+ "res_layer": {
+  "knn_vote_top": {
+   "desc": "RES-07 协同过滤打分顶档（T+5 期望分前 10%）",
+   "ref": "#276/#277",
+   "roll250_pp": 0.387,
+   "roll60_pp": 1.146,
+   "day_win": 57.8,
+   "days": 244,
+   "window_start": "2025-09-26"
+  },
+  "ivol20": {
+   "desc": "RES-08 低特质波动尾",
+   "ref": "#277",
+   "roll250_pp": 0.152,
+   "roll60_pp": 0.677,
+   "day_win": 49.6,
+   "days": 244,
+   "window_start": "2025-09-26",
+   "watch": true
+  },
+  "pv_corr_ov10@yao": {
+   "desc": "RES-08 量价背离ov10×妖股期",
+   "ref": "#277",
+   "roll250_pp": -0.029,
+   "roll60_pp": -0.179,
+   "day_win": 49.3,
+   "days": 71,
+   "window_start": "2025-09-26"
+  },
+  "pv_corr_cv20@yao": {
+   "desc": "RES-08 量价背离cv20×妖股期",
+   "ref": "#277",
+   "roll250_pp": 0.246,
+   "roll60_pp": 0.825,
+   "day_win": 56.3,
+   "days": 71,
+   "window_start": "2025-09-26",
+   "watch": true
+  },
+  "volcv20@yao": {
+   "desc": "RES-08 量变系数×妖股期",
+   "ref": "#277",
+   "roll250_pp": 0.151,
+   "roll60_pp": 0.262,
+   "day_win": 56.3,
+   "days": 71,
+   "window_start": "2025-09-26",
+   "watch": true
+  }
+ },
+ "threats": [
+  {
+   "id": "T1",
+   "title": "跌停次日接 T+1 腿 edge 归零",
+   "status": "triggered",
+   "metrics": {
+    "r1": {
+     "n": 199,
+     "mean_pp": -0.06,
+     "win": 48.7
+    },
+    "r5": {
+     "n": 180,
+     "mean_pp": -1.04,
+     "win": 44.4
+    },
+    "window": "60d"
+   },
+   "proposal": "T+1 腿进 ICU 观察（#278 已提案，待裁决）",
+   "source": "#278"
+  },
+  {
+   "id": "T2",
+   "title": "预增低位池：低价层读前复权价 bug + 2026 转负",
+   "status": "triggered",
+   "metrics": {
+    "price_bug_present": true,
+    "sim_2026": {
+     "n": 33,
+     "mean_pp": -0.81,
+     "win": 51.5
+    }
+   },
+   "proposal": "PFX-01 口径修复 + 降置信，待裁决（#278 已提案）",
+   "source": "#278"
+  },
+  {
+   "id": "T3",
+   "title": "摇篮线 2024 单年依赖超限",
+   "status": "triggered",
+   "metrics": {
+    "top_year": "2024",
+    "top_year_share": 0.77,
+    "y2026_t20_win": 0.18,
+    "file_age_days": 19
+   },
+   "proposal": "降为年集中假设+推送降权（#278 已提案，待裁决）",
+   "source": "#278"
+  },
+  {
+   "id": "T4",
+   "title": "深档低位 v2：2026 收益集中 + 近期影子走坏",
+   "status": "triggered",
+   "metrics": {
+    "last_batch": "2026-08-19",
+    "days_since_batch": 58,
+    "batches_2026": {
+     "n": 14,
+     "win": 0.53
+    },
+    "shadow_r5_since_0819": {
+     "COMP_LIMITDOWN_LOW_DEEP": {
+      "n": 3,
+      "mean_pp": -8.28,
+      "win": 0.0
+     },
+     "COMP_LIMITDOWN_LOW_SHRINK_XFUND": {
+      "n": 6,
+      "mean_pp": -14.63,
+      "win": 0.0
+     },
+     "COMP_LIMITDOWN_LOW_3DOWN_SHRINK": {
+      "n": 3,
+      "mean_pp": -14.24,
+      "win": 0.0
+     },
+     "COMP_LIMITDOWN_LOW_3DOWN_DEEP": {
+      "n": 1,
+      "mean_pp": -5.45,
+      "win": 0.0
+     }
+    },
+    "zero_win_variants": [
+     "COMP_LIMITDOWN_LOW_DEEP",
+     "COMP_LIMITDOWN_LOW_SHRINK_XFUND",
+     "COMP_LIMITDOWN_LOW_3DOWN_SHRINK"
+    ]
+   },
+   "proposal": "维持存活降置信；影子 r20 仍负 → 进 ICU 提案（#278）",
+   "source": "#278"
+  },
+  {
+   "id": "T5",
+   "title": "转债低价池装入违约级债",
+   "status": "triggered",
+   "metrics": {
+    "pool_n": 2,
+    "junk": [
+     {
+      "code": "118027",
+      "name": "宏图转债",
+      "rating": "CC"
+     }
+    ],
+    "pool_date": "2026-10-15"
+   },
+   "proposal": "池加评级闸（剔 CCC 及以下）或推送标注「信用困境债≠债底」（#278 已提案）",
+   "source": "#278"
+  },
+  {
+   "id": "T6",
+   "title": "股息锚 2026 实盘检验转负",
+   "status": "triggered",
+   "metrics": {
+    "curve_ret_pp": -1.72,
+    "day_win": 47.8,
+    "span": [
+     "2026-03-02",
+     "2026-09-11"
+    ]
+   },
+   "proposal": "列入月度上会体温表；TAX-01 红利税建模维持 backlog（#278）",
+   "source": "#278"
+  },
+  {
+   "id": "T7",
+   "title": "金股×三连阴变体（THREE_DOWN_GOLD）影子走坏",
+   "status": "triggered",
+   "metrics": {
+    "r5": {
+     "n": 13,
+     "mean_pp": -4.39,
+     "win": 38.5
+    },
+    "last": "2026-10-15"
+   },
+   "proposal": "变体降级观察，主线不动（#278 已提案，待裁决）",
+   "source": "#278"
+  }
+ ],
+ "proposals": [
+  "RES 观察层 pv_corr_ov10@yao 销案提案",
+  "T1 威胁触发中（#278 提案待裁决）",
+  "T2 威胁触发中（#278 提案待裁决）",
+  "T3 威胁触发中（#278 提案待裁决）",
+  "T4 威胁触发中（#278 提案待裁决）",
+  "T5 威胁触发中（#278 提案待裁决）",
+  "T6 威胁触发中（#278 提案待裁决）",
+  "T7 威胁触发中（#278 提案待裁决）"
+ ]
+}

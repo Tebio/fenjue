@@ -15,7 +15,8 @@ from collections import defaultdict
 ROOT = "/opt/data/fenjue"
 D = ROOT + "/data"
 WINDOW_START = "2025-09-12"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 FILL_M60 = "--fill-m60" in sys.argv  # 实战保守版：close-entry 仅当尾盘 bar 有开缝（可排队成交）才计入
 
 sys.path.insert(0, ROOT + "/engine")

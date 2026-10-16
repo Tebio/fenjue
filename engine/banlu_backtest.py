@@ -16,7 +16,8 @@ from collections import defaultdict
 ROOT = "/opt/data/fenjue"
 D = ROOT + "/data"
 START = "2024-08-26"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 TRIG = 1.06   # +6% 触发
 SEAL = 1.098  # 封板判定
 

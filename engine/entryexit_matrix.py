@@ -113,7 +113,8 @@ def main() -> None:
                     stats_total[(sig, buy_mode, sell_mode)].append(pct(sell, buy))
 
     # 汇总打印：先总矩阵（全市态），再按市态、票型拆
-    COST = 0.15  # 双边印花税+佣金（2026-09-06 欠账#2：全改净口径）
+    from costs import FLAT_RT_PCT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+    COST = FLAT_RT_PCT  # 双边印花税+佣金（2026-09-06 欠账#2：全改净口径）
     def agg(rows):
         if len(rows) < 30:
             return None

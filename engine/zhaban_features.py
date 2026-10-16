@@ -47,7 +47,8 @@ BIGK = DATA / "big_kcache"
 CAP = DATA / "cap_hist"
 OUT = DATA / "zhaban_features_20260913.json"
 
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 LIMIT_PCT = 7.0                 # 挂单价 = 昨收 × 1.07
 BAND_LO, BAND_HI = 3.0, 8.5     # 浅炸区间（当日最低涨幅）
 TRAIN_END = "2025-08-31"        # train: <= ; test: >

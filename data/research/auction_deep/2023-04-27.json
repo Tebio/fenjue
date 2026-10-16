@@ -1,0 +1,59 @@
+{
+ "date": "2023-04-27",
+ "source": "iwencai_per_stock_auction",
+ "n": 5,
+ "items": [
+  {
+   "code": "000620",
+   "name": "盈新发展",
+   "date": "2023-04-27",
+   "found": true,
+   "auction_price": 1.36,
+   "auction_volume": 1451200.0,
+   "auction_amount": 1973632.0,
+   "auction_pct": -0.09934,
+   "unmatched_volume": -65932409.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  },
+  {
+   "code": "600466",
+   "date": "2023-04-27",
+   "found": false
+  },
+  {
+   "code": "000918",
+   "date": "2023-04-27",
+   "found": false
+  },
+  {
+   "code": "000711",
+   "name": "京蓝科技",
+   "date": "2023-04-27",
+   "found": true,
+   "auction_price": 1.31,
+   "auction_volume": 5279700.0,
+   "auction_amount": 6916407.0,
+   "auction_pct": -0.09655,
+   "unmatched_volume": -14788960.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  },
+  {
+   "code": "600766",
+   "date": "2023-04-27",
+   "found": false
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T09:01:27+08:00",
+  "data_snapshot": "2023-04-27",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

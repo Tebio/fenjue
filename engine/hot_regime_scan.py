@@ -13,7 +13,8 @@ from pathlib import Path
 
 KC = Path("/opt/data/fenjue/data/big_kcache")
 TL = Path("/opt/data/fenjue/data/regime_timeline_hcap.json")
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 OUT = Path("/opt/data/fenjue/data/hot_regime_scan_20260912.json")
 
 stocks = {}

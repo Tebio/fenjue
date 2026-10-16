@@ -1,0 +1,367 @@
+{
+ "lines": {
+  "LIMITDOWN_NEXT_DAY": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": true,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 1,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "BANLU_B5": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": true
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 1,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "COMP_LIMITDOWN_LOW_DEEP": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "CROSS_GAPLOW_3DOWN_XFUND": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": true,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 1,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "HIGH_UPPER_DISTRIBUTION": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": true
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 1,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "PANIC_DEPTH_DOSE": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": true,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 1,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "FRONTRUN_FIRSTBOARD_V2": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "WATCHPOOL_GRAD": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "COMP_LIMITDOWN_LOW_LOSER250_OS20": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": true,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 1,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "COMP_LIMITDOWN_LOW_3DOWN": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "COMP_TOUCH_NOT_SEAL_LOW": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "CROSS_LOW_3DOWN_LOSER250": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "CROSS_LOW_3DOWN_OS20": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "COMP_LIMITDOWN_LOW_DEEP_LDC100": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "COMP_LIMITDOWN_LOW_3DOWN_DEEP": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "CROSS_GAPLOW_3DOWN_TD9": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": true
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 1,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "COMP_TOUCH_TD9_XFUND_OS20": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "REVERSAL_PANIC50": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "DEMON_CRADLE_CLUSTER": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": true,
+     "recover": false
+    }
+   ],
+   "below_days": 0,
+   "near_days": 1,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "YAO_LAUNCH_FIRSTBOARD": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": true,
+     "near": false,
+     "recover": false
+    }
+   ],
+   "below_days": 1,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "MAINLINE_DIP_RSI2": {
+   "history": [],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 0,
+   "proposal": null,
+   "proposal_since": null
+  },
+  "PEAD_LOW_POOL": {
+   "history": [
+    {
+     "date": "2026-10-16",
+     "below": false,
+     "near": false,
+     "recover": true
+    }
+   ],
+   "below_days": 0,
+   "near_days": 0,
+   "recover_days": 1,
+   "proposal": null,
+   "proposal_since": null
+  }
+ },
+ "res": {
+  "knn_vote_top": {
+   "proposal": null
+  },
+  "ivol20": {
+   "proposal": null
+  },
+  "pv_corr_ov10@yao": {
+   "proposal": "drop"
+  },
+  "pv_corr_cv20@yao": {
+   "proposal": null
+  },
+  "volcv20@yao": {
+   "proposal": null
+  }
+ },
+ "threats": {
+  "T1": {
+   "active": true
+  },
+  "T2": {
+   "active": true
+  },
+  "T3": {
+   "active": true
+  },
+  "T4": {
+   "active": true
+  },
+  "T5": {
+   "active": true
+  },
+  "T6": {
+   "active": true
+  },
+  "T7": {
+   "active": true
+  }
+ }
+}

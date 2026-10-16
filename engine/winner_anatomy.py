@@ -26,7 +26,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from fjcore import Universe, forward, REGISTRY, START, td9buy, three_down  # 2026-09-20 绞杀者收编（fwd 与 fjcore.forward 逐行一致，直接换）
 
 ROOT = Path("/opt/data/fenjue")
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 HORIZONS = [1, 2, 3, 5, 10, 20]
 
 

@@ -1,0 +1,54 @@
+{
+ "date": "2021-01-08",
+ "source": "iwencai_per_stock_auction",
+ "n": 4,
+ "items": [
+  {
+   "code": "600687",
+   "date": "2021-01-08",
+   "found": false
+  },
+  {
+   "code": "000007",
+   "name": "全新好",
+   "date": "2021-01-08",
+   "found": true,
+   "auction_price": 4.11,
+   "auction_volume": 440200.0,
+   "auction_amount": null,
+   "auction_pct": -0.10066000000000001,
+   "unmatched_volume": -26174650.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  },
+  {
+   "code": "002781",
+   "date": "2021-01-08",
+   "found": false
+  },
+  {
+   "code": "603825",
+   "name": "ST华扬",
+   "date": "2021-01-08",
+   "found": true,
+   "auction_price": 16.5,
+   "auction_volume": 89000.0,
+   "auction_amount": null,
+   "auction_pct": 0.00733,
+   "unmatched_volume": -20700.0,
+   "unmatched_amount": null,
+   "abnormal_type": "涨停试盘",
+   "auction_rating": "-"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:57:39+08:00",
+  "data_snapshot": "2021-01-08",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

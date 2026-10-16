@@ -56,7 +56,8 @@ D = ROOT + "/data"
 START = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--start=")), "2019-01-03")
 OUTSUF = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--out=")), "20260913")
 
-FEE = 0.0015                 # 单边手续费
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT                 # 单边手续费
 CAPITAL = 100000.0
 
 BUY_Y = 0.045                # 建仓线（核心 / 卫星一致）

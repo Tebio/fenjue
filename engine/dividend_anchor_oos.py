@@ -26,7 +26,8 @@ KCACHE = ROOT / "data" / "big_kcache"
 CAPDIR = ROOT / "data" / "cap_hist"
 DIV = ROOT / "data" / "dividend_history.json"
 FWD = 120          # 前向窗口（交易日）
-FEE = 0.0015       # 双边费用
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT       # 双边费用
 BUY_Y = 4.5        # 买入区阈值 %
 
 

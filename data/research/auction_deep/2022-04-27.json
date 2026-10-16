@@ -1,0 +1,86 @@
+{
+ "date": "2022-04-27",
+ "source": "iwencai_per_stock_auction",
+ "n": 5,
+ "items": [
+  {
+   "code": "002177",
+   "name": "御银股份",
+   "date": "2022-04-27",
+   "found": true,
+   "auction_price": 2.75,
+   "auction_volume": 1710400.0,
+   "auction_amount": 4703600.0,
+   "auction_pct": -0.09836,
+   "unmatched_volume": -16521310.0,
+   "unmatched_amount": null,
+   "abnormal_type": "跌停试盘",
+   "auction_rating": "-"
+  },
+  {
+   "code": "002316",
+   "name": "亚联发展",
+   "date": "2022-04-27",
+   "found": true,
+   "auction_price": 2.95,
+   "auction_volume": 155600.0,
+   "auction_amount": 459020.0,
+   "auction_pct": -0.10061,
+   "unmatched_volume": -13615700.0,
+   "unmatched_amount": null,
+   "abnormal_type": "跌停试盘",
+   "auction_rating": "-"
+  },
+  {
+   "code": "603717",
+   "name": "天域生物",
+   "date": "2022-04-27",
+   "found": true,
+   "auction_price": 6.5,
+   "auction_volume": 108220.0,
+   "auction_amount": 703430.0,
+   "auction_pct": -0.0634,
+   "unmatched_volume": 4880.0,
+   "unmatched_amount": null,
+   "abnormal_type": null,
+   "auction_rating": null
+  },
+  {
+   "code": "002837",
+   "name": "英维克",
+   "date": "2022-04-27",
+   "found": true,
+   "auction_price": 19.81,
+   "auction_volume": 77700.0,
+   "auction_amount": 1539237.0,
+   "auction_pct": -0.04346,
+   "unmatched_volume": 5800.0,
+   "unmatched_amount": null,
+   "abnormal_type": "急速上涨",
+   "auction_rating": "-"
+  },
+  {
+   "code": "601828",
+   "name": "美凯龙",
+   "date": "2022-04-27",
+   "found": true,
+   "auction_price": 4.91,
+   "auction_volume": 649060.0,
+   "auction_amount": 3186884.6,
+   "auction_pct": -0.03347,
+   "unmatched_volume": 44440.0,
+   "unmatched_amount": null,
+   "abnormal_type": "涨停试盘",
+   "auction_rating": "-"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:59:14+08:00",
+  "data_snapshot": "2022-04-27",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

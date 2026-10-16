@@ -1,0 +1,40 @@
+{
+ "date": "2021-02-02",
+ "source": "iwencai_per_stock_auction",
+ "n": 3,
+ "items": [
+  {
+   "code": "600086",
+   "date": "2021-02-02",
+   "found": false
+  },
+  {
+   "code": "600291",
+   "date": "2021-02-02",
+   "found": false
+  },
+  {
+   "code": "600198",
+   "name": "大唐电信",
+   "date": "2021-02-02",
+   "found": true,
+   "auction_price": 5.58,
+   "auction_volume": 911100.0,
+   "auction_amount": null,
+   "auction_pct": -0.1,
+   "unmatched_volume": -23836821.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:58:02+08:00",
+  "data_snapshot": "2021-02-02",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

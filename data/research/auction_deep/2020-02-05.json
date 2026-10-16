@@ -1,0 +1,30 @@
+{
+ "date": "2020-02-05",
+ "source": "iwencai_per_stock_auction",
+ "n": 1,
+ "items": [
+  {
+   "code": "600892",
+   "name": "大晟文化",
+   "date": "2020-02-05",
+   "found": true,
+   "auction_price": 3.01,
+   "auction_volume": 5518642.0,
+   "auction_amount": null,
+   "auction_pct": -0.0681,
+   "unmatched_volume": 600758.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "偏空"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:56:56+08:00",
+  "data_snapshot": "2020-02-05",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

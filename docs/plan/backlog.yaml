@@ -69,14 +69,14 @@ items:
     area: TAX
     priority: P2
     gate: G1
-    status: todo
+    status: done
     depends_on: [TAX-01]
     ledger_ref: "263③ 267"
     inputs: ["engine/console.py（股息锚价格带）", "dividend_cache.json", "taxfee.dividend_tax"]
     outputs: ["税后买入线（含持有期假设）", "docs/research/dividend-aftertax.md"]
     acceptance: "给出 4.5%/4.0%/3.0% 锚线在（不满1月/1月-1年/超1年）三档税后对应的价格带；明确满1年免税可作持有期规则"
     effort_days: 1
-    evidence: null
+    evidence: "AGENTS#287：docs/research/dividend-aftertax.md 落地（engine/dividend_aftertax_study.py 可复跑，data/dividend_aftertax_20261016.json）；三档税后价格带+五大行工作例齐备；典型持有期中位恰 365 天（39%免/50%十档/11%二十档）；满1年 edge=延迟 33 天省 0.069pp/笔，写进卖出纪律与否待用户裁决（生产锚线未动）"
   - id: DOC-01
     title: 交接手册与降级策略（离线 N 天怎么跑）
     area: DOC
@@ -138,14 +138,14 @@ items:
     area: TAX
     priority: P0
     gate: G1
-    status: todo
+    status: done
     depends_on: []
     ledger_ref: "263④"
     inputs: ["entryexit_matrix.py:116 COST=0.15", "limitup_capture_t0.py:82 FEE_RT=0.001", "109 个含 0.15 的文件"]
     outputs: ["engine/taxfee/__init__.py", "fee()/dividend_tax()/roundtrip_cost()", "tests/test_taxfee.py"]
     acceptance: "含最低佣金 5 元与红利税税级（不满1月20%、1月到1年10%、超1年0%）的单测通过；输出与 limitup_capture_t0 的真实费目口径一致；列出待迁移文件清单"
     effort_days: 1.5
-    evidence: null
+    evidence: "AGENTS#287（卡 t_72f416d8，用户跳过 G0 直派）：落地为单文件 engine/costs.py（FeeSchedule+buy/sell_fee+roundtrip_cost+FLAT_RT/FLAT_RT_PCT 兼容锚+dividend_tax_rate 日历月含边界），tests/test_costs.py 22 断言全绿；65 研究脚本已迁、14 待裁决、13 假阳性（data/口径迁移台账.jsonl 92 行）；对拍=pead_pool_sim 前后逐字节一致 + broker_reconcile selftest 绿/报告一致"
   - id: RES-08
     title: 因子普查候选层影子观察（ivol20 + 量价背离族×妖股期三条）
     area: RES
@@ -621,14 +621,14 @@ items:
     area: RES
     priority: P2
     gate: G2
-    status: todo
+    status: done
     depends_on: [PLAT-01]
     ledger_ref: "263②"
     inputs: ["事件研究工具"]
     outputs: ["engine/research/bootstrap.py"]
     acceptance: "为至少 3 条注册线给出 CI；与 HAC t 值对照并解释差异"
     effort_days: 1.5
-    evidence: null
+    evidence: "2026-10-16 卡 t_543a4e96：engine/walkforward.py 交付 4 线（深档v2/预增池/反转族×knn/预增池×knn）全段 block bootstrap CI（block=20交易日聚类 B=2000）与 HAC t_NW 同段并排；差异解释=日历聚类后事件非独立故 CI 宽于 t 隐含区间（AGENTS #290）；data/walkforward_20261016.json。偏离：落在 walkforward.py 未单独立 engine/research/bootstrap.py，PLAT-01 抽取仍欠"
   - id: RES-05
     title: alpha 衰减曲线与半衰期估计
     area: RES

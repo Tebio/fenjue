@@ -1,0 +1,35 @@
+{
+ "date": "2023-04-24",
+ "source": "iwencai_per_stock_auction",
+ "n": 2,
+ "items": [
+  {
+   "code": "603133",
+   "date": "2023-04-24",
+   "found": false
+  },
+  {
+   "code": "000615",
+   "name": "*ST美谷",
+   "date": "2023-04-24",
+   "found": true,
+   "auction_price": 4.15,
+   "auction_volume": 935000.0,
+   "auction_amount": 3880250.0,
+   "auction_pct": -0.07572,
+   "unmatched_volume": 56500.0,
+   "unmatched_amount": null,
+   "abnormal_type": "大幅低开",
+   "auction_rating": "看空"
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T09:00:32+08:00",
+  "data_snapshot": "2023-04-24",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

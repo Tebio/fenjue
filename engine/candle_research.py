@@ -11,7 +11,8 @@ import json, glob, statistics as st
 from pathlib import Path
 
 KC = Path("/opt/data/fenjue/data/big_kcache")
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 OUT = Path("/opt/data/fenjue/data/candle_research_20260911.json")
 
 stocks = {Path(fp).stem: json.loads(open(fp).read()) for fp in glob.glob(str(KC / "*.json"))}

@@ -1,0 +1,13 @@
+rank files 3376, 2s
+trading days 242: 2025-10-16..2026-10-15
+  scan 500/3376 rows=108797 6s
+  scan 1000/3376 rows=221692 10s
+  scan 1500/3376 rows=335323 14s
+  scan 2000/3376 rows=446221 19s
+  scan 2500/3376 rows=558479 23s
+  scan 3000/3376 rows=673580 28s
+events 763163, 32s
+saved events npz
+saved /opt/data/fenjue/data/guba_sentiment_study_20261016.json 39s
+EXIT=0
+Fri Oct 16 04:35:45 UTC 2026

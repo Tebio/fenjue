@@ -1,0 +1,40 @@
+{
+ "date": "2021-02-05",
+ "source": "iwencai_per_stock_auction",
+ "n": 3,
+ "items": [
+  {
+   "code": "600086",
+   "date": "2021-02-05",
+   "found": false
+  },
+  {
+   "code": "600191",
+   "name": "华资实业",
+   "date": "2021-02-05",
+   "found": true,
+   "auction_price": 3.02,
+   "auction_volume": 15126980.0,
+   "auction_amount": null,
+   "auction_pct": -0.04732,
+   "unmatched_volume": 2040020.0,
+   "unmatched_amount": null,
+   "abnormal_type": "急速上涨",
+   "auction_rating": "-"
+  },
+  {
+   "code": "600695",
+   "date": "2021-02-05",
+   "found": false
+  }
+ ],
+ "_meta": {
+  "generated_at": "2026-10-16T08:58:37+08:00",
+  "data_snapshot": "2021-02-05",
+  "code_version": "311c5ba4b",
+  "inputs": [
+   "auction_confirm_events_20261016.json"
+  ],
+  "owner": "engine.auction_confirm_fetch"
+ }
+}

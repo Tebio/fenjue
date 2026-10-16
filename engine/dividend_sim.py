@@ -15,7 +15,8 @@ ROOT = "/opt/data/fenjue"
 D = ROOT + "/data"
 START = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--start=")), "2019-01-03")
 OUTSUF = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--out=")), "20260912")
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 CAPITAL = 100000.0
 BUY_Y, SELL_Y = 0.045, 0.035
 

@@ -1,0 +1,7590 @@
+{
+ "_meta": {
+  "built": "2026-10-15 23:48",
+  "engine": "GridCF-D(无regime轴)",
+  "min_cell_n": 200,
+  "fee": 0.0015,
+  "learn_rows": 5141330,
+  "口径": "次日开盘入,一字开剔,净0.15%,分箱边界=学习期(信号日前全部股票日)分位数",
+  "refs": "AGENTS.md #276/#277；RES-07 排序层定位，不作独立触发"
+ },
+ "date": "2026-10-15",
+ "sources": {
+  "deep_low": {
+   "file": "docs/ops-state.json",
+   "n": 1,
+   "status": "ok"
+  },
+  "reversal_confirmed": {
+   "file": "data/reversal_confirmed.json",
+   "n": 483,
+   "status": "ok"
+  },
+  "watch_pool": {
+   "file": "data/watch_pool.json",
+   "n": 28,
+   "status": "ok"
+  }
+ },
+ "hist_score_t5_quantiles": {
+  "0.1": -0.352,
+  "0.5": 0.161,
+  "0.9": 0.635
+ },
+ "scores": [
+  {
+   "code": "000011",
+   "name": "深物业A",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.269,
+   "knn_t5_pct": -0.891,
+   "knn_t20_pct": -2.433,
+   "pct_rank_hist": 0.025,
+   "pct_rank_hist_t1": 0.045,
+   "top_decile": false,
+   "n_neighbors": 4952,
+   "grid_level": 0
+  },
+  {
+   "code": "000014",
+   "name": "沙河股份",
+   "sources": [
+    "reversal_confirmed",
+    "watch_pool"
+   ],
+   "knn_t1_pct": 0.025,
+   "knn_t5_pct": 0.182,
+   "knn_t20_pct": 1.348,
+   "pct_rank_hist": 0.528,
+   "pct_rank_hist_t1": 0.646,
+   "top_decile": false,
+   "n_neighbors": 2747,
+   "grid_level": 0
+  },
+  {
+   "code": "000017",
+   "name": "深中华A",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.137,
+   "knn_t5_pct": -0.022,
+   "knn_t20_pct": 0.969,
+   "pct_rank_hist": 0.279,
+   "pct_rank_hist_t1": 0.176,
+   "top_decile": false,
+   "n_neighbors": 513,
+   "grid_level": 0
+  },
+  {
+   "code": "000020",
+   "name": "深华发Ａ",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.236,
+   "knn_t5_pct": -0.471,
+   "knn_t20_pct": -0.066,
+   "pct_rank_hist": 0.074,
+   "pct_rank_hist_t1": 0.063,
+   "top_decile": false,
+   "n_neighbors": 2284,
+   "grid_level": 0
+  },
+  {
+   "code": "000021",
+   "name": "深科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "000034",
+   "name": "神州数码",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.146,
+   "knn_t5_pct": 0.601,
+   "knn_t20_pct": 2.063,
+   "pct_rank_hist": 0.887,
+   "pct_rank_hist_t1": 0.876,
+   "top_decile": false,
+   "n_neighbors": 2675,
+   "grid_level": 0
+  },
+  {
+   "code": "000035",
+   "name": "中国天楹",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.102,
+   "knn_t5_pct": 0.052,
+   "knn_t20_pct": 0.985,
+   "pct_rank_hist": 0.35,
+   "pct_rank_hist_t1": 0.26,
+   "top_decile": false,
+   "n_neighbors": 2439,
+   "grid_level": 0
+  },
+  {
+   "code": "000070",
+   "name": "特发信息",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.149,
+   "knn_t5_pct": -0.096,
+   "knn_t20_pct": 0.296,
+   "pct_rank_hist": 0.213,
+   "pct_rank_hist_t1": 0.155,
+   "top_decile": false,
+   "n_neighbors": 5772,
+   "grid_level": 0
+  },
+  {
+   "code": "000338",
+   "name": "潍柴动力",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.38,
+   "knn_t5_pct": 1.257,
+   "knn_t20_pct": 3.677,
+   "pct_rank_hist": 0.969,
+   "pct_rank_hist_t1": 0.967,
+   "top_decile": true,
+   "n_neighbors": 2265,
+   "grid_level": 0
+  },
+  {
+   "code": "000410",
+   "name": "沈阳机床",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.243,
+   "knn_t5_pct": 0.001,
+   "knn_t20_pct": 0.278,
+   "pct_rank_hist": 0.299,
+   "pct_rank_hist_t1": 0.06,
+   "top_decile": false,
+   "n_neighbors": 1452,
+   "grid_level": 0
+  },
+  {
+   "code": "000420",
+   "name": "吉林化纤",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.09,
+   "knn_t5_pct": 0.202,
+   "knn_t20_pct": 0.336,
+   "pct_rank_hist": 0.556,
+   "pct_rank_hist_t1": 0.288,
+   "top_decile": false,
+   "n_neighbors": 2939,
+   "grid_level": 0
+  },
+  {
+   "code": "000426",
+   "name": "兴业银锡",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.752,
+   "knn_t5_pct": 1.952,
+   "knn_t20_pct": 4.094,
+   "pct_rank_hist": 0.98,
+   "pct_rank_hist_t1": 0.985,
+   "top_decile": true,
+   "n_neighbors": 293,
+   "grid_level": 0
+  },
+  {
+   "code": "000498",
+   "name": "山东路桥",
+   "sources": [
+    "reversal_confirmed",
+    "watch_pool"
+   ],
+   "knn_t1_pct": 0.002,
+   "knn_t5_pct": -0.085,
+   "knn_t20_pct": 1.326,
+   "pct_rank_hist": 0.223,
+   "pct_rank_hist_t1": 0.577,
+   "top_decile": false,
+   "n_neighbors": 2754,
+   "grid_level": 0
+  },
+  {
+   "code": "000503",
+   "name": "国新健康",
+   "sources": [
+    "reversal_confirmed",
+    "watch_pool"
+   ],
+   "knn_t1_pct": 0.17,
+   "knn_t5_pct": 0.333,
+   "knn_t20_pct": 0.981,
+   "pct_rank_hist": 0.713,
+   "pct_rank_hist_t1": 0.894,
+   "top_decile": false,
+   "n_neighbors": 6522,
+   "grid_level": 0
+  },
+  {
+   "code": "000504",
+   "name": "南华生物",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.002,
+   "knn_t5_pct": 0.333,
+   "knn_t20_pct": 0.645,
+   "pct_rank_hist": 0.711,
+   "pct_rank_hist_t1": 0.576,
+   "top_decile": false,
+   "n_neighbors": 6865,
+   "grid_level": 0
+  },
+  {
+   "code": "000510",
+   "name": "新金路",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.251,
+   "knn_t5_pct": 1.307,
+   "knn_t20_pct": 3.499,
+   "pct_rank_hist": 0.969,
+   "pct_rank_hist_t1": 0.94,
+   "top_decile": true,
+   "n_neighbors": 6021,
+   "grid_level": 0
+  },
+  {
+   "code": "000523",
+   "name": "红棉股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.019,
+   "knn_t5_pct": -0.149,
+   "knn_t20_pct": 0.042,
+   "pct_rank_hist": 0.182,
+   "pct_rank_hist_t1": 0.508,
+   "top_decile": false,
+   "n_neighbors": 1322,
+   "grid_level": 0
+  },
+  {
+   "code": "000525",
+   "name": "红太阳",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.005,
+   "knn_t5_pct": 0.264,
+   "knn_t20_pct": 1.551,
+   "pct_rank_hist": 0.634,
+   "pct_rank_hist_t1": 0.591,
+   "top_decile": false,
+   "n_neighbors": 1179,
+   "grid_level": 0
+  },
+  {
+   "code": "000532",
+   "name": "华金资本",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.059,
+   "knn_t5_pct": -0.058,
+   "knn_t20_pct": -0.104,
+   "pct_rank_hist": 0.242,
+   "pct_rank_hist_t1": 0.379,
+   "top_decile": false,
+   "n_neighbors": 3593,
+   "grid_level": 0
+  },
+  {
+   "code": "000533",
+   "name": "顺钠股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.693,
+   "knn_t5_pct": 1.09,
+   "knn_t20_pct": 0.966,
+   "pct_rank_hist": 0.963,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 356,
+   "grid_level": 0
+  },
+  {
+   "code": "000546",
+   "name": "金圆股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.055,
+   "knn_t5_pct": 0.025,
+   "knn_t20_pct": 1.939,
+   "pct_rank_hist": 0.324,
+   "pct_rank_hist_t1": 0.393,
+   "top_decile": false,
+   "n_neighbors": 4292,
+   "grid_level": 0
+  },
+  {
+   "code": "000558",
+   "name": "天府文旅",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.054,
+   "knn_t5_pct": -0.359,
+   "knn_t20_pct": -0.16,
+   "pct_rank_hist": 0.098,
+   "pct_rank_hist_t1": 0.395,
+   "top_decile": false,
+   "n_neighbors": 1852,
+   "grid_level": 0
+  },
+  {
+   "code": "000559",
+   "name": "万向钱潮",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.283,
+   "knn_t5_pct": 1.076,
+   "knn_t20_pct": 4.201,
+   "pct_rank_hist": 0.963,
+   "pct_rank_hist_t1": 0.949,
+   "top_decile": true,
+   "n_neighbors": 3215,
+   "grid_level": 0
+  },
+  {
+   "code": "000572",
+   "name": "海马汽车",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.105,
+   "knn_t5_pct": 0.421,
+   "knn_t20_pct": 2.341,
+   "pct_rank_hist": 0.79,
+   "pct_rank_hist_t1": 0.816,
+   "top_decile": false,
+   "n_neighbors": 726,
+   "grid_level": 0
+  },
+  {
+   "code": "000592",
+   "name": "平潭发展",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.184,
+   "knn_t5_pct": -0.65,
+   "knn_t20_pct": -1.355,
+   "pct_rank_hist": 0.045,
+   "pct_rank_hist_t1": 0.104,
+   "top_decile": false,
+   "n_neighbors": 2151,
+   "grid_level": 0
+  },
+  {
+   "code": "000595",
+   "name": "新能股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.097,
+   "knn_t5_pct": 0.247,
+   "knn_t20_pct": 0.982,
+   "pct_rank_hist": 0.612,
+   "pct_rank_hist_t1": 0.275,
+   "top_decile": false,
+   "n_neighbors": 859,
+   "grid_level": 0
+  },
+  {
+   "code": "000603",
+   "name": "盛达资源",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.491,
+   "knn_t5_pct": 0.391,
+   "knn_t20_pct": 3.064,
+   "pct_rank_hist": 0.767,
+   "pct_rank_hist_t1": 0.008,
+   "top_decile": false,
+   "n_neighbors": 244,
+   "grid_level": 0
+  },
+  {
+   "code": "000626",
+   "name": "远大控股",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.1,
+   "knn_t5_pct": -0.311,
+   "knn_t20_pct": -1.348,
+   "pct_rank_hist": 0.109,
+   "pct_rank_hist_t1": 0.266,
+   "top_decile": false,
+   "n_neighbors": 8537,
+   "grid_level": 0
+  },
+  {
+   "code": "000628",
+   "name": "高新发展",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.145,
+   "knn_t5_pct": 0.238,
+   "knn_t20_pct": 2.36,
+   "pct_rank_hist": 0.606,
+   "pct_rank_hist_t1": 0.163,
+   "top_decile": false,
+   "n_neighbors": 362,
+   "grid_level": 0
+  },
+  {
+   "code": "000655",
+   "name": "金岭矿业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.125,
+   "knn_t5_pct": 0.096,
+   "knn_t20_pct": 1.456,
+   "pct_rank_hist": 0.41,
+   "pct_rank_hist_t1": 0.213,
+   "top_decile": false,
+   "n_neighbors": 1709,
+   "grid_level": 0
+  },
+  {
+   "code": "000657",
+   "name": "中钨高新",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.417,
+   "knn_t5_pct": 4.669,
+   "knn_t20_pct": 9.529,
+   "pct_rank_hist": 0.999,
+   "pct_rank_hist_t1": 0.999,
+   "top_decile": true,
+   "n_neighbors": 6022,
+   "grid_level": 0
+  },
+  {
+   "code": "000670",
+   "name": "盈方微",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.068,
+   "knn_t5_pct": 0.288,
+   "knn_t20_pct": 1.669,
+   "pct_rank_hist": 0.672,
+   "pct_rank_hist_t1": 0.74,
+   "top_decile": false,
+   "n_neighbors": 1319,
+   "grid_level": 0
+  },
+  {
+   "code": "000672",
+   "name": "上峰材料",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.144,
+   "knn_t5_pct": -0.068,
+   "knn_t20_pct": 0.512,
+   "pct_rank_hist": 0.236,
+   "pct_rank_hist_t1": 0.165,
+   "top_decile": false,
+   "n_neighbors": 2320,
+   "grid_level": 0
+  },
+  {
+   "code": "000678",
+   "name": "襄阳轴承",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.039,
+   "knn_t5_pct": 0.079,
+   "knn_t20_pct": -0.201,
+   "pct_rank_hist": 0.386,
+   "pct_rank_hist_t1": 0.686,
+   "top_decile": false,
+   "n_neighbors": 6438,
+   "grid_level": 0
+  },
+  {
+   "code": "000697",
+   "name": "炼石航空",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.02,
+   "knn_t5_pct": 0.179,
+   "knn_t20_pct": 0.641,
+   "pct_rank_hist": 0.522,
+   "pct_rank_hist_t1": 0.63,
+   "top_decile": false,
+   "n_neighbors": 3566,
+   "grid_level": 0
+  },
+  {
+   "code": "000700",
+   "name": "模塑科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.016,
+   "knn_t5_pct": 0.165,
+   "knn_t20_pct": 0.805,
+   "pct_rank_hist": 0.506,
+   "pct_rank_hist_t1": 0.621,
+   "top_decile": false,
+   "n_neighbors": 3030,
+   "grid_level": 0
+  },
+  {
+   "code": "000710",
+   "name": "贝瑞基因",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.091,
+   "knn_t5_pct": 0.341,
+   "knn_t20_pct": 0.687,
+   "pct_rank_hist": 0.721,
+   "pct_rank_hist_t1": 0.789,
+   "top_decile": false,
+   "n_neighbors": 6768,
+   "grid_level": 0
+  },
+  {
+   "code": "000711",
+   "name": "京蓝科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.536,
+   "knn_t5_pct": 1.229,
+   "knn_t20_pct": 2.793,
+   "pct_rank_hist": 0.966,
+   "pct_rank_hist_t1": 0.975,
+   "top_decile": true,
+   "n_neighbors": 2688,
+   "grid_level": 0
+  },
+  {
+   "code": "000715",
+   "name": "中兴商业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.224,
+   "knn_t5_pct": 0.626,
+   "knn_t20_pct": 0.816,
+   "pct_rank_hist": 0.896,
+   "pct_rank_hist_t1": 0.932,
+   "top_decile": false,
+   "n_neighbors": 4578,
+   "grid_level": 0
+  },
+  {
+   "code": "000731",
+   "name": "四川美丰",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.105,
+   "knn_t5_pct": -0.398,
+   "knn_t20_pct": -1.166,
+   "pct_rank_hist": 0.089,
+   "pct_rank_hist_t1": 0.253,
+   "top_decile": false,
+   "n_neighbors": 2326,
+   "grid_level": 0
+  },
+  {
+   "code": "000753",
+   "name": "漳州发展",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.044,
+   "knn_t5_pct": 0.098,
+   "knn_t20_pct": 1.042,
+   "pct_rank_hist": 0.412,
+   "pct_rank_hist_t1": 0.434,
+   "top_decile": false,
+   "n_neighbors": 1511,
+   "grid_level": 0
+  },
+  {
+   "code": "000756",
+   "name": "新华制药",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.185,
+   "knn_t5_pct": 0.12,
+   "knn_t20_pct": 0.357,
+   "pct_rank_hist": 0.445,
+   "pct_rank_hist_t1": 0.102,
+   "top_decile": false,
+   "n_neighbors": 2728,
+   "grid_level": 0
+  },
+  {
+   "code": "000759",
+   "name": "中百集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.057,
+   "knn_t5_pct": 0.121,
+   "knn_t20_pct": 1.637,
+   "pct_rank_hist": 0.447,
+   "pct_rank_hist_t1": 0.388,
+   "top_decile": false,
+   "n_neighbors": 4579,
+   "grid_level": 0
+  },
+  {
+   "code": "000799",
+   "name": "酒鬼酒",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.052,
+   "knn_t5_pct": 0.127,
+   "knn_t20_pct": 0.662,
+   "pct_rank_hist": 0.455,
+   "pct_rank_hist_t1": 0.407,
+   "top_decile": false,
+   "n_neighbors": 4133,
+   "grid_level": 0
+  },
+  {
+   "code": "000811",
+   "name": "冰轮环境",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.655,
+   "knn_t5_pct": 2.916,
+   "knn_t20_pct": 6.834,
+   "pct_rank_hist": 0.99,
+   "pct_rank_hist_t1": 0.98,
+   "top_decile": true,
+   "n_neighbors": 6598,
+   "grid_level": 0
+  },
+  {
+   "code": "000823",
+   "name": "超声电子",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.329,
+   "knn_t5_pct": -1.266,
+   "knn_t20_pct": -3.0,
+   "pct_rank_hist": 0.006,
+   "pct_rank_hist_t1": 0.027,
+   "top_decile": false,
+   "n_neighbors": 5944,
+   "grid_level": 0
+  },
+  {
+   "code": "000863",
+   "name": "三湘印象",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.019,
+   "knn_t5_pct": 0.396,
+   "knn_t20_pct": 1.029,
+   "pct_rank_hist": 0.771,
+   "pct_rank_hist_t1": 0.626,
+   "top_decile": false,
+   "n_neighbors": 3969,
+   "grid_level": 0
+  },
+  {
+   "code": "000868",
+   "name": "安凯客车",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.028,
+   "knn_t5_pct": 0.352,
+   "knn_t20_pct": 1.602,
+   "pct_rank_hist": 0.734,
+   "pct_rank_hist_t1": 0.652,
+   "top_decile": false,
+   "n_neighbors": 2491,
+   "grid_level": 0
+  },
+  {
+   "code": "000893",
+   "name": "亚钾国际",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.283,
+   "knn_t5_pct": 1.076,
+   "knn_t20_pct": 4.201,
+   "pct_rank_hist": 0.963,
+   "pct_rank_hist_t1": 0.949,
+   "top_decile": true,
+   "n_neighbors": 3215,
+   "grid_level": 0
+  },
+  {
+   "code": "000905",
+   "name": "厦门港务",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.303,
+   "knn_t5_pct": -0.155,
+   "knn_t20_pct": 0.483,
+   "pct_rank_hist": 0.176,
+   "pct_rank_hist_t1": 0.034,
+   "top_decile": false,
+   "n_neighbors": 1613,
+   "grid_level": 0
+  },
+  {
+   "code": "000910",
+   "name": "大亚圣象",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.184,
+   "knn_t5_pct": 0.583,
+   "knn_t20_pct": 1.787,
+   "pct_rank_hist": 0.881,
+   "pct_rank_hist_t1": 0.905,
+   "top_decile": false,
+   "n_neighbors": 4018,
+   "grid_level": 0
+  },
+  {
+   "code": "000922",
+   "name": "佳电股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.13,
+   "knn_t5_pct": 0.044,
+   "knn_t20_pct": 0.995,
+   "pct_rank_hist": 0.341,
+   "pct_rank_hist_t1": 0.2,
+   "top_decile": false,
+   "n_neighbors": 2131,
+   "grid_level": 0
+  },
+  {
+   "code": "000925",
+   "name": "众合科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.126,
+   "knn_t5_pct": 0.002,
+   "knn_t20_pct": 0.954,
+   "pct_rank_hist": 0.301,
+   "pct_rank_hist_t1": 0.209,
+   "top_decile": false,
+   "n_neighbors": 4068,
+   "grid_level": 0
+  },
+  {
+   "code": "000938",
+   "name": "紫光股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.417,
+   "knn_t5_pct": 4.669,
+   "knn_t20_pct": 9.529,
+   "pct_rank_hist": 0.999,
+   "pct_rank_hist_t1": 0.999,
+   "top_decile": true,
+   "n_neighbors": 6022,
+   "grid_level": 0
+  },
+  {
+   "code": "000949",
+   "name": "新乡化纤",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.023,
+   "knn_t5_pct": -0.043,
+   "knn_t20_pct": 1.033,
+   "pct_rank_hist": 0.253,
+   "pct_rank_hist_t1": 0.642,
+   "top_decile": false,
+   "n_neighbors": 634,
+   "grid_level": 0
+  },
+  {
+   "code": "000960",
+   "name": "锡业股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.553,
+   "knn_t5_pct": 1.223,
+   "knn_t20_pct": 4.17,
+   "pct_rank_hist": 0.966,
+   "pct_rank_hist_t1": 0.976,
+   "top_decile": true,
+   "n_neighbors": 1024,
+   "grid_level": 0
+  },
+  {
+   "code": "000962",
+   "name": "东方钽业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.707,
+   "knn_t5_pct": 2.041,
+   "knn_t20_pct": 4.27,
+   "pct_rank_hist": 0.982,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 5579,
+   "grid_level": 0
+  },
+  {
+   "code": "000977",
+   "name": "浪潮信息",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "000978",
+   "name": "桂林旅游",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.396,
+   "knn_t5_pct": -0.589,
+   "knn_t20_pct": -0.445,
+   "pct_rank_hist": 0.053,
+   "pct_rank_hist_t1": 0.015,
+   "top_decile": false,
+   "n_neighbors": 412,
+   "grid_level": 0
+  },
+  {
+   "code": "000980",
+   "name": "众泰汽车",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.053,
+   "knn_t5_pct": -0.041,
+   "knn_t20_pct": 0.492,
+   "pct_rank_hist": 0.257,
+   "pct_rank_hist_t1": 0.403,
+   "top_decile": false,
+   "n_neighbors": 3573,
+   "grid_level": 0
+  },
+  {
+   "code": "000981",
+   "name": "山子高科",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.034,
+   "knn_t5_pct": 0.029,
+   "knn_t20_pct": 1.427,
+   "pct_rank_hist": 0.328,
+   "pct_rank_hist_t1": 0.471,
+   "top_decile": false,
+   "n_neighbors": 1153,
+   "grid_level": 0
+  },
+  {
+   "code": "000988",
+   "name": "华工科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "001209",
+   "name": "洪兴股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.012,
+   "knn_t5_pct": 0.094,
+   "knn_t20_pct": 0.457,
+   "pct_rank_hist": 0.408,
+   "pct_rank_hist_t1": 0.53,
+   "top_decile": false,
+   "n_neighbors": 3763,
+   "grid_level": 0
+  },
+  {
+   "code": "001212",
+   "name": "中旗新材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.115,
+   "knn_t5_pct": 0.476,
+   "knn_t20_pct": 1.723,
+   "pct_rank_hist": 0.823,
+   "pct_rank_hist_t1": 0.837,
+   "top_decile": false,
+   "n_neighbors": 7925,
+   "grid_level": 0
+  },
+  {
+   "code": "001222",
+   "name": "源飞宠物",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.105,
+   "knn_t5_pct": 0.068,
+   "knn_t20_pct": 0.718,
+   "pct_rank_hist": 0.37,
+   "pct_rank_hist_t1": 0.251,
+   "top_decile": false,
+   "n_neighbors": 2308,
+   "grid_level": 0
+  },
+  {
+   "code": "001236",
+   "name": "弘业期货",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.273,
+   "knn_t5_pct": -0.377,
+   "knn_t20_pct": 0.178,
+   "pct_rank_hist": 0.095,
+   "pct_rank_hist_t1": 0.044,
+   "top_decile": false,
+   "n_neighbors": 2180,
+   "grid_level": 0
+  },
+  {
+   "code": "001267",
+   "name": "汇绿生态",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "001270",
+   "name": "铖昌科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "001278",
+   "name": "一彬科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.043,
+   "knn_t5_pct": 0.263,
+   "knn_t20_pct": 0.598,
+   "pct_rank_hist": 0.633,
+   "pct_rank_hist_t1": 0.437,
+   "top_decile": false,
+   "n_neighbors": 5146,
+   "grid_level": 0
+  },
+  {
+   "code": "001280",
+   "name": "中国铀业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.119,
+   "knn_t5_pct": 0.443,
+   "knn_t20_pct": 1.371,
+   "pct_rank_hist": 0.803,
+   "pct_rank_hist_t1": 0.846,
+   "top_decile": false,
+   "n_neighbors": 1923,
+   "grid_level": 0
+  },
+  {
+   "code": "001299",
+   "name": "美能能源",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": 0.203,
+   "knn_t5_pct": 0.696,
+   "knn_t20_pct": 1.532,
+   "pct_rank_hist": 0.918,
+   "pct_rank_hist_t1": 0.919,
+   "top_decile": true,
+   "n_neighbors": 7479,
+   "grid_level": 0
+  },
+  {
+   "code": "001300",
+   "name": "三柏硕",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.015,
+   "knn_t5_pct": 0.374,
+   "knn_t20_pct": 1.388,
+   "pct_rank_hist": 0.752,
+   "pct_rank_hist_t1": 0.522,
+   "top_decile": false,
+   "n_neighbors": 4046,
+   "grid_level": 0
+  },
+  {
+   "code": "001309",
+   "name": "德明利",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.417,
+   "knn_t5_pct": 4.669,
+   "knn_t20_pct": 9.529,
+   "pct_rank_hist": 0.999,
+   "pct_rank_hist_t1": 0.999,
+   "top_decile": true,
+   "n_neighbors": 6022,
+   "grid_level": 0
+  },
+  {
+   "code": "001317",
+   "name": "三羊马",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.017,
+   "knn_t5_pct": 0.162,
+   "knn_t20_pct": 0.397,
+   "pct_rank_hist": 0.501,
+   "pct_rank_hist_t1": 0.514,
+   "top_decile": false,
+   "n_neighbors": 5282,
+   "grid_level": 0
+  },
+  {
+   "code": "001331",
+   "name": "胜通能源",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.001,
+   "knn_t5_pct": 0.514,
+   "knn_t20_pct": 2.167,
+   "pct_rank_hist": 0.849,
+   "pct_rank_hist_t1": 0.565,
+   "top_decile": false,
+   "n_neighbors": 4439,
+   "grid_level": 0
+  },
+  {
+   "code": "001332",
+   "name": "锡装股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.585,
+   "knn_t5_pct": 1.479,
+   "knn_t20_pct": 4.279,
+   "pct_rank_hist": 0.973,
+   "pct_rank_hist_t1": 0.978,
+   "top_decile": true,
+   "n_neighbors": 3186,
+   "grid_level": 0
+  },
+  {
+   "code": "001336",
+   "name": "楚环科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.135,
+   "knn_t5_pct": 0.488,
+   "knn_t20_pct": 1.701,
+   "pct_rank_hist": 0.834,
+   "pct_rank_hist_t1": 0.186,
+   "top_decile": false,
+   "n_neighbors": 2033,
+   "grid_level": 0
+  },
+  {
+   "code": "001356",
+   "name": "富岭股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.125,
+   "knn_t5_pct": 0.609,
+   "knn_t20_pct": 1.892,
+   "pct_rank_hist": 0.89,
+   "pct_rank_hist_t1": 0.854,
+   "top_decile": false,
+   "n_neighbors": 3258,
+   "grid_level": 0
+  },
+  {
+   "code": "001365",
+   "name": "天海电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.022,
+   "knn_t5_pct": 0.494,
+   "knn_t20_pct": 1.989,
+   "pct_rank_hist": 0.836,
+   "pct_rank_hist_t1": 0.638,
+   "top_decile": false,
+   "n_neighbors": 9090,
+   "grid_level": 0
+  },
+  {
+   "code": "001376",
+   "name": "百通能源",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.158,
+   "knn_t5_pct": -0.18,
+   "knn_t20_pct": 1.333,
+   "pct_rank_hist": 0.158,
+   "pct_rank_hist_t1": 0.139,
+   "top_decile": false,
+   "n_neighbors": 1530,
+   "grid_level": 0
+  },
+  {
+   "code": "001389",
+   "name": "广合科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "001393",
+   "name": "维通利",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.304,
+   "knn_t5_pct": 0.806,
+   "knn_t20_pct": 5.308,
+   "pct_rank_hist": 0.945,
+   "pct_rank_hist_t1": 0.954,
+   "top_decile": true,
+   "n_neighbors": 3228,
+   "grid_level": 0
+  },
+  {
+   "code": "001399",
+   "name": "惠科股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.767,
+   "knn_t5_pct": 2.597,
+   "knn_t20_pct": 5.713,
+   "pct_rank_hist": 0.989,
+   "pct_rank_hist_t1": 0.985,
+   "top_decile": true,
+   "n_neighbors": 6020,
+   "grid_level": 0
+  },
+  {
+   "code": "002008",
+   "name": "大族激光",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.417,
+   "knn_t5_pct": 4.669,
+   "knn_t20_pct": 9.529,
+   "pct_rank_hist": 0.999,
+   "pct_rank_hist_t1": 0.999,
+   "top_decile": true,
+   "n_neighbors": 6022,
+   "grid_level": 0
+  },
+  {
+   "code": "002025",
+   "name": "航天电器",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "002043",
+   "name": "兔宝宝",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.157,
+   "knn_t5_pct": -0.1,
+   "knn_t20_pct": 0.119,
+   "pct_rank_hist": 0.208,
+   "pct_rank_hist_t1": 0.14,
+   "top_decile": false,
+   "n_neighbors": 2199,
+   "grid_level": 0
+  },
+  {
+   "code": "002046",
+   "name": "国机精工",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.051,
+   "knn_t5_pct": 0.231,
+   "knn_t20_pct": 0.88,
+   "pct_rank_hist": 0.594,
+   "pct_rank_hist_t1": 0.711,
+   "top_decile": false,
+   "n_neighbors": 7698,
+   "grid_level": 0
+  },
+  {
+   "code": "002048",
+   "name": "宁波华翔",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.087,
+   "knn_t5_pct": -0.009,
+   "knn_t20_pct": 1.231,
+   "pct_rank_hist": 0.286,
+   "pct_rank_hist_t1": 0.296,
+   "top_decile": false,
+   "n_neighbors": 2855,
+   "grid_level": 0
+  },
+  {
+   "code": "002050",
+   "name": "三花智控",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.655,
+   "knn_t5_pct": 2.916,
+   "knn_t20_pct": 6.834,
+   "pct_rank_hist": 0.99,
+   "pct_rank_hist_t1": 0.98,
+   "top_decile": true,
+   "n_neighbors": 6598,
+   "grid_level": 0
+  },
+  {
+   "code": "002062",
+   "name": "宏润建设",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.2,
+   "knn_t5_pct": -0.302,
+   "knn_t20_pct": -0.629,
+   "pct_rank_hist": 0.114,
+   "pct_rank_hist_t1": 0.087,
+   "top_decile": false,
+   "n_neighbors": 889,
+   "grid_level": 0
+  },
+  {
+   "code": "002064",
+   "name": "华峰化学",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.537,
+   "knn_t5_pct": 0.809,
+   "knn_t20_pct": 3.28,
+   "pct_rank_hist": 0.946,
+   "pct_rank_hist_t1": 0.975,
+   "top_decile": true,
+   "n_neighbors": 746,
+   "grid_level": 0
+  },
+  {
+   "code": "002068",
+   "name": "黑猫股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.185,
+   "knn_t5_pct": 0.12,
+   "knn_t20_pct": 0.357,
+   "pct_rank_hist": 0.445,
+   "pct_rank_hist_t1": 0.102,
+   "top_decile": false,
+   "n_neighbors": 2728,
+   "grid_level": 0
+  },
+  {
+   "code": "002077",
+   "name": "大港股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.008,
+   "knn_t5_pct": 0.156,
+   "knn_t20_pct": 0.959,
+   "pct_rank_hist": 0.496,
+   "pct_rank_hist_t1": 0.541,
+   "top_decile": false,
+   "n_neighbors": 978,
+   "grid_level": 0
+  },
+  {
+   "code": "002081",
+   "name": "金 螳 螂",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.134,
+   "knn_t5_pct": 0.608,
+   "knn_t20_pct": 2.929,
+   "pct_rank_hist": 0.89,
+   "pct_rank_hist_t1": 0.189,
+   "top_decile": false,
+   "n_neighbors": 403,
+   "grid_level": 0
+  },
+  {
+   "code": "002083",
+   "name": "孚日股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.125,
+   "knn_t5_pct": 0.52,
+   "knn_t20_pct": 1.944,
+   "pct_rank_hist": 0.853,
+   "pct_rank_hist_t1": 0.856,
+   "top_decile": false,
+   "n_neighbors": 2400,
+   "grid_level": 0
+  },
+  {
+   "code": "002084",
+   "name": "海鸥住工",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.55,
+   "knn_t5_pct": -1.024,
+   "knn_t20_pct": -0.825,
+   "pct_rank_hist": 0.016,
+   "pct_rank_hist_t1": 0.006,
+   "top_decile": false,
+   "n_neighbors": 978,
+   "grid_level": 0
+  },
+  {
+   "code": "002095",
+   "name": "生 意 宝",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.08,
+   "knn_t5_pct": 0.255,
+   "knn_t20_pct": 0.618,
+   "pct_rank_hist": 0.621,
+   "pct_rank_hist_t1": 0.775,
+   "top_decile": false,
+   "n_neighbors": 5082,
+   "grid_level": 0
+  },
+  {
+   "code": "002112",
+   "name": "三变科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.11,
+   "knn_t5_pct": 0.576,
+   "knn_t20_pct": 2.069,
+   "pct_rank_hist": 0.878,
+   "pct_rank_hist_t1": 0.826,
+   "top_decile": false,
+   "n_neighbors": 2350,
+   "grid_level": 0
+  },
+  {
+   "code": "002119",
+   "name": "康强电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.041,
+   "knn_t5_pct": 0.173,
+   "knn_t20_pct": 0.515,
+   "pct_rank_hist": 0.514,
+   "pct_rank_hist_t1": 0.445,
+   "top_decile": false,
+   "n_neighbors": 4773,
+   "grid_level": 0
+  },
+  {
+   "code": "002125",
+   "name": "湘潭电化",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.231,
+   "knn_t5_pct": 0.791,
+   "knn_t20_pct": 2.005,
+   "pct_rank_hist": 0.942,
+   "pct_rank_hist_t1": 0.933,
+   "top_decile": true,
+   "n_neighbors": 2400,
+   "grid_level": 0
+  },
+  {
+   "code": "002126",
+   "name": "银轮股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.707,
+   "knn_t5_pct": 2.041,
+   "knn_t20_pct": 4.27,
+   "pct_rank_hist": 0.982,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 5579,
+   "grid_level": 0
+  },
+  {
+   "code": "002129",
+   "name": "TCL中环",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": 0.058,
+   "knn_t5_pct": 0.284,
+   "knn_t20_pct": 0.807,
+   "pct_rank_hist": 0.668,
+   "pct_rank_hist_t1": 0.722,
+   "top_decile": false,
+   "n_neighbors": 2822,
+   "grid_level": 0
+  },
+  {
+   "code": "002150",
+   "name": "正泰电源",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.194,
+   "knn_t5_pct": 0.816,
+   "knn_t20_pct": 2.943,
+   "pct_rank_hist": 0.946,
+   "pct_rank_hist_t1": 0.912,
+   "top_decile": true,
+   "n_neighbors": 4957,
+   "grid_level": 0
+  },
+  {
+   "code": "002156",
+   "name": "通富微电",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "002158",
+   "name": "汉钟精机",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "002162",
+   "name": "悦心健康",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.203,
+   "knn_t5_pct": 0.351,
+   "knn_t20_pct": 0.822,
+   "pct_rank_hist": 0.731,
+   "pct_rank_hist_t1": 0.921,
+   "top_decile": false,
+   "n_neighbors": 5433,
+   "grid_level": 0
+  },
+  {
+   "code": "002163",
+   "name": "海南发展",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.001,
+   "knn_t5_pct": 0.232,
+   "knn_t20_pct": 1.821,
+   "pct_rank_hist": 0.595,
+   "pct_rank_hist_t1": 0.564,
+   "top_decile": false,
+   "n_neighbors": 4455,
+   "grid_level": 0
+  },
+  {
+   "code": "002167",
+   "name": "东方锆业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.769,
+   "knn_t5_pct": 1.419,
+   "knn_t20_pct": 2.136,
+   "pct_rank_hist": 0.972,
+   "pct_rank_hist_t1": 0.986,
+   "top_decile": true,
+   "n_neighbors": 1248,
+   "grid_level": 0
+  },
+  {
+   "code": "002169",
+   "name": "智光电气",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.003,
+   "knn_t5_pct": 0.566,
+   "knn_t20_pct": 2.912,
+   "pct_rank_hist": 0.875,
+   "pct_rank_hist_t1": 0.562,
+   "top_decile": false,
+   "n_neighbors": 2844,
+   "grid_level": 0
+  },
+  {
+   "code": "002172",
+   "name": "澳洋健康",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.268,
+   "knn_t5_pct": -0.829,
+   "knn_t20_pct": -2.064,
+   "pct_rank_hist": 0.028,
+   "pct_rank_hist_t1": 0.047,
+   "top_decile": false,
+   "n_neighbors": 3051,
+   "grid_level": 0
+  },
+  {
+   "code": "002176",
+   "name": "江特电机",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.043,
+   "knn_t5_pct": 0.402,
+   "knn_t20_pct": 1.175,
+   "pct_rank_hist": 0.775,
+   "pct_rank_hist_t1": 0.699,
+   "top_decile": false,
+   "n_neighbors": 2094,
+   "grid_level": 0
+  },
+  {
+   "code": "002178",
+   "name": "延华智能",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.236,
+   "knn_t5_pct": -0.471,
+   "knn_t20_pct": -0.066,
+   "pct_rank_hist": 0.074,
+   "pct_rank_hist_t1": 0.063,
+   "top_decile": false,
+   "n_neighbors": 2284,
+   "grid_level": 0
+  },
+  {
+   "code": "002183",
+   "name": "怡 亚 通",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.17,
+   "knn_t5_pct": 0.631,
+   "knn_t20_pct": 1.681,
+   "pct_rank_hist": 0.899,
+   "pct_rank_hist_t1": 0.893,
+   "top_decile": false,
+   "n_neighbors": 4164,
+   "grid_level": 0
+  },
+  {
+   "code": "002184",
+   "name": "海得控制",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.224,
+   "knn_t5_pct": 0.626,
+   "knn_t20_pct": 0.816,
+   "pct_rank_hist": 0.896,
+   "pct_rank_hist_t1": 0.932,
+   "top_decile": false,
+   "n_neighbors": 4578,
+   "grid_level": 0
+  },
+  {
+   "code": "002185",
+   "name": "华天科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.655,
+   "knn_t5_pct": 2.916,
+   "knn_t20_pct": 6.834,
+   "pct_rank_hist": 0.99,
+   "pct_rank_hist_t1": 0.98,
+   "top_decile": true,
+   "n_neighbors": 6598,
+   "grid_level": 0
+  },
+  {
+   "code": "002196",
+   "name": "方正电机",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.005,
+   "knn_t5_pct": 0.37,
+   "knn_t20_pct": 1.28,
+   "pct_rank_hist": 0.75,
+   "pct_rank_hist_t1": 0.588,
+   "top_decile": false,
+   "n_neighbors": 8537,
+   "grid_level": 0
+  },
+  {
+   "code": "002202",
+   "name": "金风科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.131,
+   "knn_t5_pct": 0.618,
+   "knn_t20_pct": 4.017,
+   "pct_rank_hist": 0.893,
+   "pct_rank_hist_t1": 0.196,
+   "top_decile": false,
+   "n_neighbors": 3340,
+   "grid_level": 0
+  },
+  {
+   "code": "002213",
+   "name": "大为股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.246,
+   "knn_t5_pct": 0.955,
+   "knn_t20_pct": 3.542,
+   "pct_rank_hist": 0.959,
+   "pct_rank_hist_t1": 0.939,
+   "top_decile": true,
+   "n_neighbors": 3018,
+   "grid_level": 0
+  },
+  {
+   "code": "002222",
+   "name": "福晶科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "002232",
+   "name": "启明信息",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.092,
+   "knn_t5_pct": 0.261,
+   "knn_t20_pct": 0.764,
+   "pct_rank_hist": 0.63,
+   "pct_rank_hist_t1": 0.791,
+   "top_decile": false,
+   "n_neighbors": 3593,
+   "grid_level": 0
+  },
+  {
+   "code": "002244",
+   "name": "滨江集团",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.052,
+   "knn_t5_pct": -0.068,
+   "knn_t20_pct": -0.142,
+   "pct_rank_hist": 0.235,
+   "pct_rank_hist_t1": 0.406,
+   "top_decile": false,
+   "n_neighbors": 3805,
+   "grid_level": 0
+  },
+  {
+   "code": "002245",
+   "name": "蔚蓝锂芯",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "002250",
+   "name": "联化科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.077,
+   "knn_t5_pct": 0.103,
+   "knn_t20_pct": 0.585,
+   "pct_rank_hist": 0.42,
+   "pct_rank_hist_t1": 0.324,
+   "top_decile": false,
+   "n_neighbors": 8084,
+   "grid_level": 0
+  },
+  {
+   "code": "002263",
+   "name": "大东南",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.053,
+   "knn_t5_pct": -0.041,
+   "knn_t20_pct": 0.492,
+   "pct_rank_hist": 0.257,
+   "pct_rank_hist_t1": 0.403,
+   "top_decile": false,
+   "n_neighbors": 3573,
+   "grid_level": 0
+  },
+  {
+   "code": "002272",
+   "name": "川润股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.075,
+   "knn_t5_pct": 0.727,
+   "knn_t20_pct": 2.551,
+   "pct_rank_hist": 0.928,
+   "pct_rank_hist_t1": 0.76,
+   "top_decile": true,
+   "n_neighbors": 5544,
+   "grid_level": 0
+  },
+  {
+   "code": "002281",
+   "name": "光迅科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.655,
+   "knn_t5_pct": 2.916,
+   "knn_t20_pct": 6.834,
+   "pct_rank_hist": 0.99,
+   "pct_rank_hist_t1": 0.98,
+   "top_decile": true,
+   "n_neighbors": 6598,
+   "grid_level": 0
+  },
+  {
+   "code": "002284",
+   "name": "亚太股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.001,
+   "knn_t5_pct": 0.232,
+   "knn_t20_pct": 1.821,
+   "pct_rank_hist": 0.595,
+   "pct_rank_hist_t1": 0.564,
+   "top_decile": false,
+   "n_neighbors": 4455,
+   "grid_level": 0
+  },
+  {
+   "code": "002285",
+   "name": "世联行",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.039,
+   "knn_t5_pct": 0.079,
+   "knn_t20_pct": -0.201,
+   "pct_rank_hist": 0.386,
+   "pct_rank_hist_t1": 0.686,
+   "top_decile": false,
+   "n_neighbors": 6438,
+   "grid_level": 0
+  },
+  {
+   "code": "002290",
+   "name": "禾盛新材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.077,
+   "knn_t5_pct": 0.103,
+   "knn_t20_pct": 0.585,
+   "pct_rank_hist": 0.42,
+   "pct_rank_hist_t1": 0.324,
+   "top_decile": false,
+   "n_neighbors": 8084,
+   "grid_level": 0
+  },
+  {
+   "code": "002297",
+   "name": "博云新材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.094,
+   "knn_t5_pct": 0.102,
+   "knn_t20_pct": 0.191,
+   "pct_rank_hist": 0.417,
+   "pct_rank_hist_t1": 0.281,
+   "top_decile": false,
+   "n_neighbors": 8097,
+   "grid_level": 0
+  },
+  {
+   "code": "002298",
+   "name": "中电鑫龙",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.079,
+   "knn_t5_pct": 0.55,
+   "knn_t20_pct": 1.575,
+   "pct_rank_hist": 0.867,
+   "pct_rank_hist_t1": 0.771,
+   "top_decile": false,
+   "n_neighbors": 713,
+   "grid_level": 0
+  },
+  {
+   "code": "002300",
+   "name": "太阳电缆",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.191,
+   "knn_t5_pct": -0.415,
+   "knn_t20_pct": 0.289,
+   "pct_rank_hist": 0.081,
+   "pct_rank_hist_t1": 0.097,
+   "top_decile": false,
+   "n_neighbors": 923,
+   "grid_level": 0
+  },
+  {
+   "code": "002301",
+   "name": "齐心集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.126,
+   "knn_t5_pct": 0.066,
+   "knn_t20_pct": 1.23,
+   "pct_rank_hist": 0.369,
+   "pct_rank_hist_t1": 0.211,
+   "top_decile": false,
+   "n_neighbors": 4649,
+   "grid_level": 0
+  },
+  {
+   "code": "002303",
+   "name": "美盈森",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.062,
+   "knn_t5_pct": 0.152,
+   "knn_t20_pct": 0.55,
+   "pct_rank_hist": 0.492,
+   "pct_rank_hist_t1": 0.368,
+   "top_decile": false,
+   "n_neighbors": 4636,
+   "grid_level": 0
+  },
+  {
+   "code": "002316",
+   "name": "亚联发展",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.021,
+   "knn_t5_pct": 0.304,
+   "knn_t20_pct": 0.783,
+   "pct_rank_hist": 0.689,
+   "pct_rank_hist_t1": 0.502,
+   "top_decile": false,
+   "n_neighbors": 3531,
+   "grid_level": 0
+  },
+  {
+   "code": "002320",
+   "name": "海峡股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.119,
+   "knn_t5_pct": 0.443,
+   "knn_t20_pct": 1.371,
+   "pct_rank_hist": 0.803,
+   "pct_rank_hist_t1": 0.846,
+   "top_decile": false,
+   "n_neighbors": 1923,
+   "grid_level": 0
+  },
+  {
+   "code": "002321",
+   "name": "华英农业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.071,
+   "knn_t5_pct": 0.106,
+   "knn_t20_pct": 1.219,
+   "pct_rank_hist": 0.426,
+   "pct_rank_hist_t1": 0.339,
+   "top_decile": false,
+   "n_neighbors": 2667,
+   "grid_level": 0
+  },
+  {
+   "code": "002322",
+   "name": "理工能科",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.052,
+   "knn_t5_pct": -0.436,
+   "knn_t20_pct": -0.993,
+   "pct_rank_hist": 0.079,
+   "pct_rank_hist_t1": 0.405,
+   "top_decile": false,
+   "n_neighbors": 3413,
+   "grid_level": 0
+  },
+  {
+   "code": "002329",
+   "name": "皇氏集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.01,
+   "knn_t5_pct": 0.053,
+   "knn_t20_pct": 0.226,
+   "pct_rank_hist": 0.351,
+   "pct_rank_hist_t1": 0.536,
+   "top_decile": false,
+   "n_neighbors": 3988,
+   "grid_level": 0
+  },
+  {
+   "code": "002339",
+   "name": "积成电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.005,
+   "knn_t5_pct": 0.264,
+   "knn_t20_pct": 1.551,
+   "pct_rank_hist": 0.634,
+   "pct_rank_hist_t1": 0.591,
+   "top_decile": false,
+   "n_neighbors": 1179,
+   "grid_level": 0
+  },
+  {
+   "code": "002342",
+   "name": "巨力索具",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.026,
+   "knn_t5_pct": 0.187,
+   "knn_t20_pct": 1.442,
+   "pct_rank_hist": 0.534,
+   "pct_rank_hist_t1": 0.487,
+   "top_decile": false,
+   "n_neighbors": 4138,
+   "grid_level": 0
+  },
+  {
+   "code": "002347",
+   "name": "泰尔股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.129,
+   "knn_t5_pct": 0.223,
+   "knn_t20_pct": 2.2,
+   "pct_rank_hist": 0.585,
+   "pct_rank_hist_t1": 0.2,
+   "top_decile": false,
+   "n_neighbors": 1799,
+   "grid_level": 0
+  },
+  {
+   "code": "002349",
+   "name": "精华制药",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.136,
+   "knn_t5_pct": -0.165,
+   "knn_t20_pct": -0.071,
+   "pct_rank_hist": 0.169,
+   "pct_rank_hist_t1": 0.18,
+   "top_decile": false,
+   "n_neighbors": 3851,
+   "grid_level": 0
+  },
+  {
+   "code": "002353",
+   "name": "杰瑞股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.417,
+   "knn_t5_pct": 4.669,
+   "knn_t20_pct": 9.529,
+   "pct_rank_hist": 0.999,
+   "pct_rank_hist_t1": 0.999,
+   "top_decile": true,
+   "n_neighbors": 6022,
+   "grid_level": 0
+  },
+  {
+   "code": "002364",
+   "name": "中恒电气",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "002376",
+   "name": "新北洋",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.039,
+   "knn_t5_pct": -0.312,
+   "knn_t20_pct": -0.346,
+   "pct_rank_hist": 0.109,
+   "pct_rank_hist_t1": 0.459,
+   "top_decile": false,
+   "n_neighbors": 2983,
+   "grid_level": 0
+  },
+  {
+   "code": "002384",
+   "name": "东山精密",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "002403",
+   "name": "爱仕达",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.035,
+   "knn_t5_pct": 0.07,
+   "knn_t20_pct": 0.422,
+   "pct_rank_hist": 0.375,
+   "pct_rank_hist_t1": 0.671,
+   "top_decile": false,
+   "n_neighbors": 3539,
+   "grid_level": 0
+  },
+  {
+   "code": "002407",
+   "name": "多氟多",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.347,
+   "knn_t5_pct": 1.254,
+   "knn_t20_pct": 4.478,
+   "pct_rank_hist": 0.968,
+   "pct_rank_hist_t1": 0.963,
+   "top_decile": true,
+   "n_neighbors": 2950,
+   "grid_level": 0
+  },
+  {
+   "code": "002409",
+   "name": "雅克科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.417,
+   "knn_t5_pct": 4.669,
+   "knn_t20_pct": 9.529,
+   "pct_rank_hist": 0.999,
+   "pct_rank_hist_t1": 0.999,
+   "top_decile": true,
+   "n_neighbors": 6022,
+   "grid_level": 0
+  },
+  {
+   "code": "002421",
+   "name": "达实智能",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.158,
+   "knn_t5_pct": -0.022,
+   "knn_t20_pct": 0.802,
+   "pct_rank_hist": 0.278,
+   "pct_rank_hist_t1": 0.138,
+   "top_decile": false,
+   "n_neighbors": 2309,
+   "grid_level": 0
+  },
+  {
+   "code": "002428",
+   "name": "云南锗业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.243,
+   "knn_t5_pct": 0.544,
+   "knn_t20_pct": 2.426,
+   "pct_rank_hist": 0.862,
+   "pct_rank_hist_t1": 0.938,
+   "top_decile": false,
+   "n_neighbors": 2328,
+   "grid_level": 0
+  },
+  {
+   "code": "002430",
+   "name": "杭氧股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.149,
+   "knn_t5_pct": 0.018,
+   "knn_t20_pct": 0.402,
+   "pct_rank_hist": 0.319,
+   "pct_rank_hist_t1": 0.154,
+   "top_decile": false,
+   "n_neighbors": 4929,
+   "grid_level": 0
+  },
+  {
+   "code": "002437",
+   "name": "誉衡药业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.132,
+   "knn_t5_pct": 0.024,
+   "knn_t20_pct": 1.03,
+   "pct_rank_hist": 0.322,
+   "pct_rank_hist_t1": 0.194,
+   "top_decile": false,
+   "n_neighbors": 512,
+   "grid_level": 0
+  },
+  {
+   "code": "002440",
+   "name": "闰土股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.019,
+   "knn_t5_pct": 0.525,
+   "knn_t20_pct": 1.37,
+   "pct_rank_hist": 0.857,
+   "pct_rank_hist_t1": 0.508,
+   "top_decile": false,
+   "n_neighbors": 1080,
+   "grid_level": 0
+  },
+  {
+   "code": "002441",
+   "name": "众业达",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.003,
+   "knn_t5_pct": 0.179,
+   "knn_t20_pct": 0.364,
+   "pct_rank_hist": 0.522,
+   "pct_rank_hist_t1": 0.562,
+   "top_decile": false,
+   "n_neighbors": 3522,
+   "grid_level": 0
+  },
+  {
+   "code": "002451",
+   "name": "摩恩电气",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.197,
+   "knn_t5_pct": -0.153,
+   "knn_t20_pct": 0.9,
+   "pct_rank_hist": 0.176,
+   "pct_rank_hist_t1": 0.09,
+   "top_decile": false,
+   "n_neighbors": 2318,
+   "grid_level": 0
+  },
+  {
+   "code": "002452",
+   "name": "长高电气",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.395,
+   "knn_t5_pct": -0.226,
+   "knn_t20_pct": 3.826,
+   "pct_rank_hist": 0.139,
+   "pct_rank_hist_t1": 0.015,
+   "top_decile": false,
+   "n_neighbors": 343,
+   "grid_level": 0
+  },
+  {
+   "code": "002453",
+   "name": "华软科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.236,
+   "knn_t5_pct": -0.471,
+   "knn_t20_pct": -0.066,
+   "pct_rank_hist": 0.074,
+   "pct_rank_hist_t1": 0.063,
+   "top_decile": false,
+   "n_neighbors": 2284,
+   "grid_level": 0
+  },
+  {
+   "code": "002454",
+   "name": "松芝股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.04,
+   "knn_t5_pct": 0.315,
+   "knn_t20_pct": 1.332,
+   "pct_rank_hist": 0.701,
+   "pct_rank_hist_t1": 0.456,
+   "top_decile": false,
+   "n_neighbors": 2357,
+   "grid_level": 0
+  },
+  {
+   "code": "002457",
+   "name": "青龙管业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.045,
+   "knn_t5_pct": 0.264,
+   "knn_t20_pct": 0.612,
+   "pct_rank_hist": 0.635,
+   "pct_rank_hist_t1": 0.433,
+   "top_decile": false,
+   "n_neighbors": 2571,
+   "grid_level": 0
+  },
+  {
+   "code": "002467",
+   "name": "二六三",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.157,
+   "knn_t5_pct": -0.1,
+   "knn_t20_pct": 0.119,
+   "pct_rank_hist": 0.208,
+   "pct_rank_hist_t1": 0.14,
+   "top_decile": false,
+   "n_neighbors": 2199,
+   "grid_level": 0
+  },
+  {
+   "code": "002469",
+   "name": "三维化学",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.1,
+   "knn_t5_pct": -0.311,
+   "knn_t20_pct": -1.348,
+   "pct_rank_hist": 0.109,
+   "pct_rank_hist_t1": 0.266,
+   "top_decile": false,
+   "n_neighbors": 8537,
+   "grid_level": 0
+  },
+  {
+   "code": "002471",
+   "name": "中超控股",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.039,
+   "knn_t5_pct": 0.462,
+   "knn_t20_pct": 1.526,
+   "pct_rank_hist": 0.816,
+   "pct_rank_hist_t1": 0.688,
+   "top_decile": false,
+   "n_neighbors": 2286,
+   "grid_level": 0
+  },
+  {
+   "code": "002472",
+   "name": "双环传动",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.077,
+   "knn_t5_pct": 0.103,
+   "knn_t20_pct": 0.585,
+   "pct_rank_hist": 0.42,
+   "pct_rank_hist_t1": 0.324,
+   "top_decile": false,
+   "n_neighbors": 8084,
+   "grid_level": 0
+  },
+  {
+   "code": "002484",
+   "name": "江海股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "002487",
+   "name": "大金重工",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.094,
+   "knn_t5_pct": 0.032,
+   "knn_t20_pct": 0.168,
+   "pct_rank_hist": 0.33,
+   "pct_rank_hist_t1": 0.278,
+   "top_decile": false,
+   "n_neighbors": 7241,
+   "grid_level": 0
+  },
+  {
+   "code": "002491",
+   "name": "通鼎互联",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.094,
+   "knn_t5_pct": 0.032,
+   "knn_t20_pct": 0.168,
+   "pct_rank_hist": 0.33,
+   "pct_rank_hist_t1": 0.278,
+   "top_decile": false,
+   "n_neighbors": 7241,
+   "grid_level": 0
+  },
+  {
+   "code": "002494",
+   "name": "华斯股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.015,
+   "knn_t5_pct": 0.385,
+   "knn_t20_pct": 1.298,
+   "pct_rank_hist": 0.763,
+   "pct_rank_hist_t1": 0.52,
+   "top_decile": false,
+   "n_neighbors": 3104,
+   "grid_level": 0
+  },
+  {
+   "code": "002496",
+   "name": "辉丰股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.129,
+   "knn_t5_pct": 0.059,
+   "knn_t20_pct": 1.843,
+   "pct_rank_hist": 0.358,
+   "pct_rank_hist_t1": 0.204,
+   "top_decile": false,
+   "n_neighbors": 2821,
+   "grid_level": 0
+  },
+  {
+   "code": "002497",
+   "name": "雅化集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "002513",
+   "name": "蓝丰生化",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.105,
+   "knn_t5_pct": 0.068,
+   "knn_t20_pct": 0.718,
+   "pct_rank_hist": 0.37,
+   "pct_rank_hist_t1": 0.251,
+   "top_decile": false,
+   "n_neighbors": 2308,
+   "grid_level": 0
+  },
+  {
+   "code": "002520",
+   "name": "日发精机",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.009,
+   "knn_t5_pct": 0.171,
+   "knn_t20_pct": 1.886,
+   "pct_rank_hist": 0.512,
+   "pct_rank_hist_t1": 0.537,
+   "top_decile": false,
+   "n_neighbors": 2232,
+   "grid_level": 0
+  },
+  {
+   "code": "002531",
+   "name": "天顺风能",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.04,
+   "knn_t5_pct": 0.082,
+   "knn_t20_pct": 0.354,
+   "pct_rank_hist": 0.39,
+   "pct_rank_hist_t1": 0.452,
+   "top_decile": false,
+   "n_neighbors": 3818,
+   "grid_level": 0
+  },
+  {
+   "code": "002543",
+   "name": "万和电气",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.1,
+   "knn_t5_pct": -0.311,
+   "knn_t20_pct": -1.348,
+   "pct_rank_hist": 0.109,
+   "pct_rank_hist_t1": 0.266,
+   "top_decile": false,
+   "n_neighbors": 8537,
+   "grid_level": 0
+  },
+  {
+   "code": "002546",
+   "name": "新联电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.065,
+   "knn_t5_pct": 0.348,
+   "knn_t20_pct": 1.168,
+   "pct_rank_hist": 0.729,
+   "pct_rank_hist_t1": 0.353,
+   "top_decile": false,
+   "n_neighbors": 8590,
+   "grid_level": 0
+  },
+  {
+   "code": "002549",
+   "name": "凯美特气",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.01,
+   "knn_t5_pct": 0.119,
+   "knn_t20_pct": 1.062,
+   "pct_rank_hist": 0.444,
+   "pct_rank_hist_t1": 0.601,
+   "top_decile": false,
+   "n_neighbors": 1568,
+   "grid_level": 0
+  },
+  {
+   "code": "002552",
+   "name": "宝鼎科技",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.295,
+   "knn_t5_pct": -0.058,
+   "knn_t20_pct": 0.238,
+   "pct_rank_hist": 0.241,
+   "pct_rank_hist_t1": 0.037,
+   "top_decile": false,
+   "n_neighbors": 1650,
+   "grid_level": 0
+  },
+  {
+   "code": "002553",
+   "name": "南方精工",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.11,
+   "knn_t5_pct": 0.576,
+   "knn_t20_pct": 2.069,
+   "pct_rank_hist": 0.878,
+   "pct_rank_hist_t1": 0.826,
+   "top_decile": false,
+   "n_neighbors": 2350,
+   "grid_level": 0
+  },
+  {
+   "code": "002560",
+   "name": "通达股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.071,
+   "knn_t5_pct": 0.106,
+   "knn_t20_pct": 1.219,
+   "pct_rank_hist": 0.426,
+   "pct_rank_hist_t1": 0.339,
+   "top_decile": false,
+   "n_neighbors": 2667,
+   "grid_level": 0
+  },
+  {
+   "code": "002562",
+   "name": "兄弟科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.266,
+   "knn_t5_pct": -0.224,
+   "knn_t20_pct": 0.559,
+   "pct_rank_hist": 0.139,
+   "pct_rank_hist_t1": 0.049,
+   "top_decile": false,
+   "n_neighbors": 2361,
+   "grid_level": 0
+  },
+  {
+   "code": "002564",
+   "name": "天沃科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.208,
+   "knn_t5_pct": -0.411,
+   "knn_t20_pct": 0.219,
+   "pct_rank_hist": 0.082,
+   "pct_rank_hist_t1": 0.081,
+   "top_decile": false,
+   "n_neighbors": 1350,
+   "grid_level": 0
+  },
+  {
+   "code": "002565",
+   "name": "顺灏股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.001,
+   "knn_t5_pct": 0.351,
+   "knn_t20_pct": 1.183,
+   "pct_rank_hist": 0.732,
+   "pct_rank_hist_t1": 0.571,
+   "top_decile": false,
+   "n_neighbors": 7745,
+   "grid_level": 0
+  },
+  {
+   "code": "002576",
+   "name": "通达动力",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.071,
+   "knn_t5_pct": 0.27,
+   "knn_t20_pct": 1.816,
+   "pct_rank_hist": 0.647,
+   "pct_rank_hist_t1": 0.337,
+   "top_decile": false,
+   "n_neighbors": 1699,
+   "grid_level": 0
+  },
+  {
+   "code": "002578",
+   "name": "闽发铝业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.167,
+   "knn_t5_pct": -0.547,
+   "knn_t20_pct": -0.427,
+   "pct_rank_hist": 0.063,
+   "pct_rank_hist_t1": 0.13,
+   "top_decile": false,
+   "n_neighbors": 1804,
+   "grid_level": 0
+  },
+  {
+   "code": "002580",
+   "name": "圣阳股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.042,
+   "knn_t5_pct": 0.276,
+   "knn_t20_pct": 0.441,
+   "pct_rank_hist": 0.656,
+   "pct_rank_hist_t1": 0.444,
+   "top_decile": false,
+   "n_neighbors": 769,
+   "grid_level": 0
+  },
+  {
+   "code": "002584",
+   "name": "西陇科学",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.024,
+   "knn_t5_pct": 0.189,
+   "knn_t20_pct": 0.875,
+   "pct_rank_hist": 0.536,
+   "pct_rank_hist_t1": 0.493,
+   "top_decile": false,
+   "n_neighbors": 3818,
+   "grid_level": 0
+  },
+  {
+   "code": "002587",
+   "name": "奥拓电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.074,
+   "knn_t5_pct": 0.469,
+   "knn_t20_pct": 1.091,
+   "pct_rank_hist": 0.821,
+   "pct_rank_hist_t1": 0.757,
+   "top_decile": false,
+   "n_neighbors": 3857,
+   "grid_level": 0
+  },
+  {
+   "code": "002589",
+   "name": "瑞康医药",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.256,
+   "knn_t5_pct": -0.225,
+   "knn_t20_pct": 0.355,
+   "pct_rank_hist": 0.139,
+   "pct_rank_hist_t1": 0.052,
+   "top_decile": false,
+   "n_neighbors": 2203,
+   "grid_level": 0
+  },
+  {
+   "code": "002591",
+   "name": "恒大高新",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.003,
+   "knn_t5_pct": 0.194,
+   "knn_t20_pct": 0.977,
+   "pct_rank_hist": 0.543,
+   "pct_rank_hist_t1": 0.582,
+   "top_decile": false,
+   "n_neighbors": 3587,
+   "grid_level": 0
+  },
+  {
+   "code": "002606",
+   "name": "大连电瓷",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.071,
+   "knn_t5_pct": 0.51,
+   "knn_t20_pct": 1.581,
+   "pct_rank_hist": 0.845,
+   "pct_rank_hist_t1": 0.747,
+   "top_decile": false,
+   "n_neighbors": 7964,
+   "grid_level": 0
+  },
+  {
+   "code": "002612",
+   "name": "朗姿股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.252,
+   "knn_t5_pct": -0.765,
+   "knn_t20_pct": -1.035,
+   "pct_rank_hist": 0.034,
+   "pct_rank_hist_t1": 0.054,
+   "top_decile": false,
+   "n_neighbors": 2092,
+   "grid_level": 0
+  },
+  {
+   "code": "002614",
+   "name": "奥佳华",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.676,
+   "knn_t5_pct": -0.981,
+   "knn_t20_pct": 0.379,
+   "pct_rank_hist": 0.021,
+   "pct_rank_hist_t1": 0.002,
+   "top_decile": false,
+   "n_neighbors": 5622,
+   "grid_level": 0
+  },
+  {
+   "code": "002617",
+   "name": "露笑科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.171,
+   "knn_t5_pct": -0.185,
+   "knn_t20_pct": 0.04,
+   "pct_rank_hist": 0.157,
+   "pct_rank_hist_t1": 0.121,
+   "top_decile": false,
+   "n_neighbors": 4992,
+   "grid_level": 0
+  },
+  {
+   "code": "002625",
+   "name": "光启技术",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.131,
+   "knn_t5_pct": 0.618,
+   "knn_t20_pct": 4.017,
+   "pct_rank_hist": 0.893,
+   "pct_rank_hist_t1": 0.196,
+   "top_decile": false,
+   "n_neighbors": 3340,
+   "grid_level": 0
+  },
+  {
+   "code": "002631",
+   "name": "德尔未来",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.113,
+   "knn_t5_pct": -0.051,
+   "knn_t20_pct": 0.72,
+   "pct_rank_hist": 0.246,
+   "pct_rank_hist_t1": 0.235,
+   "top_decile": false,
+   "n_neighbors": 2932,
+   "grid_level": 0
+  },
+  {
+   "code": "002640",
+   "name": "跨境通",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.049,
+   "knn_t5_pct": 0.194,
+   "knn_t20_pct": -0.003,
+   "pct_rank_hist": 0.543,
+   "pct_rank_hist_t1": 0.708,
+   "top_decile": false,
+   "n_neighbors": 7564,
+   "grid_level": 0
+  },
+  {
+   "code": "002643",
+   "name": "万润股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.137,
+   "knn_t5_pct": -0.023,
+   "knn_t20_pct": 0.715,
+   "pct_rank_hist": 0.273,
+   "pct_rank_hist_t1": 0.178,
+   "top_decile": false,
+   "n_neighbors": 2998,
+   "grid_level": 0
+  },
+  {
+   "code": "002645",
+   "name": "华宏科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.707,
+   "knn_t5_pct": 2.041,
+   "knn_t20_pct": 4.27,
+   "pct_rank_hist": 0.982,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 5579,
+   "grid_level": 0
+  },
+  {
+   "code": "002655",
+   "name": "共达电声",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.025,
+   "knn_t5_pct": 0.014,
+   "knn_t20_pct": 0.452,
+   "pct_rank_hist": 0.313,
+   "pct_rank_hist_t1": 0.489,
+   "top_decile": false,
+   "n_neighbors": 3120,
+   "grid_level": 0
+  },
+  {
+   "code": "002692",
+   "name": "远程股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.161,
+   "knn_t5_pct": -0.485,
+   "knn_t20_pct": 0.966,
+   "pct_rank_hist": 0.072,
+   "pct_rank_hist_t1": 0.136,
+   "top_decile": false,
+   "n_neighbors": 980,
+   "grid_level": 0
+  },
+  {
+   "code": "002693",
+   "name": "双成药业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.479,
+   "knn_t5_pct": -1.03,
+   "knn_t20_pct": -0.447,
+   "pct_rank_hist": 0.016,
+   "pct_rank_hist_t1": 0.01,
+   "top_decile": false,
+   "n_neighbors": 457,
+   "grid_level": 0
+  },
+  {
+   "code": "002708",
+   "name": "光洋股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.053,
+   "knn_t5_pct": -0.164,
+   "knn_t20_pct": -0.701,
+   "pct_rank_hist": 0.17,
+   "pct_rank_hist_t1": 0.403,
+   "top_decile": false,
+   "n_neighbors": 4369,
+   "grid_level": 0
+  },
+  {
+   "code": "002709",
+   "name": "天赐材料",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.347,
+   "knn_t5_pct": 1.254,
+   "knn_t20_pct": 4.478,
+   "pct_rank_hist": 0.968,
+   "pct_rank_hist_t1": 0.963,
+   "top_decile": true,
+   "n_neighbors": 2950,
+   "grid_level": 0
+  },
+  {
+   "code": "002713",
+   "name": "东易日盛",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.01,
+   "knn_t5_pct": 0.36,
+   "knn_t20_pct": 1.34,
+   "pct_rank_hist": 0.744,
+   "pct_rank_hist_t1": 0.603,
+   "top_decile": false,
+   "n_neighbors": 8020,
+   "grid_level": 0
+  },
+  {
+   "code": "002730",
+   "name": "电光科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.251,
+   "knn_t5_pct": 1.307,
+   "knn_t20_pct": 3.499,
+   "pct_rank_hist": 0.969,
+   "pct_rank_hist_t1": 0.94,
+   "top_decile": true,
+   "n_neighbors": 6021,
+   "grid_level": 0
+  },
+  {
+   "code": "002733",
+   "name": "雄韬股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.24,
+   "knn_t5_pct": -0.143,
+   "knn_t20_pct": 0.299,
+   "pct_rank_hist": 0.183,
+   "pct_rank_hist_t1": 0.061,
+   "top_decile": false,
+   "n_neighbors": 2542,
+   "grid_level": 0
+  },
+  {
+   "code": "002734",
+   "name": "利民股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.164,
+   "knn_t5_pct": 0.552,
+   "knn_t20_pct": 1.813,
+   "pct_rank_hist": 0.867,
+   "pct_rank_hist_t1": 0.889,
+   "top_decile": false,
+   "n_neighbors": 3986,
+   "grid_level": 0
+  },
+  {
+   "code": "002748",
+   "name": "世龙实业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.101,
+   "knn_t5_pct": -0.39,
+   "knn_t20_pct": -0.965,
+   "pct_rank_hist": 0.091,
+   "pct_rank_hist_t1": 0.261,
+   "top_decile": false,
+   "n_neighbors": 7673,
+   "grid_level": 0
+  },
+  {
+   "code": "002757",
+   "name": "南兴股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.04,
+   "knn_t5_pct": 0.127,
+   "knn_t20_pct": 1.394,
+   "pct_rank_hist": 0.456,
+   "pct_rank_hist_t1": 0.453,
+   "top_decile": false,
+   "n_neighbors": 2730,
+   "grid_level": 0
+  },
+  {
+   "code": "002780",
+   "name": "三夫户外",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.051,
+   "knn_t5_pct": -0.032,
+   "knn_t20_pct": 0.546,
+   "pct_rank_hist": 0.263,
+   "pct_rank_hist_t1": 0.41,
+   "top_decile": false,
+   "n_neighbors": 10666,
+   "grid_level": 0
+  },
+  {
+   "code": "002785",
+   "name": "万里石",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.369,
+   "knn_t5_pct": 1.796,
+   "knn_t20_pct": 4.343,
+   "pct_rank_hist": 0.978,
+   "pct_rank_hist_t1": 0.965,
+   "top_decile": true,
+   "n_neighbors": 2915,
+   "grid_level": 0
+  },
+  {
+   "code": "002787",
+   "name": "华源控股",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.049,
+   "knn_t5_pct": 0.204,
+   "knn_t20_pct": 0.942,
+   "pct_rank_hist": 0.557,
+   "pct_rank_hist_t1": 0.418,
+   "top_decile": false,
+   "n_neighbors": 5008,
+   "grid_level": 0
+  },
+  {
+   "code": "002792",
+   "name": "通宇通讯",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.156,
+   "knn_t5_pct": 0.115,
+   "knn_t20_pct": 1.411,
+   "pct_rank_hist": 0.441,
+   "pct_rank_hist_t1": 0.142,
+   "top_decile": false,
+   "n_neighbors": 4391,
+   "grid_level": 0
+  },
+  {
+   "code": "002796",
+   "name": "世嘉科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.251,
+   "knn_t5_pct": 1.307,
+   "knn_t20_pct": 3.499,
+   "pct_rank_hist": 0.969,
+   "pct_rank_hist_t1": 0.94,
+   "top_decile": true,
+   "n_neighbors": 6021,
+   "grid_level": 0
+  },
+  {
+   "code": "002805",
+   "name": "丰元股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.04,
+   "knn_t5_pct": 0.336,
+   "knn_t20_pct": 1.094,
+   "pct_rank_hist": 0.715,
+   "pct_rank_hist_t1": 0.692,
+   "top_decile": false,
+   "n_neighbors": 4720,
+   "grid_level": 0
+  },
+  {
+   "code": "002819",
+   "name": "东方中科",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.04,
+   "knn_t5_pct": 0.315,
+   "knn_t20_pct": 1.332,
+   "pct_rank_hist": 0.701,
+   "pct_rank_hist_t1": 0.456,
+   "top_decile": false,
+   "n_neighbors": 2357,
+   "grid_level": 0
+  },
+  {
+   "code": "002821",
+   "name": "凯莱英",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.083,
+   "knn_t5_pct": 0.392,
+   "knn_t20_pct": 1.279,
+   "pct_rank_hist": 0.769,
+   "pct_rank_hist_t1": 0.778,
+   "top_decile": false,
+   "n_neighbors": 4690,
+   "grid_level": 0
+  },
+  {
+   "code": "002827",
+   "name": "高争民爆",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.122,
+   "knn_t5_pct": -0.949,
+   "knn_t20_pct": -2.147,
+   "pct_rank_hist": 0.023,
+   "pct_rank_hist_t1": 0.218,
+   "top_decile": false,
+   "n_neighbors": 446,
+   "grid_level": 0
+  },
+  {
+   "code": "002837",
+   "name": "英维克",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "002838",
+   "name": "道恩股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.251,
+   "knn_t5_pct": 1.307,
+   "knn_t20_pct": 3.499,
+   "pct_rank_hist": 0.969,
+   "pct_rank_hist_t1": 0.94,
+   "top_decile": true,
+   "n_neighbors": 6021,
+   "grid_level": 0
+  },
+  {
+   "code": "002846",
+   "name": "英联股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.182,
+   "knn_t5_pct": 0.74,
+   "knn_t20_pct": 1.184,
+   "pct_rank_hist": 0.932,
+   "pct_rank_hist_t1": 0.904,
+   "top_decile": true,
+   "n_neighbors": 3987,
+   "grid_level": 0
+  },
+  {
+   "code": "002848",
+   "name": "高斯贝尔",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.028,
+   "knn_t5_pct": 0.429,
+   "knn_t20_pct": 1.235,
+   "pct_rank_hist": 0.794,
+   "pct_rank_hist_t1": 0.654,
+   "top_decile": false,
+   "n_neighbors": 3107,
+   "grid_level": 0
+  },
+  {
+   "code": "002850",
+   "name": "科达利",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.417,
+   "knn_t5_pct": 4.669,
+   "knn_t20_pct": 9.529,
+   "pct_rank_hist": 0.999,
+   "pct_rank_hist_t1": 0.999,
+   "top_decile": true,
+   "n_neighbors": 6022,
+   "grid_level": 0
+  },
+  {
+   "code": "002865",
+   "name": "钧达股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.767,
+   "knn_t5_pct": 2.597,
+   "knn_t20_pct": 5.713,
+   "pct_rank_hist": 0.989,
+   "pct_rank_hist_t1": 0.985,
+   "top_decile": true,
+   "n_neighbors": 6020,
+   "grid_level": 0
+  },
+  {
+   "code": "002866",
+   "name": "传艺科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.018,
+   "knn_t5_pct": 0.549,
+   "knn_t20_pct": 1.159,
+   "pct_rank_hist": 0.866,
+   "pct_rank_hist_t1": 0.625,
+   "top_decile": false,
+   "n_neighbors": 5370,
+   "grid_level": 0
+  },
+  {
+   "code": "002869",
+   "name": "金溢科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.002,
+   "knn_t5_pct": 0.333,
+   "knn_t20_pct": 0.645,
+   "pct_rank_hist": 0.711,
+   "pct_rank_hist_t1": 0.576,
+   "top_decile": false,
+   "n_neighbors": 6865,
+   "grid_level": 0
+  },
+  {
+   "code": "002882",
+   "name": "金龙羽",
+   "sources": [
+    "reversal_confirmed",
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.22,
+   "knn_t5_pct": -0.392,
+   "knn_t20_pct": -1.792,
+   "pct_rank_hist": 0.09,
+   "pct_rank_hist_t1": 0.074,
+   "top_decile": false,
+   "n_neighbors": 2870,
+   "grid_level": 0
+  },
+  {
+   "code": "002885",
+   "name": "京泉华",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.075,
+   "knn_t5_pct": 0.727,
+   "knn_t20_pct": 2.551,
+   "pct_rank_hist": 0.928,
+   "pct_rank_hist_t1": 0.76,
+   "top_decile": true,
+   "n_neighbors": 5544,
+   "grid_level": 0
+  },
+  {
+   "code": "002896",
+   "name": "中大力德",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "002897",
+   "name": "意华股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.251,
+   "knn_t5_pct": 1.307,
+   "knn_t20_pct": 3.499,
+   "pct_rank_hist": 0.969,
+   "pct_rank_hist_t1": 0.94,
+   "top_decile": true,
+   "n_neighbors": 6021,
+   "grid_level": 0
+  },
+  {
+   "code": "002900",
+   "name": "哈三联",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.159,
+   "knn_t5_pct": 0.636,
+   "knn_t20_pct": 3.079,
+   "pct_rank_hist": 0.9,
+   "pct_rank_hist_t1": 0.884,
+   "top_decile": true,
+   "n_neighbors": 1340,
+   "grid_level": 0
+  },
+  {
+   "code": "002902",
+   "name": "铭普光磁",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.057,
+   "knn_t5_pct": 0.121,
+   "knn_t20_pct": 1.637,
+   "pct_rank_hist": 0.447,
+   "pct_rank_hist_t1": 0.388,
+   "top_decile": false,
+   "n_neighbors": 4579,
+   "grid_level": 0
+  },
+  {
+   "code": "002907",
+   "name": "华森制药",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.166,
+   "knn_t5_pct": -0.096,
+   "knn_t20_pct": 0.553,
+   "pct_rank_hist": 0.215,
+   "pct_rank_hist_t1": 0.13,
+   "top_decile": false,
+   "n_neighbors": 2664,
+   "grid_level": 0
+  },
+  {
+   "code": "002909",
+   "name": "集泰股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.239,
+   "knn_t5_pct": -0.351,
+   "knn_t20_pct": -0.173,
+   "pct_rank_hist": 0.1,
+   "pct_rank_hist_t1": 0.062,
+   "top_decile": false,
+   "n_neighbors": 2820,
+   "grid_level": 0
+  },
+  {
+   "code": "002920",
+   "name": "德赛西威",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.222,
+   "knn_t5_pct": 1.55,
+   "knn_t20_pct": 4.486,
+   "pct_rank_hist": 0.975,
+   "pct_rank_hist_t1": 0.997,
+   "top_decile": true,
+   "n_neighbors": 642,
+   "grid_level": 0
+  },
+  {
+   "code": "002922",
+   "name": "伊戈尔",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.767,
+   "knn_t5_pct": 2.597,
+   "knn_t20_pct": 5.713,
+   "pct_rank_hist": 0.989,
+   "pct_rank_hist_t1": 0.985,
+   "top_decile": true,
+   "n_neighbors": 6020,
+   "grid_level": 0
+  },
+  {
+   "code": "002923",
+   "name": "润都股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.131,
+   "knn_t5_pct": 0.631,
+   "knn_t20_pct": 1.476,
+   "pct_rank_hist": 0.898,
+   "pct_rank_hist_t1": 0.864,
+   "top_decile": false,
+   "n_neighbors": 3272,
+   "grid_level": 0
+  },
+  {
+   "code": "002935",
+   "name": "天奥电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.155,
+   "knn_t5_pct": 0.159,
+   "knn_t20_pct": 0.94,
+   "pct_rank_hist": 0.497,
+   "pct_rank_hist_t1": 0.145,
+   "top_decile": false,
+   "n_neighbors": 4447,
+   "grid_level": 0
+  },
+  {
+   "code": "002937",
+   "name": "兴瑞科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.075,
+   "knn_t5_pct": 0.727,
+   "knn_t20_pct": 2.551,
+   "pct_rank_hist": 0.928,
+   "pct_rank_hist_t1": 0.76,
+   "top_decile": true,
+   "n_neighbors": 5544,
+   "grid_level": 0
+  },
+  {
+   "code": "002938",
+   "name": "鹏鼎控股",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.497,
+   "knn_t5_pct": 1.399,
+   "knn_t20_pct": 2.93,
+   "pct_rank_hist": 0.972,
+   "pct_rank_hist_t1": 0.974,
+   "top_decile": true,
+   "n_neighbors": 2472,
+   "grid_level": 0
+  },
+  {
+   "code": "002940",
+   "name": "昂利康",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.41,
+   "knn_t5_pct": 1.231,
+   "knn_t20_pct": 4.327,
+   "pct_rank_hist": 0.967,
+   "pct_rank_hist_t1": 0.97,
+   "top_decile": true,
+   "n_neighbors": 4835,
+   "grid_level": 0
+  },
+  {
+   "code": "002943",
+   "name": "宇晶股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.425,
+   "knn_t5_pct": 1.01,
+   "knn_t20_pct": 3.49,
+   "pct_rank_hist": 0.961,
+   "pct_rank_hist_t1": 0.971,
+   "top_decile": true,
+   "n_neighbors": 1855,
+   "grid_level": 0
+  },
+  {
+   "code": "002947",
+   "name": "恒铭达",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.707,
+   "knn_t5_pct": 2.041,
+   "knn_t20_pct": 4.27,
+   "pct_rank_hist": 0.982,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 5579,
+   "grid_level": 0
+  },
+  {
+   "code": "002949",
+   "name": "华阳国际",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.02,
+   "knn_t5_pct": -0.078,
+   "knn_t20_pct": 0.042,
+   "pct_rank_hist": 0.228,
+   "pct_rank_hist_t1": 0.631,
+   "top_decile": false,
+   "n_neighbors": 3062,
+   "grid_level": 0
+  },
+  {
+   "code": "002957",
+   "name": "科瑞技术",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "002959",
+   "name": "小熊电器",
+   "sources": [
+    "reversal_confirmed",
+    "watch_pool"
+   ],
+   "knn_t1_pct": 0.079,
+   "knn_t5_pct": 0.34,
+   "knn_t20_pct": 0.619,
+   "pct_rank_hist": 0.719,
+   "pct_rank_hist_t1": 0.768,
+   "top_decile": false,
+   "n_neighbors": 4303,
+   "grid_level": 0
+  },
+  {
+   "code": "002962",
+   "name": "五方光电",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.169,
+   "knn_t5_pct": 0.707,
+   "knn_t20_pct": 1.809,
+   "pct_rank_hist": 0.923,
+   "pct_rank_hist_t1": 0.892,
+   "top_decile": true,
+   "n_neighbors": 3515,
+   "grid_level": 0
+  },
+  {
+   "code": "002965",
+   "name": "祥鑫科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.251,
+   "knn_t5_pct": 1.307,
+   "knn_t20_pct": 3.499,
+   "pct_rank_hist": 0.969,
+   "pct_rank_hist_t1": 0.94,
+   "top_decile": true,
+   "n_neighbors": 6021,
+   "grid_level": 0
+  },
+  {
+   "code": "002967",
+   "name": "广电计量",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.183,
+   "knn_t5_pct": -0.067,
+   "knn_t20_pct": 0.869,
+   "pct_rank_hist": 0.236,
+   "pct_rank_hist_t1": 0.105,
+   "top_decile": false,
+   "n_neighbors": 4054,
+   "grid_level": 0
+  },
+  {
+   "code": "002971",
+   "name": "和远气体",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.022,
+   "knn_t5_pct": 0.277,
+   "knn_t20_pct": 1.275,
+   "pct_rank_hist": 0.657,
+   "pct_rank_hist_t1": 0.496,
+   "top_decile": false,
+   "n_neighbors": 8448,
+   "grid_level": 0
+  },
+  {
+   "code": "002972",
+   "name": "科安达",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.033,
+   "knn_t5_pct": -0.987,
+   "knn_t20_pct": -0.451,
+   "pct_rank_hist": 0.02,
+   "pct_rank_hist_t1": 0.667,
+   "top_decile": false,
+   "n_neighbors": 376,
+   "grid_level": 0
+  },
+  {
+   "code": "002973",
+   "name": "侨银股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.161,
+   "knn_t5_pct": 0.101,
+   "knn_t20_pct": 1.153,
+   "pct_rank_hist": 0.417,
+   "pct_rank_hist_t1": 0.136,
+   "top_decile": false,
+   "n_neighbors": 1661,
+   "grid_level": 0
+  },
+  {
+   "code": "002975",
+   "name": "博杰股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.114,
+   "knn_t5_pct": 0.0,
+   "knn_t20_pct": 0.102,
+   "pct_rank_hist": 0.298,
+   "pct_rank_hist_t1": 0.232,
+   "top_decile": false,
+   "n_neighbors": 4623,
+   "grid_level": 0
+  },
+  {
+   "code": "002979",
+   "name": "雷赛智能",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.051,
+   "knn_t5_pct": 0.231,
+   "knn_t20_pct": 0.88,
+   "pct_rank_hist": 0.594,
+   "pct_rank_hist_t1": 0.711,
+   "top_decile": false,
+   "n_neighbors": 7698,
+   "grid_level": 0
+  },
+  {
+   "code": "002980",
+   "name": "华盛昌",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.04,
+   "knn_t5_pct": 0.255,
+   "knn_t20_pct": 0.672,
+   "pct_rank_hist": 0.622,
+   "pct_rank_hist_t1": 0.694,
+   "top_decile": false,
+   "n_neighbors": 1707,
+   "grid_level": 0
+  },
+  {
+   "code": "002988",
+   "name": "豪美新材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.053,
+   "knn_t5_pct": -0.164,
+   "knn_t20_pct": -0.701,
+   "pct_rank_hist": 0.17,
+   "pct_rank_hist_t1": 0.403,
+   "top_decile": false,
+   "n_neighbors": 4369,
+   "grid_level": 0
+  },
+  {
+   "code": "003001",
+   "name": "中岩大地",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.075,
+   "knn_t5_pct": 0.639,
+   "knn_t20_pct": 2.964,
+   "pct_rank_hist": 0.903,
+   "pct_rank_hist_t1": 0.758,
+   "top_decile": true,
+   "n_neighbors": 1754,
+   "grid_level": 0
+  },
+  {
+   "code": "003021",
+   "name": "兆威机电",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "003026",
+   "name": "中晶科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.029,
+   "knn_t5_pct": 0.341,
+   "knn_t20_pct": 0.939,
+   "pct_rank_hist": 0.722,
+   "pct_rank_hist_t1": 0.656,
+   "top_decile": false,
+   "n_neighbors": 2616,
+   "grid_level": 0
+  },
+  {
+   "code": "003029",
+   "name": "吉大正元",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.101,
+   "knn_t5_pct": -0.39,
+   "knn_t20_pct": -0.965,
+   "pct_rank_hist": 0.091,
+   "pct_rank_hist_t1": 0.261,
+   "top_decile": false,
+   "n_neighbors": 7673,
+   "grid_level": 0
+  },
+  {
+   "code": "003036",
+   "name": "泰坦股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.075,
+   "knn_t5_pct": 0.727,
+   "knn_t20_pct": 2.551,
+   "pct_rank_hist": 0.928,
+   "pct_rank_hist_t1": 0.76,
+   "top_decile": true,
+   "n_neighbors": 5544,
+   "grid_level": 0
+  },
+  {
+   "code": "003043",
+   "name": "华亚智能",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.003,
+   "knn_t5_pct": 0.486,
+   "knn_t20_pct": 1.2,
+   "pct_rank_hist": 0.833,
+   "pct_rank_hist_t1": 0.561,
+   "top_decile": false,
+   "n_neighbors": 3248,
+   "grid_level": 0
+  },
+  {
+   "code": "600011",
+   "name": "华能国际",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": 0.116,
+   "knn_t5_pct": 0.436,
+   "knn_t20_pct": 0.971,
+   "pct_rank_hist": 0.801,
+   "pct_rank_hist_t1": 0.841,
+   "top_decile": false,
+   "n_neighbors": 4714,
+   "grid_level": 0
+  },
+  {
+   "code": "600048",
+   "name": "保利发展",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.074,
+   "knn_t5_pct": 0.043,
+   "knn_t20_pct": 0.708,
+   "pct_rank_hist": 0.34,
+   "pct_rank_hist_t1": 0.33,
+   "top_decile": false,
+   "n_neighbors": 2271,
+   "grid_level": 0
+  },
+  {
+   "code": "600059",
+   "name": "古越龙山",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.102,
+   "knn_t5_pct": 0.42,
+   "knn_t20_pct": 0.732,
+   "pct_rank_hist": 0.788,
+   "pct_rank_hist_t1": 0.811,
+   "top_decile": false,
+   "n_neighbors": 4418,
+   "grid_level": 0
+  },
+  {
+   "code": "600064",
+   "name": "南京高科",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.006,
+   "knn_t5_pct": -0.041,
+   "knn_t20_pct": 0.307,
+   "pct_rank_hist": 0.255,
+   "pct_rank_hist_t1": 0.548,
+   "top_decile": false,
+   "n_neighbors": 3615,
+   "grid_level": 0
+  },
+  {
+   "code": "600066",
+   "name": "宇通客车",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.015,
+   "knn_t5_pct": 0.385,
+   "knn_t20_pct": 1.298,
+   "pct_rank_hist": 0.763,
+   "pct_rank_hist_t1": 0.52,
+   "top_decile": false,
+   "n_neighbors": 3104,
+   "grid_level": 0
+  },
+  {
+   "code": "600103",
+   "name": "青山纸业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.145,
+   "knn_t5_pct": -0.567,
+   "knn_t20_pct": 0.042,
+   "pct_rank_hist": 0.06,
+   "pct_rank_hist_t1": 0.163,
+   "top_decile": false,
+   "n_neighbors": 682,
+   "grid_level": 0
+  },
+  {
+   "code": "600105",
+   "name": "永鼎股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.655,
+   "knn_t5_pct": 2.916,
+   "knn_t20_pct": 6.834,
+   "pct_rank_hist": 0.99,
+   "pct_rank_hist_t1": 0.98,
+   "top_decile": true,
+   "n_neighbors": 6598,
+   "grid_level": 0
+  },
+  {
+   "code": "600108",
+   "name": "亚盛集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.234,
+   "knn_t5_pct": -0.383,
+   "knn_t20_pct": -1.205,
+   "pct_rank_hist": 0.094,
+   "pct_rank_hist_t1": 0.064,
+   "top_decile": false,
+   "n_neighbors": 697,
+   "grid_level": 0
+  },
+  {
+   "code": "600111",
+   "name": "北方稀土",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.177,
+   "knn_t5_pct": 0.702,
+   "knn_t20_pct": 2.321,
+   "pct_rank_hist": 0.921,
+   "pct_rank_hist_t1": 0.9,
+   "top_decile": true,
+   "n_neighbors": 4494,
+   "grid_level": 0
+  },
+  {
+   "code": "600113",
+   "name": "浙江东日",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.051,
+   "knn_t5_pct": 0.249,
+   "knn_t20_pct": 1.049,
+   "pct_rank_hist": 0.615,
+   "pct_rank_hist_t1": 0.412,
+   "top_decile": false,
+   "n_neighbors": 3958,
+   "grid_level": 0
+  },
+  {
+   "code": "600130",
+   "name": "波导股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.224,
+   "knn_t5_pct": -0.554,
+   "knn_t20_pct": -0.601,
+   "pct_rank_hist": 0.061,
+   "pct_rank_hist_t1": 0.071,
+   "top_decile": false,
+   "n_neighbors": 2070,
+   "grid_level": 0
+  },
+  {
+   "code": "600131",
+   "name": "国网信通",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.005,
+   "knn_t5_pct": 0.033,
+   "knn_t20_pct": 0.449,
+   "pct_rank_hist": 0.332,
+   "pct_rank_hist_t1": 0.588,
+   "top_decile": false,
+   "n_neighbors": 2351,
+   "grid_level": 0
+  },
+  {
+   "code": "600143",
+   "name": "金发科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.063,
+   "knn_t5_pct": 0.511,
+   "knn_t20_pct": 1.664,
+   "pct_rank_hist": 0.846,
+   "pct_rank_hist_t1": 0.734,
+   "top_decile": false,
+   "n_neighbors": 8473,
+   "grid_level": 0
+  },
+  {
+   "code": "600172",
+   "name": "黄河旋风",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.051,
+   "knn_t5_pct": 0.249,
+   "knn_t20_pct": 1.049,
+   "pct_rank_hist": 0.615,
+   "pct_rank_hist_t1": 0.412,
+   "top_decile": false,
+   "n_neighbors": 3958,
+   "grid_level": 0
+  },
+  {
+   "code": "600176",
+   "name": "中国巨石",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "600192",
+   "name": "长城电工",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.016,
+   "knn_t5_pct": -0.035,
+   "knn_t20_pct": 0.06,
+   "pct_rank_hist": 0.26,
+   "pct_rank_hist_t1": 0.622,
+   "top_decile": false,
+   "n_neighbors": 3418,
+   "grid_level": 0
+  },
+  {
+   "code": "600196",
+   "name": "复星医药",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.14,
+   "knn_t5_pct": -0.039,
+   "knn_t20_pct": 0.51,
+   "pct_rank_hist": 0.258,
+   "pct_rank_hist_t1": 0.17,
+   "top_decile": false,
+   "n_neighbors": 2869,
+   "grid_level": 0
+  },
+  {
+   "code": "600199",
+   "name": "金种子酒",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.039,
+   "knn_t5_pct": 0.079,
+   "knn_t20_pct": -0.201,
+   "pct_rank_hist": 0.386,
+   "pct_rank_hist_t1": 0.686,
+   "top_decile": false,
+   "n_neighbors": 6438,
+   "grid_level": 0
+  },
+  {
+   "code": "600206",
+   "name": "有研新材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.131,
+   "knn_t5_pct": 0.618,
+   "knn_t20_pct": 4.017,
+   "pct_rank_hist": 0.893,
+   "pct_rank_hist_t1": 0.196,
+   "top_decile": false,
+   "n_neighbors": 3340,
+   "grid_level": 0
+  },
+  {
+   "code": "600207",
+   "name": "安彩高科",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.071,
+   "knn_t5_pct": -0.177,
+   "knn_t20_pct": -0.32,
+   "pct_rank_hist": 0.16,
+   "pct_rank_hist_t1": 0.339,
+   "top_decile": false,
+   "n_neighbors": 3557,
+   "grid_level": 0
+  },
+  {
+   "code": "600218",
+   "name": "全柴动力",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.129,
+   "knn_t5_pct": 0.059,
+   "knn_t20_pct": 1.843,
+   "pct_rank_hist": 0.358,
+   "pct_rank_hist_t1": 0.204,
+   "top_decile": false,
+   "n_neighbors": 2821,
+   "grid_level": 0
+  },
+  {
+   "code": "600222",
+   "name": "太龙药业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.067,
+   "knn_t5_pct": 0.113,
+   "knn_t20_pct": 1.115,
+   "pct_rank_hist": 0.439,
+   "pct_rank_hist_t1": 0.345,
+   "top_decile": false,
+   "n_neighbors": 5585,
+   "grid_level": 0
+  },
+  {
+   "code": "600246",
+   "name": "万通发展",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.087,
+   "knn_t5_pct": -0.009,
+   "knn_t20_pct": 1.231,
+   "pct_rank_hist": 0.286,
+   "pct_rank_hist_t1": 0.296,
+   "top_decile": false,
+   "n_neighbors": 2855,
+   "grid_level": 0
+  },
+  {
+   "code": "600250",
+   "name": "南京商旅",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.19,
+   "knn_t5_pct": -0.089,
+   "knn_t20_pct": 0.981,
+   "pct_rank_hist": 0.219,
+   "pct_rank_hist_t1": 0.098,
+   "top_decile": false,
+   "n_neighbors": 2202,
+   "grid_level": 0
+  },
+  {
+   "code": "600259",
+   "name": "中稀有色",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.707,
+   "knn_t5_pct": 2.041,
+   "knn_t20_pct": 4.27,
+   "pct_rank_hist": 0.982,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 5579,
+   "grid_level": 0
+  },
+  {
+   "code": "600280",
+   "name": "中央商场",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.004,
+   "knn_t5_pct": 0.094,
+   "knn_t20_pct": 0.564,
+   "pct_rank_hist": 0.407,
+   "pct_rank_hist_t1": 0.587,
+   "top_decile": false,
+   "n_neighbors": 2212,
+   "grid_level": 0
+  },
+  {
+   "code": "600281",
+   "name": "华阳新材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.101,
+   "knn_t5_pct": -0.39,
+   "knn_t20_pct": -0.965,
+   "pct_rank_hist": 0.091,
+   "pct_rank_hist_t1": 0.261,
+   "top_decile": false,
+   "n_neighbors": 7673,
+   "grid_level": 0
+  },
+  {
+   "code": "600303",
+   "name": "曙光股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.228,
+   "knn_t5_pct": 0.242,
+   "knn_t20_pct": 1.238,
+   "pct_rank_hist": 0.609,
+   "pct_rank_hist_t1": 0.069,
+   "top_decile": false,
+   "n_neighbors": 1617,
+   "grid_level": 0
+  },
+  {
+   "code": "600313",
+   "name": "农发种业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.191,
+   "knn_t5_pct": -0.415,
+   "knn_t20_pct": 0.289,
+   "pct_rank_hist": 0.081,
+   "pct_rank_hist_t1": 0.097,
+   "top_decile": false,
+   "n_neighbors": 923,
+   "grid_level": 0
+  },
+  {
+   "code": "600325",
+   "name": "华发股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.009,
+   "knn_t5_pct": 0.115,
+   "knn_t20_pct": 0.608,
+   "pct_rank_hist": 0.44,
+   "pct_rank_hist_t1": 0.539,
+   "top_decile": false,
+   "n_neighbors": 4541,
+   "grid_level": 0
+  },
+  {
+   "code": "600330",
+   "name": "天通股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.071,
+   "knn_t5_pct": 0.272,
+   "knn_t20_pct": 0.588,
+   "pct_rank_hist": 0.65,
+   "pct_rank_hist_t1": 0.338,
+   "top_decile": false,
+   "n_neighbors": 1344,
+   "grid_level": 0
+  },
+  {
+   "code": "600353",
+   "name": "旭光电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "600354",
+   "name": "敦煌种业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.129,
+   "knn_t5_pct": -0.991,
+   "knn_t20_pct": -2.141,
+   "pct_rank_hist": 0.02,
+   "pct_rank_hist_t1": 0.201,
+   "top_decile": false,
+   "n_neighbors": 753,
+   "grid_level": 0
+  },
+  {
+   "code": "600356",
+   "name": "恒丰纸业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.002,
+   "knn_t5_pct": 0.333,
+   "knn_t20_pct": 0.645,
+   "pct_rank_hist": 0.711,
+   "pct_rank_hist_t1": 0.576,
+   "top_decile": false,
+   "n_neighbors": 6865,
+   "grid_level": 0
+  },
+  {
+   "code": "600359",
+   "name": "新农开发",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.326,
+   "knn_t5_pct": -0.335,
+   "knn_t20_pct": 0.175,
+   "pct_rank_hist": 0.104,
+   "pct_rank_hist_t1": 0.029,
+   "top_decile": false,
+   "n_neighbors": 917,
+   "grid_level": 0
+  },
+  {
+   "code": "600366",
+   "name": "宁波韵升",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.137,
+   "knn_t5_pct": -0.023,
+   "knn_t20_pct": 0.715,
+   "pct_rank_hist": 0.273,
+   "pct_rank_hist_t1": 0.178,
+   "top_decile": false,
+   "n_neighbors": 2998,
+   "grid_level": 0
+  },
+  {
+   "code": "600371",
+   "name": "万向德农",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.474,
+   "knn_t5_pct": -0.745,
+   "knn_t20_pct": -2.927,
+   "pct_rank_hist": 0.036,
+   "pct_rank_hist_t1": 0.011,
+   "top_decile": false,
+   "n_neighbors": 2649,
+   "grid_level": 0
+  },
+  {
+   "code": "600376",
+   "name": "首开股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.369,
+   "knn_t5_pct": 1.421,
+   "knn_t20_pct": 3.966,
+   "pct_rank_hist": 0.973,
+   "pct_rank_hist_t1": 0.965,
+   "top_decile": true,
+   "n_neighbors": 807,
+   "grid_level": 0
+  },
+  {
+   "code": "600380",
+   "name": "健康元",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.154,
+   "knn_t5_pct": -0.161,
+   "knn_t20_pct": 0.092,
+   "pct_rank_hist": 0.173,
+   "pct_rank_hist_t1": 0.147,
+   "top_decile": false,
+   "n_neighbors": 2706,
+   "grid_level": 0
+  },
+  {
+   "code": "600416",
+   "name": "湘电股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.119,
+   "knn_t5_pct": 0.443,
+   "knn_t20_pct": 1.371,
+   "pct_rank_hist": 0.803,
+   "pct_rank_hist_t1": 0.846,
+   "top_decile": false,
+   "n_neighbors": 1923,
+   "grid_level": 0
+  },
+  {
+   "code": "600418",
+   "name": "江淮汽车",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.016,
+   "knn_t5_pct": 0.251,
+   "knn_t20_pct": 1.654,
+   "pct_rank_hist": 0.619,
+   "pct_rank_hist_t1": 0.519,
+   "top_decile": false,
+   "n_neighbors": 3884,
+   "grid_level": 0
+  },
+  {
+   "code": "600460",
+   "name": "士兰微",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "600468",
+   "name": "百利电气",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.22,
+   "knn_t5_pct": 0.232,
+   "knn_t20_pct": 1.302,
+   "pct_rank_hist": 0.597,
+   "pct_rank_hist_t1": 0.074,
+   "top_decile": false,
+   "n_neighbors": 708,
+   "grid_level": 0
+  },
+  {
+   "code": "600478",
+   "name": "科力远",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.045,
+   "knn_t5_pct": 0.053,
+   "knn_t20_pct": 0.441,
+   "pct_rank_hist": 0.351,
+   "pct_rank_hist_t1": 0.429,
+   "top_decile": false,
+   "n_neighbors": 3568,
+   "grid_level": 0
+  },
+  {
+   "code": "600488",
+   "name": "津药药业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.163,
+   "knn_t5_pct": -0.301,
+   "knn_t20_pct": 0.322,
+   "pct_rank_hist": 0.115,
+   "pct_rank_hist_t1": 0.133,
+   "top_decile": false,
+   "n_neighbors": 714,
+   "grid_level": 0
+  },
+  {
+   "code": "600498",
+   "name": "烽火通信",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "600500",
+   "name": "中化国际",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.094,
+   "knn_t5_pct": 0.102,
+   "knn_t20_pct": 0.191,
+   "pct_rank_hist": 0.417,
+   "pct_rank_hist_t1": 0.281,
+   "top_decile": false,
+   "n_neighbors": 8097,
+   "grid_level": 0
+  },
+  {
+   "code": "600503",
+   "name": "华丽家族",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.127,
+   "knn_t5_pct": -0.266,
+   "knn_t20_pct": -0.504,
+   "pct_rank_hist": 0.123,
+   "pct_rank_hist_t1": 0.206,
+   "top_decile": false,
+   "n_neighbors": 3668,
+   "grid_level": 0
+  },
+  {
+   "code": "600520",
+   "name": "三佳科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.094,
+   "knn_t5_pct": 0.676,
+   "knn_t20_pct": 1.878,
+   "pct_rank_hist": 0.913,
+   "pct_rank_hist_t1": 0.796,
+   "top_decile": true,
+   "n_neighbors": 3081,
+   "grid_level": 0
+  },
+  {
+   "code": "600522",
+   "name": "中天科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "600531",
+   "name": "豫光金铅",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.536,
+   "knn_t5_pct": 1.229,
+   "knn_t20_pct": 2.793,
+   "pct_rank_hist": 0.966,
+   "pct_rank_hist_t1": 0.975,
+   "top_decile": true,
+   "n_neighbors": 2688,
+   "grid_level": 0
+  },
+  {
+   "code": "600540",
+   "name": "新赛股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.225,
+   "knn_t5_pct": -0.641,
+   "knn_t20_pct": -1.151,
+   "pct_rank_hist": 0.046,
+   "pct_rank_hist_t1": 0.07,
+   "top_decile": false,
+   "n_neighbors": 482,
+   "grid_level": 0
+  },
+  {
+   "code": "600545",
+   "name": "卓郎智能",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.075,
+   "knn_t5_pct": 0.727,
+   "knn_t20_pct": 2.551,
+   "pct_rank_hist": 0.928,
+   "pct_rank_hist_t1": 0.76,
+   "top_decile": true,
+   "n_neighbors": 5544,
+   "grid_level": 0
+  },
+  {
+   "code": "600547",
+   "name": "山东黄金",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.175,
+   "knn_t5_pct": 2.336,
+   "knn_t20_pct": 6.172,
+   "pct_rank_hist": 0.986,
+   "pct_rank_hist_t1": 0.996,
+   "top_decile": true,
+   "n_neighbors": 366,
+   "grid_level": 1
+  },
+  {
+   "code": "600549",
+   "name": "厦门钨业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.417,
+   "knn_t5_pct": 4.669,
+   "knn_t20_pct": 9.529,
+   "pct_rank_hist": 0.999,
+   "pct_rank_hist_t1": 0.999,
+   "top_decile": true,
+   "n_neighbors": 6022,
+   "grid_level": 0
+  },
+  {
+   "code": "600550",
+   "name": "保变电气",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.227,
+   "knn_t5_pct": 0.557,
+   "knn_t20_pct": 1.493,
+   "pct_rank_hist": 0.87,
+   "pct_rank_hist_t1": 0.933,
+   "top_decile": false,
+   "n_neighbors": 1185,
+   "grid_level": 0
+  },
+  {
+   "code": "600552",
+   "name": "凯盛科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.001,
+   "knn_t5_pct": 0.514,
+   "knn_t20_pct": 2.167,
+   "pct_rank_hist": 0.849,
+   "pct_rank_hist_t1": 0.565,
+   "top_decile": false,
+   "n_neighbors": 4439,
+   "grid_level": 0
+  },
+  {
+   "code": "600580",
+   "name": "卧龙电驱",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.417,
+   "knn_t5_pct": 4.669,
+   "knn_t20_pct": 9.529,
+   "pct_rank_hist": 0.999,
+   "pct_rank_hist_t1": 0.999,
+   "top_decile": true,
+   "n_neighbors": 6022,
+   "grid_level": 0
+  },
+  {
+   "code": "600592",
+   "name": "龙溪股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.101,
+   "knn_t5_pct": -0.078,
+   "knn_t20_pct": 0.998,
+   "pct_rank_hist": 0.229,
+   "pct_rank_hist_t1": 0.263,
+   "top_decile": false,
+   "n_neighbors": 1318,
+   "grid_level": 0
+  },
+  {
+   "code": "600596",
+   "name": "新安股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.094,
+   "knn_t5_pct": 0.102,
+   "knn_t20_pct": 0.191,
+   "pct_rank_hist": 0.417,
+   "pct_rank_hist_t1": 0.281,
+   "top_decile": false,
+   "n_neighbors": 8097,
+   "grid_level": 0
+  },
+  {
+   "code": "600605",
+   "name": "汇通能源",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.059,
+   "knn_t5_pct": 0.087,
+   "knn_t20_pct": 0.531,
+   "pct_rank_hist": 0.401,
+   "pct_rank_hist_t1": 0.38,
+   "top_decile": false,
+   "n_neighbors": 3731,
+   "grid_level": 0
+  },
+  {
+   "code": "600613",
+   "name": "神奇制药",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.094,
+   "knn_t5_pct": -0.67,
+   "knn_t20_pct": -2.206,
+   "pct_rank_hist": 0.044,
+   "pct_rank_hist_t1": 0.281,
+   "top_decile": false,
+   "n_neighbors": 766,
+   "grid_level": 1
+  },
+  {
+   "code": "600619",
+   "name": "海立股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.231,
+   "knn_t5_pct": 0.791,
+   "knn_t20_pct": 2.005,
+   "pct_rank_hist": 0.942,
+   "pct_rank_hist_t1": 0.933,
+   "top_decile": true,
+   "n_neighbors": 2400,
+   "grid_level": 0
+  },
+  {
+   "code": "600640",
+   "name": "国脉文化",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.004,
+   "knn_t5_pct": -0.001,
+   "knn_t20_pct": -0.148,
+   "pct_rank_hist": 0.294,
+   "pct_rank_hist_t1": 0.555,
+   "top_decile": false,
+   "n_neighbors": 9113,
+   "grid_level": 0
+  },
+  {
+   "code": "600657",
+   "name": "信达地产",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.329,
+   "knn_t5_pct": -0.653,
+   "knn_t20_pct": -0.443,
+   "pct_rank_hist": 0.045,
+   "pct_rank_hist_t1": 0.027,
+   "top_decile": false,
+   "n_neighbors": 2285,
+   "grid_level": 0
+  },
+  {
+   "code": "600664",
+   "name": "哈药股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.984,
+   "knn_t5_pct": 2.686,
+   "knn_t20_pct": 7.045,
+   "pct_rank_hist": 0.99,
+   "pct_rank_hist_t1": 0.992,
+   "top_decile": true,
+   "n_neighbors": 327,
+   "grid_level": 1
+  },
+  {
+   "code": "600667",
+   "name": "太极实业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "600686",
+   "name": "金龙汽车",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.125,
+   "knn_t5_pct": 0.52,
+   "knn_t20_pct": 1.944,
+   "pct_rank_hist": 0.853,
+   "pct_rank_hist_t1": 0.856,
+   "top_decile": false,
+   "n_neighbors": 2400,
+   "grid_level": 0
+  },
+  {
+   "code": "600697",
+   "name": "欧亚集团",
+   "sources": [
+    "reversal_confirmed",
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.052,
+   "knn_t5_pct": 0.087,
+   "knn_t20_pct": -0.059,
+   "pct_rank_hist": 0.402,
+   "pct_rank_hist_t1": 0.409,
+   "top_decile": false,
+   "n_neighbors": 3808,
+   "grid_level": 0
+  },
+  {
+   "code": "600699",
+   "name": "均胜电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.185,
+   "knn_t5_pct": -0.125,
+   "knn_t20_pct": 0.446,
+   "pct_rank_hist": 0.195,
+   "pct_rank_hist_t1": 0.102,
+   "top_decile": false,
+   "n_neighbors": 5182,
+   "grid_level": 0
+  },
+  {
+   "code": "600702",
+   "name": "舍得酒业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.052,
+   "knn_t5_pct": 0.127,
+   "knn_t20_pct": 0.662,
+   "pct_rank_hist": 0.455,
+   "pct_rank_hist_t1": 0.407,
+   "top_decile": false,
+   "n_neighbors": 4133,
+   "grid_level": 0
+  },
+  {
+   "code": "600703",
+   "name": "三安光电",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.655,
+   "knn_t5_pct": 2.916,
+   "knn_t20_pct": 6.834,
+   "pct_rank_hist": 0.99,
+   "pct_rank_hist_t1": 0.98,
+   "top_decile": true,
+   "n_neighbors": 6598,
+   "grid_level": 0
+  },
+  {
+   "code": "600707",
+   "name": "彩虹股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.24,
+   "knn_t5_pct": 0.505,
+   "knn_t20_pct": 2.205,
+   "pct_rank_hist": 0.843,
+   "pct_rank_hist_t1": 0.938,
+   "top_decile": false,
+   "n_neighbors": 1616,
+   "grid_level": 0
+  },
+  {
+   "code": "600712",
+   "name": "南宁百货",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.19,
+   "knn_t5_pct": -0.089,
+   "knn_t20_pct": 0.981,
+   "pct_rank_hist": 0.219,
+   "pct_rank_hist_t1": 0.098,
+   "top_decile": false,
+   "n_neighbors": 2202,
+   "grid_level": 0
+  },
+  {
+   "code": "600721",
+   "name": "百花医药",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.155,
+   "knn_t5_pct": -0.201,
+   "knn_t20_pct": -1.638,
+   "pct_rank_hist": 0.149,
+   "pct_rank_hist_t1": 0.883,
+   "top_decile": false,
+   "n_neighbors": 568,
+   "grid_level": 0
+  },
+  {
+   "code": "600733",
+   "name": "北汽蓝谷",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.043,
+   "knn_t5_pct": 0.402,
+   "knn_t20_pct": 1.175,
+   "pct_rank_hist": 0.775,
+   "pct_rank_hist_t1": 0.699,
+   "top_decile": false,
+   "n_neighbors": 2094,
+   "grid_level": 0
+  },
+  {
+   "code": "600737",
+   "name": "中粮糖业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.222,
+   "knn_t5_pct": -0.091,
+   "knn_t20_pct": 1.173,
+   "pct_rank_hist": 0.218,
+   "pct_rank_hist_t1": 0.073,
+   "top_decile": false,
+   "n_neighbors": 615,
+   "grid_level": 0
+  },
+  {
+   "code": "600770",
+   "name": "综艺股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.206,
+   "knn_t5_pct": -0.567,
+   "knn_t20_pct": -0.275,
+   "pct_rank_hist": 0.06,
+   "pct_rank_hist_t1": 0.082,
+   "top_decile": false,
+   "n_neighbors": 902,
+   "grid_level": 0
+  },
+  {
+   "code": "600779",
+   "name": "水井坊",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.133,
+   "knn_t5_pct": 0.083,
+   "knn_t20_pct": 0.709,
+   "pct_rank_hist": 0.391,
+   "pct_rank_hist_t1": 0.192,
+   "top_decile": false,
+   "n_neighbors": 4607,
+   "grid_level": 0
+  },
+  {
+   "code": "600801",
+   "name": "华新建材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.229,
+   "knn_t5_pct": -0.097,
+   "knn_t20_pct": 0.344,
+   "pct_rank_hist": 0.213,
+   "pct_rank_hist_t1": 0.068,
+   "top_decile": false,
+   "n_neighbors": 565,
+   "grid_level": 0
+  },
+  {
+   "code": "600802",
+   "name": "福建水泥",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.324,
+   "knn_t5_pct": -0.51,
+   "knn_t20_pct": -1.516,
+   "pct_rank_hist": 0.066,
+   "pct_rank_hist_t1": 0.029,
+   "top_decile": false,
+   "n_neighbors": 2704,
+   "grid_level": 0
+  },
+  {
+   "code": "600828",
+   "name": "茂业商业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.056,
+   "knn_t5_pct": -0.084,
+   "knn_t20_pct": 0.726,
+   "pct_rank_hist": 0.224,
+   "pct_rank_hist_t1": 0.39,
+   "top_decile": false,
+   "n_neighbors": 2464,
+   "grid_level": 0
+  },
+  {
+   "code": "600831",
+   "name": "广电网络",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.201,
+   "knn_t5_pct": 0.099,
+   "knn_t20_pct": 0.242,
+   "pct_rank_hist": 0.413,
+   "pct_rank_hist_t1": 0.917,
+   "top_decile": false,
+   "n_neighbors": 7955,
+   "grid_level": 0
+  },
+  {
+   "code": "600838",
+   "name": "上海九百",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.017,
+   "knn_t5_pct": 0.162,
+   "knn_t20_pct": 0.397,
+   "pct_rank_hist": 0.501,
+   "pct_rank_hist_t1": 0.514,
+   "top_decile": false,
+   "n_neighbors": 5282,
+   "grid_level": 0
+  },
+  {
+   "code": "600843",
+   "name": "上工申贝",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.021,
+   "knn_t5_pct": 0.267,
+   "knn_t20_pct": 0.771,
+   "pct_rank_hist": 0.641,
+   "pct_rank_hist_t1": 0.633,
+   "top_decile": false,
+   "n_neighbors": 7851,
+   "grid_level": 0
+  },
+  {
+   "code": "600853",
+   "name": "龙建股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.116,
+   "knn_t5_pct": 0.484,
+   "knn_t20_pct": 0.979,
+   "pct_rank_hist": 0.832,
+   "pct_rank_hist_t1": 0.839,
+   "top_decile": false,
+   "n_neighbors": 4091,
+   "grid_level": 0
+  },
+  {
+   "code": "600865",
+   "name": "百大集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.104,
+   "knn_t5_pct": -0.252,
+   "knn_t20_pct": -0.7,
+   "pct_rank_hist": 0.13,
+   "pct_rank_hist_t1": 0.254,
+   "top_decile": false,
+   "n_neighbors": 3437,
+   "grid_level": 0
+  },
+  {
+   "code": "600895",
+   "name": "张江高科",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.063,
+   "knn_t5_pct": 0.511,
+   "knn_t20_pct": 1.664,
+   "pct_rank_hist": 0.846,
+   "pct_rank_hist_t1": 0.734,
+   "top_decile": false,
+   "n_neighbors": 8473,
+   "grid_level": 0
+  },
+  {
+   "code": "600933",
+   "name": "爱柯迪",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.15,
+   "knn_t5_pct": 0.041,
+   "knn_t20_pct": 0.307,
+   "pct_rank_hist": 0.337,
+   "pct_rank_hist_t1": 0.152,
+   "top_decile": false,
+   "n_neighbors": 4100,
+   "grid_level": 0
+  },
+  {
+   "code": "600961",
+   "name": "株冶集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.146,
+   "knn_t5_pct": 0.601,
+   "knn_t20_pct": 2.063,
+   "pct_rank_hist": 0.887,
+   "pct_rank_hist_t1": 0.876,
+   "top_decile": false,
+   "n_neighbors": 2675,
+   "grid_level": 0
+  },
+  {
+   "code": "600969",
+   "name": "郴电国际",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.042,
+   "knn_t5_pct": -0.022,
+   "knn_t20_pct": 0.991,
+   "pct_rank_hist": 0.278,
+   "pct_rank_hist_t1": 0.697,
+   "top_decile": false,
+   "n_neighbors": 777,
+   "grid_level": 0
+  },
+  {
+   "code": "601020",
+   "name": "华钰矿业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.774,
+   "knn_t5_pct": 1.11,
+   "knn_t20_pct": 4.728,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.986,
+   "top_decile": true,
+   "n_neighbors": 409,
+   "grid_level": 0
+  },
+  {
+   "code": "601026",
+   "name": "道生天合",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.087,
+   "knn_t5_pct": 0.603,
+   "knn_t20_pct": 2.69,
+   "pct_rank_hist": 0.888,
+   "pct_rank_hist_t1": 0.781,
+   "top_decile": false,
+   "n_neighbors": 2466,
+   "grid_level": 0
+  },
+  {
+   "code": "601069",
+   "name": "西部黄金",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.282,
+   "knn_t5_pct": 0.096,
+   "knn_t20_pct": 1.725,
+   "pct_rank_hist": 0.41,
+   "pct_rank_hist_t1": 0.04,
+   "top_decile": false,
+   "n_neighbors": 484,
+   "grid_level": 0
+  },
+  {
+   "code": "601086",
+   "name": "国芳集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.135,
+   "knn_t5_pct": -0.401,
+   "knn_t20_pct": -1.012,
+   "pct_rank_hist": 0.087,
+   "pct_rank_hist_t1": 0.184,
+   "top_decile": false,
+   "n_neighbors": 8124,
+   "grid_level": 0
+  },
+  {
+   "code": "601100",
+   "name": "恒立液压",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "601118",
+   "name": "海南橡胶",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.184,
+   "knn_t5_pct": -0.65,
+   "knn_t20_pct": -1.355,
+   "pct_rank_hist": 0.045,
+   "pct_rank_hist_t1": 0.104,
+   "top_decile": false,
+   "n_neighbors": 2151,
+   "grid_level": 0
+  },
+  {
+   "code": "601123",
+   "name": "马矿股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "error": "no_bar_or_insufficient_history"
+  },
+  {
+   "code": "601126",
+   "name": "四方股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.707,
+   "knn_t5_pct": 2.041,
+   "knn_t20_pct": 4.27,
+   "pct_rank_hist": 0.982,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 5579,
+   "grid_level": 0
+  },
+  {
+   "code": "601127",
+   "name": "赛力斯",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.007,
+   "knn_t5_pct": 0.482,
+   "knn_t20_pct": 1.761,
+   "pct_rank_hist": 0.828,
+   "pct_rank_hist_t1": 0.597,
+   "top_decile": false,
+   "n_neighbors": 8285,
+   "grid_level": 0
+  },
+  {
+   "code": "601133",
+   "name": "柏诚股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "601136",
+   "name": "首创证券",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.105,
+   "knn_t5_pct": 0.068,
+   "knn_t20_pct": 0.718,
+   "pct_rank_hist": 0.37,
+   "pct_rank_hist_t1": 0.251,
+   "top_decile": false,
+   "n_neighbors": 2308,
+   "grid_level": 0
+  },
+  {
+   "code": "601138",
+   "name": "工业富联",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "601179",
+   "name": "中国西电",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.054,
+   "knn_t5_pct": 0.409,
+   "knn_t20_pct": 2.23,
+   "pct_rank_hist": 0.783,
+   "pct_rank_hist_t1": 0.717,
+   "top_decile": false,
+   "n_neighbors": 2270,
+   "grid_level": 0
+  },
+  {
+   "code": "601218",
+   "name": "吉鑫科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.039,
+   "knn_t5_pct": -0.312,
+   "knn_t20_pct": -0.346,
+   "pct_rank_hist": 0.109,
+   "pct_rank_hist_t1": 0.459,
+   "top_decile": false,
+   "n_neighbors": 2983,
+   "grid_level": 0
+  },
+  {
+   "code": "601231",
+   "name": "环旭电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "601336",
+   "name": "新华保险",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.154,
+   "knn_t5_pct": 0.56,
+   "knn_t20_pct": 1.793,
+   "pct_rank_hist": 0.872,
+   "pct_rank_hist_t1": 0.881,
+   "top_decile": false,
+   "n_neighbors": 6499,
+   "grid_level": 0
+  },
+  {
+   "code": "601369",
+   "name": "陕鼓动力",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.17,
+   "knn_t5_pct": 0.631,
+   "knn_t20_pct": 1.681,
+   "pct_rank_hist": 0.899,
+   "pct_rank_hist_t1": 0.893,
+   "top_decile": false,
+   "n_neighbors": 4164,
+   "grid_level": 0
+  },
+  {
+   "code": "601567",
+   "name": "三星电气",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.006,
+   "knn_t5_pct": 0.241,
+   "knn_t20_pct": 2.422,
+   "pct_rank_hist": 0.608,
+   "pct_rank_hist_t1": 0.594,
+   "top_decile": false,
+   "n_neighbors": 723,
+   "grid_level": 0
+  },
+  {
+   "code": "601579",
+   "name": "会稽山",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.049,
+   "knn_t5_pct": -0.487,
+   "knn_t20_pct": -1.673,
+   "pct_rank_hist": 0.07,
+   "pct_rank_hist_t1": 0.416,
+   "top_decile": false,
+   "n_neighbors": 8437,
+   "grid_level": 0
+  },
+  {
+   "code": "601615",
+   "name": "明阳智能",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.001,
+   "knn_t5_pct": 0.575,
+   "knn_t20_pct": 1.632,
+   "pct_rank_hist": 0.877,
+   "pct_rank_hist_t1": 0.57,
+   "top_decile": false,
+   "n_neighbors": 2727,
+   "grid_level": 0
+  },
+  {
+   "code": "601777",
+   "name": "千里科技",
+   "sources": [
+    "reversal_confirmed",
+    "watch_pool"
+   ],
+   "knn_t1_pct": 0.028,
+   "knn_t5_pct": 0.293,
+   "knn_t20_pct": 1.794,
+   "pct_rank_hist": 0.678,
+   "pct_rank_hist_t1": 0.653,
+   "top_decile": false,
+   "n_neighbors": 2621,
+   "grid_level": 0
+  },
+  {
+   "code": "601869",
+   "name": "长飞光纤",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.154,
+   "knn_t5_pct": 0.56,
+   "knn_t20_pct": 1.793,
+   "pct_rank_hist": 0.872,
+   "pct_rank_hist_t1": 0.881,
+   "top_decile": false,
+   "n_neighbors": 6499,
+   "grid_level": 0
+  },
+  {
+   "code": "601918",
+   "name": "新集能源",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.142,
+   "knn_t5_pct": 0.027,
+   "knn_t20_pct": 0.596,
+   "pct_rank_hist": 0.326,
+   "pct_rank_hist_t1": 0.168,
+   "top_decile": false,
+   "n_neighbors": 2482,
+   "grid_level": 0
+  },
+  {
+   "code": "603001",
+   "name": "奥康国际",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.365,
+   "knn_t5_pct": -1.005,
+   "knn_t20_pct": -2.495,
+   "pct_rank_hist": 0.017,
+   "pct_rank_hist_t1": 0.018,
+   "top_decile": false,
+   "n_neighbors": 5054,
+   "grid_level": 0
+  },
+  {
+   "code": "603005",
+   "name": "晶方科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "603019",
+   "name": "中科曙光",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.417,
+   "knn_t5_pct": 4.669,
+   "knn_t20_pct": 9.529,
+   "pct_rank_hist": 0.999,
+   "pct_rank_hist_t1": 0.999,
+   "top_decile": true,
+   "n_neighbors": 6022,
+   "grid_level": 0
+  },
+  {
+   "code": "603020",
+   "name": "爱普股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.317,
+   "knn_t5_pct": -0.397,
+   "knn_t20_pct": -0.131,
+   "pct_rank_hist": 0.09,
+   "pct_rank_hist_t1": 0.032,
+   "top_decile": false,
+   "n_neighbors": 1449,
+   "grid_level": 0
+  },
+  {
+   "code": "603026",
+   "name": "石大胜华",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.647,
+   "knn_t5_pct": 1.485,
+   "knn_t20_pct": 3.532,
+   "pct_rank_hist": 0.974,
+   "pct_rank_hist_t1": 0.979,
+   "top_decile": true,
+   "n_neighbors": 2793,
+   "grid_level": 0
+  },
+  {
+   "code": "603031",
+   "name": "安孚科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.707,
+   "knn_t5_pct": 2.041,
+   "knn_t20_pct": 4.27,
+   "pct_rank_hist": 0.982,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 5579,
+   "grid_level": 0
+  },
+  {
+   "code": "603032",
+   "name": "德新科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.067,
+   "knn_t5_pct": 0.113,
+   "knn_t20_pct": 1.115,
+   "pct_rank_hist": 0.439,
+   "pct_rank_hist_t1": 0.345,
+   "top_decile": false,
+   "n_neighbors": 5585,
+   "grid_level": 0
+  },
+  {
+   "code": "603042",
+   "name": "华脉科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.162,
+   "knn_t5_pct": -0.146,
+   "knn_t20_pct": 0.297,
+   "pct_rank_hist": 0.182,
+   "pct_rank_hist_t1": 0.134,
+   "top_decile": false,
+   "n_neighbors": 1851,
+   "grid_level": 0
+  },
+  {
+   "code": "603045",
+   "name": "福达合金",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.251,
+   "knn_t5_pct": 1.307,
+   "knn_t20_pct": 3.499,
+   "pct_rank_hist": 0.969,
+   "pct_rank_hist_t1": 0.94,
+   "top_decile": true,
+   "n_neighbors": 6021,
+   "grid_level": 0
+  },
+  {
+   "code": "603052",
+   "name": "可川科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.075,
+   "knn_t5_pct": 0.727,
+   "knn_t20_pct": 2.551,
+   "pct_rank_hist": 0.928,
+   "pct_rank_hist_t1": 0.76,
+   "top_decile": true,
+   "n_neighbors": 5544,
+   "grid_level": 0
+  },
+  {
+   "code": "603061",
+   "name": "金海通",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.707,
+   "knn_t5_pct": 2.041,
+   "knn_t20_pct": 4.27,
+   "pct_rank_hist": 0.982,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 5579,
+   "grid_level": 0
+  },
+  {
+   "code": "603065",
+   "name": "宿迁联盛",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.016,
+   "knn_t5_pct": 0.165,
+   "knn_t20_pct": 0.805,
+   "pct_rank_hist": 0.506,
+   "pct_rank_hist_t1": 0.621,
+   "top_decile": false,
+   "n_neighbors": 3030,
+   "grid_level": 0
+  },
+  {
+   "code": "603073",
+   "name": "彩蝶实业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.051,
+   "knn_t5_pct": 0.273,
+   "knn_t20_pct": 0.774,
+   "pct_rank_hist": 0.651,
+   "pct_rank_hist_t1": 0.712,
+   "top_decile": false,
+   "n_neighbors": 6119,
+   "grid_level": 0
+  },
+  {
+   "code": "603078",
+   "name": "江化微",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "603082",
+   "name": "北自科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.138,
+   "knn_t5_pct": 0.336,
+   "knn_t20_pct": 1.35,
+   "pct_rank_hist": 0.716,
+   "pct_rank_hist_t1": 0.176,
+   "top_decile": false,
+   "n_neighbors": 675,
+   "grid_level": 0
+  },
+  {
+   "code": "603085",
+   "name": "天成自控",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.095,
+   "knn_t5_pct": 0.247,
+   "knn_t20_pct": 0.754,
+   "pct_rank_hist": 0.613,
+   "pct_rank_hist_t1": 0.797,
+   "top_decile": false,
+   "n_neighbors": 3185,
+   "grid_level": 0
+  },
+  {
+   "code": "603087",
+   "name": "甘李药业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.059,
+   "knn_t5_pct": 0.404,
+   "knn_t20_pct": 1.432,
+   "pct_rank_hist": 0.776,
+   "pct_rank_hist_t1": 0.726,
+   "top_decile": false,
+   "n_neighbors": 4941,
+   "grid_level": 0
+  },
+  {
+   "code": "603090",
+   "name": "宏盛股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.41,
+   "knn_t5_pct": 1.231,
+   "knn_t20_pct": 4.327,
+   "pct_rank_hist": 0.967,
+   "pct_rank_hist_t1": 0.97,
+   "top_decile": true,
+   "n_neighbors": 4835,
+   "grid_level": 0
+  },
+  {
+   "code": "603092",
+   "name": "德力佳",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.585,
+   "knn_t5_pct": 1.479,
+   "knn_t20_pct": 4.279,
+   "pct_rank_hist": 0.973,
+   "pct_rank_hist_t1": 0.978,
+   "top_decile": true,
+   "n_neighbors": 3186,
+   "grid_level": 0
+  },
+  {
+   "code": "603093",
+   "name": "南华期货",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.197,
+   "knn_t5_pct": -0.206,
+   "knn_t20_pct": 0.108,
+   "pct_rank_hist": 0.146,
+   "pct_rank_hist_t1": 0.09,
+   "top_decile": false,
+   "n_neighbors": 3572,
+   "grid_level": 0
+  },
+  {
+   "code": "603101",
+   "name": "汇嘉时代",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.127,
+   "knn_t5_pct": -0.266,
+   "knn_t20_pct": -0.504,
+   "pct_rank_hist": 0.123,
+   "pct_rank_hist_t1": 0.206,
+   "top_decile": false,
+   "n_neighbors": 3668,
+   "grid_level": 0
+  },
+  {
+   "code": "603112",
+   "name": "华翔股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.0,
+   "knn_t5_pct": 0.012,
+   "knn_t20_pct": 0.372,
+   "pct_rank_hist": 0.31,
+   "pct_rank_hist_t1": 0.567,
+   "top_decile": false,
+   "n_neighbors": 2380,
+   "grid_level": 0
+  },
+  {
+   "code": "603115",
+   "name": "海星股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "603122",
+   "name": "合富中国",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.133,
+   "knn_t5_pct": 0.055,
+   "knn_t20_pct": 0.431,
+   "pct_rank_hist": 0.352,
+   "pct_rank_hist_t1": 0.193,
+   "top_decile": false,
+   "n_neighbors": 2388,
+   "grid_level": 0
+  },
+  {
+   "code": "603127",
+   "name": "昭衍新药",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.007,
+   "knn_t5_pct": 0.2,
+   "knn_t20_pct": 0.47,
+   "pct_rank_hist": 0.553,
+   "pct_rank_hist_t1": 0.597,
+   "top_decile": false,
+   "n_neighbors": 1099,
+   "grid_level": 0
+  },
+  {
+   "code": "603138",
+   "name": "海量数据",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.133,
+   "knn_t5_pct": 0.055,
+   "knn_t20_pct": 0.431,
+   "pct_rank_hist": 0.352,
+   "pct_rank_hist_t1": 0.193,
+   "top_decile": false,
+   "n_neighbors": 2388,
+   "grid_level": 0
+  },
+  {
+   "code": "603158",
+   "name": "腾龙股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.053,
+   "knn_t5_pct": 0.518,
+   "knn_t20_pct": 1.875,
+   "pct_rank_hist": 0.851,
+   "pct_rank_hist_t1": 0.716,
+   "top_decile": false,
+   "n_neighbors": 4595,
+   "grid_level": 0
+  },
+  {
+   "code": "603163",
+   "name": "圣晖集成",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.075,
+   "knn_t5_pct": 0.727,
+   "knn_t20_pct": 2.551,
+   "pct_rank_hist": 0.928,
+   "pct_rank_hist_t1": 0.76,
+   "top_decile": true,
+   "n_neighbors": 5544,
+   "grid_level": 0
+  },
+  {
+   "code": "603171",
+   "name": "税友股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.028,
+   "knn_t5_pct": 0.124,
+   "knn_t20_pct": 0.577,
+   "pct_rank_hist": 0.452,
+   "pct_rank_hist_t1": 0.652,
+   "top_decile": false,
+   "n_neighbors": 923,
+   "grid_level": 0
+  },
+  {
+   "code": "603175",
+   "name": "超颖电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.11,
+   "knn_t5_pct": -0.102,
+   "knn_t20_pct": -0.346,
+   "pct_rank_hist": 0.206,
+   "pct_rank_hist_t1": 0.241,
+   "top_decile": false,
+   "n_neighbors": 3825,
+   "grid_level": 0
+  },
+  {
+   "code": "603179",
+   "name": "新泉股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "603188",
+   "name": "亚邦股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.201,
+   "knn_t5_pct": 0.099,
+   "knn_t20_pct": 0.242,
+   "pct_rank_hist": 0.413,
+   "pct_rank_hist_t1": 0.917,
+   "top_decile": false,
+   "n_neighbors": 7955,
+   "grid_level": 0
+  },
+  {
+   "code": "603197",
+   "name": "保隆科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.02,
+   "knn_t5_pct": 0.249,
+   "knn_t20_pct": 1.182,
+   "pct_rank_hist": 0.617,
+   "pct_rank_hist_t1": 0.63,
+   "top_decile": false,
+   "n_neighbors": 5172,
+   "grid_level": 0
+  },
+  {
+   "code": "603203",
+   "name": "快克智能",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "603225",
+   "name": "新凤鸣",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.243,
+   "knn_t5_pct": 0.429,
+   "knn_t20_pct": 2.838,
+   "pct_rank_hist": 0.796,
+   "pct_rank_hist_t1": 0.059,
+   "top_decile": false,
+   "n_neighbors": 714,
+   "grid_level": 0
+  },
+  {
+   "code": "603228",
+   "name": "景旺电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.329,
+   "knn_t5_pct": -0.704,
+   "knn_t20_pct": -0.293,
+   "pct_rank_hist": 0.04,
+   "pct_rank_hist_t1": 0.027,
+   "top_decile": false,
+   "n_neighbors": 286,
+   "grid_level": 0
+  },
+  {
+   "code": "603248",
+   "name": "锡华科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.036,
+   "knn_t5_pct": 0.235,
+   "knn_t20_pct": 1.05,
+   "pct_rank_hist": 0.602,
+   "pct_rank_hist_t1": 0.468,
+   "top_decile": false,
+   "n_neighbors": 4182,
+   "grid_level": 0
+  },
+  {
+   "code": "603256",
+   "name": "宏和科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "603258",
+   "name": "电魂网络",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": -0.211,
+   "knn_t5_pct": -1.218,
+   "knn_t20_pct": -2.934,
+   "pct_rank_hist": 0.009,
+   "pct_rank_hist_t1": 0.079,
+   "top_decile": false,
+   "n_neighbors": 3386,
+   "grid_level": 0
+  },
+  {
+   "code": "603266",
+   "name": "天龙股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.051,
+   "knn_t5_pct": -0.032,
+   "knn_t20_pct": 0.546,
+   "pct_rank_hist": 0.263,
+   "pct_rank_hist_t1": 0.41,
+   "top_decile": false,
+   "n_neighbors": 10666,
+   "grid_level": 0
+  },
+  {
+   "code": "603269",
+   "name": "海鸥股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.352,
+   "knn_t5_pct": -0.621,
+   "knn_t20_pct": -1.601,
+   "pct_rank_hist": 0.049,
+   "pct_rank_hist_t1": 0.021,
+   "top_decile": false,
+   "n_neighbors": 714,
+   "grid_level": 0
+  },
+  {
+   "code": "603278",
+   "name": "大业股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.071,
+   "knn_t5_pct": 0.282,
+   "knn_t20_pct": 1.099,
+   "pct_rank_hist": 0.663,
+   "pct_rank_hist_t1": 0.749,
+   "top_decile": false,
+   "n_neighbors": 3739,
+   "grid_level": 0
+  },
+  {
+   "code": "603283",
+   "name": "赛腾股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "603296",
+   "name": "华勤技术",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.177,
+   "knn_t5_pct": 0.702,
+   "knn_t20_pct": 2.321,
+   "pct_rank_hist": 0.921,
+   "pct_rank_hist_t1": 0.9,
+   "top_decile": true,
+   "n_neighbors": 4494,
+   "grid_level": 0
+  },
+  {
+   "code": "603306",
+   "name": "华懋科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "603316",
+   "name": "诚邦股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.071,
+   "knn_t5_pct": 0.51,
+   "knn_t20_pct": 1.581,
+   "pct_rank_hist": 0.845,
+   "pct_rank_hist_t1": 0.747,
+   "top_decile": false,
+   "n_neighbors": 7964,
+   "grid_level": 0
+  },
+  {
+   "code": "603322",
+   "name": "超讯科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.044,
+   "knn_t5_pct": 0.205,
+   "knn_t20_pct": 1.832,
+   "pct_rank_hist": 0.56,
+   "pct_rank_hist_t1": 0.435,
+   "top_decile": false,
+   "n_neighbors": 4582,
+   "grid_level": 0
+  },
+  {
+   "code": "603336",
+   "name": "宏辉果蔬",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.183,
+   "knn_t5_pct": -0.189,
+   "knn_t20_pct": 0.362,
+   "pct_rank_hist": 0.153,
+   "pct_rank_hist_t1": 0.106,
+   "top_decile": false,
+   "n_neighbors": 1630,
+   "grid_level": 0
+  },
+  {
+   "code": "603337",
+   "name": "杰克科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.769,
+   "knn_t5_pct": 1.419,
+   "knn_t20_pct": 2.136,
+   "pct_rank_hist": 0.972,
+   "pct_rank_hist_t1": 0.986,
+   "top_decile": true,
+   "n_neighbors": 1248,
+   "grid_level": 0
+  },
+  {
+   "code": "603353",
+   "name": "和顺石油",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.01,
+   "knn_t5_pct": -0.139,
+   "knn_t20_pct": 0.139,
+   "pct_rank_hist": 0.185,
+   "pct_rank_hist_t1": 0.535,
+   "top_decile": false,
+   "n_neighbors": 1445,
+   "grid_level": 0
+  },
+  {
+   "code": "603366",
+   "name": "日出东方",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": 0.04,
+   "knn_t5_pct": -0.134,
+   "knn_t20_pct": -0.355,
+   "pct_rank_hist": 0.19,
+   "pct_rank_hist_t1": 0.689,
+   "top_decile": false,
+   "n_neighbors": 6053,
+   "grid_level": 0
+  },
+  {
+   "code": "603390",
+   "name": "通达电气",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.039,
+   "knn_t5_pct": 0.407,
+   "knn_t20_pct": 0.739,
+   "pct_rank_hist": 0.781,
+   "pct_rank_hist_t1": 0.688,
+   "top_decile": false,
+   "n_neighbors": 2469,
+   "grid_level": 0
+  },
+  {
+   "code": "603399",
+   "name": "永杉锂业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.046,
+   "knn_t5_pct": 2.459,
+   "knn_t20_pct": 5.899,
+   "pct_rank_hist": 0.986,
+   "pct_rank_hist_t1": 0.993,
+   "top_decile": true,
+   "n_neighbors": 3079,
+   "grid_level": 0
+  },
+  {
+   "code": "603407",
+   "name": "长裕集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.003,
+   "knn_t5_pct": 0.794,
+   "knn_t20_pct": 4.247,
+   "pct_rank_hist": 0.942,
+   "pct_rank_hist_t1": 0.559,
+   "top_decile": true,
+   "n_neighbors": 3681,
+   "grid_level": 0
+  },
+  {
+   "code": "603448",
+   "name": "C天博",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "error": "no_bar_or_insufficient_history"
+  },
+  {
+   "code": "603459",
+   "name": "红板科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.044,
+   "knn_t5_pct": 0.786,
+   "knn_t20_pct": 3.559,
+   "pct_rank_hist": 0.941,
+   "pct_rank_hist_t1": 0.703,
+   "top_decile": true,
+   "n_neighbors": 773,
+   "grid_level": 0
+  },
+  {
+   "code": "603500",
+   "name": "祥和实业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.03,
+   "knn_t5_pct": 0.467,
+   "knn_t20_pct": 1.914,
+   "pct_rank_hist": 0.819,
+   "pct_rank_hist_t1": 0.658,
+   "top_decile": false,
+   "n_neighbors": 4286,
+   "grid_level": 0
+  },
+  {
+   "code": "603507",
+   "name": "振江股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.044,
+   "knn_t5_pct": 0.335,
+   "knn_t20_pct": 1.163,
+   "pct_rank_hist": 0.714,
+   "pct_rank_hist_t1": 0.435,
+   "top_decile": false,
+   "n_neighbors": 4109,
+   "grid_level": 0
+  },
+  {
+   "code": "603519",
+   "name": "立霸股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.059,
+   "knn_t5_pct": -0.058,
+   "knn_t20_pct": -0.104,
+   "pct_rank_hist": 0.242,
+   "pct_rank_hist_t1": 0.379,
+   "top_decile": false,
+   "n_neighbors": 3593,
+   "grid_level": 0
+  },
+  {
+   "code": "603528",
+   "name": "多伦科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.054,
+   "knn_t5_pct": -0.359,
+   "knn_t20_pct": -0.16,
+   "pct_rank_hist": 0.098,
+   "pct_rank_hist_t1": 0.395,
+   "top_decile": false,
+   "n_neighbors": 1852,
+   "grid_level": 0
+  },
+  {
+   "code": "603538",
+   "name": "美诺华",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.194,
+   "knn_t5_pct": 0.816,
+   "knn_t20_pct": 2.943,
+   "pct_rank_hist": 0.946,
+   "pct_rank_hist_t1": 0.912,
+   "top_decile": true,
+   "n_neighbors": 4957,
+   "grid_level": 0
+  },
+  {
+   "code": "603556",
+   "name": "海兴电力",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.051,
+   "knn_t5_pct": 0.249,
+   "knn_t20_pct": 1.049,
+   "pct_rank_hist": 0.615,
+   "pct_rank_hist_t1": 0.412,
+   "top_decile": false,
+   "n_neighbors": 3958,
+   "grid_level": 0
+  },
+  {
+   "code": "603588",
+   "name": "高能环境",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.296,
+   "knn_t5_pct": 0.747,
+   "knn_t20_pct": 2.499,
+   "pct_rank_hist": 0.933,
+   "pct_rank_hist_t1": 0.952,
+   "top_decile": true,
+   "n_neighbors": 1224,
+   "grid_level": 0
+  },
+  {
+   "code": "603590",
+   "name": "康辰药业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.128,
+   "knn_t5_pct": 0.731,
+   "knn_t20_pct": 1.175,
+   "pct_rank_hist": 0.929,
+   "pct_rank_hist_t1": 0.861,
+   "top_decile": true,
+   "n_neighbors": 2972,
+   "grid_level": 0
+  },
+  {
+   "code": "603601",
+   "name": "再升科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.156,
+   "knn_t5_pct": 0.115,
+   "knn_t20_pct": 1.411,
+   "pct_rank_hist": 0.441,
+   "pct_rank_hist_t1": 0.142,
+   "top_decile": false,
+   "n_neighbors": 4391,
+   "grid_level": 0
+  },
+  {
+   "code": "603606",
+   "name": "东方电缆",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.094,
+   "knn_t5_pct": 0.032,
+   "knn_t20_pct": 0.168,
+   "pct_rank_hist": 0.33,
+   "pct_rank_hist_t1": 0.278,
+   "top_decile": false,
+   "n_neighbors": 7241,
+   "grid_level": 0
+  },
+  {
+   "code": "603616",
+   "name": "韩建河山",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.204,
+   "knn_t5_pct": 0.271,
+   "knn_t20_pct": 1.754,
+   "pct_rank_hist": 0.649,
+   "pct_rank_hist_t1": 0.085,
+   "top_decile": false,
+   "n_neighbors": 2430,
+   "grid_level": 0
+  },
+  {
+   "code": "603626",
+   "name": "科森科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.005,
+   "knn_t5_pct": 0.185,
+   "knn_t20_pct": -0.096,
+   "pct_rank_hist": 0.528,
+   "pct_rank_hist_t1": 0.552,
+   "top_decile": false,
+   "n_neighbors": 7888,
+   "grid_level": 0
+  },
+  {
+   "code": "603636",
+   "name": "南威软件",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.022,
+   "knn_t5_pct": 0.191,
+   "knn_t20_pct": 0.678,
+   "pct_rank_hist": 0.54,
+   "pct_rank_hist_t1": 0.637,
+   "top_decile": false,
+   "n_neighbors": 4794,
+   "grid_level": 0
+  },
+  {
+   "code": "603638",
+   "name": "艾迪精密",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.148,
+   "knn_t5_pct": -0.176,
+   "knn_t20_pct": 0.021,
+   "pct_rank_hist": 0.162,
+   "pct_rank_hist_t1": 0.158,
+   "top_decile": false,
+   "n_neighbors": 4527,
+   "grid_level": 0
+  },
+  {
+   "code": "603650",
+   "name": "彤程新材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.047,
+   "knn_t5_pct": 4.31,
+   "knn_t20_pct": 9.384,
+   "pct_rank_hist": 0.997,
+   "pct_rank_hist_t1": 0.994,
+   "top_decile": true,
+   "n_neighbors": 7587,
+   "grid_level": 0
+  },
+  {
+   "code": "603657",
+   "name": "春光科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.025,
+   "knn_t5_pct": -0.131,
+   "knn_t20_pct": 0.376,
+   "pct_rank_hist": 0.191,
+   "pct_rank_hist_t1": 0.648,
+   "top_decile": false,
+   "n_neighbors": 1586,
+   "grid_level": 0
+  },
+  {
+   "code": "603659",
+   "name": "璞泰来",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.007,
+   "knn_t5_pct": 0.482,
+   "knn_t20_pct": 1.761,
+   "pct_rank_hist": 0.828,
+   "pct_rank_hist_t1": 0.597,
+   "top_decile": false,
+   "n_neighbors": 8285,
+   "grid_level": 0
+  },
+  {
+   "code": "603661",
+   "name": "恒林股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.044,
+   "knn_t5_pct": 0.335,
+   "knn_t20_pct": 1.163,
+   "pct_rank_hist": 0.714,
+   "pct_rank_hist_t1": 0.435,
+   "top_decile": false,
+   "n_neighbors": 4109,
+   "grid_level": 0
+  },
+  {
+   "code": "603663",
+   "name": "三祥新材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "603667",
+   "name": "五洲新春",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "603668",
+   "name": "天马科技",
+   "sources": [
+    "deep_low",
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.046,
+   "knn_t5_pct": 2.459,
+   "knn_t20_pct": 5.899,
+   "pct_rank_hist": 0.986,
+   "pct_rank_hist_t1": 0.993,
+   "top_decile": true,
+   "n_neighbors": 3079,
+   "grid_level": 0
+  },
+  {
+   "code": "603686",
+   "name": "福龙马",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.169,
+   "knn_t5_pct": 0.449,
+   "knn_t20_pct": 2.201,
+   "pct_rank_hist": 0.807,
+   "pct_rank_hist_t1": 0.891,
+   "top_decile": false,
+   "n_neighbors": 1411,
+   "grid_level": 0
+  },
+  {
+   "code": "603690",
+   "name": "至纯科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.331,
+   "knn_t5_pct": 0.185,
+   "knn_t20_pct": 0.27,
+   "pct_rank_hist": 0.528,
+   "pct_rank_hist_t1": 0.961,
+   "top_decile": false,
+   "n_neighbors": 698,
+   "grid_level": 0
+  },
+  {
+   "code": "603713",
+   "name": "密尔克卫",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.049,
+   "knn_t5_pct": 0.204,
+   "knn_t20_pct": 0.942,
+   "pct_rank_hist": 0.557,
+   "pct_rank_hist_t1": 0.418,
+   "top_decile": false,
+   "n_neighbors": 5008,
+   "grid_level": 0
+  },
+  {
+   "code": "603716",
+   "name": "塞力医疗",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.127,
+   "knn_t5_pct": 0.06,
+   "knn_t20_pct": 1.886,
+   "pct_rank_hist": 0.36,
+   "pct_rank_hist_t1": 0.208,
+   "top_decile": false,
+   "n_neighbors": 795,
+   "grid_level": 0
+  },
+  {
+   "code": "603738",
+   "name": "泰晶科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "603757",
+   "name": "大元泵业",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.226,
+   "knn_t5_pct": -0.509,
+   "knn_t20_pct": 0.05,
+   "pct_rank_hist": 0.067,
+   "pct_rank_hist_t1": 0.07,
+   "top_decile": false,
+   "n_neighbors": 792,
+   "grid_level": 0
+  },
+  {
+   "code": "603767",
+   "name": "中马传动",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.097,
+   "knn_t5_pct": 0.54,
+   "knn_t20_pct": 0.934,
+   "pct_rank_hist": 0.86,
+   "pct_rank_hist_t1": 0.8,
+   "top_decile": false,
+   "n_neighbors": 4528,
+   "grid_level": 0
+  },
+  {
+   "code": "603778",
+   "name": "国晟科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.046,
+   "knn_t5_pct": 2.459,
+   "knn_t20_pct": 5.899,
+   "pct_rank_hist": 0.986,
+   "pct_rank_hist_t1": 0.993,
+   "top_decile": true,
+   "n_neighbors": 3079,
+   "grid_level": 0
+  },
+  {
+   "code": "603800",
+   "name": "洪田股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.707,
+   "knn_t5_pct": 2.041,
+   "knn_t20_pct": 4.27,
+   "pct_rank_hist": 0.982,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 5579,
+   "grid_level": 0
+  },
+  {
+   "code": "603803",
+   "name": "瑞斯康达",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.057,
+   "knn_t5_pct": 0.121,
+   "knn_t20_pct": 1.637,
+   "pct_rank_hist": 0.447,
+   "pct_rank_hist_t1": 0.388,
+   "top_decile": false,
+   "n_neighbors": 4579,
+   "grid_level": 0
+  },
+  {
+   "code": "603819",
+   "name": "神力股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.054,
+   "knn_t5_pct": -0.359,
+   "knn_t20_pct": -0.16,
+   "pct_rank_hist": 0.098,
+   "pct_rank_hist_t1": 0.395,
+   "top_decile": false,
+   "n_neighbors": 1852,
+   "grid_level": 0
+  },
+  {
+   "code": "603823",
+   "name": "百合花",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "603867",
+   "name": "新化股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.053,
+   "knn_t5_pct": 0.202,
+   "knn_t20_pct": 0.662,
+   "pct_rank_hist": 0.555,
+   "pct_rank_hist_t1": 0.399,
+   "top_decile": false,
+   "n_neighbors": 4078,
+   "grid_level": 0
+  },
+  {
+   "code": "603881",
+   "name": "数据港",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.329,
+   "knn_t5_pct": 1.172,
+   "knn_t20_pct": 2.853,
+   "pct_rank_hist": 0.965,
+   "pct_rank_hist_t1": 0.96,
+   "top_decile": true,
+   "n_neighbors": 643,
+   "grid_level": 0
+  },
+  {
+   "code": "603906",
+   "name": "龙蟠科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.02,
+   "knn_t5_pct": 0.149,
+   "knn_t20_pct": 0.505,
+   "pct_rank_hist": 0.489,
+   "pct_rank_hist_t1": 0.632,
+   "top_decile": false,
+   "n_neighbors": 2802,
+   "grid_level": 0
+  },
+  {
+   "code": "603928",
+   "name": "兴业股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.029,
+   "knn_t5_pct": 0.341,
+   "knn_t20_pct": 0.939,
+   "pct_rank_hist": 0.722,
+   "pct_rank_hist_t1": 0.656,
+   "top_decile": false,
+   "n_neighbors": 2616,
+   "grid_level": 0
+  },
+  {
+   "code": "603929",
+   "name": "亚翔集成",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.707,
+   "knn_t5_pct": 2.041,
+   "knn_t20_pct": 4.27,
+   "pct_rank_hist": 0.982,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 5579,
+   "grid_level": 0
+  },
+  {
+   "code": "603936",
+   "name": "博敏电子",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.063,
+   "knn_t5_pct": 0.17,
+   "knn_t20_pct": 0.924,
+   "pct_rank_hist": 0.51,
+   "pct_rank_hist_t1": 0.732,
+   "top_decile": false,
+   "n_neighbors": 4587,
+   "grid_level": 0
+  },
+  {
+   "code": "603937",
+   "name": "丽岛新材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.236,
+   "knn_t5_pct": -0.471,
+   "knn_t20_pct": -0.066,
+   "pct_rank_hist": 0.074,
+   "pct_rank_hist_t1": 0.063,
+   "top_decile": false,
+   "n_neighbors": 2284,
+   "grid_level": 0
+  },
+  {
+   "code": "603938",
+   "name": "三孚股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "603949",
+   "name": "雪龙集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.045,
+   "knn_t5_pct": 0.177,
+   "knn_t20_pct": 1.84,
+   "pct_rank_hist": 0.521,
+   "pct_rank_hist_t1": 0.432,
+   "top_decile": false,
+   "n_neighbors": 3093,
+   "grid_level": 0
+  },
+  {
+   "code": "603956",
+   "name": "威派格",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.017,
+   "knn_t5_pct": 0.07,
+   "knn_t20_pct": -0.777,
+   "pct_rank_hist": 0.373,
+   "pct_rank_hist_t1": 0.515,
+   "top_decile": false,
+   "n_neighbors": 7585,
+   "grid_level": 0
+  },
+  {
+   "code": "603979",
+   "name": "金诚信",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.477,
+   "knn_t5_pct": 1.21,
+   "knn_t20_pct": 1.911,
+   "pct_rank_hist": 0.966,
+   "pct_rank_hist_t1": 0.974,
+   "top_decile": true,
+   "n_neighbors": 511,
+   "grid_level": 0
+  },
+  {
+   "code": "603980",
+   "name": "吉华集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.266,
+   "knn_t5_pct": -0.968,
+   "knn_t20_pct": -2.644,
+   "pct_rank_hist": 0.022,
+   "pct_rank_hist_t1": 0.048,
+   "top_decile": false,
+   "n_neighbors": 4772,
+   "grid_level": 0
+  },
+  {
+   "code": "603985",
+   "name": "恒润股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.115,
+   "knn_t5_pct": 0.476,
+   "knn_t20_pct": 1.723,
+   "pct_rank_hist": 0.823,
+   "pct_rank_hist_t1": 0.837,
+   "top_decile": false,
+   "n_neighbors": 7925,
+   "grid_level": 0
+  },
+  {
+   "code": "603986",
+   "name": "兆易创新",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 1.417,
+   "knn_t5_pct": 4.669,
+   "knn_t20_pct": 9.529,
+   "pct_rank_hist": 0.999,
+   "pct_rank_hist_t1": 0.999,
+   "top_decile": true,
+   "n_neighbors": 6022,
+   "grid_level": 0
+  },
+  {
+   "code": "603989",
+   "name": "艾华集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "603997",
+   "name": "继峰股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.045,
+   "knn_t5_pct": 0.218,
+   "knn_t20_pct": 0.869,
+   "pct_rank_hist": 0.582,
+   "pct_rank_hist_t1": 0.431,
+   "top_decile": false,
+   "n_neighbors": 3714,
+   "grid_level": 0
+  },
+  {
+   "code": "605069",
+   "name": "正和生态",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.065,
+   "knn_t5_pct": 0.436,
+   "knn_t20_pct": 1.888,
+   "pct_rank_hist": 0.8,
+   "pct_rank_hist_t1": 0.356,
+   "top_decile": false,
+   "n_neighbors": 5535,
+   "grid_level": 0
+  },
+  {
+   "code": "605088",
+   "name": "冠盛股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.005,
+   "knn_t5_pct": 0.37,
+   "knn_t20_pct": 1.28,
+   "pct_rank_hist": 0.75,
+   "pct_rank_hist_t1": 0.588,
+   "top_decile": false,
+   "n_neighbors": 8537,
+   "grid_level": 0
+  },
+  {
+   "code": "605100",
+   "name": "华丰股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.022,
+   "knn_t5_pct": 0.291,
+   "knn_t20_pct": 1.495,
+   "pct_rank_hist": 0.675,
+   "pct_rank_hist_t1": 0.64,
+   "top_decile": false,
+   "n_neighbors": 4720,
+   "grid_level": 0
+  },
+  {
+   "code": "605111",
+   "name": "新洁能",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.112,
+   "knn_t5_pct": 1.128,
+   "knn_t20_pct": 3.036,
+   "pct_rank_hist": 0.964,
+   "pct_rank_hist_t1": 0.831,
+   "top_decile": true,
+   "n_neighbors": 5464,
+   "grid_level": 0
+  },
+  {
+   "code": "605117",
+   "name": "德业股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.177,
+   "knn_t5_pct": 0.702,
+   "knn_t20_pct": 2.321,
+   "pct_rank_hist": 0.921,
+   "pct_rank_hist_t1": 0.9,
+   "top_decile": true,
+   "n_neighbors": 4494,
+   "grid_level": 0
+  },
+  {
+   "code": "605128",
+   "name": "上海沿浦",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.01,
+   "knn_t5_pct": -0.139,
+   "knn_t20_pct": 0.139,
+   "pct_rank_hist": 0.185,
+   "pct_rank_hist_t1": 0.535,
+   "top_decile": false,
+   "n_neighbors": 1445,
+   "grid_level": 0
+  },
+  {
+   "code": "605136",
+   "name": "丽人丽妆",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.1,
+   "knn_t5_pct": -0.311,
+   "knn_t20_pct": -1.348,
+   "pct_rank_hist": 0.109,
+   "pct_rank_hist_t1": 0.266,
+   "top_decile": false,
+   "n_neighbors": 8537,
+   "grid_level": 0
+  },
+  {
+   "code": "605168",
+   "name": "三人行",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.02,
+   "knn_t5_pct": 0.179,
+   "knn_t20_pct": 0.641,
+   "pct_rank_hist": 0.522,
+   "pct_rank_hist_t1": 0.63,
+   "top_decile": false,
+   "n_neighbors": 3566,
+   "grid_level": 0
+  },
+  {
+   "code": "605178",
+   "name": "时空科技",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.075,
+   "knn_t5_pct": 0.727,
+   "knn_t20_pct": 2.551,
+   "pct_rank_hist": 0.928,
+   "pct_rank_hist_t1": 0.76,
+   "top_decile": true,
+   "n_neighbors": 5544,
+   "grid_level": 0
+  },
+  {
+   "code": "605208",
+   "name": "永茂泰",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.364,
+   "knn_t5_pct": 0.2,
+   "knn_t20_pct": 0.976,
+   "pct_rank_hist": 0.552,
+   "pct_rank_hist_t1": 0.965,
+   "top_decile": false,
+   "n_neighbors": 243,
+   "grid_level": 0
+  },
+  {
+   "code": "605288",
+   "name": "凯迪股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.001,
+   "knn_t5_pct": 0.351,
+   "knn_t20_pct": 1.183,
+   "pct_rank_hist": 0.732,
+   "pct_rank_hist_t1": 0.571,
+   "top_decile": false,
+   "n_neighbors": 7745,
+   "grid_level": 0
+  },
+  {
+   "code": "605289",
+   "name": "罗曼股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.707,
+   "knn_t5_pct": 2.041,
+   "knn_t20_pct": 4.27,
+   "pct_rank_hist": 0.982,
+   "pct_rank_hist_t1": 0.982,
+   "top_decile": true,
+   "n_neighbors": 5579,
+   "grid_level": 0
+  },
+  {
+   "code": "605296",
+   "name": "神农集团",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.134,
+   "knn_t5_pct": 0.778,
+   "knn_t20_pct": 1.264,
+   "pct_rank_hist": 0.94,
+   "pct_rank_hist_t1": 0.866,
+   "top_decile": true,
+   "n_neighbors": 2275,
+   "grid_level": 0
+  },
+  {
+   "code": "605299",
+   "name": "舒华体育",
+   "sources": [
+    "watch_pool"
+   ],
+   "knn_t1_pct": 0.121,
+   "knn_t5_pct": 0.2,
+   "knn_t20_pct": 0.234,
+   "pct_rank_hist": 0.551,
+   "pct_rank_hist_t1": 0.851,
+   "top_decile": false,
+   "n_neighbors": 4849,
+   "grid_level": 0
+  },
+  {
+   "code": "605303",
+   "name": "园林股份",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.017,
+   "knn_t5_pct": 0.162,
+   "knn_t20_pct": 0.397,
+   "pct_rank_hist": 0.501,
+   "pct_rank_hist_t1": 0.514,
+   "top_decile": false,
+   "n_neighbors": 5282,
+   "grid_level": 0
+  },
+  {
+   "code": "605319",
+   "name": "无锡振华",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.156,
+   "knn_t5_pct": 0.115,
+   "knn_t20_pct": 1.411,
+   "pct_rank_hist": 0.441,
+   "pct_rank_hist_t1": 0.142,
+   "top_decile": false,
+   "n_neighbors": 4391,
+   "grid_level": 0
+  },
+  {
+   "code": "605358",
+   "name": "立昂微",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.127,
+   "knn_t5_pct": 0.803,
+   "knn_t20_pct": 2.022,
+   "pct_rank_hist": 0.943,
+   "pct_rank_hist_t1": 0.859,
+   "top_decile": true,
+   "n_neighbors": 5092,
+   "grid_level": 0
+  },
+  {
+   "code": "605366",
+   "name": "宏柏新材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.063,
+   "knn_t5_pct": -0.014,
+   "knn_t20_pct": 0.273,
+   "pct_rank_hist": 0.285,
+   "pct_rank_hist_t1": 0.367,
+   "top_decile": false,
+   "n_neighbors": 1516,
+   "grid_level": 0
+  },
+  {
+   "code": "605378",
+   "name": "野马电池",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": -0.017,
+   "knn_t5_pct": 0.162,
+   "knn_t20_pct": 0.397,
+   "pct_rank_hist": 0.501,
+   "pct_rank_hist_t1": 0.514,
+   "top_decile": false,
+   "n_neighbors": 5282,
+   "grid_level": 0
+  },
+  {
+   "code": "605398",
+   "name": "新炬网络",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.101,
+   "knn_t5_pct": 0.111,
+   "knn_t20_pct": 0.722,
+   "pct_rank_hist": 0.436,
+   "pct_rank_hist_t1": 0.805,
+   "top_decile": false,
+   "n_neighbors": 5263,
+   "grid_level": 0
+  },
+  {
+   "code": "605399",
+   "name": "晨光新材",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.053,
+   "knn_t5_pct": -0.003,
+   "knn_t20_pct": 0.701,
+   "pct_rank_hist": 0.293,
+   "pct_rank_hist_t1": 0.715,
+   "top_decile": false,
+   "n_neighbors": 3025,
+   "grid_level": 0
+  },
+  {
+   "code": "605566",
+   "name": "福莱蒽特",
+   "sources": [
+    "reversal_confirmed"
+   ],
+   "knn_t1_pct": 0.185,
+   "knn_t5_pct": 0.232,
+   "knn_t20_pct": 0.972,
+   "pct_rank_hist": 0.596,
+   "pct_rank_hist_t1": 0.907,
+   "top_decile": false,
+   "n_neighbors": 5272,
+   "grid_level": 0
+  }
+ ]
+}

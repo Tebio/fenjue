@@ -19,7 +19,8 @@ from exec_timing_m60 import load_m60, nw_t
 
 ROOT = Path(__file__).resolve().parent.parent
 M60 = ROOT / "data/m60_cache"
-FEE = 0.0015
+from costs import FLAT_RT  # TAX-01 唯一真源 engine/costs.py（AGENTS #287）
+FEE = FLAT_RT
 WIN0 = "2024-08-26"
 SIGS = ["跌停接_MA60下", "组合_跌停低_三连阴", "组合_跌停低_长周期_超跌20"]
 SLOTS = [("9:30开", None), ("10:30", 0), ("11:30", 1), ("14:00", 2), ("15:00尾盘", 3)]
