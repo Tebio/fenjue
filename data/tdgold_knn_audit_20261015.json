@@ -1,0 +1,31 @@
+{
+ "B_2026": {
+  "n_pairs": 1399,
+  "matched": 1399,
+  "miss": 0,
+  "knn_r1_mean": 0.00032,
+  "knn_r1_win": 0.4367,
+  "real_r1_mean": 0.00194,
+  "real_r1_win": 0.4803,
+  "real_r1_n": 1399,
+  "knn_r5_mean": 0.00278,
+  "knn_r5_win": 0.6319,
+  "real_r5_mean": 0.00383,
+  "real_r5_win": 0.4946,
+  "real_r5_n": 1399,
+  "knn_r20_mean": 0.00908,
+  "knn_r20_win": 0.7727,
+  "real_r20_mean": 0.00632,
+  "real_r20_win": 0.4682,
+  "real_r20_n": 1399,
+  "feat_depth60": -0.0072,
+  "feat_ret20": -0.0157,
+  "feat_volr5": 0.9414,
+  "feat_regime": {
+   "平淡期": 0.415,
+   "妖股期": 0.143,
+   "恐慌期": 0.267,
+   "主线期": 0.175
+  }
+ }
+}
