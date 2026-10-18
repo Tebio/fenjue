@@ -13,6 +13,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # 同目录模块（trade_calendar）
 import trade_calendar as tc
@@ -29,14 +30,25 @@ for line in Path("/opt/data/.env").read_text().splitlines():
         env[k] = v
 
 
+def _this_month():
+    return datetime.datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m")
+
+
 def fetch_month(mo):
-    """拉一月名单；配额耗尽返回 None（不写缓存），成功写缓存返回列表"""
+    """拉一月名单；配额耗尽返回 None（不写缓存），成功写缓存返回列表。
+
+    2026-10-18 修：本月名单是「逐日累加」的（各券商陆续发布），旧逻辑「缓存非空即永久复用」把
+    2026-10 冻结在 10-09 拿到的 6 条 → 独家+年内首入恒为 0，整月谎报「空仓过月」（正常月份 125~241 条）。
+    现规则：本月缓存在 6 小时内算新鲜，逾时重拉；历史月份永久复用。
+    """
     fp = CACHE / f"{mo}.json"
     if fp.exists():
         cached = json.loads(fp.read_text())
         if cached:
-            return cached
-        fp.unlink()
+            if mo != _this_month() or (time.time() - fp.stat().st_mtime) < 6 * 3600:
+                return cached
+        else:
+            fp.unlink()
     y, m = mo.split("-")
     out, page = [], 1
     while True:
@@ -101,6 +113,10 @@ def main():
     state = {"month": mo, "status": "ok", "entry_day": entry_day,
              "total": len(rows), "solo_fresh": solo_fresh,
              "note": f"入场日={entry_day}（月第6交易日），独家+年内首入 {len(solo_fresh)} 只，T+20 出"}
+    if mo == _this_month() and len(rows) < 50:
+        # 2026-10-18 加：本月名单正常 125~241 条，过少=券商发布未齐或翻页异常，必须喊出来，
+        # 否则会像 2026-10 那样静默谎报「空仓过月」。
+        state["warning"] = f"本月名单仅 {len(rows)} 条（正常 125~241），疑券商发布未齐/查询异常"
     # 月末预热：当月剩余交易日≤3 时顺带探下月名单（券商月末就发下月金股，缓存落盘供下月复用）
     remaining = [d for d in idates if d.startswith(mo) and d >= today]
     if len(remaining) <= 3:
