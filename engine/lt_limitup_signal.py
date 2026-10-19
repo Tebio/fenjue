@@ -57,7 +57,7 @@ def fetch(date8):
             hs=x.get('hs') or 0, lbc=x.get('lbc') or 1, zbc=x.get('zbc') or 0,
             fbt=fmt_fbt(x.get('fbt')), fund_pct=(fund / ltsz * 100) if ltsz else 0,
             ltsz=ltsz / 1e8, amt=(x.get('amount') or 0) / 1e8,
-            hybk=x.get('hybk') or '',
+            hybk=x.get('hybk') or '', limit_px=(x.get('p') or 0) / 1000.0,
         ))
     return out
 
@@ -87,18 +87,23 @@ def main():
     print(f'主板涨停 {len(pool)} 只 → 符合可用档 {len(ok)} 只')
     print(f'条件：换手<{HS_MAX}% 且 封单/流通<{FUND_MAX}% 且 首封≤{FBT_MAX} 且 连板≤{LB_MAX}')
     if ok:
-        print(f'\n{"代码":<8}{"名称":<10}{"换手":>7}{"封单":>7}{"首封":>7}{"板":>3}{"炸":>3}{"流通亿":>8}  行业')
+        print(f'\n{"代码":<8}{"名称":<10}{"涨停价":>8}{"换手":>7}{"封单":>7}{"首封":>7}{"板":>3}{"炸":>3}{"流通亿":>8}  行业')
         for x in sorted(ok, key=lambda y: y['hs']):
-            print(f"{x['code']:<8}{x['name'][:8]:<10}{x['hs']:>6.1f}%{x['fund_pct']:>6.2f}%"
+            print(f"{x['code']:<8}{x['name'][:8]:<10}{x['limit_px']:>8.2f}{x['hs']:>6.1f}%{x['fund_pct']:>6.2f}%"
                   f"{x['fbt']:>7}{x['lbc']:>3}{x['zbc']:>3}{x['ltsz']:>8.1f}  {x['hybk'][:8]}")
-        print('\n执行：当日封板价买入 → 次日开盘价卖出（回测 +2.10%/笔、胜66.1%、中位+1.35%）')
-        print('      别贪隔日，别等收盘（开盘 +2.10% vs 收盘 +1.53%）；炸板不回封就当日走，别硬扛')
+        print('\n执行（照做，不要改）：')
+        print('  1) 今天收盘前以涨停价挂买单排队（挂涨停价，成交价就是涨停价，不会更高）')
+        print('  2) 明天（下一交易日）09:30 开盘价全部卖出，不等盘中冲高')
+        print('  3) 炸板不回封：当天就不参与，别追；已经买入的炸板不用管，明天开盘照卖')
+        print('  回测口径：单笔 +2.10%、胜率 66.1%、中位 +1.35%、p1 -5.2%、最差 -7.2%')
+        print('  卖点为什么是开盘：开盘 +2.10% 明显优于收盘 +1.53%，且开盘价在次日振幅分位仅 0.488（不是高点）')
     else:
         print('\n今日没有符合可用档的票。空手是常态 —— 回测日均只有 4.6 只，且要求换手极低。')
     if strict and strong:
         print(f'\n【参考档·强封单】{len(strong)} 只（历史 +6.68%/笔，但封单这么厚基本排不上队，只能看）')
         for x in sorted(strong, key=lambda y: -y['fund_pct']):
-            print(f"  {x['code']} {x['name'][:8]:<9} 换手{x['hs']:>4.1f}% 封单{x['fund_pct']:>6.2f}% 首封{x['fbt']}")
+            print(f"  {x['code']} {x['name'][:8]:<9} 涨停价{x['limit_px']:>7.2f} 换手{x['hs']:>4.1f}% "
+                  f"封单{x['fund_pct']:>6.2f}% 首封{x['fbt']}")
 
     with LEDGER.open('a', encoding='utf-8') as f:
         f.write(json.dumps({'ts': now.isoformat(timespec='seconds'), 'date': date,
