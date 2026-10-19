@@ -73,7 +73,7 @@ def main():
         if rows:
             m = {r[0]: r[1] for r in old["rows"]}
             before = dict(m)
-            m.update({r[0]: int(x["rank"]) for x in rows})
+            m.update({x["calcTime"]: int(x["rank"]) for x in rows})
             merged = sorted([d, v] for d, v in m.items())
             changed = sum(1 for d, v in m.items() if before.get(d) != v)
             fp.write_text(json.dumps({"_meta": meta(), "code": code, "rows": merged}))

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""engine/preflight.py — 下单前体检 CLI（第四波「全面升级」集成卡 t_fdbe6e13）
+"""engine/preflight.py — 下单前体检 CLI（第四波「全面升级」集成卡 t_fdbe6e13；第五波加 --from-state，#295）
 
 一条命令回答「这票现在能不能买」：python3 engine/preflight.py 601398
 
@@ -14,6 +14,12 @@
   ⑤ 簇状态           xrules_state（ldc/gap_cluster/panic_cluster vs 簇门）+ ops-state 深档簇计数
   ⑥ 位置带           console_banks / console_dividend_sectors / console_sectors（命中才显示）
   ⑦ 总结论           🟢/🟡/🔴 + 一句理由
+
+【--from-state（#295 日态包优先读）】用法：`preflight.py <code> --from-state [路径]`
+  ① ② ⑤ + 持仓哨兵 四段改从权威日态包 data/daily_state/<date>.json 取数，**渲染与直连版共用同一份
+  打印逻辑**（只换取值来源，不改任何判据/文案）；包缺、包日期落后最新交易日、或包内 unknown 时
+  自动回落直连并在输出里明标，绝不拿陈包当今日用。
+  ③ KNN（单票即时打分）④ 黑名单 ⑥ 位置带 仍直连——理由见 docs/daily_state-schema.md §5。
 
 裁决规则（写死，不猜）：
   🔴 = ST/退市整理期 | 玉兰路近 5 日命中 | KNN 分位≤0.20 | 命中线 grade∈{critical,weak} 或 status∈{ICU,DECAYING}

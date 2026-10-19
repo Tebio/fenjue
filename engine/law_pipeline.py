@@ -68,6 +68,54 @@ def load_regime():
     return {r["date"]: r["regime"] for r in json.loads(TIMELINE.read_text())}
 
 
+# ── REGISTRY 状态守卫（第四波卡 t_897ee796；#262-D 落地）────────────────────
+# 调用 ICU/DEAD 线时打 [WARN]（**只警告不阻断**，防误伤既有 cron：#283 只提案纪律）。
+# 状态源 = data/registry/state.json（INTERFACES I6 冻结路径，engine/registry_state.py 生成）。
+_STATE_CACHE = {"mtime": None, "items": {}}
+_STATE_WARNED = set()
+
+
+def registry_state_of(name):
+    """返回该 REGISTRY 线的状态（state.json 缺失/未收录时返回 None，未知≠通过）。"""
+    p = ROOT / "data/registry/state.json"
+    try:
+        m = p.stat().st_mtime
+    except OSError:
+        return None
+    if _STATE_CACHE["mtime"] != m:
+        try:
+            doc = json.loads(p.read_text())
+            _STATE_CACHE["items"] = {it["id"]: it for it in doc.get("items", [])}
+            _STATE_CACHE["mtime"] = m
+        except Exception:
+            return None
+    it = _STATE_CACHE["items"].get(name)
+    return it.get("state") if it else None
+
+
+def state_guard(name, where="", force=False):
+    """调用处守卫。返回 True=可继续（警告不阻断）；同进程内同名线只喊一次（防刷屏）。"""
+    st = registry_state_of(name)
+    if st in ("ICU", "DEAD"):
+        key = (name, st)
+        if force or key not in _STATE_WARNED:
+            _STATE_WARNED.add(key)
+            print(f"[WARN] registry: {where or 'law_pipeline'} 调用 {name}（state={st}）"
+                  f"——已判停/ICU，结果不得用于推送或注册（#283 只提案纪律）", file=sys.stderr)
+            try:  # 落守卫日志（与 registry_state.guard_call 同文件，便于调用面体检汇总）
+                from datetime import datetime as _dt, timedelta as _td, timezone as _tz
+                lg = ROOT / "data/registry/guard_log.jsonl"
+                lg.parent.mkdir(parents=True, exist_ok=True)
+                with lg.open("a") as f:
+                    f.write(json.dumps(
+                        {"ts": (_dt.now(_tz.utc) + _td(hours=8)).isoformat(timespec="seconds"),
+                         "id": name, "state": st, "where": where or "law_pipeline",
+                         "mode": "research"}, ensure_ascii=False) + "\n")
+            except Exception:
+                pass
+    return True
+
+
 def load_cap_quintiles():
     """市值分位（2026-09-19 PIT 修复）：
     旧实现两重月内未来函数——①个股月值取的是月末（循环覆写留下最后一行）；
@@ -221,6 +269,7 @@ def _norm_ppf(p):
 
 
 def run_pipeline(name, detect, stocks, regime, stock_cap, qs, horizon=HORIZON, fee=0.0015):
+    state_guard(name, where="run_pipeline")
     full, ctrl = [], []
     events = []  # (code, i) 供多期衰减曲线复用
     seg_t, seg_r, seg_c = {"2019-2022": [], "2023-2026": []}, {}, {i: [] for i in range(5)}
@@ -1524,6 +1573,12 @@ def main():
     submit_mode = only and only[0] == "submit"
     if submit_mode:
         only = only[1:] or None
+        # submit 只许提交非 ICU/DEAD 线（世界量 BRAIN「提交前状态机检查」形态）。
+        # 纪律：警告不阻断（脚本化测试/复跑仍可用），但 REJECT 类的重复提交会当场现形。
+        hit = [n for n in (only or list(REGISTRY)) if registry_state_of(n) in ("ICU", "DEAD") and n in REGISTRY]
+        for n in hit:
+            print(f"[WARN] registry: submit 提交 {n}（state={registry_state_of(n)}）"
+                  f"——该线已判停/ICU，重复提交不构成复活的证据（#283 只提案纪律）", file=sys.stderr)
     stocks = load_universe()
     print("stocks:", len(stocks), flush=True)
     build_xsection(stocks)

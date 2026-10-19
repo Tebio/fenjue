@@ -211,6 +211,7 @@ def build_pool(z, sig_rows_by_line):
 
 
 def run_line(L, panic, z, keys_sorted, korder, rng, hs_main=5):
+    nd = len(z["cal"])          # 交易日总数（原实现漏定义 → NameError，2026-10-16 终审修复）
     out = {"note": L.note, "n": int(L.n), "口径": "次日开盘入 / 净费 0.15% 已含（npz 一字开已剔）"}
     out["基础"] = {f"T+{h}": stats(L.R[:, L.hcol(h)], lag=h) for h in L.horizons}
     i5 = L.hcol(hs_main)
