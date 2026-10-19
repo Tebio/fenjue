@@ -70,7 +70,7 @@ def settle(U):
         buy, sell = c["buy_day"], c["sell_day"]
         if not buy or not sell:
             continue
-        rows, rows_top, miss = [], [], 0
+        rows, rows_top, rows_core, miss = [], [], [], 0
         for it in c["items"]:
             d = U.get(it["code"])
             if not d or buy not in d["date"] or sell not in d["date"]:
@@ -85,20 +85,29 @@ def settle(U):
             rows.append(r)
             if it.get("rank_elastic") and it["rank_elastic"] <= max(1, len(c["items"]) // 3):
                 rows_top.append(r)
+            if it.get("core"):
+                rows_core.append(r)
         if not rows:
             continue
         win = sum(1 for x in rows if x > 0) / len(rows)
+
+        def agg(xs):
+            return {"n": len(xs), "mean": round(sum(xs) / len(xs), 4),
+                    "win": round(sum(1 for x in xs if x > 0) / len(xs), 4)} if xs else {"n": 0, "mean": None, "win": None}
+
         c["result"] = {"n": len(rows), "miss": miss, "win": round(win, 4),
                        "mean": round(sum(rows) / len(rows), 4), "buy_day": buy, "sell_day": sell,
-                       "elastic_top": {"n": len(rows_top),
-                                       "mean": round(sum(rows_top) / len(rows_top), 4) if rows_top else None,
-                                       "win": round(sum(1 for x in rows_top if x > 0) / len(rows_top), 4) if rows_top else None}}
+                       "elastic_top": agg(rows_top), "core": agg(rows_core)}
         jdump(LEDGER, led)
         out.append(f"金股d7k2 {c['cohort']}：{buy}收盘买 → {sell}收盘卖，全池 n={len(rows)} "
                    f"均值 {sum(rows)/len(rows)*100:+.2f}% 胜率 {win*100:.0f}%（缺 {miss}）")
         if rows_top:
             out.append(f"   弹性top{len(rows_top)}：均值 {sum(rows_top)/len(rows_top)*100:+.2f}% "
                        f"胜率 {sum(1 for x in rows_top if x > 0)/len(rows_top)*100:.0f}%")
+        if rows_core:
+            out.append(f"   核心(弹性top1/3∩≥2家)：n={len(rows_core)} "
+                       f"均值 {sum(rows_core)/len(rows_core)*100:+.2f}% "
+                       f"胜率 {sum(1 for x in rows_core if x > 0)/len(rows_core)*100:.0f}%")
     return out
 
 

@@ -108,6 +108,265 @@
     }
    ],
    "result": null
+  },
+  {
+   "cohort": "2026-10-consensus",
+   "kind": "金股 d7k2 + 拥挤度过滤（≥2家券商）",
+   "official_entry_day": "2026-10-15",
+   "buy_day": "2026-10-26",
+   "sell_day": "2026-10-28",
+   "note": "口径来自 2026-10-19 拥挤度检验：≥2家推 +1.55%/5-5全正；弹性top1/3∩≥2家 +2.38%/最差月+1.08%",
+   "items": [
+    {
+     "code": "600176",
+     "name": "中国巨石",
+     "n_broker": 3,
+     "elastic": 1.212,
+     "rank_elastic": 1,
+     "core": true
+    },
+    {
+     "code": "002353",
+     "name": "杰瑞股份",
+     "n_broker": 2,
+     "elastic": 0.883,
+     "rank_elastic": 2,
+     "core": true
+    },
+    {
+     "code": "600026",
+     "name": "中远海能",
+     "n_broker": 3,
+     "elastic": 0.427,
+     "rank_elastic": 3,
+     "core": true
+    },
+    {
+     "code": "603893",
+     "name": "瑞芯微",
+     "n_broker": 2,
+     "elastic": 0.333,
+     "rank_elastic": 4,
+     "core": true
+    },
+    {
+     "code": "600301",
+     "name": "华锡有色",
+     "n_broker": 2,
+     "elastic": 0.267,
+     "rank_elastic": 5,
+     "core": true
+    },
+    {
+     "code": "002126",
+     "name": "银轮股份",
+     "n_broker": 2,
+     "elastic": 0.242,
+     "rank_elastic": 6,
+     "core": true
+    },
+    {
+     "code": "601233",
+     "name": "桐昆股份",
+     "n_broker": 4,
+     "elastic": 0.185,
+     "rank_elastic": 7,
+     "core": true
+    },
+    {
+     "code": "600188",
+     "name": "兖矿能源",
+     "n_broker": 3,
+     "elastic": 0.045,
+     "rank_elastic": 8,
+     "core": false
+    },
+    {
+     "code": "603259",
+     "name": "药明康德",
+     "n_broker": 11,
+     "elastic": 0.035,
+     "rank_elastic": 9,
+     "core": false
+    },
+    {
+     "code": "002541",
+     "name": "鸿路钢构",
+     "n_broker": 3,
+     "elastic": -0.079,
+     "rank_elastic": 10,
+     "core": false
+    },
+    {
+     "code": "600352",
+     "name": "浙江龙盛",
+     "n_broker": 2,
+     "elastic": -0.099,
+     "rank_elastic": 11,
+     "core": false
+    },
+    {
+     "code": "002831",
+     "name": "裕同科技",
+     "n_broker": 2,
+     "elastic": -0.112,
+     "rank_elastic": 12,
+     "core": false
+    },
+    {
+     "code": "002517",
+     "name": "恺英网络",
+     "n_broker": 2,
+     "elastic": -0.21,
+     "rank_elastic": 13,
+     "core": false
+    },
+    {
+     "code": "601899",
+     "name": "紫金矿业",
+     "n_broker": 4,
+     "elastic": -0.236,
+     "rank_elastic": 14,
+     "core": false
+    },
+    {
+     "code": "603596",
+     "name": "伯特利",
+     "n_broker": 2,
+     "elastic": -0.318,
+     "rank_elastic": 15,
+     "core": false
+    },
+    {
+     "code": "603099",
+     "name": "长白山",
+     "n_broker": 3,
+     "elastic": -0.38,
+     "rank_elastic": 16,
+     "core": false
+    },
+    {
+     "code": "600989",
+     "name": "宝丰能源",
+     "n_broker": 2,
+     "elastic": -0.426,
+     "rank_elastic": 17,
+     "core": false
+    },
+    {
+     "code": "603605",
+     "name": "珀莱雅",
+     "n_broker": 2,
+     "elastic": -0.623,
+     "rank_elastic": 18,
+     "core": false
+    },
+    {
+     "code": "600060",
+     "name": "海信视像",
+     "n_broker": 3,
+     "elastic": -0.637,
+     "rank_elastic": 19,
+     "core": false
+    },
+    {
+     "code": "000768",
+     "name": "中航西飞",
+     "n_broker": 2,
+     "elastic": -0.644,
+     "rank_elastic": 20,
+     "core": false
+    },
+    {
+     "code": "601601",
+     "name": "中国太保",
+     "n_broker": 2,
+     "elastic": -0.653,
+     "rank_elastic": 21,
+     "core": false
+    },
+    {
+     "code": "603345",
+     "name": "安井食品",
+     "n_broker": 4,
+     "elastic": -0.716,
+     "rank_elastic": 22,
+     "core": false
+    },
+    {
+     "code": "002714",
+     "name": "牧原股份",
+     "n_broker": 6,
+     "elastic": -0.726,
+     "rank_elastic": 23,
+     "core": false
+    },
+    {
+     "code": "601919",
+     "name": "中远海控",
+     "n_broker": 2,
+     "elastic": -0.889,
+     "rank_elastic": 24,
+     "core": false
+    },
+    {
+     "code": "002142",
+     "name": "宁波银行",
+     "n_broker": 2,
+     "elastic": -0.914,
+     "rank_elastic": 25,
+     "core": false
+    },
+    {
+     "code": "002966",
+     "name": "苏州银行",
+     "n_broker": 2,
+     "elastic": -0.933,
+     "rank_elastic": 26,
+     "core": false
+    },
+    {
+     "code": "601939",
+     "name": "建设银行",
+     "n_broker": 2,
+     "elastic": -0.94,
+     "rank_elastic": 27,
+     "core": false
+    },
+    {
+     "code": "601398",
+     "name": "工商银行",
+     "n_broker": 2,
+     "elastic": -0.947,
+     "rank_elastic": 28,
+     "core": false
+    },
+    {
+     "code": "600030",
+     "name": "中信证券",
+     "n_broker": 2,
+     "elastic": -0.951,
+     "rank_elastic": 29,
+     "core": false
+    },
+    {
+     "code": "601009",
+     "name": "南京银行",
+     "n_broker": 2,
+     "elastic": -0.989,
+     "rank_elastic": 30,
+     "core": false
+    },
+    {
+     "code": "600887",
+     "name": "伊利股份",
+     "n_broker": 4,
+     "elastic": -1.022,
+     "rank_elastic": 31,
+     "core": false
+    }
+   ],
+   "result": null
   }
  ]
 }
