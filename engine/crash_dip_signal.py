@@ -135,6 +135,43 @@ def realize_subset(U, date, cal, codes):
     return st.mean(rets) if rets else None
 
 
+def cash_sim(U, cal, sig, trig, hold, cheap_n=20):
+    """真实资金池模拟：单一份本金，前一批未到期则无法开新仓（跳过该信号）。
+    这是把「每次都能满仓独立建仓」的数学幻觉打掉的检验 —— 连续触发日（2024-02-05/06/07）会撞车。"""
+    events = []
+    for d in trig:
+        if d not in cal:
+            continue
+        i = cal.index(d)
+        if i + 1 + hold >= len(cal):
+            continue
+        buy, sell = cal[i + 1], cal[i + 1 + hold]
+        cs = sorted(sig[d], key=lambda x: x[3])[:cheap_n]
+        rets = []
+        for code, _, _, _ in cs:
+            d2 = U.get(code)
+            if not d2 or buy not in d2['date'] or sell not in d2['date']:
+                continue
+            k, m = d2['date'].index(buy), d2['date'].index(sell)
+            if d2['o'][k] > 0:
+                rets.append(d2['c'][m] / d2['o'][k] - 1 - COST)
+        if rets:
+            events.append((buy, sell, st.mean(rets)))
+    cash, positions, taken, skipped = 1.0, [], 0, 0
+    for buy, sell, r in events:
+        free = [p for p in positions if p[1] > buy]
+        cash += sum(p[2] for p in positions if p[1] <= buy)
+        positions = free
+        if cash <= 1e-9:
+            skipped += 1
+            continue
+        positions.append((buy, sell, cash * (1 + r)))
+        cash = 0.0
+        taken += 1
+    eq = cash + sum(p[2] for p in positions)
+    return eq, taken, skipped
+
+
 def main():
     argv = sys.argv[1:]
     scan = '--scan' in argv
@@ -183,6 +220,14 @@ def main():
         if big:
             print(f'注意：{len(big)} 次触发日信号数超 500 只（最大 {max(big)} 只），'
                   f'「买全部」不可执行，实盘只能买其中一部分')
+        print('\n资金约束检验（只买最便宜 20 只，单一份本金；前一批未到期就不能开新仓）：')
+        for h in (3, 5, 10, 20):
+            eqc2, tk, sk = cash_sim(U, cal, sig, trig, h)
+            yrs2 = (datetime.strptime(trig[-1], '%Y-%m-%d') - datetime.strptime(trig[0], '%Y-%m-%d')).days / 365.25
+            print(f'  T+{h:<2} 复利 {(eqc2 - 1) * 100:>+8.0f}%   年化 {(eqc2 ** (1 / yrs2) - 1) * 100:>+6.1f}%   '
+                  f'执行 {tk} 次 / 因资金占用跳过 {sk} 次')
+        print('  ※ 「无约束满仓」的 T+20 +1733% 是幻觉：它假设每次触发都能用全部资金重新开仓，')
+        print('    而 2024-02-05/06/07 三天连发时只有一份钱。**以本表的 T+5 全仓为对外口径。**')
         return 0
 
     if scan:
