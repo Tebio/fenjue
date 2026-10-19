@@ -70,7 +70,7 @@ def settle(U):
         buy, sell = c["buy_day"], c["sell_day"]
         if not buy or not sell:
             continue
-        rows, miss = [], 0
+        rows, rows_top, miss = [], [], 0
         for it in c["items"]:
             d = U.get(it["code"])
             if not d or buy not in d["date"] or sell not in d["date"]:
@@ -81,15 +81,24 @@ def settle(U):
             if jb >= d["n"] or js >= d["n"] or jb == 0:
                 miss += 1
                 continue
-            rows.append(d["c"][js] / d["c"][jb] - 1 - FEE)
+            r = d["c"][js] / d["c"][jb] - 1 - FEE
+            rows.append(r)
+            if it.get("rank_elastic") and it["rank_elastic"] <= max(1, len(c["items"]) // 3):
+                rows_top.append(r)
         if not rows:
             continue
         win = sum(1 for x in rows if x > 0) / len(rows)
         c["result"] = {"n": len(rows), "miss": miss, "win": round(win, 4),
-                       "mean": round(sum(rows) / len(rows), 4), "buy_day": buy, "sell_day": sell}
+                       "mean": round(sum(rows) / len(rows), 4), "buy_day": buy, "sell_day": sell,
+                       "elastic_top": {"n": len(rows_top),
+                                       "mean": round(sum(rows_top) / len(rows_top), 4) if rows_top else None,
+                                       "win": round(sum(1 for x in rows_top if x > 0) / len(rows_top), 4) if rows_top else None}}
         jdump(LEDGER, led)
-        out.append(f"金股d7k2 {c['cohort']}：{buy}收盘买 → {sell}收盘卖，n={len(rows)} "
+        out.append(f"金股d7k2 {c['cohort']}：{buy}收盘买 → {sell}收盘卖，全池 n={len(rows)} "
                    f"均值 {sum(rows)/len(rows)*100:+.2f}% 胜率 {win*100:.0f}%（缺 {miss}）")
+        if rows_top:
+            out.append(f"   弹性top{len(rows_top)}：均值 {sum(rows_top)/len(rows_top)*100:+.2f}% "
+                       f"胜率 {sum(1 for x in rows_top if x > 0)/len(rows_top)*100:.0f}%")
     return out
 
 

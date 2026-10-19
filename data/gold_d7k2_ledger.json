@@ -11,72 +11,100 @@
     {
      "code": "603099",
      "name": "长白山",
-     "rank": 1
+     "rank": 1,
+     "elastic": -0.38,
+     "rank_elastic": 10
     },
     {
      "code": "601636",
      "name": "旗滨集团",
-     "rank": 2
+     "rank": 2,
+     "elastic": -0.042,
+     "rank_elastic": 5
     },
     {
      "code": "600310",
      "name": "广西能源",
-     "rank": 3
+     "rank": 3,
+     "elastic": 0.156,
+     "rank_elastic": 3
     },
     {
      "code": "002472",
      "name": "双环传动",
-     "rank": 4
+     "rank": 4,
+     "elastic": -0.231,
+     "rank_elastic": 7
     },
     {
      "code": "601985",
      "name": "中国核电",
-     "rank": 5
+     "rank": 5,
+     "elastic": -1.136,
+     "rank_elastic": 14
     },
     {
      "code": "002003",
      "name": "伟星股份",
-     "rank": 6
+     "rank": 6,
+     "elastic": -0.651,
+     "rank_elastic": 11
     },
     {
      "code": "603341",
      "name": "龙旗科技",
-     "rank": 7
+     "rank": 7,
+     "elastic": -0.148,
+     "rank_elastic": 6
     },
     {
      "code": "000725",
      "name": "京东方A",
-     "rank": 8
+     "rank": 8,
+     "elastic": 0.204,
+     "rank_elastic": 2
     },
     {
      "code": "603129",
      "name": "春风动力",
-     "rank": 9
+     "rank": 9,
+     "elastic": -0.32,
+     "rank_elastic": 8
     },
     {
      "code": "601919",
      "name": "中远海控",
-     "rank": 10
+     "rank": 10,
+     "elastic": -0.889,
+     "rank_elastic": 13
     },
     {
      "code": "002780",
      "name": "三夫户外",
-     "rank": 11
+     "rank": 11,
+     "elastic": -0.32,
+     "rank_elastic": 9
     },
     {
      "code": "600489",
      "name": "中金黄金",
-     "rank": 12
+     "rank": 12,
+     "elastic": 0.035,
+     "rank_elastic": 4
     },
     {
      "code": "603529",
      "name": "爱玛科技",
-     "rank": 13
+     "rank": 13,
+     "elastic": -0.838,
+     "rank_elastic": 12
     },
     {
      "code": "002980",
      "name": "华盛昌",
-     "rank": 14
+     "rank": 14,
+     "elastic": 1.8,
+     "rank_elastic": 1
     }
    ],
    "result": null
