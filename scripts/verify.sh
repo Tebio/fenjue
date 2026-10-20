@@ -8,7 +8,9 @@ FAST=0; [ "${1:-}" = "--fast" ] && FAST=1
 
 # 选一个有 pyyaml 的解释器
 PY=""
-for cand in /opt/hermes/.venv/bin/python python3; do
+# 2026-10-20：加 fenjue .venv —— 原候选都不含它，容器里 python3 是 3.14 无 yaml，
+# 导致本闸长期跑不起来（#330 ABI 环境同源问题）。
+for cand in /opt/hermes/.venv/bin/python "$PWD/.venv/bin/python" python3; do
   if command -v "$cand" >/dev/null 2>&1 && "$cand" -c "import yaml" >/dev/null 2>&1; then PY="$cand"; break; fi
 done
 [ -z "$PY" ] && { echo "❌ 找不到带 pyyaml 的 python（试过 /opt/hermes/.venv/bin/python, python3）"; exit 1; }

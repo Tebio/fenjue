@@ -2,12 +2,12 @@
  "_meta": {
   "version": "data_health/1.0 (2026-10-20, DATA-01)",
   "date": "2026-10-20",
-  "generated_at": "2026-10-20T12:07:45+08:00",
+  "generated_at": "2026-10-20T12:27:52+08:00",
   "registry_version": "1.0 (2026-10-20, DATA-01)",
   "ref_date": "2026-10-19",
-  "ref_source": "--ref-date",
+  "ref_source": "auto(最近已收盘交易日)",
   "discipline": "read-only + 落盘 + 提案；不自动补数/重跑（#278 同纪律）",
-  "elapsed_s": 0.18
+  "elapsed_s": 0.34
  },
  "items": {
   "big_kcache": {

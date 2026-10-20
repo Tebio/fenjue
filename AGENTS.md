@@ -1378,3 +1378,37 @@ wrapper 已于 10-19 事后改成 `exec venv python`（`stock_kcache_shard0/1.sh
 
 **监控机上岗首日抓到一条真实滞后**：`xrules_state` 末端 10-16、lag=1 判 stale——10-19 kcache 事故时它正确
 拒判、补数后没人重跑。这条正是「数据面没人管」的活标本。
+
+
+**332. DATA-01 收尾裁决 + verify.sh 首次全绿（2026-10-20）**
+
+主 agent 拍板（用户授权「你和K3决定」）：
+
+**A. cron 接入 —— 新增独立 job `21befa1e52b7`「数据面健康体检」20:35 BJT（`35 12 * * 1-5`）**
+`no_agent=true` + `script=stock_data_health.sh`，看门狗模式：无阻断 stdout 为空不推送，有阻断才输出并退出 1 报红。
+选独立 job 而非挂进 20:40 面板班的理由：①数据断供与面板构建失败是两件事，混在一个退出码里就分不清是谁的锅
+（#330 的教训就是"混在一起看不出来"）；②先生成 `data_health.json`，面板 5 分钟后消费，顺序天然正确，为将来面板徽标铺路；
+③脚本走 `.venv/bin/python`（3.13），不用 `/usr/local/bin/python3`（3.14，numpy ABI 不匹配＝#330 根因）。
+K3 建议的 18:35 未采纳：那时 `xrules_state`/`regime_log` 可能还没写完，会产假 stale。
+
+**B. `scripts/verify.sh` 解释器候选补 `.venv/bin/python`** —— 原候选只有 `/opt/hermes/.venv/bin/python` 和 `python3`，
+容器里 python3 是 3.14 无 yaml，导致**总闸长期跑不起来**（与 #330 同源的 ABI 环境问题）。补上即通。
+
+**C. `factor_census` 断言修复（24→25）并揭穿一条假断言**
+`assert got["registry"]["order"] == fc.ORDER` 是**自比较**（case 内部就用 `fc.ORDER` 生成输出），永真无用。
+改为钉两条真正会坏的：总量 25（24 基础 + `knn_vote`/RES-07），以及 **`knn_vote` 必须恒为最后一号**
+——插队会让因子编号全变，trials 分母与 DSR 随之全变，等于所有历史结论静默作废。
+ORDER 的内容与顺序由 golden oracle 冻结（case 输出含 order 列表）。
+
+**D. `engine/lt_limitup_signal.py` 语法错误修复 + 判死标注**
+第 104 行多行字符串未闭合（`print('...` 跨行）→ **SyntaxError，整个脚本无法运行**，而 `scripts/lt_limitup_push.sh` 还在调它。
+查证 cron `af865422c1e3`「低换手打板信号（14:30BJT）」**enabled=false**（#317 已判死），故不影响生产；
+但该文件让 verify.sh 的语法闸永远红着，真失败会被噪声掩盖。已修字符串闭合，并在文件头加判死标注
+（勿引用；+2.57% 是幸存者偏差，真实期望 -2.07%/笔）。
+
+**E. backlog ID 冲突修正**：追加 DATA-01 时撞了既有 `DATA-01`「DQ 断言库（覆盖率/新鲜度/缺口/异常价/连续零成交）」，
+已把本卡改为 **DATA-06**，并把旧 DATA-01 的 title 收窄为「缺口/异常价/连续零成交」，注明新鲜度/覆盖率子集已由 DATA-06 落地。
+**`plan_lint` 不查重复 ID** —— 这是工具漏洞（重复 ID 会让依赖/引用于无声中错位），记为欠账待补。
+
+**结果：`bash scripts/verify.sh --fast` 首次全绿** —— plan_lint 绿 / py_compile 294 files 0 fail / pytest 18 passed / golden 绿。
+在此之前总闸一直红（factor_census），等于形同虚设。

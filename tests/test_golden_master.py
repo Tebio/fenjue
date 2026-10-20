@@ -71,8 +71,14 @@ def test_factor_census_registry_frozen():
     """因子注册表顺序 = 编号（顺序变了 trials 分母与 DSR 全变）。"""
     import factor_census as fc
     got = C.case_factor_census()
-    assert got["registry"]["order"] == fc.ORDER
-    assert got["registry"]["n_factors_stage1"] == 24, "stage1 因子数应为 24（+knn_vote=25）"
+    # 旧断言 `got["registry"]["order"] == fc.ORDER` 是自比较（case 内部就用 fc.ORDER 生成），永真无用；
+    # ORDER 的**内容与顺序**由 golden oracle 冻结（case 输出含 order 列表，比对 oracle 即冻结）。
+    # 这里钉两条真正会坏的：总量，以及"新增只能追加不能插队"（插队=编号全变，
+    # trials 分母与 DSR 全变，是所有历史结论的静默作废）。
+    assert got["registry"]["n_factors_stage1"] == 25, \
+        "stage1 因子数应为 25（24 基础 + knn_vote/RES-07）；变了就重启编号审计并记录 oracle 漂移"
+    assert fc.ORDER[-1] == "knn_vote" and len(fc.ORDER) == 25, \
+        "knn_vote 必须恒为最后一号——新增因子只能追加，插队会让历史 DSR/trials 分母静默作废"
     assert got["invariants"]["fee_is_flat_rt_from_costs"]
     assert fc.FEE == 0.0015
 
