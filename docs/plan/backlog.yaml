@@ -824,6 +824,40 @@ items:
       - 禁止用"全部主张都依赖 big_kcache"这类粗粒度兜底（会让 DATA_STALE 失去分辨力）
     note: 完成后解除 DATA-08 二期阻塞。
 
+  - id: DATA-09
+    title: 数据源纳管（fund_cache / cap_hist / industry_map / claims_shadow）+ freshness_core 扩展
+    area: DATA
+    priority: P1
+    status: done
+    gate: G1
+    depends_on: [DATA-01]
+    ledger_ref: 346
+    rationale: >-
+      7 个 detector 闭包引用的 _X 全局里，_XFUND/_XCAP/_IND 三个数据源从未纳管，data_health 因此
+      看不见它们——实测 fund_cache/cap_hist 内容停在 2026-09-18（滞后 16 个交易日），9 条 XFUND
+      主张仍在用 32 天前的 peTTM/isST 出结论且无任何 stale 标记。claims_shadow.jsonl 10-19 零产出
+      同样无人发现（三重盲区：未纳管 / 无日志 / executions 表被高频 job 挤满）。
+    inputs:
+      - data/datasets_registry.yaml
+      - engine/freshness_core.py（date_expr 解析）
+      - data/fund_cache、data/cap_hist（list-of-list 结构）、data/industry_map.json（无日期字段）、data/claims_shadow.jsonl
+    outputs:
+      - freshness_core 新增 [-1][N] / dir:last_bar[N] / none 三种 date_expr
+      - 注册表 10 到 14 条，severity 一律 warn（DEGRADE_MARK：审计照跑打 data_stale，不全线停摆）
+      - industry_map 走 none 得 unknown_date 加 freshness_unknown=true，不许静默当 ok
+      - golden 新增 date_expr 全形式用例与 a2_none_assess 硬断言
+    acceptance:
+      - 现有 10 条数据集七字段一字未变（增量改动，实测通过）
+      - 体检如实报出 fund_cache/cap_hist/claims_shadow stale 与 industry_map unknown_date
+      - 把 industry_map 的 date_expr 从 none 改成可解析形式时 a2 断言必须报红（牙齿测试，实测 2 个测试红）
+      - lineage.yaml 同步 4 条 direct，与注册表 blocks 逐字相等
+    note: >-
+      2026-10-20 完成并审计通过（台账记 DATA-09 两条）。遗留一：fund_cache/cap_hist 停更根因是
+      根本没有日更管道（owner 均为手动脚本、无 cron），本任务只让它们可见，补管道另立任务。
+      遗留二：claims_shadow 10-19/10-20 漏跑原因未查（本任务只纳管不修生产者）。
+    effort_days: 1.0
+    evidence: ''
+
   - id: RES-10
     title: 高位剧震回避黑名单（AVOID）终审与注册 — 分年验尸 + 三口径 + 位置匹配
     area: RES

@@ -287,6 +287,8 @@ def case_data_health_snapshot() -> dict:
     与四条协议不变量的布尔值；**不冻结解析出的日期**（它每天前进，冻结=每天红）。
     不变量翻转 = golden 漂移 = 测试红——这正是协议断言的本职：
       (a) 每个注册条目都能解析出日期（date_expr 写错/产物结构变了立即被抓）
+      (a2) date_expr="none" 的条目（DATA-09 起允许）是**显式不检查**：assess 必须报
+           unknown_date + freshness_unknown=True——「不检查」显式可见，不许静默当 ok
       (b) severity=fatal 必带 blocks（fatal 无阻塞面 = 告警无人认领）
       (c) blocks 里每个下游名 ∈ 注册表 consumers 封闭清单
       (d) big_kcache/emotion_series/regime_timeline_hcap/ops_state/kcache 必在册
@@ -298,9 +300,20 @@ def case_data_health_snapshot() -> dict:
     consumers = set(doc.get("consumers") or [])
     mandatory5 = ["big_kcache", "emotion_series", "regime_timeline_hcap", "ops_state", "kcache"]
     parseable = {}
+    explicit_unchecked = {}
+    none_assess = {}
     for key, spec in ds.items():
         d = fc.extract_date(fc.ROOT / spec["path"], spec["date_expr"])
         parseable[key] = d is not None
+        is_none = spec.get("date_expr") == "none"
+        explicit_unchecked[key] = is_none
+        if is_none:
+            # none 短路灯在日历加载之前，ref_date 只是占位不会被用于滞后计算
+            r = fc.assess(key, spec, "2026-10-20", fc.ROOT)
+            none_assess[key] = {"status": r["status"],
+                                "freshness_unknown": r.get("freshness_unknown") is True,
+                                "date_is_none": r["date"] is None,
+                                "lag_is_none": r["lag"] is None}
     return {
         "registry_version": doc.get("registry_version"),
         "consumers": sorted(consumers),
@@ -310,6 +323,8 @@ def case_data_health_snapshot() -> dict:
                      for k, v in sorted(ds.items())},
         "invariants": {
             "a_date_parseable": parseable,
+            "a_explicit_unchecked": explicit_unchecked,
+            "a2_none_assess": none_assess,
             "b_fatal_has_blocks": {k: (v.get("severity") != "fatal") or bool(v.get("blocks"))
                                    for k, v in ds.items()},
             "c_blocks_known_consumers": {k: set(v.get("blocks") or []) <= consumers
@@ -353,6 +368,112 @@ def case_climax_quake_detector() -> dict:
 
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# 8. date_expr 全形式覆盖（DATA-09：每种语法一个对应用例）
+# ---------------------------------------------------------------------------
+
+def case_date_expr_forms() -> dict:
+    """freshness_core.extract_date 的每一种 date_expr 形式钉一个确定性用例。
+
+    DATA-09 验收要求：含新增的 "[-1][0]"、"dir:last_bar[0]" 与 "none"，且
+    list-of-list 取的确实是**内容第 0 项**而不是 mtime。fixture 全部现场构造
+    （固定内容 + os.utime 固定 mtime），不读生产数据，结果与日期前进无关。
+    两个反陷阱钉子：
+      - dir_index_content_not_mtime：mtime 最新的文件内容日期**最旧**，
+        若实现误用 mtime 当日期，结果会错；
+      - dir_index_empty_files_starve：25 个空数组文件占据 mtime 最前，
+        若空文件计入 DIR_SAMPLE 采样会被吃光 → None；正确实现必须跳过它们
+        取到后面唯一有效文件的日期。
+    """
+    import json
+    import os
+    import tempfile
+    from pathlib import Path
+
+    import freshness_core as fc
+
+    def w(fp: Path, payload, mtime: int):
+        fp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        os.utime(fp, (mtime, mtime))
+
+    out = {}
+    with tempfile.TemporaryDirectory(prefix="dateexpr_") as td:
+        root = Path(td)
+
+        # 1) "[-1].date"：JSON 数组末元素的字段
+        f1 = root / "a1.json"; w(f1, [{"date": "2026-01-05"}, {"date": "2026-01-06"}], 1000)
+        out["[-1].date"] = fc.extract_date(f1, "[-1].date")
+
+        # 2) "[-1].signal_date|jsonl"：JSONL 末行任意字段名（DATA-09 复核点：已支持则不改）
+        f2 = root / "a2.jsonl"
+        f2.write_text('{"signal_date": "2026-02-03", "x": 1}\n{"signal_date": "2026-02-04"}\n',
+                      encoding="utf-8")
+        os.utime(f2, (1000, 1000))
+        out["[-1].signal_date|jsonl"] = fc.extract_date(f2, "[-1].signal_date|jsonl")
+
+        # 3) "_meta.date"：字典 dotted 路径
+        f3 = root / "a3.json"; w(f3, {"_meta": {"date": "2026-03-07"}, "items": []}, 1000)
+        out["_meta.date"] = fc.extract_date(f3, "_meta.date")
+
+        # 4) "sig_date"：平铺字段（ops_state 形态）
+        f4 = root / "a4.json"; w(f4, {"sig_date": "2026-03-09", "v": 1}, 1000)
+        out["sig_date"] = fc.extract_date(f4, "sig_date")
+
+        # 5) "dir:last_bar"：目录 dict-bar 默认字段
+        d5 = root / "d5"; d5.mkdir()
+        w(d5 / "x.json", [{"date": "2026-04-01"}, {"date": "2026-04-02"}], 1000)
+        w(d5 / "y.json", [{"date": "2026-04-03"}], 2000)
+        out["dir:last_bar"] = fc.extract_date(d5, "dir:last_bar")
+
+        # 6) "dir:last_bar:day"：目录自定义字段（新浪缓存形态）
+        d6 = root / "d6"; d6.mkdir()
+        w(d6 / "x.json", [{"day": "2026-05-04"}], 1000)
+        w(d6 / "y.json", [{"day": "2026-05-06"}], 2000)
+        out["dir:last_bar:day"] = fc.extract_date(d6, "dir:last_bar:day")
+
+        # 7) "[-1][0]"：单文件 list-of-list，末元素第 0 项（index 1 放个更晚的伪日期，
+        #    取到它就证明实现拿错了下标）
+        f7 = root / "a7.json"; w(f7, [["2026-06-01", 1.0], ["2026-06-02", "2030-12-31", 2]], 1000)
+        out["[-1][0]"] = fc.extract_date(f7, "[-1][0]")
+
+        # 8) "dir:last_bar[0]" 反陷阱 A：mtime 最新的文件内容最旧——
+        #    结果必须是内容最大日期 2026-07-09（证明读内容不读 mtime）
+        d8 = root / "d8"; d8.mkdir()
+        w(d8 / "new_mtime_old_content.json", [["2020-01-02", 1]], 9000)
+        w(d8 / "old_mtime_new_content.json", [["2026-07-09", 1]], 1000)
+        out["dir:last_bar[0] content_not_mtime"] = fc.extract_date(d8, "dir:last_bar[0]")
+
+        # 9) "dir:last_bar[0]" 反陷阱 B：25 个空数组文件占据 mtime 最前（= DIR_SAMPLE），
+        #    空文件若计入样本会把采样吃光 → None；正确实现跳过它们取到 2026-08-11
+        d9 = root / "d9"; d9.mkdir()
+        for i in range(fc.DIR_SAMPLE):
+            w(d9 / f"empty_{i:02d}.json", [], 2000 + i)
+        w(d9 / "good.json", [["2026-08-11", 1]], 1000)
+        out["dir:last_bar[0] empty_files_skipped"] = fc.extract_date(d9, "dir:last_bar[0]")
+
+        # 10) "none"：显式不检查 → None（由 assess 翻译成 unknown_date + freshness_unknown）
+        f10 = root / "a10.json"; w(f10, {"600000": {"name": "浦发银行"}}, 1000)
+        out["none"] = fc.extract_date(f10, "none")
+
+        # 11) assess 级：none 条目的完整判定记录（unknown_date + freshness_unknown，不算 ok）
+        spec_none = {"path": "a10.json", "date_expr": "none", "cadence": "static",
+                     "max_lag": 0, "severity": "info", "blocks": [], "owner": "t"}
+        r = fc.assess("demo_none", spec_none, "2026-10-20", root)
+        out["assess_none"] = {"status": r["status"],
+                              "freshness_unknown": r.get("freshness_unknown") is True,
+                              "date": r["date"], "lag": r["lag"],
+                              "is_blocking": fc.is_blocking(r["status"], r["severity"])}
+
+        # 12) 边界：list-of-list 文件为空数组 → None（unknown_date，不许崩不许编）
+        f12 = root / "a12.json"; w(f12, [], 1000)
+        out["[-1][0] empty_array"] = fc.extract_date(f12, "[-1][0]")
+
+    out["_forms_covered"] = sorted(k for k in out if not k.startswith("_"))
+    return out
+
+
+# ---------------------------------------------------------------------------
+
 CASES = {
     "law_pipeline_three": case_law_pipeline_three,
     "similarity_knn": case_similarity_knn,
@@ -361,4 +482,5 @@ CASES = {
     "factor_census": case_factor_census,
     "data_health_snapshot": case_data_health_snapshot,
     "climax_quake_detector": case_climax_quake_detector,
+    "date_expr_forms": case_date_expr_forms,
 }

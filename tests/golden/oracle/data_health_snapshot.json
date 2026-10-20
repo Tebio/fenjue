@@ -2,7 +2,7 @@
  "_meta": {
   "as_of": "2026-10-15",
   "drift_pp": 0.1,
-  "generated_at": "2026-10-20T15:28:11+08:00",
+  "generated_at": "2026-10-20T16:51:37+08:00",
   "golden": "data_health_snapshot",
   "repo": "/opt/data/fenjue",
   "slice_stride": 28
@@ -37,6 +37,29 @@
    "path": "data/big_kcache",
    "severity": "fatal"
   },
+  "cap_hist": {
+   "blocks": [
+    "line_health",
+    "影子盘"
+   ],
+   "cadence": "daily",
+   "date_expr": "dir:last_bar[0]",
+   "max_lag": 5,
+   "owner": "engine/fetch_cap_history.py（手动抓取，无 cron）",
+   "path": "data/cap_hist",
+   "severity": "warn"
+  },
+  "claims_shadow": {
+   "blocks": [
+    "影子盘"
+   ],
+   "cadence": "daily",
+   "date_expr": "[-1].signal_date|jsonl",
+   "max_lag": 1,
+   "owner": "engine/claims_shadow.py（stock_claims_shadow.py 班 82e54a0a812f）",
+   "path": "data/claims_shadow.jsonl",
+   "severity": "warn"
+  },
   "emotion_series": {
    "blocks": [
     "周期仪",
@@ -49,6 +72,18 @@
    "path": "data/emotion_series.jsonl",
    "severity": "fatal"
   },
+  "fund_cache": {
+   "blocks": [
+    "line_health",
+    "影子盘"
+   ],
+   "cadence": "daily",
+   "date_expr": "dir:last_bar[0]",
+   "max_lag": 1,
+   "owner": "engine/fetch_fundamentals.py（手动分片抓取，无 cron；最近一批 2026-09-18，tmp/launch_fund.sh）",
+   "path": "data/fund_cache",
+   "severity": "warn"
+  },
   "index_sh000001": {
    "blocks": [
     "周期仪",
@@ -60,6 +95,15 @@
    "owner": "engine/update_kcache.py（update_index 段）",
    "path": "data/index_sh000001.json",
    "severity": "fatal"
+  },
+  "industry_map": {
+   "blocks": [],
+   "cadence": "static",
+   "date_expr": "none",
+   "max_lag": 0,
+   "owner": "内部维护（人工；engine/scripts 无自动生产者，2026-10-20 实测 grep 零命中）",
+   "path": "data/industry_map.json",
+   "severity": "info"
   },
   "kcache": {
    "blocks": [
@@ -145,10 +189,22 @@
   }
  },
  "invariants": {
+  "a2_none_assess": {
+   "industry_map": {
+    "date_is_none": true,
+    "freshness_unknown": true,
+    "lag_is_none": true,
+    "status": "unknown_date"
+   }
+  },
   "a_date_parseable": {
    "big_kcache": true,
+   "cap_hist": true,
+   "claims_shadow": true,
    "emotion_series": true,
+   "fund_cache": true,
    "index_sh000001": true,
+   "industry_map": false,
    "kcache": true,
    "line_health": true,
    "ops_state": true,
@@ -157,10 +213,30 @@
    "watch_pool": true,
    "xrules_state": true
   },
+  "a_explicit_unchecked": {
+   "big_kcache": false,
+   "cap_hist": false,
+   "claims_shadow": false,
+   "emotion_series": false,
+   "fund_cache": false,
+   "index_sh000001": false,
+   "industry_map": true,
+   "kcache": false,
+   "line_health": false,
+   "ops_state": false,
+   "regime_log": false,
+   "regime_timeline_hcap": false,
+   "watch_pool": false,
+   "xrules_state": false
+  },
   "b_fatal_has_blocks": {
    "big_kcache": true,
+   "cap_hist": true,
+   "claims_shadow": true,
    "emotion_series": true,
+   "fund_cache": true,
    "index_sh000001": true,
+   "industry_map": true,
    "kcache": true,
    "line_health": true,
    "ops_state": true,
@@ -171,8 +247,12 @@
   },
   "c_blocks_known_consumers": {
    "big_kcache": true,
+   "cap_hist": true,
+   "claims_shadow": true,
    "emotion_series": true,
+   "fund_cache": true,
    "index_sh000001": true,
+   "industry_map": true,
    "kcache": true,
    "line_health": true,
    "ops_state": true,
@@ -196,5 +276,5 @@
   "ops_state",
   "kcache"
  ],
- "registry_version": "1.0 (2026-10-20, DATA-01)"
+ "registry_version": "1.1 (2026-10-20, DATA-09)"
 }

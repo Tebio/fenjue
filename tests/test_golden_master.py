@@ -186,6 +186,32 @@ def test_regime_thresholds_positive():
         assert v["state"] == c[name]["regime"], f"{name}：classify_ex 与 classify 标签不一致"
 
 
+def test_date_expr_forms_semantics():
+    """DATA-09：date_expr 每种形式的语义断言（独立于 oracle，防「实现与 oracle 一起错」）。
+
+    钉死的三条 DATA-09 新增语义：
+      1. "[-1][0]" 取的是 list-of-list 末元素**第 0 项**（index 1 的伪晚期日期不得被取到）；
+      2. "dir:last_bar[0]" 读的是**内容**不是 mtime（mtime 最新 ≠ 内容最新）；
+      3. 空数组文件不得吃光目录采样（fund_cache 71 个空文件 mtime 最新的实测陷阱）。
+    """
+    got = C.case_date_expr_forms()
+    assert got["[-1][0]"] == "2026-06-02", \
+        f"[-1][0] 必须取第 0 项而不是别的下标：{got['[-1][0]']}"
+    assert got["dir:last_bar[0] content_not_mtime"] == "2026-07-09", \
+        "dir:last_bar[0] 必须按内容取最大日期，不许用 mtime 冒充"
+    assert got["dir:last_bar[0] empty_files_skipped"] == "2026-08-11", \
+        "空数组文件必须跳过且不计入目录采样（否则 fund_cache 会误报 unknown_date）"
+    assert got["[-1].signal_date|jsonl"] == "2026-02-04", \
+        "[-1].<任意字段>|jsonl 必须支持任意字段名（signal_date）"
+    assert got["none"] is None, "date_expr=none 必须解析为 None（显式不检查）"
+    an = got["assess_none"]
+    assert an["status"] == "unknown_date" and an["freshness_unknown"] is True, \
+        f"none 条目必须报 unknown_date + freshness_unknown：{an}"
+    assert an["date"] is None and an["lag"] is None, "none 条目不得编造 date/lag"
+    assert an["is_blocking"] is False, "info 级 none 不阻断（只显式可见）"
+    assert got["[-1][0] empty_array"] is None, "空数组文件必须返回 None，不许崩不许编"
+
+
 def test_console_bands_monotonic():
     """价格带必须单调：买入线 ≤ 卖出线 ≤ 清仓线（锚反了会把清仓区当买入区）。"""
     got = C.case_console_price_band()
@@ -203,9 +229,24 @@ def test_data_health_protocol():
     import freshness_core as fc
     got = C.case_data_health_snapshot()
     inv = got["invariants"]
-    # (a) 每个注册条目都能解析出日期（unknown_date 不许静默降级 ok 的前置闸）
+    # (a) 每个注册条目都能解析出日期（unknown_date 不许静默降级 ok 的前置闸）；
+    #     DATA-09 起允许 date_expr="none" 的**显式不检查**条目（a_explicit_unchecked 标出），
+    #     它们不解析日期是设计语义而非故障——但必须同时满足 (a2) 的显式可见要求。
+    unchecked = inv.get("a_explicit_unchecked", {})
     for key, ok in inv["a_date_parseable"].items():
-        assert ok, f"(a) {key} 的 date_expr 解析不出日期——表达式写错或产物结构变了"
+        assert ok or unchecked.get(key), \
+            f"(a) {key} 的 date_expr 解析不出日期——表达式写错或产物结构变了"
+    # (a2) 显式不检查必须显式可见：none 条目 assess 必须报 unknown_date +
+    #      freshness_unknown=True 且 date/lag 都为 None——「不检查」不许静默当 ok
+    #      （dbt「neither warn_after nor error_after → 不检查」同纪律，契约基线 §1）
+    for key, is_none in unchecked.items():
+        if not is_none:
+            continue
+        na = inv["a2_none_assess"].get(key) or {}
+        assert na.get("status") == "unknown_date" and na.get("freshness_unknown") is True, \
+            f"(a2) {key} date_expr=none 必须报 unknown_date + freshness_unknown，实际 {na}"
+        assert na.get("date_is_none") and na.get("lag_is_none"), \
+            f"(a2) {key} none 条目不得编造 date/lag，实际 {na}"
     # (b) fatal 必带 blocks
     for key, ok in inv["b_fatal_has_blocks"].items():
         assert ok, f"(b) {key} severity=fatal 但 blocks 为空——fatal 必须声明阻塞面"

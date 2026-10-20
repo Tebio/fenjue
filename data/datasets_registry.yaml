@@ -7,14 +7,19 @@
 #
 # 字段契约（spec 接口契约）：
 #   path      仓库相对路径（文件或目录）
-#   date_expr freshness_core 语法："[-1].date" / "[-1].date|jsonl" / "_meta.date" /
-#             "dir:last_bar[:字段]"（目录模式取最近写入者末 bar，本期只看末端日期不看覆盖率）
+#   date_expr freshness_core 语法："[-1].date" / "[-1].date|jsonl"（字段名任意）/
+#             "[-1][N]"（list-of-list 末 bar 第 N 项，DATA-09）/ "_meta.date" /
+#             "dir:last_bar[:字段]"（目录模式取最近写入者末 bar，本期只看末端日期不看覆盖率）/
+#             "dir:last_bar[N]"（目录 list-of-list，跳过空/坏文件不计入样本，DATA-09）/
+#             "none"（显式不检查：无机器可读日期 → unknown_date + freshness_unknown，
+#              不许静默当 ok，DATA-09）
 #   cadence   daily = 每交易日应更新（周末/假日滞后由交易日历吸收，不算断供）
+#             static = 无日更预期（配合 date_expr "none" 使用）
 #   max_lag   允许的最大滞后（交易日，官方日历口径）
 #   severity  fatal（断供=下游结论不可信，cron 报红 exit 1）/ warn / info
 #   blocks    断供时被静默污染的下游（必须 ∈ 下方 consumers 清单；fatal 不许为空）
 #   owner     生产者（出事找谁）
-registry_version: "1.0 (2026-10-20, DATA-01)"
+registry_version: "1.1 (2026-10-20, DATA-09)"
 
 # 规范消费者清单（golden 协议断言 c 的封闭世界；词汇与 spec 现状证据一致）
 consumers:
@@ -129,3 +134,50 @@ datasets:
     severity: info
     blocks: [日度状态包, 面板20:40]
     owner: engine/watch_pool.py
+
+  # ── DATA-09（2026-10-20）：detector 闭包三大盲区 + 影子账本纳管 ──────────────
+  # 背景：_XFUND/_XCAP/_IND 三个 detector 全局的数据源此前完全未纳管，data_health 对它们
+  # 失明；claims_shadow 10-19 零产出（10-15 1492 条 → 10-16 108 条 → 10-19 0 条）三重盲区
+  # 叠加无人发现。severity 一律 warn/info 不用 fatal——断供时主张审计仍要跑、跑出来打
+  # data_stale 标记（DATA-07 已定 DEGRADE_MARK 语义），比全线停摆有用。
+
+  fund_cache:                       # 估值/风险缓存 3377 票（peTTM/isST；_XFUND 源，9 条主张）
+    path: data/fund_cache
+    date_expr: "dir:last_bar[0]"    # list-of-list 末 bar 第 0 项=日期；71 个空数组文件 mtime
+                                    # 最新（2026-10-20 实测），空文件跳过不计入样本
+    cadence: daily
+    max_lag: 1
+    severity: warn                  # DEGRADE_MARK：审计照跑打 data_stale，不全线停摆
+    blocks: [影子盘, line_health]
+    owner: engine/fetch_fundamentals.py（手动分片抓取，无 cron；最近一批 2026-09-18，tmp/launch_fund.sh）
+
+  cap_hist:                         # 流通市值历史 3368 票（_XCAP 源，5 条主张）
+    path: data/cap_hist
+    date_expr: "dir:last_bar[0]"    # mtime 不可信实证：000001.json mtime 10-03 内容停在 09-18
+    cadence: daily
+    max_lag: 5                      # 市值是慢变量，容忍 5 个交易日（比估值宽）
+    severity: warn
+    blocks: [影子盘, line_health]
+    owner: engine/fetch_cap_history.py（手动抓取，无 cron）
+
+  industry_map:                     # 行业映射 5546 键（_IND 源，3 条主张）
+    path: data/industry_map.json
+    date_expr: "none"               # 无日期字段，不许编——显式不检查 → unknown_date +
+                                    # freshness_unknown:true，不检查必须显式可见（契约基线 §1）
+    cadence: static
+    max_lag: 0                      # 占位（none 短路不参与滞后判定；validate 要求非负整数）
+    severity: info
+    blocks: []
+    owner: 内部维护（人工；engine/scripts 无自动生产者，2026-10-20 实测 grep 零命中）
+    note: "内部维护，无自动时间戳，靠人工复核"
+
+  claims_shadow:                    # 主张影子账本（10-15 1492 条→10-16 108 条→10-19 0 条无人发现）
+    path: data/claims_shadow.jsonl
+    date_expr: "[-1].signal_date|jsonl"   # 字段名是 signal_date 不是 date（2026-10-20 实测）
+    cadence: daily
+    max_lag: 1                      # ⚠️ 与任务书表格(max_lag=2)的偏离，理由见 AGENTS #346：
+                                    # 滞后按交易日口径，10-16→10-20 lag=2，max_lag=2 今天判 ok，
+                                    # 与验收「必须报出 claims_shadow stale」直接冲突；取 1 使其如实报红
+    severity: warn
+    blocks: [影子盘]
+    owner: engine/claims_shadow.py（stock_claims_shadow.py 班 82e54a0a812f）

@@ -16,11 +16,23 @@
 
 date_expr 语法（spec 接口契约）：
   "[-1].date"         JSON 数组末元素的 date 字段（支持 dotted： "[-1]._meta.date"）
-  "[-1].date|jsonl"   JSONL 末行的 date 字段
+  "[-1].date|jsonl"   JSONL 末行的 date 字段（字段名任意，如 "[-1].signal_date|jsonl"）
+  "[-1][N]"           JSON 数组末元素的第 N 项（list-of-list 的日期列，如 "[-1][0]"；
+                      DATA-09 新增，fund_cache/cap_hist 单文件形态）
   "_meta.date"        JSON 字典的 dotted 路径（如 "sig_date"）
+  "none"              显式不做新鲜度检查（DATA-09 新增）：该数据集无机器可读日期，
+                      体检必须报 unknown_date + freshness_unknown=True——
+                      「不检查」必须显式可见，不许静默当 ok
+                      （dbt「neither warn_after nor error_after → 不检查」同纪律，
+                      见 docs/plan/references/data-contract-baseline.md §1）
   "dir:last_bar[:字段]" 目录模式：取最近写入的 ≤25 个 .json，读各自末 bar 的日期字段
                       （默认 "date"，新浪缓存用 "dir:last_bar:day"），取最大值。
                       spec 风险 2：本期 freshness 只看末端日期，不看覆盖率。
+  "dir:last_bar[N]"   目录 list-of-list 模式（DATA-09 新增）：末 bar 是 list，取第 N 项
+                      作日期。mtime 不可信（cap_hist 实证：mtime 10-03 内容停在 09-18；
+                      fund_cache 实证：71 个空数组文件 mtime 最新）——因此本形态按
+                      mtime 降序扫描，**跳过空/坏文件不计入样本**，取前 ≤25 个
+                      能产出有效日期的文件的最大值（总读取数上限 DIR_SCAN_CAP 防爆）。
 """
 from __future__ import annotations
 
@@ -52,7 +64,10 @@ def is_blocking(status: str, severity: str | None = None) -> bool:
 SEVERITIES = ("fatal", "warn", "info")
 REQUIRED_FIELDS = ("path", "date_expr", "cadence", "max_lag", "severity", "blocks", "owner")
 DIR_SAMPLE = 25          # 目录模式最多读的近期文件数（体检 <60s/<300MB 纪律）
+DIR_SCAN_CAP = 200       # dir:last_bar[N] 跳过空/坏文件时的总读取上限（fund_cache 实测 71 空文件顶头）
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+_IDX_RE = re.compile(r"^\[-1\]\[(\d+)\]$")          # "[-1][0]" 单文件 list-of-list
+_DIR_IDX_RE = re.compile(r"^last_bar\[(\d+)\]$")    # "dir:last_bar[0]" 目录 list-of-list
 
 
 class CalendarUnavailable(RuntimeError):
@@ -156,13 +171,80 @@ def _dir_last_bar(path: Path, expr: str):
     return best
 
 
+def _dir_last_bar_index(path: Path, idx: int):
+    """目录 list-of-list 模式（"dir:last_bar[N]"，DATA-09 新增，与 dict 版互不改动）。
+
+    与 _dir_last_bar 的两处语义差异（都由实测驱动，不许合并回旧函数）：
+    1. 末 bar 是 list，日期 = arr[-1][idx]（fund_cache/cap_hist 的第 0 项）；
+    2. mtime 不可信：fund_cache 有 71 个空数组文件占据 mtime 最新位置（2026-10-20 实测），
+       若按旧「mtime 前 25 个一刀切」，采样会被空文件吃光而误报 unknown_date。
+       因此本形态跳过空/坏文件**不计入** DIR_SAMPLE，只把「能产出有效日期的文件」
+       计入样本；总读取数受 DIR_SCAN_CAP 限制（防大规模 schema 漂移时体检超时）。
+    读到的最大日期即结果；一个有效文件都没有 → None（unknown_date 由调用方判）。
+    """
+    if not path.is_dir():
+        return None
+    try:
+        files = sorted(path.glob("*.json"), key=lambda f: f.stat().st_mtime, reverse=True)
+    except Exception:
+        return None
+    best = None
+    sampled = 0
+    for fp in files[:DIR_SCAN_CAP]:
+        if sampled >= DIR_SAMPLE:
+            break
+        try:
+            arr = json.loads(fp.read_text())
+        except Exception:
+            continue                       # 半截写入/坏文件：跳过不计数（#330-D3）
+        if isinstance(arr, dict):          # 容忍 {"data": [...]} 一层包裹
+            arr = next((v for v in arr.values() if isinstance(v, list)), [])
+        if not isinstance(arr, list) or not arr or not isinstance(arr[-1], list):
+            continue                       # 空数组/非 list-of-list：跳过不计数
+        last = arr[-1]
+        if idx >= len(last):
+            continue
+        d = last[idx]
+        if isinstance(d, str) and _DATE_RE.match(d):
+            sampled += 1
+            if best is None or d > best:
+                best = d
+    return best
+
+
 def extract_date(path: Path, date_expr: str):
-    """按 date_expr 解析末端日期 → "YYYY-MM-DD" 或 None（unknown_date 由调用方判）。"""
+    """按 date_expr 解析末端日期 → "YYYY-MM-DD" 或 None（unknown_date 由调用方判）。
+
+    "none"（DATA-09）：显式不检查，恒返回 None——调用方（assess）据此打
+    unknown_date + freshness_unknown=True，「不检查」显式可见而非静默 ok。
+    """
+    if date_expr == "none":
+        return None
     try:
         if date_expr.startswith("dir:"):
+            m = _DIR_IDX_RE.match(date_expr.split(":")[1] if ":" in date_expr else "")
+            if m:
+                return _dir_last_bar_index(path, int(m.group(1)))
             return _dir_last_bar(path, date_expr)
         jsonl = date_expr.endswith("|jsonl")
         expr = date_expr[:-len("|jsonl")] if jsonl else date_expr
+        m = _IDX_RE.match(expr)
+        if m:                            # "[-1][N]"：list-of-list 末元素第 N 项
+            idx = int(m.group(1))
+            if jsonl:
+                last = None
+                with path.open() as f:
+                    for line in f:
+                        if line.strip():
+                            last = line
+                obj = json.loads(last) if last else None
+            else:
+                arr = json.loads(path.read_text())
+                obj = arr[-1] if isinstance(arr, list) and arr else None
+            if isinstance(obj, list) and idx < len(obj):
+                d = obj[idx]
+                return d if isinstance(d, str) and _DATE_RE.match(d) else None
+            return None
         if expr.startswith("[-1]."):
             if jsonl:
                 last = None
@@ -229,7 +311,8 @@ def validate_registry(doc: dict) -> list[str]:
 def assess(key: str, spec: dict, ref_date: str, root: Path = ROOT) -> dict:
     """{key,path,date,status,severity,lag,cadence,max_lag,blocks,owner,reason}
 
-    status 判定：路径缺失→missing；日期解析不出→unknown_date（禁止降级 ok）；
+    status 判定：路径缺失→missing；date_expr="none"→unknown_date + freshness_unknown
+    （显式不检查，不许静默当 ok）；日期解析不出→unknown_date（禁止降级 ok）；
     lag>max_lag→fatal_lag(severity=fatal) 或 stale(warn/info)；否则 ok。
     日历不可用 → trading_days_between raise（上层按基建错误 exit 2，不许猜）。
     """
@@ -241,6 +324,15 @@ def assess(key: str, spec: dict, ref_date: str, root: Path = ROOT) -> dict:
     if not path.exists():
         rec["status"] = "missing"
         rec["reason"] = f"路径不存在：{spec['path']}"
+        return rec
+    if spec["date_expr"] == "none":
+        # DATA-09：无机器可读日期的数据集（如 industry_map）显式不检查新鲜度。
+        # dbt/Dagster 同纪律：「不检查」必须显式可见，不许静默当 ok（契约基线 §1）。
+        # status=unknown_date → 不进 ok 计数、进 ⚠️ 段；severity=info → 不阻断。
+        rec["status"] = "unknown_date"
+        rec["freshness_unknown"] = True
+        rec["reason"] = ("date_expr=\"none\"：该数据集无机器可读日期，显式不做新鲜度检查"
+                         "（freshness_unknown，靠人工复核；见注册表 note）")
         return rec
     date = extract_date(path, spec["date_expr"])
     rec["date"] = date

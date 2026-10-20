@@ -4,24 +4,24 @@
    "history": [
     {
      "date": "2026-10-20",
-     "status": "ok",
+     "status": "fatal_lag",
      "sev": "fatal",
-     "lag": 0,
-     "ref": "2026-10-19"
+     "lag": 1,
+     "ref": "2026-10-20"
     }
    ],
-   "bad_since": null,
-   "fatal_days": 0,
-   "fatal_active": false
+   "bad_since": "2026-10-20",
+   "fatal_days": 1,
+   "fatal_active": true
   },
   "kcache": {
    "history": [
     {
      "date": "2026-10-20",
-     "status": "ok",
+     "status": "stale",
      "sev": "warn",
-     "lag": 0,
-     "ref": "2026-10-19"
+     "lag": 1,
+     "ref": "2026-10-20"
     }
    ],
    "bad_since": null,
@@ -32,29 +32,29 @@
    "history": [
     {
      "date": "2026-10-20",
-     "status": "ok",
+     "status": "fatal_lag",
      "sev": "fatal",
-     "lag": 0,
-     "ref": "2026-10-19"
+     "lag": 1,
+     "ref": "2026-10-20"
     }
    ],
-   "bad_since": null,
-   "fatal_days": 0,
-   "fatal_active": false
+   "bad_since": "2026-10-20",
+   "fatal_days": 1,
+   "fatal_active": true
   },
   "regime_timeline_hcap": {
    "history": [
     {
      "date": "2026-10-20",
-     "status": "ok",
+     "status": "fatal_lag",
      "sev": "fatal",
-     "lag": 0,
-     "ref": "2026-10-19"
+     "lag": 1,
+     "ref": "2026-10-20"
     }
    ],
-   "bad_since": null,
-   "fatal_days": 0,
-   "fatal_active": false
+   "bad_since": "2026-10-20",
+   "fatal_days": 1,
+   "fatal_active": true
   },
   "ops_state": {
    "history": [
@@ -63,7 +63,7 @@
      "status": "ok",
      "sev": "fatal",
      "lag": 0,
-     "ref": "2026-10-19"
+     "ref": "2026-10-20"
     }
    ],
    "bad_since": null,
@@ -74,24 +74,24 @@
    "history": [
     {
      "date": "2026-10-20",
-     "status": "ok",
+     "status": "fatal_lag",
      "sev": "fatal",
-     "lag": 0,
-     "ref": "2026-10-19"
+     "lag": 1,
+     "ref": "2026-10-20"
     }
    ],
-   "bad_since": null,
-   "fatal_days": 0,
-   "fatal_active": false
+   "bad_since": "2026-10-20",
+   "fatal_days": 1,
+   "fatal_active": true
   },
   "regime_log": {
    "history": [
     {
      "date": "2026-10-20",
-     "status": "ok",
+     "status": "stale",
      "sev": "warn",
-     "lag": 0,
-     "ref": "2026-10-19"
+     "lag": 1,
+     "ref": "2026-10-20"
     }
    ],
    "bad_since": null,
@@ -102,10 +102,10 @@
    "history": [
     {
      "date": "2026-10-20",
-     "status": "ok",
+     "status": "stale",
      "sev": "warn",
-     "lag": 0,
-     "ref": "2026-10-19"
+     "lag": 1,
+     "ref": "2026-10-20"
     }
    ],
    "bad_since": null,
@@ -116,10 +116,10 @@
    "history": [
     {
      "date": "2026-10-20",
-     "status": "ok",
+     "status": "stale",
      "sev": "warn",
-     "lag": 0,
-     "ref": "2026-10-19"
+     "lag": 1,
+     "ref": "2026-10-20"
     }
    ],
    "bad_since": null,
@@ -133,7 +133,63 @@
      "status": "ok",
      "sev": "info",
      "lag": 0,
-     "ref": "2026-10-19"
+     "ref": "2026-10-20"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "fund_cache": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "stale",
+     "sev": "warn",
+     "lag": 16,
+     "ref": "2026-10-20"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "cap_hist": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "stale",
+     "sev": "warn",
+     "lag": 16,
+     "ref": "2026-10-20"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "industry_map": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "unknown_date",
+     "sev": "info",
+     "lag": null,
+     "ref": "2026-10-20"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "claims_shadow": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "stale",
+     "sev": "warn",
+     "lag": 2,
+     "ref": "2026-10-20"
     }
    ],
    "bad_since": null,
@@ -141,6 +197,6 @@
    "fatal_active": false
   }
  },
- "updated_at": "2026-10-20T15:05:04+08:00",
+ "updated_at": "2026-10-20T17:00:52+08:00",
  "date": "2026-10-20"
 }

@@ -125,6 +125,17 @@ downstreams:
       - {glob: "data/regime_timeline_hcap.json"}
     reports: []
 
+  line_health:
+    # DATA-09（2026-10-20）补登记：fund_cache/cap_hist 纳管后 blocks 指向本下游，
+    # validate() 要求 blocks 里的名字必须有 downstreams 定义（禁止只登记概念名）。
+    # 信号线监控机：读 data/line_health.json 算滚动 edge。无 cron 作业（70 job 快照实测
+    # 零命中 line_health，2026-10-20），手动工具；脚本名记载于 AGENTS.md:852（DATA-01 台账行）。
+    producer: engine/line_health.py
+    trigger: {manual: "AGENTS.md:852"}
+    artifacts:
+      - {glob: "data/line_health.json"}
+    reports: []
+
 # direct 列表逐字 == data/datasets_registry.yaml 各数据集 blocks（顺序也一致）。
 # 改注册表 blocks 而不改本表（或反之）→ validate() 加载即 raise。
 datasets:
@@ -138,3 +149,8 @@ datasets:
   xrules_state:          {direct: [作战单9:25, 面板20:40]}
   line_health:           {direct: [日度状态包]}
   watch_pool:            {direct: [日度状态包, 面板20:40]}
+  # ── DATA-09（2026-10-20）纳管的四个，direct 逐字 == 注册表 blocks ──
+  fund_cache:            {direct: [影子盘, line_health]}
+  cap_hist:              {direct: [影子盘, line_health]}
+  industry_map:          {direct: []}
+  claims_shadow:         {direct: [影子盘]}

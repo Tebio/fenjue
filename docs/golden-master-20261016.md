@@ -125,3 +125,28 @@
 （切片宇宙 119 票：adapter 328 = collect 328，symmetric_difference=0）。
 既有六条 oracle 未动、零刷新；`pytest tests/test_golden_master.py` 13 passed（12 既有 + 1 新增）。
 背景与数字见 AGENTS.md #336。
+
+---
+
+## 2026-10-20 · DATA-09 刷新 `data_health_snapshot` + 新增 `date_expr_forms`（注册表扩编）
+
+**刷新 `data_health_snapshot` 的原因**：DATA-09 把 4 个盲区数据集纳管进注册表
+（fund_cache / cap_hist / industry_map / claims_shadow），注册表声明快照必然漂移。
+漂移值：datasets 10 → 14；registry_version 1.0 → 1.1；invariants 新增
+`a_explicit_unchecked`（date_expr="none" 的显式不检查清单）与 `a2_none_assess`
+（none 条目的 assess 判定：unknown_date + freshness_unknown=True + date/lag 为 None）。
+既有 10 个数据集的声明字段零变化（旧 oracle 与新 oracle 逐键比对，仅新增 4 键 + 2 个不变量键）。
+
+**新增 `date_expr_forms`（新冻结，非刷新）**：`extract_date` 的每一种 date_expr
+形式一个确定性用例（fixture 现场构造、os.utime 钉 mtime，与日期前进无关），含
+DATA-09 新增的 `[-1][0]`、`dir:last_bar[0]`、`none`。两个反陷阱钉子：
+mtime 最新≠内容最新（必须取内容最大日期 2026-07-09）；25 个空数组文件顶在
+mtime 最前不得吃光采样（必须取到 2026-08-11）。
+
+**配套断言变更**（`test_data_health_protocol`）：不变量 (a) 对 `date_expr="none"`
+条目放行（显式不检查是设计语义），但新增 (a2) 硬断言——none 条目 assess 必须报
+unknown_date + freshness_unknown=True 且不得编造 date/lag。另新增
+`test_date_expr_forms_semantics`（独立于 oracle 的语义断言）。
+
+**回归**：`pytest tests/test_golden_master.py -q` → 18 passed；
+`bash scripts/verify.sh --fast` → 24 passed 全绿。背景见 AGENTS.md #346。
