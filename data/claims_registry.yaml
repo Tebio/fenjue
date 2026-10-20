@@ -1504,3 +1504,24 @@ claims:
   note: '一年两次的事件交易，非日常池；n=569(沪深300+中证500合并口径)；执行=公告次交易日开盘买/生效日收盘卖；中证1000仅3周期(CNFIN)+2.95%/65%(未动量匹配)；调出票反弹+1.7~3.1%噪声大不注册；2021两周期baostock成分数据缺失
     | 2026-10-03 正式化: NW t(周期聚合)=3.81过Harvey3.0, 双段+2.36/+1.30pp同正, 近3周期+1.61/+1.76/+1.54趋稳未衰减,
     升候选L2+'
+- id: AVOID_CLIMAX_QUAKE
+  statement: 连板链高位（近10日≥2板）出现天量剧震日（量比≥2 且 上影≥4% 或 大阴≤-4%）后，T+20 相对位置匹配对照有显著负边际——持有=持续失血，应离场回避
+  detector: 高位剧震
+  control: position_matched
+  direction: negative
+  horizon:
+  - 5
+  - 20
+  baseline_pp:
+    5: -1.16
+    20: -2.71
+  kill_line_pp:
+    5: 0.0
+    20: 0.0
+  grade: AVOID（RES-10 终审：T+20 主判据 8/8年全负 -1.56~-5.04pp、中位差 -4.18pp、t_NW=-10.1、日历时间
+    t=-8.0、DSR=1.0≥0.95 过 Harvey3.0；阈值1.5敏感性 -2.83pp 仍负）
+  created: '2026-10-20'
+  audit_every_days: 30
+  note: n=9034(fwd有效)/9754事件；对照1 同票高位非剧震 -2.71pp、对照2 同期同板块 -2.61pp（覆盖率99.2%）。⚠️ detector「高位剧震」尚未进
+    law_pipeline.REGISTRY，故 claims_audit 本轮只登记不复跑，复验靠 engine/r4_yearbreak.py（153s，幂等）；纳入自动审计见
+    RES-11。作废条件4条见 research/R4_final.md。遗留：退市股未入样本(DATA-05)、ctrl2 用静态行业快照。

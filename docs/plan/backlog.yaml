@@ -807,9 +807,9 @@ not_doing:
     title: 高位剧震回避黑名单（AVOID）终审与注册 — 分年验尸 + 三口径 + 位置匹配
     area: RES
     priority: P1
-    status: todo
+    status: done
     gate: G1
-    ledger_ref: 334
+    ledger_ref: 335
     inputs:
       - docs/plan/specs/RES-10-r4-climax-avoid.md
       - engine/research_queue_20260919.py（r4() 事件定义，逐行复用）
@@ -825,4 +825,36 @@ not_doing:
       - 阈值放宽反例如实报告
       - 结论只允许：注册 AVOID / 降级观察 / 证伪；附作废条件
     effort_days: 1.0
+    evidence: >-
+      2026-10-20 终审通过，判决=注册 AVOID。实跑 engine/r4_yearbreak.py
+      （自检：200票子集 vs rq.r4 原生逐数字相等 PASS；可复跑性 IDENTICAL）：
+      主档 vr≥2.0 事件 n=9754（fwd有效9034），T+20 剧震 33.7%/-2.65%（t_NW=-10.1），
+      边际 vs对照1(同票高位) -2.71pp / vs对照2(同期同板块,覆盖率99.2%) -2.61pp；
+      日历时间 t_NW=-8.0（1706天，日均超额-3.124%）；DSR(回避侧)=1.0（trials=16250=普查16248+本次2）；
+      分年 8/8 年 T+20 边际全负（-1.56~-5.04pp），单年最大占比 17.8%（2024，未触40%否决线）；
+      敏感档 vr≥1.5（n=17134）T+20 边际 -2.83pp 仍为负，edge 不依赖单点阈值。
+      全量数字 data/r4_final_20261020.json，报告 research/R4_final.md（含作废条件4条）。
+      遗留：退市股幸存者偏差（DATA-05）、静态行业快照、T+1边际≈0（黑名单管持续失血不管次日）。
+
+  - id: RES-11
+    title: 「高位剧震」detector 接入 REGISTRY — 让 AVOID_CLIMAX_QUAKE 进 claims_audit 自动复验
+    area: RES
+    priority: P1
+    status: todo
+    gate: G1
+    depends_on: [RES-10]
+    ledger_ref: 335
+    inputs:
+      - docs/plan/specs/RES-11-climax-detector.md
+      - engine/r4_yearbreak.py（is_quake/collect，口径逐行等价）
+      - engine/law_pipeline.py（REGISTRY 契约）
+    outputs:
+      - law_pipeline.REGISTRY 新增 高位剧震 detector（薄适配层）
+      - tests/golden 一致性 case
+    acceptance:
+      - claims_audit 复跑 AVOID_CLIMAX_QUAKE，全量 T+20 边际与 RES-10 报告一致
+      - 适配层与原 is_quake 在同一 200 票子集上事件集合完全相同（集合相等断言）
+      - law_pipeline_three 若有漂移则逐案记录，不许静默刷新
+      - 不改动任何既有 detector 输出
+    effort_days: 0.5
     evidence: ''
