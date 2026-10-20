@@ -1,14 +1,16 @@
 {
  "version": 2,
- "built_at": "2026-10-20 02:41",
+ "built_at": "2026-10-20 03:18",
  "sig_date": "2026-10-19",
  "buy_day": "2026-10-20",
  "sell_day": "2026-10-21",
  "regime": {
-  "date": "2026-10-16",
+  "date": "2026-10-19",
   "regime": "妖股期",
-  "limit_ups": 55,
-  "limit_downs": 14
+  "limit_ups": 42,
+  "limit_downs": 27,
+  "advice": "涨停全是小市值散票无主线——默认不参与；个股不可预测",
+  "gap": false
  },
  "deep_low": [],
  "focus": [
@@ -31,16 +33,7 @@
    "window": "梯队≥3涨停+自身首板=触发"
   }
  ],
- "positions_alert": [
-  {
-   "code": "001299",
-   "name": "美能能源",
-   "flags": [
-    "✅过MA20修复确认",
-    "✅过MA120修复确认"
-   ]
-  }
- ],
+ "positions_alert": [],
  "shadow_t1": null,
  "b5": {
   "date": "2026-10-16",
