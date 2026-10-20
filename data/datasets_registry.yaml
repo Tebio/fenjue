@@ -1,0 +1,126 @@
+# data/datasets_registry.yaml — DATA-01 数据源注册表（数据面监控机的唯一输入）
+#
+# 一期只注册「真实在用」的 10 个数据集（spec 风险 4：宁少勿滥，注册表会腐）。
+# 新增数据集：先加 consumers（若是新下游名），再加 datasets 条目，七字段缺一不可。
+# golden tests/golden/oracle/data_health_snapshot.json 冻结本表声明——改任何一行都会
+# 触发 golden 漂移，必须走 record + 台账说明（与 claims_registry 同纪律）。
+#
+# 字段契约（spec 接口契约）：
+#   path      仓库相对路径（文件或目录）
+#   date_expr freshness_core 语法："[-1].date" / "[-1].date|jsonl" / "_meta.date" /
+#             "dir:last_bar[:字段]"（目录模式取最近写入者末 bar，本期只看末端日期不看覆盖率）
+#   cadence   daily = 每交易日应更新（周末/假日滞后由交易日历吸收，不算断供）
+#   max_lag   允许的最大滞后（交易日，官方日历口径）
+#   severity  fatal（断供=下游结论不可信，cron 报红 exit 1）/ warn / info
+#   blocks    断供时被静默污染的下游（必须 ∈ 下方 consumers 清单；fatal 不许为空）
+#   owner     生产者（出事找谁）
+registry_version: "1.0 (2026-10-20, DATA-01)"
+
+# 规范消费者清单（golden 协议断言 c 的封闭世界；词汇与 spec 现状证据一致）
+consumers:
+  - 深档名单        # dashboard_build.deep_low_scan
+  - 影子盘          # fen_shadow / claims_shadow
+  - 周期仪          # regime_meter（含 regime_core 分位）
+  - 权威时间轴      # regime_daily_append → regime_timeline_hcap / regime_log
+  - X规则线         # xrules_daily
+  - 作战单9:25      # ops_briefing（每日必发）
+  - 面板20:40       # dashboard_build（含徽标）
+  - 日度状态包      # build_daily_state → data/daily_state/
+  - 晨报            # line_health_report / 晨报 cron
+  - line_health     # 信号线监控机（算滚动 edge 的输入面）
+  - 盘前自检        # preflight.py
+  - 回测族          # regime_backtest_hcap 等读权威时间轴的回测
+
+# 必注册集（spec 协议断言 d：防新数据集绕过注册；缺了 = unregistered + exit 1）
+mandatory: [big_kcache, emotion_series, regime_timeline_hcap, ops_state, kcache]
+
+datasets:
+  big_kcache:                       # 前复权日K权威库 3377 票（baostock）
+    path: data/big_kcache
+    date_expr: "dir:last_bar"
+    cadence: daily
+    max_lag: 0
+    severity: fatal                 # #330-A：冻在 10-16 三天，下游照常跑不报错
+    blocks: [深档名单, 影子盘, 周期仪, 权威时间轴, X规则线]
+    owner: engine/update_kcache.py（18:30/19:00 分片 + 21:00 兜漏）
+
+  kcache:                           # 新浪线小缓存 21 票（线1影子在用；非全主板）
+    path: data/kcache
+    date_expr: "dir:last_bar:day"   # 新浪 schema 是 day 不是 date
+    cadence: daily
+    max_lag: 0
+    severity: warn                  # 部分文件停更属已知（blindspot-2026check 待裁决），不挡主链
+    blocks: [影子盘]
+    owner: fen_shadow.py（线1影子随取随更）
+
+  emotion_series:                   # 情绪六指标日序列（恐慌分位唯一来源，#329 遗留②）
+    path: data/emotion_series.jsonl
+    date_expr: "[-1].date|jsonl"
+    cadence: daily
+    max_lag: 0
+    severity: fatal                 # 断了 = 腿一退 ABS_FALLBACK=38 + gap=true
+    blocks: [周期仪, 权威时间轴]
+    owner: engine/emotion_series.py（15:40 周期仪班）
+
+  regime_timeline_hcap:             # regime 权威时间轴（G3 闸门/回测/面板源）
+    path: data/regime_timeline_hcap.json
+    date_expr: "[-1].date"
+    cadence: daily
+    max_lag: 0
+    severity: fatal                 # #330-B：曾静默停更两天 cron 还报 ok
+    blocks: [面板20:40, 日度状态包, 回测族]
+    owner: engine/regime_daily_append.py（18:35 班）
+
+  ops_state:                        # 人机共驾舱单一事实源（作战单直接读）
+    path: docs/ops-state.json
+    date_expr: "sig_date"
+    cadence: daily
+    max_lag: 0
+    severity: fatal                 # 作战单每日必发，吃旧 sig_date = 给过期指令
+    blocks: [作战单9:25, 盘前自检]
+    owner: engine/dashboard_build.py（20:40 面板班写出）
+
+  index_sh000001:                   # 上证指数日K（regime 判定与日历回退的基准）
+    path: data/index_sh000001.json
+    date_expr: "[-1].date"
+    cadence: daily
+    max_lag: 0
+    severity: fatal
+    blocks: [权威时间轴, 周期仪]
+    owner: engine/update_kcache.py（update_index 段）
+
+  regime_log:                       # 面板徽标源（regime_daily_append 覆盖写）
+    path: data/regime_log.jsonl
+    date_expr: "[-1].date|jsonl"
+    cadence: daily
+    max_lag: 0
+    severity: warn                  # 徽标停更是体验问题，timeline 才是闸门
+    blocks: [面板20:40]
+    owner: engine/regime_daily_append.py（18:35 班）
+
+  xrules_state:                     # X规则线状态（T1-MEGA/X3，作战单第 3 段）
+    path: data/xrules_state.json
+    date_expr: "date"
+    cadence: daily
+    max_lag: 0
+    severity: warn                  # 自带 failure_streak 告警，此处只补「日期面」视角
+    blocks: [作战单9:25, 面板20:40]
+    owner: engine/xrules_daily.py
+
+  line_health:                      # 信号线监控机输出（监控机的监控）
+    path: data/line_health.json
+    date_expr: "_meta.date"
+    cadence: daily
+    max_lag: 0
+    severity: warn
+    blocks: [晨报, 日度状态包]
+    owner: engine/line_health.py
+
+  watch_pool:                       # 观察池（状态制；updated 不保证每个交易日都动）
+    path: data/watch_pool.json
+    date_expr: "updated"
+    cadence: daily
+    max_lag: 1
+    severity: info
+    blocks: [日度状态包, 面板20:40]
+    owner: engine/watch_pool.py

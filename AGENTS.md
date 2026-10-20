@@ -1335,3 +1335,46 @@ wrapper 已于 10-19 事后改成 `exec venv python`（`stock_kcache_shard0/1.sh
 2. **cron 报 ok 不等于产出成功**：no_agent 脚本的「跳过并退出 0」是最危险的静默态（本次跳过语句还是 `print` 一句就 continue）。凡「覆盖率不足/无数据」分支，除真假日外一律 `exit 1`。
 3. **读 kcache 的重活不要与 kcache 写入并发**：写入非原子，并发读会读到半截文件被 `except` 吞掉 → 横截面静默欠采样。
 4. **AGENTS.md 体积已 296KB，远超 #271 定的 100KB** —— 261 之后的条目需成段搬进 `docs/agents-archive-*.md`（只搬不改，主干留导航 + 指针）。这条本身就是欠账。
+
+**331. DATA-01 数据面监控机 data_health 落地（2026-10-20，按 docs/plan/specs/DATA-01-data-health.md 施工）**
+
+**做了什么**：与 `line_health.py` 同构的数据源生命周期监控机——读声明式注册表 → 体检全部数据集时效/存在性 → 四输出 + 幂等状态 + 晨报段，使「数据断供」在下游静默消费之前变成可见的 fatal 告警（直接针对 #330-A/B：big_kcache 冻三天、权威时间轴停两天，下游照常跑不报错）。新文件：`engine/freshness_core.py`（时效判定唯一出处：STATUSES 六态 / `trading_days_between` 按官方交易日历算滞后 / `extract_date` / `assess` / 注册表加载与配置校验）、`data/datasets_registry.yaml`（一期 10 个真实在用数据集：mandatory 5 + index/regime_log/xrules_state/line_health/watch_pool，每个 path/date_expr/cadence/max_lag/severity/blocks/owner 七字段 + consumers 封闭清单）、`engine/data_health.py`（check_all + main，退出码 0/1/2）、四输出（`data/data_health.json`、`data_health_state.json`、`data_health_report.md`、`data/health/YYYY-MM-DD.json`）、golden `data_health_snapshot` + 四条协议断言（每条目可解析日期 / fatal 必带 blocks / blocks ∈ consumers / 五关键数据集必在册）。唯一改的既有文件是 `engine/ops_briefing.py` +10 行（try/except 包裹，仅 fatal 渲染一行断供告警，文件缺失静默跳过——作战单每日必发不许被它卡住）。顺手关掉 #329 遗留②（emotion_series 新鲜度进监控）。
+
+**为什么这么设计（关键取舍）**：①滞后只读本地 `data/trade_calendar/<year>.json` 缓存，**故意不调** `trade_calendar.trading_days()`（它缓存过期会 import baostock 联网，违反本卡「只读本地」）；日历不可用 → raise → exit 2，不许猜节假日（#330-B 同款纪律）。②default ref-date = 最近已收盘交易日（16:00 BJT 前取前一交易日）——9:25 作战单盘前消费时若基准取「今天」会每日假 fatal。③fatal 只给 5 个「断供=下游结论不可信」的数据集，其余 warn/info 分级，防告警疲劳。④幂等 state 照抄 line_health threats 段的 `fatal_active` 持续标志位：新增触发才告警，同日重跑/连续多日同故障不重复吵。⑤golden 冻结注册表**声明**不冻结日期（日期每天前进，冻结=每天红）。⑥consumers 封闭清单是对 spec「消费者清单」的最小补全（spec 只有散文词汇，落成 yaml 头部 12 项，未改 spec 文件）。
+
+**验收（全部实跑，证据 research/DATA-01_report.md）**：正例 `--ref-date 2026-10-19` exit 0、stdout 零输出、0.36s/20.0MB，big_kcache ok/lag=0、emotion_series ok（2131 行末端 10-19），summary 各项和=注册表条目数=10；**上岗首日即实抓一条真实滞后**：xrules_state stale lag=1（末端 10-16——10-19 kcache 事故时覆盖率闸正确拒判、补数后未重跑）。反例 A 假 fatal/路径不存在 → missing + exit 1 + 报告含 key；反例 B `date_expr "[-1].nope"` → unknown_date 未降级 ok；反例 C fatal 无 blocks → exit 2 配置错误。pytest 11 过 1 败（factor_census 25vs24 为 #329 已记既存问题，非本卡）。对照 `build_daily_state.freshness()`：ops_state/regime_timeline_hcap 两基准日映射后一致（fatal_lag ≡ 其 stale 且多带分级与交易日 lag）；big_kcache/emotion_series 差异 = bds 根本没有这两个调用点——正是本卡补的洞，非口径分歧。
+
+**踩到的坑**：①幂等 state 初版用「昨日 status」判新增触发，同日重跑覆盖当日记录后每次重跑都重复告警——反例 A 第 2 跑实抓，改 `fatal_active` 标志位修复；②`datetime.now(utc)+8h` 是可变时区把戏（钟点移了 tz 标签还是 +00:00，违反 INTERFACES I0），改 `timezone(timedelta(hours=8))`——**line_health.py 有同款 wart 未修**；③kcache 新浪 schema 日期字段是 `day` 不是 `date`，且 21 文件里 18 个停 10-13（目录模式取 max 会掩盖部分停更，severity=warn + P1 白名单时处理）；④verify.sh 在本容器跑不起来（既存）：解释器发现只试 /opt/hermes/.venv 与 python3（3.14 无 yaml，#330 ABI 环境），均未把 fenjue .venv 列入候选——本卡用 .venv 单跑 plan_lint/pytest 替代，改 verify.sh 超本卡范围留裁决。
+
+**下一步（P1，未动工）**：①每日生成端接线——data_health.py 挂哪个既有班（候选 18:35 regime_daily_append 班末尾或 20:40 面板班开头）需用户裁决，**目前没有任何 cron 跑它**，监控机 itself 处于「有人调才体检」状态；②build_daily_state 24 处局部 freshness() 收编到 freshness_core（映射关系已验证）；③熔断泛化：fatal 时给下游机器可读的「别信我」信号（现在只有人读报告）；④退市/停牌 186 只白名单 + 覆盖率指标化（本期只看末端日期）；⑤seam 指标化；⑥unknown_date 是否进 exit 1 留作裁决点（现按 spec 字面不进）。
+
+
+**331-补 · 主 agent 复核（2026-10-20）**
+
+复核方式：不信自报，逐项实跑。结论——文件产出、四组反例、golden 四条协议断言、约束遵守（未碰
+`k4_*`/`cron/`、未 commit、无 baostock 抓数）全部属实；pytest 11 passed / 1 failed（仅既存 `factor_census`）。
+
+**打回一处（已由主 agent 接管修掉，不再续派）**：初版 `FATAL_STATUSES` 只含 `fatal_lag/missing/unregistered`，
+于是**致命数据集 `date_expr` 写错时 `status=unknown_date` 而退出码仍为 0，cron 报绿**——「解析不出」
+被静默吞掉，与 #330「数据不可信不许翻译成今天没事」是同一个形状。K3 自己把这列为待裁决点（诚实），
+但这一条不能留：`ops_briefing` 侧当时还另写了一份 `("fatal_lag","missing","unregistered")` 元组，
+两处出结论的老病灶当场复发。
+落定：`freshness_core.is_blocking(status, severity)` 作**唯一口径**（missing/unregistered/fatal_lag 一律阻断；
+`unknown_date` 仅 severity=fatal 阻断；warn/info 的 unknown_date 只进报告），引擎四处判定点
+（state 机 `fatal_active`/`fatal_days`、报告 🚨 段、退出码）与 `ops_briefing` 渲染全部改调它；
+`degraded` 段排除已阻断项防重复。golden 增 (e) 四条纯函数断言钉口径。
+
+**实跑验收（主 agent 自己跑，非转述）**：
+- 正例 `--ref-date 2026-10-19` → exit 0、stdout 零输出、`big_kcache` ok/lag=0、`emotion_series` ok、summary 和=10
+- 反例A 假 fatal 路径不存在 → `missing` + exit 1 + 告警列出阻塞面
+- 反例B fatal 级 `date_expr="[-1].nope"` → `unknown_date` + **exit 1**（修订后）；warn 级同样写错 → `unknown_date` + exit 0（不误伤）
+- 反例C fatal 无 blocks → exit 2 零写盘
+- 作战单三态冒烟：正常无数据面行 / `data_health.json` 缺失 fail-soft 仍出 24 行 / 伪造 fatal+unknown_date 出现 `🚨 数据面断供：big_kcache[unknown_date]`
+- 注册表改后一律还原并校验 md5 一致
+
+**K3 诚实自报的遗留**（未做，属裁决权）：①无 cron 跑 `data_health.py`（建议挂 20:40 面板班开头，零新增 job，
+18:35 太早——xrules/regime_log 可能未写完）；②`verify.sh` 的解释器发现不含 fenjue `.venv`（既存问题，P1）；
+③`kcache` 目录 21 个文件 18 个停在 10-13（新浪 schema 日期字段是 `day`），severity=warn，待 P1 白名单。
+
+**监控机上岗首日抓到一条真实滞后**：`xrules_state` 末端 10-16、lag=1 判 stale——10-19 kcache 事故时它正确
+拒判、补数后没人重跑。这条正是「数据面没人管」的活标本。

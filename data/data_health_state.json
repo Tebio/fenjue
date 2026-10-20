@@ -1,0 +1,146 @@
+{
+ "items": {
+  "big_kcache": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "ok",
+     "sev": "fatal",
+     "lag": 0,
+     "ref": "2026-10-19"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "kcache": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "ok",
+     "sev": "warn",
+     "lag": 0,
+     "ref": "2026-10-19"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "emotion_series": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "ok",
+     "sev": "fatal",
+     "lag": 0,
+     "ref": "2026-10-19"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "regime_timeline_hcap": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "ok",
+     "sev": "fatal",
+     "lag": 0,
+     "ref": "2026-10-19"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "ops_state": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "ok",
+     "sev": "fatal",
+     "lag": 0,
+     "ref": "2026-10-19"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "index_sh000001": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "ok",
+     "sev": "fatal",
+     "lag": 0,
+     "ref": "2026-10-19"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "regime_log": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "ok",
+     "sev": "warn",
+     "lag": 0,
+     "ref": "2026-10-19"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "xrules_state": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "stale",
+     "sev": "warn",
+     "lag": 1,
+     "ref": "2026-10-19"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "line_health": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "ok",
+     "sev": "warn",
+     "lag": 0,
+     "ref": "2026-10-19"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  },
+  "watch_pool": {
+   "history": [
+    {
+     "date": "2026-10-20",
+     "status": "ok",
+     "sev": "info",
+     "lag": 0,
+     "ref": "2026-10-19"
+    }
+   ],
+   "bad_since": null,
+   "fatal_days": 0,
+   "fatal_active": false
+  }
+ },
+ "updated_at": "2026-10-20T12:07:45+08:00",
+ "date": "2026-10-20"
+}

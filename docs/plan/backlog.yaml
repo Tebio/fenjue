@@ -710,3 +710,48 @@ not_doing:
   - id: NT-08
     title: 杠杆 / 对冲掉自己的 beta
     reason: 不用杠杆是天然免疫（LTCM/Archegos 式强制平仓）；beta 敞口用回撤预算与 regime 闸门管理，不用对冲工具（#267）
+
+  - id: DATA-01
+    title: 数据面监控机 data_health（注册表驱动 + 三输出 + 缺口可见 + golden 自检）
+    area: DATA
+    priority: P0
+    status: done
+    gate: G1
+    depends_on: [PLAT-00]
+    ledger_ref: 330
+    inputs:
+      - docs/plan/specs/DATA-01-data-health.md
+      - engine/line_health.py（形态参照）
+      - engine/trade_calendar.py（交易日基准）
+      - data/big_kcache/ data/emotion_series.jsonl（首批注册数据集）
+    outputs:
+      - engine/data_health.py
+      - engine/freshness_core.py
+      - data/datasets_registry.yaml
+      - data/data_health.json
+      - data/data_health_state.json
+      - data/data_health_report.md
+      - data/health/YYYY-MM-DD.json
+      - tests/golden（data_health_snapshot case）
+    acceptance:
+      - python engine/data_health.py --ref-date 2026-10-19 退出码 0 且 big_kcache.status=ok / lag=0
+      - 假 fatal 数据集 → status=missing 且退出码 1；date_expr 写错 → unknown_date 不许降级 ok
+      - fatal 无 blocks → 配置错误退出码 2
+      - big_kcache/ops-state/regime_timeline_hcap/emotion_series 四项 status 与 build_daily_state.freshness 一致或差异逐条解释
+      - 全量体检 <60s、<300MB，不加载宇宙、不抓 baostock
+      - golden data_health_snapshot 四条协议断言全绿
+    effort_days: 1.0
+    evidence: >-
+      2026-10-20 验收全过（报告 research/DATA-01_report.md，台账 #331）：
+      正例 --ref-date 2026-10-19 exit 0、stdout 零输出、0.36s/20.0MB，
+      big_kcache ok/lag=0、emotion_series ok（2131 行末端 10-19），summary 各项和 10=注册表条目数，
+      xrules_state 实抓 stale lag=1（末端 10-16，10-19 kcache 事故未重跑的真实状态）；
+      反例A 假 fatal 数据集 status=missing+exit 1+报告含 key；反例B date_expr "[-1].nope" →
+      unknown_date 未降级 ok；反例C fatal 无 blocks → exit 2 配置错误；
+      幂等：同日重跑 stdout 零输出不重复告警不重复计数；
+      pytest tests/test_golden_master.py 11 过 1 败（factor_census 25vs24 既存 #329，非本卡），
+      data_health 两测试（golden snapshot + 四条协议断言）全绿；
+      对照 bds.freshness：ops_state/regime_timeline_hcap 两基准日映射后一致，
+      big_kcache/emotion_series 差异=bds 无调用点（正是本卡补的洞）；
+      ops_briefing 三态冒烟全过（无 fatal 无行/有 fatal 渲染/文件缺失静默跳过）。
+      遗留：每日生成端挂哪个既有班未接（需用户裁决，未动 cron）。

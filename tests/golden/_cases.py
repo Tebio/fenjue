@@ -276,10 +276,56 @@ def case_factor_census() -> dict:
 
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# 6. data_health 注册表协议快照（DATA-01 数据面监控机）
+# ---------------------------------------------------------------------------
+
+def case_data_health_snapshot() -> dict:
+    """DATA-01 数据源注册表的声明快照 + 四条协议断言（spec §验收-协议自检）。
+
+    冻结对象 = 注册表**声明**（path/date_expr/cadence/max_lag/severity/blocks/owner）
+    与四条协议不变量的布尔值；**不冻结解析出的日期**（它每天前进，冻结=每天红）。
+    不变量翻转 = golden 漂移 = 测试红——这正是协议断言的本职：
+      (a) 每个注册条目都能解析出日期（date_expr 写错/产物结构变了立即被抓）
+      (b) severity=fatal 必带 blocks（fatal 无阻塞面 = 告警无人认领）
+      (c) blocks 里每个下游名 ∈ 注册表 consumers 封闭清单
+      (d) big_kcache/emotion_series/regime_timeline_hcap/ops_state/kcache 必在册
+          （防新数据集绕过注册）
+    """
+    import freshness_core as fc
+    doc = fc.load_registry()
+    ds = doc.get("datasets") or {}
+    consumers = set(doc.get("consumers") or [])
+    mandatory5 = ["big_kcache", "emotion_series", "regime_timeline_hcap", "ops_state", "kcache"]
+    parseable = {}
+    for key, spec in ds.items():
+        d = fc.extract_date(fc.ROOT / spec["path"], spec["date_expr"])
+        parseable[key] = d is not None
+    return {
+        "registry_version": doc.get("registry_version"),
+        "consumers": sorted(consumers),
+        "mandatory": list(doc.get("mandatory") or []),
+        "datasets": {k: {f: (sorted(v[f]) if f == "blocks" else v[f])
+                         for f in ("path", "date_expr", "cadence", "max_lag", "severity", "blocks", "owner")}
+                     for k, v in sorted(ds.items())},
+        "invariants": {
+            "a_date_parseable": parseable,
+            "b_fatal_has_blocks": {k: (v.get("severity") != "fatal") or bool(v.get("blocks"))
+                                   for k, v in ds.items()},
+            "c_blocks_known_consumers": {k: set(v.get("blocks") or []) <= consumers
+                                         for k, v in ds.items()},
+            "d_mandatory_registered": {k: k in ds for k in mandatory5},
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+
 CASES = {
     "law_pipeline_three": case_law_pipeline_three,
     "similarity_knn": case_similarity_knn,
     "regime_meter_classify": case_regime_meter_classify,
     "console_price_band": case_console_price_band,
     "factor_census": case_factor_census,
+    "data_health_snapshot": case_data_health_snapshot,
 }

@@ -121,3 +121,44 @@ def test_console_bands_monotonic():
         b = v["bands"]
         assert b["buy"] <= b["sell"] <= b["clear"], f"{key} 价格带非单调：{b}"
         assert b["add50"] <= b["buy"], f"{key} 5%加仓线应不高于买入线：{b}"
+
+
+def test_data_health_protocol():
+    """DATA-01 四条协议断言（spec §验收-协议自检）+ 配置错误路径。
+
+    与 oracle 无关：即使 oracle 被误刷新，这四条也必须站住（防「注册表腐化」）。
+    """
+    import freshness_core as fc
+    got = C.case_data_health_snapshot()
+    inv = got["invariants"]
+    # (a) 每个注册条目都能解析出日期（unknown_date 不许静默降级 ok 的前置闸）
+    for key, ok in inv["a_date_parseable"].items():
+        assert ok, f"(a) {key} 的 date_expr 解析不出日期——表达式写错或产物结构变了"
+    # (b) fatal 必带 blocks
+    for key, ok in inv["b_fatal_has_blocks"].items():
+        assert ok, f"(b) {key} severity=fatal 但 blocks 为空——fatal 必须声明阻塞面"
+    # (c) blocks ∈ consumers 封闭清单
+    for key, ok in inv["c_blocks_known_consumers"].items():
+        assert ok, f"(c) {key} 的 blocks 含未登记消费者（须先加进 consumers 清单）"
+    # (d) 五个关键数据集必在册（防新数据集绕过注册）
+    for key, ok in inv["d_mandatory_registered"].items():
+        assert ok, f"(d) {key} 不在注册表——mandatory 必注册集被绕过"
+    # (e) is_blocking 唯一口径：致命集的「解析不出」必须阻断，非致命集不阻断
+    #     （2026-10-20 复核打回点：K3 初版 unknown_date 不进退出码，fatal 集 date_expr
+    #      写错时 cron 仍报绿——与 #330「数据不可信不许翻译成今天没事」直接冲突）
+    assert fc.is_blocking("unknown_date", "fatal") is True, "(e) 致命集日期解析不出必须阻断"
+    assert fc.is_blocking("unknown_date", "warn") is False, "(e) 非致命集 unknown_date 不许阻断"
+    assert fc.is_blocking("missing", "warn") is True, "(e) 文件缺失不分级别，一律阻断"
+    assert fc.is_blocking("stale", "fatal") is False, "(e) stale 只是滞后未超阈，不阻断"
+    # 状态词表钉死（下游按词消费，改词=改协议）
+    assert fc.STATUSES == ("ok", "stale", "fatal_lag", "missing", "unregistered", "unknown_date")
+    # 现役注册表必须零配置错误
+    doc = fc.load_registry()
+    assert fc.validate_registry(doc) == [], f"注册表配置错误：{fc.validate_registry(doc)}"
+    # 配置错误路径（spec 反例 C 的单元级固化）：fatal 无 blocks → 必须被拒绝
+    bad = {"registry_version": "t", "consumers": ["x"], "mandatory": [],
+           "datasets": {"fake": {"path": "data/nope", "date_expr": "[-1].date",
+                                  "cadence": "daily", "max_lag": 0, "severity": "fatal",
+                                  "blocks": [], "owner": "t"}}}
+    errs = fc.validate_registry(bad)
+    assert any("blocks" in e for e in errs), "fatal 无 blocks 必须被配置校验抓住（exit 2 语义）"

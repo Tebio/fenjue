@@ -1,0 +1,185 @@
+{
+ "_meta": {
+  "version": "data_health/1.0 (2026-10-20, DATA-01)",
+  "date": "2026-10-20",
+  "generated_at": "2026-10-20T12:07:45+08:00",
+  "registry_version": "1.0 (2026-10-20, DATA-01)",
+  "ref_date": "2026-10-19",
+  "ref_source": "--ref-date",
+  "discipline": "read-only + 落盘 + 提案；不自动补数/重跑（#278 同纪律）",
+  "elapsed_s": 0.18
+ },
+ "items": {
+  "big_kcache": {
+   "key": "big_kcache",
+   "path": "data/big_kcache",
+   "date": "2026-10-19",
+   "status": "ok",
+   "severity": "fatal",
+   "lag": 0,
+   "cadence": "daily",
+   "max_lag": 0,
+   "blocks": [
+    "深档名单",
+    "影子盘",
+    "周期仪",
+    "权威时间轴",
+    "X规则线"
+   ],
+   "owner": "engine/update_kcache.py（18:30/19:00 分片 + 21:00 兜漏）",
+   "reason": ""
+  },
+  "kcache": {
+   "key": "kcache",
+   "path": "data/kcache",
+   "date": "2026-10-19",
+   "status": "ok",
+   "severity": "warn",
+   "lag": 0,
+   "cadence": "daily",
+   "max_lag": 0,
+   "blocks": [
+    "影子盘"
+   ],
+   "owner": "fen_shadow.py（线1影子随取随更）",
+   "reason": ""
+  },
+  "emotion_series": {
+   "key": "emotion_series",
+   "path": "data/emotion_series.jsonl",
+   "date": "2026-10-19",
+   "status": "ok",
+   "severity": "fatal",
+   "lag": 0,
+   "cadence": "daily",
+   "max_lag": 0,
+   "blocks": [
+    "周期仪",
+    "权威时间轴"
+   ],
+   "owner": "engine/emotion_series.py（15:40 周期仪班）",
+   "reason": ""
+  },
+  "regime_timeline_hcap": {
+   "key": "regime_timeline_hcap",
+   "path": "data/regime_timeline_hcap.json",
+   "date": "2026-10-19",
+   "status": "ok",
+   "severity": "fatal",
+   "lag": 0,
+   "cadence": "daily",
+   "max_lag": 0,
+   "blocks": [
+    "面板20:40",
+    "日度状态包",
+    "回测族"
+   ],
+   "owner": "engine/regime_daily_append.py（18:35 班）",
+   "reason": ""
+  },
+  "ops_state": {
+   "key": "ops_state",
+   "path": "docs/ops-state.json",
+   "date": "2026-10-19",
+   "status": "ok",
+   "severity": "fatal",
+   "lag": 0,
+   "cadence": "daily",
+   "max_lag": 0,
+   "blocks": [
+    "作战单9:25",
+    "盘前自检"
+   ],
+   "owner": "engine/dashboard_build.py（20:40 面板班写出）",
+   "reason": ""
+  },
+  "index_sh000001": {
+   "key": "index_sh000001",
+   "path": "data/index_sh000001.json",
+   "date": "2026-10-19",
+   "status": "ok",
+   "severity": "fatal",
+   "lag": 0,
+   "cadence": "daily",
+   "max_lag": 0,
+   "blocks": [
+    "权威时间轴",
+    "周期仪"
+   ],
+   "owner": "engine/update_kcache.py（update_index 段）",
+   "reason": ""
+  },
+  "regime_log": {
+   "key": "regime_log",
+   "path": "data/regime_log.jsonl",
+   "date": "2026-10-19",
+   "status": "ok",
+   "severity": "warn",
+   "lag": 0,
+   "cadence": "daily",
+   "max_lag": 0,
+   "blocks": [
+    "面板20:40"
+   ],
+   "owner": "engine/regime_daily_append.py（18:35 班）",
+   "reason": ""
+  },
+  "xrules_state": {
+   "key": "xrules_state",
+   "path": "data/xrules_state.json",
+   "date": "2026-10-16",
+   "status": "stale",
+   "severity": "warn",
+   "lag": 1,
+   "cadence": "daily",
+   "max_lag": 0,
+   "blocks": [
+    "作战单9:25",
+    "面板20:40"
+   ],
+   "owner": "engine/xrules_daily.py",
+   "reason": "滞后 1 交易日 > max_lag 0（末端 2026-10-16，基准 2026-10-19）"
+  },
+  "line_health": {
+   "key": "line_health",
+   "path": "data/line_health.json",
+   "date": "2026-10-19",
+   "status": "ok",
+   "severity": "warn",
+   "lag": 0,
+   "cadence": "daily",
+   "max_lag": 0,
+   "blocks": [
+    "晨报",
+    "日度状态包"
+   ],
+   "owner": "engine/line_health.py",
+   "reason": ""
+  },
+  "watch_pool": {
+   "key": "watch_pool",
+   "path": "data/watch_pool.json",
+   "date": "2026-10-19",
+   "status": "ok",
+   "severity": "info",
+   "lag": 0,
+   "cadence": "daily",
+   "max_lag": 1,
+   "blocks": [
+    "日度状态包",
+    "面板20:40"
+   ],
+   "owner": "engine/watch_pool.py",
+   "reason": ""
+  }
+ },
+ "summary": {
+  "ok": 9,
+  "stale": 1,
+  "fatal_lag": 0,
+  "missing": 0,
+  "unregistered": 0,
+  "unknown_date": 0,
+  "total": 10
+ }
+}

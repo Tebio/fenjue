@@ -98,6 +98,17 @@ def main():
         L.append("🚨 分位序列缺失，本次腿一退回绝对家数兜底——判定不可信，先查数据")
     if reg.get("advice"):
         L.append(f'🧭 {reg["advice"]}')
+    # 数据面监控一行（DATA-01）：只在有 fatal 断供时说话（看门狗纪律）；
+    # data_health.json 缺失/坏掉 → 静默跳过——作战单每日必发，绝不许因它发不出
+    try:
+        from freshness_core import is_blocking as _is_blocking  # 唯一口径，禁止在此另写一份
+        _dh = jload(D + "/data_health.json", {}) or {}
+        _bad = [f'{_k}[{_v.get("status")}]' for _k, _v in (_dh.get("items") or {}).items()
+                if _is_blocking(_v.get("status"), _v.get("severity"))]
+        if _bad:
+            L.append(f'🚨 数据面断供：{"、".join(_bad)} —— 相关下游结论先别信，详见 data/data_health_report.md')
+    except Exception:
+        pass
     # 环境快照行（2026-09-27 全面升级：段龄+下阶段概率+三门+四象限+节日窗）
     try:
         from env_state import env_state, fmt_brief
