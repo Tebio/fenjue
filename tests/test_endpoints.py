@@ -14,23 +14,44 @@ from fastapi.testclient import TestClient
 from engine.database import create_tables, get_db
 from api.app import app
 
+# Startup 事件只在 TestClient 被当作上下文管理器使用时才触发；
+# pytest 里直接 `client.get(...)` 不触发 → 表不存在 → OperationalError。
+# 显式建表，让这个用例在两种跑法（pytest / 直接执行）下行为一致。
+create_tables(db_path)
+
 client = TestClient(app)
 
 
 def seed():
+    """幂等播种：pytest 与直接执行两条路径都会调，重复调用不得报错。"""
     with get_db(db_path) as db:
         db.execute(
-            "INSERT INTO stocks(id,code,name,market) VALUES(1,'600141','兴发集团','SH')"
+            "INSERT OR REPLACE INTO stocks(id,code,name,market) VALUES(1,'600141','兴发集团','SH')"
         )
         db.execute(
-            """INSERT INTO daily_score(stock_id,date,total_score,
+            """INSERT OR REPLACE INTO daily_score(id,stock_id,date,total_score,
                industry_score,flow_score,inst_score,margin_score,
                quant_score,expect_score,expectation_gap,confidence,tier,regime)
-               VALUES(1,date('now'),7.2,7.5,6.8,7.0,6.5,5.0,7.3,0.8,0.85,'S','risk_on')"""
+               VALUES(1,1,date('now'),7.2,7.5,6.8,7.0,6.5,5.0,7.3,0.8,0.85,'S','risk_on')"""
         )
         db.execute(
-            "INSERT INTO watchlist(stock_id,tier,odds,win_rate,cycle) VALUES(1,'S',2.5,0.65,'主升')"
+            "INSERT OR REPLACE INTO watchlist(id,stock_id,tier,odds,win_rate,cycle) "
+            "VALUES(1,1,'S',2.5,0.65,'主升')"
         )
+
+
+try:
+    import pytest
+
+    @pytest.fixture(autouse=True)
+    def _seed_db():
+        """pytest 路径：每个用例前确保数据在（原文件只喂 __main__ 路径，
+        pytest 下 seed() 从不执行 → 表空 → 404/空列表 的假失败）。"""
+        create_tables(db_path)
+        seed()
+        yield
+except ImportError:      # 裸解释器直接跑时的兜底
+    pass
 
 
 def test_score():

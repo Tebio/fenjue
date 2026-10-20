@@ -780,10 +780,10 @@ items:
     title: 血缘表 + DATA_STALE 联动（影响半径与"数据不可信不推断策略失效"）
     area: DATA
     priority: P1
-    status: todo
+    status: done
     gate: G1
     depends_on: [DATA-06]
-    ledger_ref: 332
+    ledger_ref: 345
     inputs:
       - docs/plan/specs/DATA-08-lineage.md
       - data/datasets_registry.yaml / data/claims_registry.yaml
@@ -798,6 +798,7 @@ items:
       - golden 新增血缘一致性 case（dataset.blocks == lineage.direct）
     note: 2026-10-20 派单前自检把原 spec 的二期项拆出——stale_claims() 依赖 claims_registry 的
       inputs 字段，实测该字段不存在（grep 0 处），故二期阻塞在 DATA-08b。详见 spec 的「自检修订 R1」。
+      一期（lineage.yaml + impact + 三条机械断言 + golden）已完成（2026-10-20，见 AGENTS #344），待审计。
     effort_days: 1.5
     evidence: ''
 

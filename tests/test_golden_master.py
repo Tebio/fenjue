@@ -57,6 +57,21 @@ def test_law_pipeline_registry_intact():
     assert lp.NW_MIN_T == 3.0, "Harvey 门槛被改动"
 
 
+def test_lineage_direct_matches_registry_blocks():
+    """DATA-08 血缘一致性（不依赖 oracle）：每个注册数据集的 lineage.direct 逐字 == 注册表 blocks。
+
+    顺带把 validate() 全量跑一遍——三条机械断言（脚本存在 / glob 命中 / trigger 可查）
+    与结构断言（consumers 封闭清单、全覆盖）任一失败都会在这里变红。
+    """
+    import lineage as lg
+    registry = lg.load_registry()
+    doc = lg.load_lineage()  # 内部即 validate()，失败直接 raise
+    for key, spec in (registry.get("datasets") or {}).items():
+        direct = list(doc["datasets"][key]["direct"])
+        assert direct == list(spec["blocks"]), \
+            f"数据集 {key}: lineage.direct {direct} != 注册表 blocks {spec['blocks']}"
+
+
 def test_similarity_engines_agree():
     """三引擎必须在同一批查询点上给出同结果（父卡 t_05a4241d 对拍的固化版）。"""
     got = C.case_similarity_knn()

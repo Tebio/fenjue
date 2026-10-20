@@ -1,0 +1,140 @@
+# data/lineage.yaml — DATA-08 一期·血缘表（唯一真源 spec：docs/plan/specs/DATA-08-lineage.md，含「自检修订 R1」）
+#
+# 结构（规范化存储，遵守仓库「单一定义原则」）：
+#   downstreams:  每个下游名定义一次（producer / trigger / artifacts / reports）
+#   datasets:     每个注册数据集的 direct 下游名列表 —— **必须逐字等于注册表 blocks**
+#                 （硬断言，engine/lineage.py validate() 加载时执行，不等即 raise）
+# impact(dataset) 的输出形态不受本文件拓扑影响：direct / artifacts / reports 都会
+# 按数据集解析铺开。spec 2.1 的「dataset → direct → artifacts → reports」导航成立。
+#
+# 每条断言的代码出处（PROTOCOL 第 5 项纪律）写在各条目 comment 里。
+# cron id 的离线比对源 = cron_snapshot 指向的快照（重录纪律见快照 _meta）。
+lineage_version: "1.0 (2026-10-20, DATA-08 一期)"
+cron_snapshot: tests/golden/cron_snapshot.json
+
+downstreams:
+  深档名单:
+    # 日更生产者 = 面板构建里的 deep_low_scan（注册表 consumers 注释点名）：
+    #   定义 engine/dashboard_build.py:232，读 big_kcache 于 engine/dashboard_build.py:256
+    # breaker 接线（DEGRADE_MARK）在 engine/k4_deep_v2.py:83 / engine/k3_deep_low_v2.py:136，
+    # 这两个是手动三版定稿重算脚本（非日更），产物 research/k4_out/k4_deep_v2.json /
+    # data/k3_deep_low_v2_results.json 属一次性研究产物，不登记为日常 artifacts。
+    producer: engine/dashboard_build.py
+    trigger: {cron: 02ef64d83cee}        # 操作台重建-晚间20:40BJT → stock_dashboard_build.py
+    artifacts:
+      - {glob: "docs/dashboard.json"}    # 深档段落实证：grep -c 深档 docs/dashboard.json = 1
+    reports: []
+
+  影子盘:
+    # 主张影子盘（breaker WRITE_BLOCK 接线 engine/claims_shadow.py:268；
+    # 落盘 claims_shadow.py:370 jsonl / :389 summary）。
+    # 线1影子 stock_shadow_record.py（9:45合并班 acb0d4e9a8ac，20 天自终止 flag 未出现）
+    # 是另一入口，产物 data/shadow_intents.jsonl 一并登记；它未接 breaker（AGENTS #340 遗留③）。
+    producer: engine/claims_shadow.py
+    trigger: {cron: 82e54a0a812f}        # 焚诀主张影子盘日更 → stock_claims_shadow.py
+    artifacts:
+      - {glob: "data/claims_shadow.jsonl"}
+      - {glob: "data/claims_shadow_summary.json"}
+      - {glob: "data/shadow_intents.jsonl"}
+    reports: []
+
+  周期仪:
+    # breaker 接线 engine/regime_meter.py:323；写 regime_log.jsonl 于 :326、--hist 写
+    # regime_hist.jsonl 于 :308。
+    # ⚠️ 当前无 cron 作业：/opt/data/scripts/stock_regime_1540.py 存在但 70 个 job 里查不到
+    # （AGENTS.md:84 记载的 15:40 班是已到期里程碑班）；每日 regime_log 的日更实际由
+    # regime_daily_append 覆盖写（见「权威时间轴」）。meter 本体现为手动/盘中工具。
+    # doc_ref 行记载的是三个 regime 入口的角色分工，含脚本名；没有记载字面手动命令的
+    # 文档行——这是本表最弱的一条 doc_ref，如实标注。
+    producer: engine/regime_meter.py
+    trigger: {manual: "AGENTS.md:788"}
+    artifacts:
+      - {glob: "data/regime_log.jsonl"}
+      - {glob: "data/regime_hist.jsonl"}
+    reports: []
+
+  权威时间轴:
+    # breaker WRITE_BLOCK 接线 engine/regime_daily_append.py:222；
+    # 写 timeline 于 :126、覆盖写 regime_log 于 :153。
+    producer: engine/regime_daily_append.py
+    trigger: {cron: 475cdafce644}        # 焚诀regime权威轴日更（20:10BJT）→ stock_regime_append.py
+    artifacts:
+      - {glob: "data/regime_timeline_hcap.json"}
+      - {glob: "data/regime_log.jsonl"}
+    reports: []
+
+  X规则线:
+    # breaker WRITE_BLOCK 接线 engine/xrules_daily.py:154；写 state 于 :305、shadow 于 :99。
+    producer: engine/xrules_daily.py
+    trigger: {cron: 036130e2e17b}        # 焚诀X规则线日判（20:15BJT）→ stock_xrules_daily.py
+    artifacts:
+      - {glob: "data/xrules_state.json"}
+      - {glob: "data/xrules_shadow.jsonl"}
+    reports: []
+
+  作战单9:25:
+    # breaker DEGRADE_MARK 接线 engine/ops_briefing.py:45；写 ledger 于 :270。
+    # 主产物=stdout 推送（不落盘），ledger 是唯一落盘文件。
+    producer: engine/ops_briefing.py
+    trigger: {cron: 024e14d44009}        # 盘前作战单（每交易日9:25）→ stock_ops_briefing.py
+    artifacts:
+      - {glob: "data/ops_briefing_ledger.jsonl"}
+    reports: []
+
+  面板20:40:
+    # breaker DEGRADE_MARK 接线 engine/dashboard_build.py:328；
+    # 写 dashboard.json 于 :1505、ops-state.json 于 :1537。
+    producer: engine/dashboard_build.py
+    trigger: {cron: 02ef64d83cee}        # 操作台重建-晚间20:40BJT → stock_dashboard_build.py
+    artifacts:
+      - {glob: "docs/dashboard.json"}
+      - {glob: "docs/ops-state.json"}
+    reports: []
+
+  日度状态包:
+    # breaker DEGRADE_MARK 接线 engine/build_daily_state.py:440。
+    # 当前零 cron 调用方（spec 勘察证据①：全库 grep 无 import/无 subprocess），
+    # 手动命令记载于 docs/daily_state-schema.md:14
+    # （spec 原文写 docs/daily-state-schema.md:14——文件名是下划线不是连字符，spec 笔误，
+    #  行号 14 经核对无误）。产物停在 2026-10-15，属预留工具，glob 仍能命中历史包。
+    producer: engine/build_daily_state.py
+    trigger: {manual: "docs/daily_state-schema.md:14"}
+    artifacts:
+      - {glob: "data/daily_state/*.json"}
+    reports: []
+
+  盘前自检:
+    # 只读拼合 CLI（七段一页，docs/agents-archive-261-300.md:287），breaker EXEMPT 恒放行。
+    # 手动命令记载于 docs/daily_state-schema.md:82。
+    # 全文件 grep 无 write_text/json.dump —— 产物就是 stdout，没有任何落盘文件，
+    # 故 artifacts 走 allow_empty 白名单（显式可见，不是放宽断言）。
+    producer: engine/preflight.py
+    trigger: {manual: "docs/daily_state-schema.md:82"}
+    artifacts:
+      - glob: "data/preflight*.json"
+        allow_empty: true
+        allow_empty_reason: "preflight 为只读拼合 CLI，产物=stdout 无落盘；未来若加落盘产物，移除此白名单并命中断言"
+    reports: []
+
+  回测族:
+    # regime 权威时间轴的历史重建器：写 timeline 于 engine/regime_backtest_hcap.py:97。
+    # breaker EXEMPT（研究回测不熔断）。无 cron；脚本名与角色记载于 AGENTS.md:788。
+    producer: engine/regime_backtest_hcap.py
+    trigger: {manual: "AGENTS.md:788"}
+    artifacts:
+      - {glob: "data/regime_timeline_hcap.json"}
+    reports: []
+
+# direct 列表逐字 == data/datasets_registry.yaml 各数据集 blocks（顺序也一致）。
+# 改注册表 blocks 而不改本表（或反之）→ validate() 加载即 raise。
+datasets:
+  big_kcache:            {direct: [深档名单, 影子盘, 周期仪, 权威时间轴, X规则线]}
+  kcache:                {direct: [影子盘]}
+  emotion_series:        {direct: [周期仪, 权威时间轴]}
+  regime_timeline_hcap:  {direct: [面板20:40, 日度状态包, 回测族]}
+  ops_state:             {direct: [作战单9:25, 盘前自检]}
+  index_sh000001:        {direct: [权威时间轴, 周期仪]}
+  regime_log:            {direct: [面板20:40]}
+  xrules_state:          {direct: [作战单9:25, 面板20:40]}
+  line_health:           {direct: [日度状态包]}
+  watch_pool:            {direct: [日度状态包, 面板20:40]}

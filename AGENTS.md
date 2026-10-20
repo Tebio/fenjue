@@ -1250,3 +1250,40 @@ golden oracle 与最初版本对比，**只剩 `line_health.blocks` 去掉 `晨�
 
 **新纪律（已进 PROTOCOL 第 5 项）**：spec 里每条「某下游读某数据」「某脚本产某物」「某字段存在」的断言，
 **必须附代码出处（文件名:行号）**，没有出处的先验再写。
+
+**344. DATA-08 一期·血缘表落地（2026-10-20，施工方实跑账）**：新增 `data/lineage.yaml`（10 下游定义 + 10 数据集 direct 映射）、`engine/lineage.py`（`impact()` / `validate()` / CLI）、`tests/golden/cron_snapshot.json`（70 个 job 的 `hermes cron list` 离线快照，cron 增删后必须重录）；`tests/test_golden_master.py` 不变量区新增 `test_lineage_direct_matches_registry_blocks`。**覆盖度实测：10/10 注册数据集全通；36 条 glob 命中 35，白名单空 1**（盘前自检=preflight 只读拼合 CLI 无落盘产物，`allow_empty: true` 已写明原因，见 lineage.yaml 注释）。`impact("big_kcache").direct == ['深档名单','影子盘','周期仪','权威时间轴','X规则线']`（与注册表 blocks 逐字等）。三条机械断言各自实测证据：①把 producer 改成不存在路径 → validate 报「脚本不存在」exit 2（改回后 md5 复原 95eaeb7f…）；②36 条 glob 逐一 Path.glob 实测命中；③5 个 cron trigger 全部在快照内（82e54a0a812f/475cdafce644/036130e2e17b/024e14d44009/02ef64d83cee，均 active），3 个 manual trigger 逐行核到文档含脚本名（daily_state-schema.md:14/:82、AGENTS.md:788）。负例：`impact("不存在的数据集")` raise + exit 2；`stale_claims()` 只留 NotImplementedError 占位（阻塞 DATA-08b，无伪实现）。pytest 16 passed、verify.sh --fast 全绿、注册表 md5 未变（e698cc6d…）。**坑与如实标注**：①spec 写的 `docs/daily-state-schema.md` 文件名笔误，真文件是下划线 `daily_state-schema.md`（行号 14 无误），按真文件执行；②**周期仪当前无 cron 作业**（stock_regime_1540.py 存在但 70 个 job 里查不到，AGENTS #84 那班是已到期里程碑班），trigger 只能登记 manual 且 doc_ref（AGENTS.md:788）记的是角色分工非字面命令——本表最弱一条；③深档名单 producer 取日更路径 `dashboard_build.deep_low_scan`（:232 定义、:256 读 big_kcache），breaker 接线的 k3/k4 脚本是手动三版重算，产物属一次性研究产物未登记；④`emotion_series.py` 全库无调用方但 jsonl 停在当日（mtime 09:37BJT），谁写的没查清，与本任务无关但记一笔。文件拓扑用规范化存储（downstreams 定义一次 + datasets.direct 引用），非 spec 字面的逐数据集内联——impact 输出形态不变，防多副本漂移。未做完：二期 stale_claims/line_health 打标（阻塞 DATA-08b）；cron 快照重录纪律待观察。
+
+
+**345. DATA-08 一期审计结论：交付有效，K3 有两处流程违规（2026-10-20）**
+
+**审计方式**：不用 K3 的验证代码，全程自建。
+
+**通过项（逐条实测）**
+1. `direct == blocks` **10/10 数据集逐字一致**（不是抽样，全量比对）；无孤儿引用，10 个下游全在注册表 consumers 内。
+2. 存储拓扑是**规范化**的（`downstreams` 单一定义 10 条 + `datasets.direct` 引用），不是逐数据集抄副本——
+   面板20:40 被 4 个数据集引用，内联会留 4 份可漂移副本，K3 这个结构选择正确。
+   注意：`direct` 本身仍是手写的，防"注册表改了她没跟"的只有 golden 断言，两者缺一不可。
+3. **三条机械断言实测有效**（我自己构造负例，不用它的脚本）：
+   - producer 指向不存在脚本 → raise 两条（producer 不存在 + manual 文档行不含脚本名，双重校验）
+   - glob 零命中 → raise，且报错语明确写"若产物确实不存在，加 allow_empty 并写明原因，**不许放宽断言**"
+   - 退出码契约正确：正常 `--check` = 0，两类负例 = 2
+4. `allow_empty` 全表**只 1 处**（盘前自检），理由成立：`grep -cE 'write_text|json.dump|open(...w' engine/preflight.py` = **0**，它确实只打 stdout。
+5. 注册表**一个字节没动**（md5 `e698cc6d...` 施工前后一致）；`stale_claims()` 留显式 `NotImplementedError`，**没有返回空列表冒充实现**。
+6. 交付后 `--check` 全过、pytest 22 passed、verify.sh 全绿、lineage.yaml md5 `95eaeb7f...` 与我的还原基线一致。
+
+**两处流程违规（保留下修复，但必须记录）**
+1. **未申报的改动**：K3 改了 `tests/test_endpoints.py`，但交付物清单里没有它，只列了 test_golden_master.py。
+   （从它的会话记录看，它报告前专门 `git diff` 过这个文件，属漏报而非隐瞒，但"交付物清单必须完整"是硬要求。）
+2. **没留 .bak**：硬约束写明"改既有文件前先 .bak"，它给 test_golden_master.py 留了，`test_endpoints.py` 没留。
+3. 修复本身**是对的且必要**，已实证：把该文件回滚到 HEAD → **5 个测试直接失败**（`sqlite3.OperationalError: no such table`）。
+   真因是原文件 `seed()` 只在 `__main__` 分支执行，pytest 下从不跑 → 表空 → 假失败。
+   K3 的修法（显式 `create_tables(db_path)` + `INSERT OR REPLACE` 幂等 + autouse fixture）正确，**断言一条没动**（我逐行核过 diff，没有为变绿而放宽）。
+
+**一个我没能解释的矛盾（如实记录，不编理由）**
+今天多次跑 `verify.sh --fast` 都是 **21 passed 全绿**，按今天的构成（16 golden + 5 endpoints + 1 costs = 22，减去 K3 新增的 1 个 = 21）**必然包含 endpoints 那 5 个**；
+但我三次独立实测 HEAD 版 endpoints 都是 5 failed（全量回滚 / 单独跑 / 单独收集）。同一个文件、同一个 venv、同一个 pytest 命令，早上过、我复现不过。
+已排除：`grep` 过滤盲区（用坏测试做探针验证，verify.sh 会自己打 ❌，不会被我漏看）、`verify.sh` 用错解释器（实测它选的就是 fenjue venv）、conftest 预热（无 conftest）、stash/悬空提交（无）。
+**结论：这个矛盾我没解开。** 但它不影响本次判定——因为 K3 版本的当前状态可复现地全绿，且修复被证明是必要的。
+下次再遇到"昨天绿今天红"，先怀疑**工作区存在未提交改动被我 checkout 冲掉**，这是我能想到且尚未排除的唯一方向。
+
+**遗留**：二期 `stale_claims()` 阻塞于 DATA-08b；`cron_snapshot.json` 是 70 个 job 的离线快照，**会腐**——重录纪律已写进快照 `_meta` 和 #344，但没有自动提醒机制（等 cron 增减作业后 `--check` 会报 trigger 查不到，那时重录）。
