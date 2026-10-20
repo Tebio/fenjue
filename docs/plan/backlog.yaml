@@ -802,3 +802,27 @@ not_doing:
       - golden 血缘一致性 case（dataset.blocks == lineage.direct）
     effort_days: 1.5
     evidence: ''
+
+  - id: RES-10
+    title: 高位剧震回避黑名单（AVOID）终审与注册 — 分年验尸 + 三口径 + 位置匹配
+    area: RES
+    priority: P1
+    status: todo
+    gate: G1
+    ledger_ref: 334
+    inputs:
+      - docs/plan/specs/RES-10-r4-climax-avoid.md
+      - engine/research_queue_20260919.py（r4() 事件定义，逐行复用）
+      - data/big_kcache/（补至 2026-10-19）
+    outputs:
+      - engine/r4_yearbreak.py
+      - data/r4_final_YYYYMMDD.json
+      - research/R4_final.md
+    acceptance:
+      - 2019-2026 逐年 n/边际/胜率齐全，单年占比>40% 即否决
+      - 三口径齐（事件研究 HAC / 日历时间 / DSR 含 trials 登记）
+      - 位置匹配对照两档均保持负边际
+      - 阈值放宽反例如实报告
+      - 结论只允许：注册 AVOID / 降级观察 / 证伪；附作废条件
+    effort_days: 1.0
+    evidence: ''
