@@ -44,3 +44,42 @@ def allow(writer: str, ref_date: str, root: Path = ROOT) -> tuple[bool, str]:
 
 ## 工期
 1.0 人日
+
+
+## 裁决修订 R1（2026-10-20，主 agent 勘察接入点后自我否决原设计）
+
+勘察发现原 spec 的「fatal 且阻断 → 下游一律不许写盘」是**错的**，必须分两类：
+
+### ① 追加型 / 记账型 → 拒写（write-block）
+一旦写进历史序列就会被**永久污染**，事后无法分辨哪一行是脏数据：
+- `权威时间轴`（regime_daily_append → regime_timeline_hcap.json）
+- `X规则线`（xrules_daily → xrules_state.json，2026-10-20 已实证：kcache 停更时它按旧日期判并静默覆盖 state）
+- `影子盘`（台账进 shadow_intents.jsonl，写错了直接污染胜率统计）
+- `回测族` 的**新数据追加**（历史重跑不受限）
+拒写 = 不写盘 + `breaker_events.jsonl` 记录 + 非零退出码。
+
+### ② 展示型 → 照写 + 标 stale（degrade-mark）
+用户必须能看到东西，同时知道它不可信。拒写会让他在数据断供时**什么都收不到**，比给他一个带警告的次优产物更糟：
+- `作战单9:25`、`面板20:40`、`日度状态包`、`深档名单`、`周期仪`
+做法：产物里带 `data_stale: true` + 依赖项清单，渲染层在顶部打横幅（ops_briefing 的 🚨 行已有雏形）。
+
+### ③ 检查器 / 告警通道 → **豁免**（exempt，永不熔断）
+这是最容易犯的错：熔断告警器等于**掐断告警**。数据断供时你更需要它跑：
+- `盘前自检`（preflight）、`晨报`、`line_health`、`data_health` 自身
+实现：`breaker.allow()` 对 `EXEMPT_WRITERS` 恒返回 True，且该豁免表写死在 `breaker.py` 里，
+**不许由注册表 `blocks` 决定**——否则将来谁给注册表加一行就能把告警器静音。
+
+### ④ 边界声明
+`engine/` 下 200+ 研究脚本也写盘，但**不在熔断范围**：它们可重跑、产物可弃、不喂生产。
+熔断只覆盖注册表点名的 11 个生产下游。这条要写进报告，防止有人误以为"全库都有了保护"。
+
+### 接口补充
+```python
+WRITE_BLOCK = {"权威时间轴", "X规则线", "影子盘"}
+DEGRADE_MARK = {"作战单9:25", "面板20:40", "日度状态包", "深档名单", "周期仪"}
+EXEMPT_WRITERS = {"盘前自检", "晨报", "line_health", "data_health", "回测族"}
+
+def allow(writer: str, ref_date: str) -> tuple[bool, str]:
+    """EXEMPT 恒 True；WRITE_BLOCK 命中阻断项 → False；DEGRADE_MARK → True 但附 stale 标记。
+    未登记的 writer → raise（新增生产下游必须先登记，防绕过）。"""
+```

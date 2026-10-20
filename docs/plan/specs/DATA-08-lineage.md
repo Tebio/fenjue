@@ -43,3 +43,34 @@ def stale_claims(ref_date: str) -> list[dict]:
 
 ## 工期
 1.5 人日
+
+
+## 勘察证据（2026-10-20 主 agent 实测，为血缘表定范围）
+
+把注册表 11 个下游逐个对账「声明 vs 现实」，查出三类不一致——**这就是血缘表存在的理由**：
+
+### ① 幽灵下游：「日度状态包」没有自动调用方
+`engine/build_daily_state.py`（写 `data/daily_state/<date>.json`）在全库 grep 不到任何调用：
+无 cron job、无 import、无 subprocess，唯一"调用方式"是 `docs/daily-state-schema.md:14` 里写的手动命令。
+产物 `data/daily_state/2026-10-15.json` **停在 10-15**，之后再没跑过。
+→ 它是个被遗忘的手动工具，不是每日下游。注册表把它列进 `blocks` 没错（手动跑时同样需要熔断），
+但**不能据此认为它每天在产出**。
+
+### ② 概念名 ≠ 作业：`日度状态包`、`回测族` 在 cron 里零引用
+`晨报`、`盘前自检` 各命中 1 个 job；`回测族`、`日度状态包` 一个都没有。
+→ 血缘表必须把「下游名」映射到**真实作业 id 或真实脚本入口**，不能只登记一个概念名。
+一个查不到生产者的下游名，等于一条假的保护承诺。
+
+### ③ 单一写入者核实（排除一处误判）
+`docs/ops-state.json` 看似双写：`build_daily_state.py` 与 `dashboard_build.py` 都引用它。
+实测 `build_daily_state.py:138/140/149/339` 全是 `jload` **只读**并做 freshness 检查，
+真正写它的只有 `dashboard_build.py:1515`（整文件 write_text）。→ **无覆盖冲突**，先前的怀疑不成立。
+
+### 由①得出的优先级修正
+DATA-02 里「收编 `build_daily_state` 24 处 `freshness()`」的收益被高估了：它不在自动链路，
+收编只让手动工具口径一致，不构成生产事故防线。**该子项降到 DATA-02 的最后一项**，
+DATA-02 的主价值回到「存在性/日期一致性交叉校验」。
+
+### 血缘表字段增补要求
+`data/lineage.yaml` 每条下游必须写 `producer`（脚本路径）+ `trigger`（cron job id 或 `manual`），
+两者任一缺失 → 加载即 raise。禁止只写概念名。

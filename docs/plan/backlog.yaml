@@ -402,7 +402,7 @@ items:
     effort_days: 1.5
     evidence: null
   - id: DATA-02
-    title: 盘前数据完备性自检（扩展 cron_health_check）— 时效已由 DATA-06 覆盖，本条只做存在性/日期一致性交叉校验 + 收编 build_daily_state 24 处 freshness + 交易日历口径统一
+    title: 盘前数据完备性自检（扩展 cron_health_check）— 时效已由 DATA-06 覆盖；本条主价值是存在性/日期一致性交叉校验 + 交易日历口径统一；收编 build_daily_state 24 处 freshness 降为末项（2026-10-20 勘察：该脚本无任何自动调用方、产物停在 10-15，属手动孤儿工具）
     area: DATA
     priority: P1
     gate: G1
@@ -773,8 +773,12 @@ not_doing:
       - data/breaker_events.jsonl
       - data_health.json 新增 metrics.seam
     acceptance:
-      - 伪造 big_kcache fatal → 深档/影子入口 allow() 返回 False 且不写盘
+      - 三类语义各自实测：WRITE_BLOCK(权威时间轴/X规则线/影子盘) 伪造 fatal → 不写盘 + 记录；
+        DEGRADE_MARK(作战单/面板/状态包/深档/周期仪) → 照写且产物带 data_stale:true + 横幅；
+        EXEMPT(盘前自检/晨报/line_health/data_health) → 数据断供时仍正常跑（熔断告警器=掐断告警，明令禁止）
       - 删除 data_health.json → 全部 allow()=True（fail-open）且事件记录"health 未知"
+      - 未登记的 writer 调 allow() → raise（新增生产下游必须先登记，防绕过）
+      - 公开声明熔断边界：只覆盖注册表点名的 11 个生产下游，engine/ 下 200+ 研究脚本不在范围
       - regime 现有覆盖率闸与熔断对同一缺口判决一致或差异逐条解释
       - metrics.seam 数值 == 当日 SEAM-FIX 计数
     effort_days: 1.0
