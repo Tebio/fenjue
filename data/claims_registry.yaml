@@ -1507,7 +1507,7 @@ claims:
 - id: AVOID_CLIMAX_QUAKE
   statement: 连板链高位（近10日≥2板）出现天量剧震日（量比≥2 且 上影≥4% 或 大阴≤-4%）后，T+20 相对位置匹配对照有显著负边际——持有=持续失血，应离场回避
   detector: 高位剧震
-  control: position_matched
+  control: position_matched_high
   direction: negative
   horizon:
   - 5
@@ -1522,6 +1522,8 @@ claims:
     t=-8.0、DSR=1.0≥0.95 过 Harvey3.0；阈值1.5敏感性 -2.83pp 仍负）
   created: '2026-10-20'
   audit_every_days: 30
-  note: n=9034(fwd有效)/9754事件；对照1 同票高位非剧震 -2.71pp、对照2 同期同板块 -2.61pp（覆盖率99.2%）。⚠️ detector「高位剧震」尚未进
-    law_pipeline.REGISTRY，故 claims_audit 本轮只登记不复跑，复验靠 engine/r4_yearbreak.py（153s，幂等）；纳入自动审计见
-    RES-11。作废条件4条见 research/R4_final.md。遗留：退市股未入样本(DATA-05)、ctrl2 用静态行业快照。
+  note: n=9034(fwd有效)/9754事件；对照1 同票高位非剧震 -2.71pp、对照2 同期同板块 -2.61pp（覆盖率99.2%）。 RES-11（2026-10-20）已接自动审计：detector「高位剧震」入
+    law_pipeline.REGISTRY（薄适配层=r4_yearbreak.is_quake+collect 高位前提，事件集合 300 票子集断言相等）；control
+    改 position_matched_high——原注册的 position_matched 只取 MA60 下方日，对高位信号会零事件空转（假绿灯），新分支是其对称版（claims_audit
+    统一施加，detector 不造对照）。审计口径与 RES-10 终审口径的差异来源见 AGENTS 第336条。作废条件4条见 research/R4_final.md。遗留：退市股未入样本(DATA-05)、ctrl2
+    用静态行业快照。

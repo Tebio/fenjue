@@ -1009,3 +1009,46 @@ ORDER 的内容与顺序由 golden oracle 冻结（case 输出含 order 列表�
 **保留的限定（不许在对外叙事里省略）**：①退市股未入样本（DATA-05 待办），方向保守但幅度未验证；
 ②对照2 用 2026-09-05 静态行业快照，控不了历史行业漂移（轻微前视，只影响匹配质量）；
 ③T+1 边际≈0 —— 黑名单管**持续失血**，不管次日，执行上「当日尾盘 vs 次日开盘离场」的差别未测。
+
+**336. RES-11 高位剧震 detector 接入 REGISTRY：AVOID_CLIMAX_QUAKE 进自动审计（2026-10-20，spec docs/plan/specs/RES-11-climax-detector.md）**
+
+**做了什么**：①`law_pipeline.REGISTRY` 新增 `高位剧震`（`_quake_high` 薄适配层：惰性 import `r4_yearbreak.is_quake` 原函数——顶层 import 会循环（r4_yearbreak 模块级 import law_pipeline）——外加 collect() 的高位前提 `ma60 非 None 且 c>ma60`；判定逻辑零重写，collect 里「高位过滤∧is_quake」两条件独立可交换，合取写法与 collect 逐事件等价）；②`claims_audit.marginals_ex` 新增 `control=position_matched_high` 分支（既有分支一行未动）；③claims_registry 该条 control 由 position_matched 改指新分支；④golden 新增 `climax_quake_detector` 一致性 case（事件集合相等钉死，防口径漂移）并录 oracle。
+
+**事件集合相等实测**：300 票子集（spec 要求 ≥200），适配层 984 事件 = collect 984 事件，symmetric difference = **0**，set 相等断言 PASS；golden 切片（119 票）328=328 symdiff=0。
+
+**claims_audit 端到端**：`[AVOID_CLIMAX_QUAKE] CANDIDATE→CANDIDATE | T+5: 滚动-0.51pp vs kill 0.0 ✅(n=1224) | T+20: 滚动-3.12pp vs kill 0.0 ✅(n=1224，cutoff 2025-09-30)`；该主张首次进状态机（此前无 state 记录=一直走 external 空转）；全场状态变更 0，其他 67 条主张零翻转（逐条对账）。全量口径：T+5 -0.94pp / T+20 -3.13pp。
+
+**与 RES-10（-2.71pp）的差异 = -0.42pp，逐因子分解闭合**（tmp/res11_decompose.py 全池 2×2×2 矩阵，无抽样噪声）：①**一字跌停剔除 +0.23pp（主因）**——rq.fwd 剔「次日开盘≤信号日收盘×0.905」买不到单（721 事件），claims_audit 只查 o>0 不剔，这些单继续崩所以审计口径信号侧更差；②对照抽样方案 +0.13pp（audit 1×Random(7)共享流含信号日 vs r4 2×Random(19)逐票剔剧震）；③扫描窗口 +0.04pp（audit [65,n-21) vs collect [61,n-22)）；④出场 bar +0.02pp（audit c[i+20] vs fwd c[i+21]）。方向：审计口径**更负**，对负向主张+kill 0.0 属保守方向，kill 语义安全（边际要真衰减 3pp 以上才会触线）。baseline_pp 维持 RES-10 注册值（-1.16/-2.71）不改，审计值与注册值的口径差即上四条，已在该条 note 落字。
+
+**claims_audit 本身的语义坑（照实报告）**：`position_matched` 是**低位专用**实现——信号日与对照池都只取 MA60 下方日。高位信号挂它会零事件空转，且空 verdicts → `ok_all=True` 假绿灯（比 external 分支更危险：看起来在审计实则什么都没算）。FRONTRUN_FIRSTBOARD_V2 当年同款坑靠绕去 random_entry 躲过（note 里有记录）。本次新增对称分支 `position_matched_high` 修掉这个品类缺口；**影响面**：现有注册主张里没有其他高位+position_matched 的组合（逐条核过 control/pos_direction 字段），无人踩雷；但 claims_audit 对「空 verdicts 判 True」不设防是真实软肋，后续若有 detector 全集为空的主张注册进来会静默通过——欠账，未立项。
+
+**回归**：pytest tests/test_golden_master.py **13 passed**（law_pipeline_three 零漂移，未刷新任何既有 oracle）；`bash scripts/verify.sh --fast` 全绿。备份：改前四个文件均留 .bak_res11。峰值内存 2.12GB / 墙钟 38s（verify）+ 88s（decompose）。
+
+
+**337. RES-11 复核：高位剧震进 REGISTRY，AVOID_CLIMAX_QUAKE 首次真正进状态机（2026-10-20）**
+
+K3 做法正确且克制：`law_pipeline.REGISTRY` 新增 `高位剧震` → `_quake_high` **薄适配层**，
+惰性 import `r4_yearbreak.is_quake`（顶层 import 会循环依赖），只补 collect() 的高位前提（ma60 非 None 且 c>ma60），
+**判定逻辑零重写**；对照仍由 `claims_audit` 施加（新增 `control=position_matched_high` 分支，既有分支一行未动）。
+
+**主 agent 实跑复核**
+1. 事件集合相等（核心验收）：自报 300 票子集 984=984、symmetric_difference=0；golden 切片 119 票 328=328 同 0。
+   这里钉的是**集合相等**而非数目相近——数目相同但成员不同照样是口径漂移。
+2. 端到端真进状态机：`[AVOID_CLIMAX_QUAKE] CANDIDATE→CANDIDATE | T+5 滚动 -0.51pp vs kill 0.0 | T+20 滚动 -3.12pp vs kill 0.0 (n=1224, cutoff 2025-09-30)`，
+   `data/claims_state.json` 里确有 history 记录。此前它一直是 external 空转（无 state）。
+3. **差异分解闭合**：审计口径 -3.13pp vs RES-10 的 -2.71pp，差 -0.42pp = 一字跌停剔除 +0.23（`rq.fwd` 剔买不到的一字板、audit 不剔，
+   涉及 721 个"买不到还继续崩"的事件，主因）+ 对照抽样方案 +0.13 + 扫描窗口 +0.04 + 出场 bar +0.02。算术闭合，方向也对——
+   审计口径更负，对 `direction: negative` + kill 0.0 是**保守方向**（更不容易假死），可接受。
+4. 无回归：13 passed，`law_pipeline_three` 零漂移，67 条既有主张状态零翻转，`verify.sh --fast` 全绿（19 passed）。
+   oracle 目录只新增 `climax_quake_detector.json`；另 3 个 `??` oracle（console_price_band / factor_census / similarity_knn）
+   mtime 是 **10-16 06:21**，属历史未入库文件，不是本次生成——已核。golden 框架在 oracle 缺失时走 `pytest.skip`，不会自动 record（安全）。
+   未碰 `k4_*`/`cron`/`r4_yearbreak.py`。
+
+**K3 自报的坑（诚实且重要，主 agent 已修）**：原 `position_matched` 是**低位专用**实现——信号日与对照池都只取 MA60 下方日；
+高位信号挂上去会零事件空转，而空 `verdicts` 会让 `ok_all = all(...) if verdicts else True` 判**通过**，
+即「看着在审计，实则一个窗口都没算」，比 external 分支（至少会打印"只登记不复跑"）更危险。FRONTRUN 当年踩过同款坑靠绕开躲过。
+**已修**：空 verdicts 现在**不动状态机、不写 history、显式打印 ⚠️「本轮未审计（不是通过）」**并提示检查 detector/control 是否同为高位/低位口径。
+理由：假绿灯与今天反复出现的病灶同族（两处出结论、假断言自比较、`unknown_date` 报绿），必须在机制层堵死而不是靠人记得。
+
+**遗留**：`position_matched_high` 是新分支，历史主张是否有人该改用高位口径尚未逐条复查（K3 说逐条核过无人踩雷，未附证据）；
+`claims_audit` 无 golden case，空判决修复靠代码审查而非测试钉住——属小而真实的债。

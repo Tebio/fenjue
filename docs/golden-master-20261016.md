@@ -116,3 +116,12 @@
 
 **回归**：`pytest tests/test_golden_master.py` → 9 passed / 1 failed，
 唯一失败是既有 `factor_census`（stage1 25 vs 断言 24，`knn_vote` 早先扩充所致，非本次引入）。
+
+---
+
+## 2026-10-20 · RES-11 新增 case `climax_quake_detector`（新冻结，非刷新）
+
+新增第七条 golden：`REGISTRY['高位剧震']` 薄适配层 vs `r4_yearbreak.collect()` 的事件集合相等断言
+（切片宇宙 119 票：adapter 328 = collect 328，symmetric_difference=0）。
+既有六条 oracle 未动、零刷新；`pytest tests/test_golden_master.py` 13 passed（12 既有 + 1 新增）。
+背景与数字见 AGENTS.md #336。

@@ -844,7 +844,7 @@ not_doing:
     title: 「高位剧震」detector 接入 REGISTRY — 让 AVOID_CLIMAX_QUAKE 进 claims_audit 自动复验
     area: RES
     priority: P1
-    status: todo
+    status: done
     gate: G1
     depends_on: [RES-10]
     ledger_ref: 335
@@ -861,4 +861,10 @@ not_doing:
       - law_pipeline_three 若有漂移则逐案记录，不许静默刷新
       - 不改动任何既有 detector 输出
     effort_days: 0.5
-    evidence: ''
+    evidence: |-
+      2026-10-20 全部实跑（.venv/bin/python，kcache 至 10-19，未联网）：
+      ①事件集合相等断言 PASS：300 票子集（≥spec 的 200），适配层 984 = collect 984，symmetric_difference=0（tmp/res11_verify.py [A]）；golden case climax_quake_detector 119 票切片 328=328 symdiff=0，oracle 已录。
+      ②claims_audit 端到端（--report）：[AVOID_CLIMAX_QUAKE] CANDIDATE→CANDIDATE | T+5 滚动-0.51pp vs kill 0.0 ✅(n=1224) | T+20 滚动-3.12pp vs kill 0.0 ✅(n=1224，cutoff 2025-09-30)；全场状态变更 0，其他主张零翻转（tmp/res11_statecheck.py 对账）。
+      ③全量 T+20 边际：审计口径 -3.13pp vs RES-10 -2.71pp，差 -0.42pp 已逐因子分解闭合（tmp/res11_decompose.py 全池 2×2×2 矩阵）：一字跌停剔除 +0.23（rq.fwd 剔 audit 不剔，主因）、对照抽样方案 +0.13、扫描窗口 +0.04、出场 bar +0.02。审计口径更负=对负向主张偏保守，kill 语义安全。
+      ④pytest tests/test_golden_master.py：13 passed，law_pipeline_three 零漂移，未刷新任何既有 oracle。
+      施工面：law_pipeline.py REGISTRY+「高位剧震」（_quake_high，惰性 import r4_yearbreak.is_quake，禁重写）；claims_audit.py 新增 position_matched_high 分支（发现：原 position_matched 只取 MA60 下方日，高位信号挂它零事件空转=假绿灯，FRONTRUN note 记过同款坑）；claims_registry 该条 control 改指新分支。既有文件均先 .bak_res11。详见 AGENTS 第336条。

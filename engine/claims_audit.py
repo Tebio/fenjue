@@ -4,6 +4,9 @@
 每条注册主张按 kill_line 复验：
 - law_pipeline 背书的主张：全量重跑 + 滚动 250 交易日窗口边际贡献
 - 位置匹配对照（position_matched）：同票同 MA60 下方随机日，剥离位置因子
+- 高位位置匹配对照（position_matched_high，RES-11）：同票 MA60 上方随机日——
+  既有 position_matched 只取 MA60 下方日，高位信号挂它会零事件空转（FRONTRUN_FIRSTBOARD_V2
+  note 记过同款坑）；本分支是其对称版，抽样纪律与既有分支逐行一致，不影响任何既有主张
 - 随机入场对照（random_entry）：任意随机日
 状态机：CANDIDATE/LAW → DECAYING（跌破 kill 线）→ DEAD（连续 2 次未恢复）→ 恢复需回到基线 70%。
 看门狗纪律：只有状态变更才输出报告；无变更输出一行心跳。
@@ -44,7 +47,7 @@ def marginals_ex(det, stocks, control, horizons, entry="next_open"):
     ctl = {h: [] for h in horizons}
     for code, d in stocks.items():
         c, o, n, ma = d["c"], d["o"], d["n"], d["ma60"]
-        days, lows = [], []
+        days, lows, highs = [], [], []
         for i in range(START, n - max(horizons) - 1):
             if _entry_px(d, i, entry) <= 0:
                 continue
@@ -56,6 +59,15 @@ def marginals_ex(det, stocks, control, horizons, entry="next_open"):
                     lows.append(i)
                 if low and det(d, i):
                     days.append(i)
+            elif control == "position_matched_high":
+                # RES-11（2026-10-20）：高位信号的对称版位置匹配（AVOID_CLIMAX_QUAKE 用）。
+                if ma[i] is None:
+                    continue
+                high = c[i] > ma[i]
+                if high:
+                    highs.append(i)
+                if high and det(d, i):
+                    days.append(i)
             else:
                 if det(d, i):
                     days.append(i)
@@ -66,6 +78,8 @@ def marginals_ex(det, stocks, control, horizons, entry="next_open"):
                 sig[h][1].append(c[i + h] / ep - 1 - FEE)
         if control == "position_matched":
             pool = lows
+        elif control == "position_matched_high":
+            pool = highs   # RES-11：与 position_matched 同一约定（含信号日自身、等量抽样、同 rnd 流）
         else:
             pool = [i for i in range(START, n - max(horizons) - 1) if _entry_px(d, i, entry) > 0]
         for i in rnd.sample(pool, min(len(days), len(pool))):
@@ -156,7 +170,16 @@ def main():
             else:
                 ok = roll_pp is not None and roll_pp >= kill
             verdicts[h] = (roll_pp, kill, ok, nroll)
-        ok_all = all(v[2] for v in verdicts.values()) if verdicts else True
+        if not verdicts:
+            # 2026-10-20 修：空 verdicts 曾判 ok_all=True —— 伪装成"本轮通过"。
+            # 这比 external 分支更危险：external 至少会打印"只登记不复跑"，而空判决看起来是在审计、实则一个窗口都没算
+            # （典型成因：detector 产出的都是高位事件，却挂了低位专用的 control → 零事件 → 零 verdicts）。
+            # 处理：不动状态机、不写 history（避免污染），只在报告里显式暴露并计入"未审计"。
+            rows.append(f"[{cid}] ⚠️ 空判决：detector/control 组合未产出任何可判决窗口，本轮**未审计**"
+                        f"（不是通过；检查 detector 与 control 是否同为高位/低位口径）")
+            state.setdefault(cid, s)
+            continue
+        ok_all = all(v[2] for v in verdicts.values())
         new, fails, prev = transit(s, ok_all)
         s.update(status=new, consecutive_fails=fails)
         today_bjt = (datetime.now(timezone.utc) + timedelta(hours=8)).date().isoformat()

@@ -1285,6 +1285,29 @@ def _pead(d, i, types, min_inc=None, pos=None):
     return True
 
 
+# ---- 2026-10-20 RES-11：高位剧震（AVOID_CLIMAX_QUAKE 自动审计接线，spec docs/plan/specs/RES-11-climax-detector.md）----
+# 薄适配层：事件判定 = r4_yearbreak.is_quake 原函数（连板链近10日≥2板 + 量比≥2 +
+# 上影≥4%或大阴≤-4%，vr_min 默认 2.0 = RES-10 注册口径），高位前提 = collect() 的同一过滤
+# （ma60 非 None 且 c > ma60）。假设说明：collect() 里「高位过滤」与「is_quake」是串联的
+# 与关系，且 is_quake 只读 c/o/h/l/v 不读 ma60，两者独立可交换——故此合取写法与 collect()
+# 逐事件等价（由 tests/golden 的 climax_quake_detector case 断言事件集合相等钉死，
+# 防止日后口径漂移）。detector 只负责「哪些事件」，对照由 claims_audit 的
+# control=position_matched_high 统一施加，此处不造对照。
+_QUAKE_FN = None
+
+
+def _quake_high(d, i):
+    global _QUAKE_FN
+    if _QUAKE_FN is None:
+        # 惰性 import：r4_yearbreak 自身 import law_pipeline（模块级），顶层 import 会循环
+        from r4_yearbreak import is_quake as _iq
+        _QUAKE_FN = _iq
+    ma = d["ma60"][i]
+    if ma is None or d["c"][i] <= ma:
+        return False
+    return _QUAKE_FN(d, i)
+
+
 REGISTRY = {
     "TD9买入": _td9buy,
     "TD9卖出": _td9sell,
@@ -1557,6 +1580,8 @@ REGISTRY = {
                                      and _reversal(d, i) and _gap_below(d, i, -0.03)),
     "反转族_MA60下_gap>+1": lambda d, i: (d["ma60"][i] is not None and d["c"][i] <= d["ma60"][i]
                                      and _reversal(d, i) and _gap_above(d, i, 0.01)),
+    # ---- 2026-10-20 RES-11：高位剧震 AVOID 黑名单接入滚动审计（负向主张，kill 线 0.0）----
+    "高位剧震": _quake_high,
 }
 
 

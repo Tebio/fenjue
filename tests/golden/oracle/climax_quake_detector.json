@@ -1,0 +1,23 @@
+{
+ "_meta": {
+  "as_of": "2026-10-15",
+  "drift_pp": 0.1,
+  "generated_at": "2026-10-20T13:52:54+08:00",
+  "golden": "climax_quake_detector",
+  "repo": "/opt/data/fenjue",
+  "slice_stride": 28
+ },
+ "adapter_events": 328,
+ "collect_events": 328,
+ "invariants": {
+  "registry_has_detector": true,
+  "sets_equal": true
+ },
+ "scan_window": "range(61, n-22) = collect() 原窗口",
+ "symmetric_difference": 0,
+ "universe": {
+  "as_of": "2026-10-15",
+  "codes": 119,
+  "stride": 28
+ }
+}

@@ -320,6 +320,38 @@ def case_data_health_snapshot() -> dict:
 
 
 # ---------------------------------------------------------------------------
+# 7. 高位剧震 detector 一致性（RES-11：适配层 ≡ collect() 事件集合）
+# ---------------------------------------------------------------------------
+
+def case_climax_quake_detector() -> dict:
+    """REGISTRY['高位剧震'] 薄适配层 vs r4_yearbreak.collect() 的事件集合必须完全相等。
+
+    钉的是 RES-11 的硬约束「适配层复用 is_quake/collect 同一判定逻辑，禁止重新实现」——
+    任何一侧口径漂移（is_quake 被改、适配层被人重写、collect 窗口被改）都会让
+    symmetric_difference 非零而当场变红。事件判定是纯个股逻辑（is_quake 只读
+    c/o/h/l/v + ma60，不读横截面），切片宇宙对它口径零影响。
+    """
+    import law_pipeline as lp
+    import r4_yearbreak as r4
+
+    stocks = H.load_sliced_universe()
+    det = lp.REGISTRY["高位剧震"]
+    adapter = set()
+    for code, d in stocks.items():
+        for i in range(61, d["n"] - 22):      # collect() 的同一扫描窗口
+            if det(d, i):
+                adapter.add((code, i))
+    collect_ev = {(c, i) for c, i, _dt in r4.collect(stocks, vr_min=2.0)["events"]}
+    sym = adapter ^ collect_ev
+    return {"universe": {"codes": len(stocks), "as_of": H.AS_OF, "stride": H.SLICE_STRIDE},
+            "scan_window": "range(61, n-22) = collect() 原窗口",
+            "adapter_events": len(adapter), "collect_events": len(collect_ev),
+            "symmetric_difference": len(sym),
+            "invariants": {"sets_equal": not sym,
+                           "registry_has_detector": "高位剧震" in lp.REGISTRY}}
+
+
+# ---------------------------------------------------------------------------
 
 CASES = {
     "law_pipeline_three": case_law_pipeline_three,
@@ -328,4 +360,5 @@ CASES = {
     "console_price_band": case_console_price_band,
     "factor_census": case_factor_census,
     "data_health_snapshot": case_data_health_snapshot,
+    "climax_quake_detector": case_climax_quake_detector,
 }
