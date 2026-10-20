@@ -1076,3 +1076,84 @@ K3 做法正确且克制：`law_pipeline.REGISTRY` 新增 `高位剧震` → `_q
 
 **复核口径留痕**：全量 `claims_audit --report` 退出 0，68 条主张状态分布前后完全一致（36 CANDIDATE / 32 DEAD，零翻转），
 `AVOID_CLIMAX_QUAKE` 两次独立运行数字逐位相同（T+5 -0.51 / T+20 -3.12），幂等成立。
+
+
+**339. DATA-07 熔断泛化落地：三类语义 + fail-open + 豁免写死 + SEAM 指标化（2026-10-20，spec R1 施工）**
+
+**做了什么**：新建 `engine/breaker.py`（唯一判定入口 `_decide`，`allow()`/`stale_mark()` 两个薄壳防两处出结论）；
+三类语义按 R1 写死在本文件：`WRITE_BLOCK={权威时间轴,X规则线,影子盘}`（追加型：拒写+记事件+非零退出）、
+`DEGRADE_MARK={作战单9:25,面板20:40,日度状态包,深档名单,周期仪}`（照写+产物 `data_stale:true`+依赖清单+横幅）、
+`EXEMPT_WRITERS={盘前自检,晨报,line_health,data_health,回测族}`（恒放行，**写死不许由注册表 blocks 决定**——
+否则给注册表加一行就能静音告警器）。未登记 writer → `UnknownWriterError`（不登记就绕过熔断比不熔断更糟）。
+阻断口径只调 `freshness_core.is_blocking`；性能纪律=优先复用 `data/data_health.json`，仅 ref_date 与体检基准
+不一致时对相关数据集增量重估（不重跑全量体检）。fail-open：health json 缺失/损坏 → 全放行 + 记
+`fail_open` 事件（监控机自己挂了不许全线停摆）。回滚开关 `data/breaker_disabled.flag`（存在即全放行，仍记事件）。
+事件日志 `data/breaker_events.jsonl`（ref_date/writer/blocking_datasets/decision/reason）。
+接线 9 个文件（全部先 .bak_data07）：regime_daily_append / xrules_daily / claims_shadow（拒写，判定在任何写盘之前）、
+ops_briefing（横幅+ledger 打标）/ dashboard_build（ops-state.json 与 dashboard.json 双产物打标 + 今日页绝对置顶
+c-red 横幅）/ build_daily_state（_meta 打标）/ regime_meter（regime_log 条目打标）/ k4_deep_v2 / k3_deep_low_v2
+（产物 json 打标，未跟踪文件只加熔断调用零重构）。**关键设计修正**：默认路径熔断基准=体检基准日（health ref_date），
+只有显式传历史日（补跑/回测）才以该日为基准——否则 #333 同款「拿派生旧日当基准」会让断供自我合法化
+（kcache 冻在 10-16 时 xrules 派生日=10-16、覆盖率闸 100% 放行、用旧数据静默覆盖 state；熔断用体检基准则必拦）。
+
+**SEAM-FIX 指标化**：`update_kcache` 新增 `record_seam_metrics()` 落侧车 `data/seam_metrics.json`
+（按 BJT 日累计 seam_fixed/seam_err/updated/errors/runs，同日分片+兜漏求和，留 14 天历史；FATAL 中止路径也落），
+`data_health.py` 体检时并进 `metrics.seam`；**连续 ≥2 个记录日 seam_err>0（重拉失败）→ big_kcache 由 ok 降为 stale**
+（spec 接口契约；异常定义写死=重拉失败，seam_fixed 本身不是病——分红后重拉是正常维护）。
+侧车方案而非 update_kcache 直写 data_health.json：保持体检产物单写入者，无覆盖冲突。
+
+**实测证据（全部真跑，伪造=注册表 big_kcache path 改坏 + 伪 fatal 条目 fake_fault_data07，跑完还原）**：
+- WRITE_BLOCK：三个入口全部 `🚨 熔断拒写` exit 1；xrules_state/xrules_shadow/claims_shadow/regime_timeline_hcap/
+  regime_log 五个产物 md5 前后逐字节不变；events 记 blocked 4 条。
+- DEGRADE_MARK 端到端三家：ops_briefing stdout 第 2 行降级横幅 + ledger 条目 `data_stale:true`；
+  dashboard_build 后 ops-state.json/dashboard.json 均 `data_stale:true`+横幅卡（cards 35，健康态重跑 34 且横幅消失）；
+  build_daily_state 产物 `_meta.data_stale:true`（测后删档，该工具本无 10-15 后产物）。
+  深档名单两脚本与 regime_meter：已接线 + `--mark` API 级 degraded 证据，**未端到端**（重算耗时长/需实时行情联网，如实记账）。
+- EXEMPT：五名 allow 全 True；注册表塞 `blocks:[盘前自检]` 的 fatal 后**仍放行**（豁免写死实证）；
+  preflight 601398 断供窗口内 exit 0 七段全出；data_health 自身在断供窗口正常报红（exit 1 + 告警）。
+- fail-open：移走 data_health.json → 9 个 writer 全 allow=True，8 条 fail_open 事件带「health 未知」。
+- 未登记 writer：`allow("瞎写的下游")` raise UnknownWriterError（traceback 实证）。
+- 回滚开关：touch flag → 权威时间轴放行（decision=disabled），删 flag → 恢复 blocked。
+- SEAM：record_seam_metrics 两次调用同日累计 seam_fixed=5=3+2，沙盒体检 `metrics.seam.today.seam_fixed==5`（spec 验收）；
+  连续 2 记录日 seam_err>0 → big_kcache 降 stale 且 reason 带说明（exit 0，stale 不阻断）。
+- 还原：注册表 md5 e8716408…23 一致、health 四产物 md5 与备份一致、无 fake_fault/BROKEN/flag/侧车残留；
+  作战单/面板清洁重跑无标记。回归：golden 14 passed、verify.sh --fast 全绿（py_compile 296 文件 0 败、pytest 20 passed）。
+
+**与 regime 覆盖率闸的对照（spec 验收）**：本次伪造缺口（注册表路径坏、真实数据在）下——覆盖率闸**放行**
+（coverage(10-19)≈100%，它只看当天 bar 够不够），熔断**拒写**（体检判 missing）；真实断供场景（10-19 事故型）
+下两者都拒（覆盖<0.8 且 big_kcache fatal_lag）。结论：熔断是覆盖率闸的超集——闸防「半更新/断链截断」，
+熔断还防「体检判死但单日复算能跑」的合法化路径，两者并存不冲突。
+
+**边界声明（spec R1-④）**：熔断只覆盖注册表 consumers 点名的生产下游；engine/ 下 200+ 研究脚本
+（可重跑、产物可弃、不喂生产）不在范围——别误以为全库都有保护。
+**spec 内部矛盾记录（按 task 纪律：照做+声明异议）**：R1-① 把「回测族的新数据追加」列入拒写，
+R1-③ 接口表却把回测族放进 EXEMPT——两者冲突，按更晚的接口契约（EXEMPT）执行；且回测族产物可重跑可弃，
+本来就不该占熔断面，R1-① 那句建议下次修订删除。
+**未做/遗留**：①深档名单两脚本、regime_meter、stock_shadow_record.py（/opt/data/scripts，影子盘另一入口，
+09:45 班 20 天已自终止）未接线端到端实测；②`metrics.seam` 在侧车缺失时不出现（kcache 班明天起才落侧车）；
+③breaker_events.jsonl 首批 23 条事件是本次自测留痕（reason 含 BROKEN/nope_data07 可辨识），非真实事故；
+④dashboard_build 端到端实跑会产生一次只读新浪报价 GET（生产 cron 本来如此）——与「严禁联网」硬约束字面冲突时
+按 spec 第三步「必须端到端实测」优先，特此声明。
+
+
+**340. DATA-07 审计结论：K3 实现有效，但审计过程挖出一个它没覆盖的设计缺口（已补）（2026-10-20）**
+
+**审计方式**：不用 K3 的验证代码，自建三件（`scenario.py` 场景编排 + `audit_static.py` AST 静态判定 + `audit_e2e.py` 端到端）。
+
+**静态审计（AST 层，糊弄不过去）**：EXEMPT_WRITERS 是模块级**字面量**且五个成员正确；import 了唯一口径 `is_blocking` 且**没有**自造 `FATAL_STATUSES`；未登记 writer 走 `UnknownWriterError`；6/8 个下游真接了 breaker（`preflight`/`line_health` 未接是**合规**——EXEMPT 本就不该拦）；注册表 md5 与基线一致、无 `fake_fault` 残留。
+
+**端到端三场景（伪造 `big_kcache` missing）**：WRITE_BLOCK `regime_daily_append` → rc=1 且 timeline md5 **一字节未变**（真没写，不是写了再删）；DEGRADE_MARK `ops_briefing` → rc=0 有产出且带告警；EXEMPT `preflight 601398` → rc=0 七段全出（熔断告警器没被掐）。生产文件全部还原、md5 与基线一致。
+
+**审计自身的错（记下来防下次）**：第一版三场景**全部 FAIL**，原因不是实现错，是我改完注册表**没有重跑体检**——breaker 读的是 `data_health.json` 的缓存结论，读到的还是旧 ok。加上"刷新体检"这一步后三项全 PASS。**审计脚本一定要复现被测对象的真实前提条件，否则测的是自己搭的假场景。**
+
+**由此挖出的真缺口（K3 没覆盖，主 agent 补齐）**：熔断依赖缓存的体检结论，若注册表被改（改 path/severity/blocks、加数据集）而体检没重跑，熔断会拿旧结论**静默放行**——看着在拦、其实没拦。
+`_meta.registry_version` 挡不住这个：它是**手写字符串** `"1.0 (2026-10-20, DATA-01)"`，改配置的人不会记得改版本号，breaker 也从未读过它。又一种「拿人肉维护的东西当一致性凭证」，必然失真。
+修法：`data_health` 写 `_meta.registry_fingerprint`（注册表**字节 md5**），`breaker._registry_drift()` 比对，不一致 → `decision="stale_health"`、stderr 喊话、事件留痕、**fail-open + data_stale=True**。
+选 fail-open 的理由：漂移窗口通常只有"改完配置到重跑体检"这几分钟，fail-closed 会让全线停摆（用户什么都收不到）；但必须打标+留痕，不许谎报"数据没问题"。旧产物缺该字段 → 返回 None 不阻断（避免升级即全线告警）。
+golden 新增 `test_registry_drift_is_visible`（指纹一致/不一致/旧产物缺字段三种行为钉死）。实测：伪造注册表不刷体检 → 输出「⚠️ 注册表内容指纹不一致（体检产物 e8716408… vs 当前 f1cd2ffa…）——本轮熔断判定不可信」，事件记 `stale_health`。
+
+**裁决 K3 的两条异议**
+1. **spec R1 自相矛盾**（R1-① 把"回测族新数据追加"列入拒写，R1-③ 接口表把回测族放 EXEMPT）。**K3 是对的，我写错了。** 它按更晚的接口契约执行并声明异议，处理得当。已撤回 R1-① 那句。
+2. **"严禁联网" vs "dashboard_build 必须端到端"冲突**：面板构建本来就发一次只读新浪行情 GET（生产 cron 同款）。裁决：**可接受**，是我的约束写得过死。以后写"禁 baostock 抓数 / 禁写外部系统 / 禁改配置"，允许生产脚本自身的只读行情请求。
+
+**遗留（如实）**：①`data/seam_metrics.json` 尚未在生产生成——`update_kcache` 还没跑，SEAM 指标只在沙盒验证过，明晚 18:30 那班才是首次真实落盘；②深档名单与周期仪只做接线与 API 级验证，未端到端（全量重算耗时长 / 需实时行情）；③`stock_shadow_record.py`（影子盘另一入口）未接线；④`晨报`/`line_health`/`回测族` 仅 API 级。

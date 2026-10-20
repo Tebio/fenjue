@@ -17,8 +17,40 @@ sys.path.insert(0, "/opt/data/python-libs")
 import baostock as bs
 
 KC = Path("/opt/data/fenjue/data/big_kcache")
+SEAM_SIDE = Path("/opt/data/fenjue/data/seam_metrics.json")  # DATA-07：SEAM-FIX 指标化侧车
 FIELDS = "date,open,high,low,close,volume"
 FULL_START = "2019-01-01"
+
+
+def record_seam_metrics(seam_fixed: int, seam_err: int, updated: int,
+                        already_current: int, errors: int, elapsed_s: float) -> None:
+    """DATA-07 SEAM-FIX 指标化：复权漂移重拉票数/失败数落盘，不再只打日志。
+
+    写侧车 data/seam_metrics.json（按 BJT 日累计——同日分片/兜漏多跑会求和，
+    保留最近 14 天历史供 data_health 判「连续多日异常」）；data_health.py 体检时
+    把它并进 data_health.json 的 metrics.seam。侧车写不进不许拖垮主流程。
+    """
+    from datetime import datetime, timezone as _tz
+    day = datetime.now(_tz(timedelta(hours=8))).date().isoformat()
+    try:
+        st = json.loads(SEAM_SIDE.read_text()) if SEAM_SIDE.exists() else {}
+        days = st.setdefault("days", {})
+        d = days.setdefault(day, {"seam_fixed": 0, "seam_err": 0, "updated": 0,
+                                  "already_current": 0, "errors": 0, "runs": 0, "elapsed_s": 0.0})
+        d["seam_fixed"] += seam_fixed
+        d["seam_err"] += seam_err
+        d["updated"] += updated
+        d["already_current"] += already_current
+        d["errors"] += errors
+        d["runs"] += 1
+        d["elapsed_s"] = round(d["elapsed_s"] + elapsed_s, 1)
+        st["days"] = {k: days[k] for k in sorted(days)[-14:]}
+        st["updated_at"] = datetime.now(_tz(timedelta(hours=8))).isoformat(timespec="seconds")
+        tmp = SEAM_SIDE.with_suffix(".tmp")
+        tmp.write_text(json.dumps(st, ensure_ascii=False, indent=1))
+        tmp.replace(SEAM_SIDE)
+    except Exception as e:
+        print(f"[WARN] seam_metrics 落盘失败：{e}", flush=True)
 
 
 def code_to_bs(code: str) -> str:
@@ -97,7 +129,7 @@ def main():
         print(f"shard {_j}/{_n}: 本轮覆盖 {len(files)} 只", flush=True)
     lg = bs.login()
     assert lg.error_code == "0", lg.error_msg
-    updated = upto = seams = errors = 0
+    updated = upto = seams = seam_errs = errors = 0
     fail_streak = 0  # 连续查询失败连击：>20 判定会话级故障，退出码1让 cron 报警（防静默"成功"）
     t0 = time.time()
     for idx, fp in enumerate(files):
@@ -116,6 +148,8 @@ def main():
                 errors += 1
                 if fail_streak > 20:
                     print(f"FATAL 连续 {fail_streak} 只查询失败（会话级故障），中止待重跑", flush=True)
+                    record_seam_metrics(seams, seam_errs, updated, upto, errors,
+                                        time.time() - t0)  # DATA-07：中止也要落已发生的 seam 计数
                     bs.logout()
                     sys.exit(1)
                 continue
@@ -139,6 +173,7 @@ def main():
                     seams += 1
                     print(f"SEAM-FIX {code}: 复权漂移，全量重拉 {len(rows)}→{len(full)} 行", flush=True)
                 else:
+                    seam_errs += 1
                     errors += 1
                     print(f"SEAM-ERR {code}: 全量重拉行数异常 {len(full)}<{len(rows)}，保留旧文件", flush=True)
                 time.sleep(0.12)
@@ -157,6 +192,7 @@ def main():
     update_index(end)
     bs.logout()
     print(f"DONE updated={updated} already_current={upto} seam_fixed={seams} errors={errors} elapsed={time.time()-t0:.0f}s")
+    record_seam_metrics(seams, seam_errs, updated, upto, errors, time.time() - t0)  # DATA-07
 
 
 if __name__ == "__main__":

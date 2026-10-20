@@ -1,7 +1,7 @@
 # 数据面监控 · 2026-10-20（体检基准 ref=2026-10-19，--ref-date）
 
 注册 10 项：ok 10
-version=data_health/1.0 (2026-10-20, DATA-01) · registry=1.0 (2026-10-20, DATA-01) · generated_at=2026-10-20T12:37:25+08:00
+version=data_health/1.0 (2026-10-20, DATA-01) · registry=1.0 (2026-10-20, DATA-01) · generated_at=2026-10-20T15:05:04+08:00
 
 ## 🚨 致命（0 项，断供=下游结论不可信）
 （无）

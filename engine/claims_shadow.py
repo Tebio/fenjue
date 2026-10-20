@@ -261,6 +261,14 @@ def bridge_only(today):
 
 def main():
     import os
+    # DATA-07 熔断（R1-①追加型拒写）：影子台账写错直接污染胜率统计。
+    # 在任何写盘（SHADOW append/重写、SUMMARY）之前判定；默认路径用体检基准日。
+    import breaker
+    _sd = os.environ.get("SHADOW_DATE")
+    _ok, _why = breaker.allow("影子盘", _sd if _sd else None)
+    if not _ok:
+        print(f"🚨 熔断拒写（DATA-07）：{_why}")
+        _sys.exit(1)
     if os.environ.get("BRIDGE_ONLY"):
         bridge_only(os.environ.get("SHADOW_DATE") or date.today().isoformat())
         return

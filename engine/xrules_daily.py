@@ -148,6 +148,13 @@ def main():
             else:
                 print(f"🚨 X规则线 {day}: big_kcache 覆盖率仅 {_cov:.0%}（<80%），数据不全拒绝判定——kcache 可能断链/被超时截断，速查")
                 sys.exit(1)
+    # DATA-07 熔断（R1-①追加型拒写）：在任何写盘（OUT / shadow）之前判定。
+    # 默认路径用体检基准日（防止「拿派生旧日当基准」自我合法化，#333）；显式回测日除外。
+    import breaker
+    _ok, _why = breaker.allow("X规则线", day if len(sys.argv) > 1 else None)
+    if not _ok:
+        print(f"🚨 熔断拒写（DATA-07）：{_why}")
+        sys.exit(1)
     # 行业映射与名单
     mmap = json.loads((ROOT / "data/industry_map.json").read_text())
     code2ind = {str(k).zfill(6): v['industry'] for k, v in mmap.items() if isinstance(v, dict) and v.get('industry')}

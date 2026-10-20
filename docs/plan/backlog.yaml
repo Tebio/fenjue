@@ -760,7 +760,7 @@ not_doing:
     title: 熔断泛化（数据不合格 → 下游拒写，而非只告警）+ SEAM-FIX 指标化
     area: DATA
     priority: P1
-    status: todo
+    status: done
     gate: G1
     depends_on: [DATA-06]
     ledger_ref: 332
@@ -782,7 +782,24 @@ not_doing:
       - regime 现有覆盖率闸与熔断对同一缺口判决一致或差异逐条解释
       - metrics.seam 数值 == 当日 SEAM-FIX 计数
     effort_days: 1.0
-    evidence: ''
+    evidence: >-
+      2026-10-20 实跑（AGENTS #339）。伪造 fatal（注册表 big_kcache path 改坏 + 伪条目
+      fake_fault_data07，跑完还原 md5=e8716408d015c8313b6070bec4296b23 一致）：
+      WRITE_BLOCK 三家（regime_daily_append/xrules_daily/claims_shadow）全部拒写——exit 1 +
+      产物 md5 前后不变（xrules_state/xrules_shadow/claims_shadow/regime_timeline_hcap/regime_log 五项 OK）
+      + breaker_events.jsonl 记 blocked 4 条；DEGRADE_MARK：ops_briefing 端到端（stdout 第2行
+      🚨降级横幅 + ledger 条目 data_stale:true）、dashboard_build 端到端（ops-state.json 与
+      dashboard.json 均 data_stale:true + 今日页首张卡 c-red 横幅，cards 35 vs 健康态 34）、
+      build_daily_state 端到端（_meta.data_stale:true）；深档名单（k4_deep_v2/k3_deep_low_v2）与
+      周期仪（regime_meter）已接线 + API 级 degraded 证据，未端到端（重算耗时长/需实时行情联网）。
+      EXEMPT 五名 allow 全 True；注册表塞 fatal blocks=[盘前自检] 仍放行（豁免写死）；
+      盘前自检 preflight 601398 断供窗口内 exit 0 七段全出；data_health 自身断供窗口内正常报红。
+      fail-open：移走 data_health.json → 9 个 writer 全 allow=True + 8 条 fail_open 事件。
+      未登记 writer raise UnknownWriterError。回滚开关 breaker_disabled.flag 实测（disabled→放行，
+      删后恢复阻断）。SEAM-FIX：update_kcache 落侧车 data/seam_metrics.json（同日分片累计），
+      data_health 并进 metrics.seam（实测 seam_fixed=5=3+2 累计）；连续2记录日 seam_err>0 →
+      big_kcache 降 stale（沙盒实测）。回归：pytest golden 14 passed，verify.sh --fast 全绿
+      （plan_lint 绿 / py_compile 296 文件 0 败 / pytest 20 passed）。未 git commit，未动 cron。
 
   - id: DATA-08
     title: 血缘表 + DATA_STALE 联动（影响半径与"数据不可信不推断策略失效"）

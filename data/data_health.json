@@ -2,12 +2,13 @@
  "_meta": {
   "version": "data_health/1.0 (2026-10-20, DATA-01)",
   "date": "2026-10-20",
-  "generated_at": "2026-10-20T12:37:25+08:00",
+  "generated_at": "2026-10-20T15:05:04+08:00",
   "registry_version": "1.0 (2026-10-20, DATA-01)",
+  "registry_fingerprint": "e8716408d015c8313b6070bec4296b23",
   "ref_date": "2026-10-19",
   "ref_source": "--ref-date",
   "discipline": "read-only + 落盘 + 提案；不自动补数/重跑（#278 同纪律）",
-  "elapsed_s": 0.26
+  "elapsed_s": 0.22
  },
  "items": {
   "big_kcache": {

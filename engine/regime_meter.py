@@ -315,17 +315,31 @@ if __name__ == "__main__":
                   f"分位 {r['pct_limit_down'] if r['pct_limit_down'] is not None else '-':>5} 指数 {r['index_pct']}")
         raise SystemExit(0)
     r = scan()
+    # DATA-07 熔断（R1-②展示型降级）：周期仪照跑照写（用户要看），
+    # 但命中阻断依赖时 regime_log 条目带 data_stale:true + 依赖项清单。
+    _brk = {"data_stale": False, "stale_datasets": [], "reason": ""}
+    try:
+        from engine import breaker
+        _brk = breaker.stale_mark("周期仪")
+    except Exception:
+        pass
     log = ROOT / "data" / "regime_log.jsonl"
-    entry = json.dumps({"date": r["date"], "regime": r["regime"], "advice": r.get("advice"),
-                        "gap": r.get("gap"), "basis": r.get("basis"),
-                        "leg1": r.get("leg1"), "leg2": r.get("leg2"),
-                        "stats": r["stats"], "boards": r["boards"]}, ensure_ascii=False)
+    entry_d = {"date": r["date"], "regime": r["regime"], "advice": r.get("advice"),
+               "gap": r.get("gap"), "basis": r.get("basis"),
+               "leg1": r.get("leg1"), "leg2": r.get("leg2"),
+               "stats": r["stats"], "boards": r["boards"]}
+    if _brk.get("data_stale"):
+        entry_d["data_stale"] = True
+        entry_d["stale_datasets"] = _brk["stale_datasets"]
+    entry = json.dumps(entry_d, ensure_ascii=False)
     lines = [l for l in log.read_text().splitlines() if l.strip()] if log.exists() else []
     if lines and json.loads(lines[-1])["date"] == r["date"]:
         lines[-1] = entry  # 同日重跑=覆盖，不堆重复行（打板接力按行序读，重复行会算出假昨日）
     else:
         lines.append(entry)
     log.write_text("\n".join(lines) + "\n")
+    if _brk.get("data_stale"):
+        print(f"🚨 数据断供降级（DATA-07）：{'、'.join(_brk['stale_datasets'])} —— 本次判定按陈旧依赖产出，见 regime_log 条目标记")
     s = r["stats"]
     print(f"情绪周期仪 {r['date']}: 【{r['regime']}】")
     print(f"  涨停 {s['limit_ups']} 家 | 小市值(<100亿)占比 {s['small_cap_board_ratio']:.0%} | "

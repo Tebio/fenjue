@@ -320,6 +320,15 @@ def main():
     today = datetime.date.today().isoformat()
     S = {"今日": [], "我的钱": [], "研究库": [], "证据库": [], "影子": []}
 
+    # DATA-07 熔断（R1-②展示型降级）：面板照写，但产物带 data_stale:true + 顶部横幅。
+    # 面板必须能打开，熔断判定自身失败 → 静默无标记（与 ops_briefing 同一纪律）。
+    _stale = {"data_stale": False, "stale_datasets": [], "reason": ""}
+    try:
+        import breaker
+        _stale = breaker.stale_mark("面板20:40")
+    except Exception:
+        pass
+
     # ══ 数据装载（全部只读）══
     _deep_lastd, _deep, _deep_cluster, _deep_soil = deep_low_scan()
     wp = jload(D / "watch_pool.json", {})
@@ -1478,9 +1487,19 @@ def main():
                "data_day": fmt_d(sig_date), "built_at": stamp}
     except Exception:
         env = None
+    # DATA-07 降级横幅（所有卡装完后插到绝对置顶：数据断供时面板照出，但第一眼必须看到不可信）
+    if _stale.get("data_stale"):
+        S["今日"].insert(0, card("🚨 数据断供降级",
+                                 callout("c-red", "🚨",
+                                         f'<b>{"、".join(esc(x) for x in _stale["stale_datasets"])}</b> 断供/滞后'
+                                         f'——本面板按陈旧数据产出，结论先别信。详见 data/data_health_report.md'),
+                                 "DATA-07 熔断降级标记", tab="今日"))
     dash = {"built_at": stamp, "sig_date": sig_date, "sig_fmt": fmt_d(sig_date),
             "buy_day": buy_day, "buy_fmt": fmt_d(buy_day),
             "env": env,
+            # DATA-07 降级标记（机器可读）：data_stale:true + 依赖项清单
+            "data_stale": bool(_stale.get("data_stale")),
+            "stale_datasets": _stale.get("stale_datasets") or [],
             "tabs": ["今日", "我的钱", "研究库", "证据库", "影子"],
             "cards": [{"tab": tab, "html": h} for tab in ("今日", "我的钱", "研究库", "证据库", "影子") for h in S[tab]]}
     (OUT.parent / "dashboard.json").write_text(json.dumps(dash, ensure_ascii=False))
@@ -1494,6 +1513,9 @@ def main():
         "version": 2,
         "built_at": stamp,
         "sig_date": sig_date, "buy_day": buy_day, "sell_day": sell_day,
+        # DATA-07 降级标记（人机共用事实源）：作战单/外部读者可按此拒信
+        "data_stale": bool(_stale.get("data_stale")),
+        "stale_datasets": _stale.get("stale_datasets") or [],
         "regime": reg and {"date": reg["date"], "regime": reg["regime"], "limit_ups": reg["stats"]["limit_ups"],
                             "limit_downs": reg["stats"]["limit_downs"],
                             # 2026-10-20：advice/gap 进人机共用事实源，作战单直接引用

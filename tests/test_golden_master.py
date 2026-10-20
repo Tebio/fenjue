@@ -83,6 +83,33 @@ def test_factor_census_registry_frozen():
     assert fc.FEE == 0.0015
 
 
+def test_registry_drift_is_visible():
+    """注册表内容指纹不一致时，熔断必须显式降级(stale_health)而不是拿旧体检结论静默放行。
+
+    动机（2026-10-20 主 agent 审计实证）：手写的 registry_version 挡不住配置漂移——
+    把某个 fatal 数据集的 path 改坏后，data_health.json 里的旧结论仍是 ok，熔断三个下游全部放行，
+    即"看着在拦其实没拦"。fingerprint 用注册表字节 md5，改一字节就变。
+    """
+    import importlib.util
+    from pathlib import Path
+    eng = Path(__file__).resolve().parent.parent / "engine"
+    def load(name, file):
+        spec = importlib.util.spec_from_file_location(name, eng / file)
+        m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
+    br = load("_breaker_probe", "breaker.py")
+
+    same = {"_meta": {"registry_fingerprint": __import__("hashlib").md5(
+        (eng.parent / "data/datasets_registry.yaml").read_bytes()).hexdigest()}}
+    assert br._registry_drift(same) is None, "指纹一致必须判无漂移"
+
+    drifted = {"_meta": {"registry_fingerprint": "0" * 32}}
+    msg = br._registry_drift(drifted)
+    assert msg and "指纹不一致" in msg, "指纹不一致必须返回说明串（必须可见，不许静默）"
+
+    legacy = {"_meta": {}}   # 升级前的旧产物没有该字段
+    assert br._registry_drift(legacy) is None, "旧产物缺字段时返回 None（不阻断），避免升级即全线告警"
+
+
 def test_claims_audit_history_idempotent():
     """claims_audit.append_history：同日重跑覆盖不追加、跨日追加、超 52 条截断。
 

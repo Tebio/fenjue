@@ -157,16 +157,23 @@ def upsert_log(entry: dict) -> str:
 def coverage(day: str) -> float:
     """big_kcache 中当日 bar 覆盖率（2026-09-21 实锤：baostock 断链只更了 328/3377，
     下游把 10 涨停当全天 → 垃圾 regime。低于 80% 拒绝写盘——实盘完整覆盖天花板≈91%
-    （186 退市+停牌）。哨兵阈值防半更新/断链）。"""
+    （186 退市+停牌）。哨兵阈值防半更新/断链）。
+
+    2026-10-20 修：旧版只认「末 bar == day」，于是历史补跑永远过不了闸（数据一旦前进到
+    之后的交易日，任何历史日的覆盖率都退化成接近 0）——文档承诺的「可补历史日」实际从未
+    可用。改为「该票序列中存在 day 这根 bar」，当日/历史日同一口径。
+    """
     tot = hit = 0
     for f in KCACHE.glob("*.json"):
         tot += 1
         try:
             ks = json.loads(f.read_text())
-            if ks and ks[-1]["date"] == day:
-                hit += 1
         except Exception:
-            pass
+            continue
+        if not ks or ks[0]["date"] > day or ks[-1]["date"] < day:
+            continue
+        if any(k["date"] == day for k in reversed(ks)):
+            hit += 1
     return hit / tot if tot else 0.0
 
 
@@ -203,11 +210,19 @@ def _intended_day() -> str:
 
 
 def main():
-    if len(sys.argv) > 1:
+    explicit = len(sys.argv) > 1
+    if explicit:
         days = sys.argv[1:]
     else:
         days = [_intended_day()]
+    import breaker  # DATA-07 熔断（R1-①追加型拒写）：lazy import 不影响模块被复用
     for day in days:
+        # 默认路径用体检基准日做熔断基准（#333 教训：拿派生日当基准会让「用旧数据跑」
+        # 自我合法化）；显式补历史日时才以该日为基准（数据末端更新于它即视为新鲜）。
+        _ok, _why = breaker.allow("权威时间轴", day if explicit else None)
+        if not _ok:
+            print(f"🚨 熔断拒写（DATA-07）：{_why}")
+            sys.exit(1)
         cov = coverage(day)
         if cov < 0.8:
             print(f"🚨 {day}: big_kcache 覆盖率仅 {cov:.0%}（<80%），数据不全拒绝落盘——kcache 可能断链/被超时截断，速查")

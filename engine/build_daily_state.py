@@ -431,6 +431,15 @@ def build(day=None):
     idx = jload("data/index_sh000001.json") or []
     latest = idx[-1]["date"] if idx else datetime.now(BJT).date().isoformat()
     day = day or latest
+    # DATA-07 熔断（R1-②展示型降级）：状态包照写，_meta 带 data_stale + 依赖项清单。
+    # 默认路径用体检基准日；显式 --date 才以该日为基准。（变量名 _brk：本地 stale 已被占）
+    _brk = {"data_stale": False, "stale_datasets": [], "reason": ""}
+    try:
+        sys.path.insert(0, str(ROOT / "engine")) if str(ROOT / "engine") not in sys.path else None
+        import breaker
+        _brk = breaker.stale_mark("日度状态包", None if day == latest else day)
+    except Exception:
+        pass
     fresh, unknown = {}, []
 
     fresh["index_sh000001"] = freshness("data/index_sh000001.json", "date", latest, day)
@@ -470,6 +479,10 @@ def build(day=None):
             "rule": "只读拼合既有产物，不重算信号；缺源写 unknown；同日重跑覆盖（幂等）",
             "cluster_gate": CLUSTER_GATE,
             "stale_sources": stale,
+            # DATA-07 熔断降级标记（注册表 blocks 驱动，与 freshness 段互补：一个是逐源
+            # 新鲜度清单，一个是「阻断级依赖是否命中」的机器可读判决）
+            "data_stale": bool(_brk.get("data_stale")),
+            "stale_datasets": _brk.get("stale_datasets") or [],
             "inputs": sorted({v["file"] for v in fresh.values()}),
             "elapsed_s": None,  # 收尾填
         },

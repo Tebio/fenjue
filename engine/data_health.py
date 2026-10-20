@@ -39,6 +39,33 @@ import freshness_core as fc  # noqa: E402
 
 VERSION = "data_health/1.0 (2026-10-20, DATA-01)"
 DATA = ROOT / "data"
+SEAM_SIDE = DATA / "seam_metrics.json"  # DATA-07：update_kcache 的 SEAM-FIX 指标化侧车
+SEAM_ABNORMAL_STREAK_DEMOTE = 2  # 连续 N 个记录日 seam_err>0 → big_kcache 降为 stale
+
+
+def load_seam_metrics() -> dict | None:
+    """读 SEAM 侧车（DATA-07）。缺失/损坏 → None（kcache 班没跑过或落盘失败，不算错误）。
+
+    返回 {"today": {当日累计或 None}, "abnormal_streak_days": n, "days": {...}}。
+    异常定义（写死）：seam_err > 0（复权漂移后全量重拉失败/行数异常）——
+    seam_fixed 本身不是病（分红送配后重拉是正常维护），重拉失败才是。
+    """
+    try:
+        st = json.loads(SEAM_SIDE.read_text())
+        days = st.get("days") or {}
+        if not isinstance(days, dict):
+            return None
+        today = bjt_now().date().isoformat()
+        streak = 0
+        for d in sorted(days, reverse=True):  # 从最新记录日往回数连续异常
+            if (days[d] or {}).get("seam_err", 0) > 0:
+                streak += 1
+            else:
+                break
+        return {"today": days.get(today), "abnormal_streak_days": streak,
+                "days": days, "updated_at": st.get("updated_at")}
+    except Exception:
+        return None
 
 
 def bjt_now() -> datetime:
@@ -87,16 +114,40 @@ def check_all(ref_date: str | None = None, only: list[str] | None = None,
                           "severity": "fatal", "lag": None, "cadence": None, "max_lag": None,
                           "blocks": [], "owner": None,
                           "reason": "在 mandatory 必注册集但未注册——监控机对它失明"}
+    # DATA-07 SEAM-FIX 指标化：连续多日 seam 异常（重拉失败）→ big_kcache 由 ok 降为 stale
+    # （spec 接口契约）。stale 不阻断（warn 级），但进报告 ⚠️ 段——接缝腐蚀是慢性病，
+    # 不配 fatal 的「断供」语义。只降不升：本来就 fatal/stale 的不动。
+    seam = load_seam_metrics()
+    if seam and seam["abnormal_streak_days"] >= SEAM_ABNORMAL_STREAK_DEMOTE:
+        bk = items.get("big_kcache")
+        if bk and bk["status"] == "ok":
+            bk["status"] = "stale"
+            bk["reason"] = (bk["reason"] + "；" if bk["reason"] else "") + \
+                (f"SEAM 连续 {seam['abnormal_streak_days']} 个记录日重拉失败"
+                 f"（seam_err>0，见 data/seam_metrics.json）→ 降级 stale")
     summary = {s: 0 for s in fc.STATUSES}
     for it in items.values():
         summary[it["status"]] += 1
     summary["total"] = len(items)
-    return {"_meta": {"version": VERSION, "date": bjt_now().date().isoformat(),
-                      "generated_at": bjt_now().isoformat(timespec="seconds"),
-                      "registry_version": doc.get("registry_version"),
-                      "ref_date": ref, "ref_source": "--ref-date" if ref_date else "auto(最近已收盘交易日)",
-                      "discipline": "read-only + 落盘 + 提案；不自动补数/重跑（#278 同纪律）"},
-            "items": items, "summary": summary}
+    # 注册表**内容指纹**（2026-10-20 补）：手写的 registry_version 在有人改 path/severity/blocks 时不会变，
+    # 拿它当"配置一致性凭证"必然失真。fingerprint = 注册表文件字节 md5，改一个字节就变。
+    # 用途见 breaker._load_health：指纹不一致 = 体检结论可能出自从前的注册表 → 熔断判定不可信，必须显式暴露。
+    import hashlib as _hl
+    try:
+        _reg_bytes = (ROOT / "data/datasets_registry.yaml").read_bytes()
+        _reg_fp = _hl.md5(_reg_bytes).hexdigest()
+    except Exception:
+        _reg_fp = None
+    result = {"_meta": {"version": VERSION, "date": bjt_now().date().isoformat(),
+                        "generated_at": bjt_now().isoformat(timespec="seconds"),
+                        "registry_version": doc.get("registry_version"),
+                        "registry_fingerprint": _reg_fp,
+                        "ref_date": ref, "ref_source": "--ref-date" if ref_date else "auto(最近已收盘交易日)",
+                        "discipline": "read-only + 落盘 + 提案；不自动补数/重跑（#278 同纪律）"},
+              "items": items, "summary": summary}
+    if seam:  # metrics.seam：当日 SEAM-FIX 计数进体检产物（spec 验收：数值 == 当日 SEAM-FIX 计数）
+        result["metrics"] = {"seam": seam}
+    return result
 
 
 # ---------------------------------------------------------------------------

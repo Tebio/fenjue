@@ -37,6 +37,14 @@ def jload(p, default=None):
 
 
 def main():
+    # DATA-07 熔断（R1-②展示型降级）：照写但在产物打 data_stale 标记+横幅。
+    # 作战单每日必发，熔断判定本身失败不许卡住发单（try/except 静默降级为无标记）。
+    _stale = {"data_stale": False, "stale_datasets": [], "reason": ""}
+    try:
+        import breaker
+        _stale = breaker.stale_mark("作战单9:25")
+    except Exception:
+        pass
     st = jload(ROOT + "/docs/ops-state.json", {})
     reg = st.get("regime") or {}
     regime = reg.get("regime", "?")
@@ -91,6 +99,10 @@ def main():
     # ══ 输出 ══
     L = []
     L.append(f'📋 作战单 · 执行日 {fmt(today)}')
+    # DATA-07 降级横幅：数据断供时用户仍要收到单子，但必须第一眼看到它不可信
+    if _stale.get("data_stale"):
+        L.append(f'🚨 数据断供降级：{"、".join(_stale["stale_datasets"])} —— 本单按陈旧数据产出，'
+                 f'结论先别信，详见 data/data_health_report.md')
     L.append(f'数据截至 {fmt(sig_date) if sig_date else "?"}收盘 · {regime} · 涨停{lu}/跌停{ld}{boost}')
     # 周期仪的分腿建议（2026-10-20 接线：advice 由 regime_core 唯一出处给出，
     # 腿一跌停潮=反弹窗口、腿二涨停枯竭=降进攻频率，两腿不得共用一句）
@@ -250,6 +262,9 @@ def main():
     # 台账：记今日买入名单（影子），供下一交易日 T+1 提醒；同日幂等
     entry = {"date": str(today),
              "buys": [f'{nm} {c}' for c, p, nm in deep_list[:5]]}
+    if _stale.get("data_stale"):  # DATA-07：台账同样落降级标记，供事后审计
+        entry["data_stale"] = True
+        entry["stale_datasets"] = _stale["stale_datasets"]
     ledger = [e for e in ledger if e.get("date") != str(today)]
     ledger.append(entry)
     with open(LEDGER, "w", encoding="utf-8") as f:

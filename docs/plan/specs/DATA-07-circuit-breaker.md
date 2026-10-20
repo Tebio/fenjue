@@ -55,7 +55,7 @@ def allow(writer: str, ref_date: str, root: Path = ROOT) -> tuple[bool, str]:
 - `权威时间轴`（regime_daily_append → regime_timeline_hcap.json）
 - `X规则线`（xrules_daily → xrules_state.json，2026-10-20 已实证：kcache 停更时它按旧日期判并静默覆盖 state）
 - `影子盘`（台账进 shadow_intents.jsonl，写错了直接污染胜率统计）
-- `回测族` 的**新数据追加**（历史重跑不受限）
+- ~~`回测族` 的**新数据追加**~~（2026-10-20 主 agent 撤回：与 R1-③ 的 EXEMPT 表自相矛盾，K3 施工时按更晚的接口契约执行 EXEMPT 并声明异议——它是对的。回测族产物可重跑可弃，不该占熔断面）
 拒写 = 不写盘 + `breaker_events.jsonl` 记录 + 非零退出码。
 
 ### ② 展示型 → 照写 + 标 stale（degrade-mark）
