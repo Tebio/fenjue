@@ -2,7 +2,7 @@
  "_meta": {
   "as_of": "2026-10-15",
   "drift_pp": 0.1,
-  "generated_at": "2026-10-20T11:53:49+08:00",
+  "generated_at": "2026-10-20T15:25:13+08:00",
   "golden": "data_health_snapshot",
   "repo": "/opt/data/fenjue",
   "slice_stride": 28
@@ -15,7 +15,6 @@
   "回测族",
   "影子盘",
   "日度状态包",
-  "晨报",
   "权威时间轴",
   "深档名单",
   "盘前自检",
@@ -74,8 +73,7 @@
   },
   "line_health": {
    "blocks": [
-    "日度状态包",
-    "晨报"
+    "作战单9:25"
    ],
    "cadence": "daily",
    "date_expr": "_meta.date",

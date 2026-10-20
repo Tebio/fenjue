@@ -49,16 +49,29 @@
 这是个设计瑕疵：给一个没人跑的工具加降级标记）。
 
 ### 待核（判死可能有误，别急着删）
-- `daily_delta.py` —— 注册表里有「晨报」这个下游标签，但**没有任何脚本绑定它**，cron 也搜不到。
-  「晨报」到底由谁生产目前是空的，这本身是个洞（登记了依赖关系却没有生产者）。
+- ~~`daily_delta.py` / 「晨报」无生产者~~ —— **2026-10-20 已清口**：注册表登记了「晨报」下游，但 cron 搜不到任何作业、
+  `line_health_report` 全库零引用，属"设计意图被当成现实登记"。已从下游定义与 `breaker.EXEMPT_WRITERS` 移除，
+  `line_health.blocks` 改为真实消费者 `作战单9:25`（ops_briefing 嵌数据面段落 + data_stale 告警）。golden oracle 已确认性更新。
 - `database.py` / `event_registry.py` —— 名字像基础设施，可能有动态引用，删前必须全库搜字符串。
+
+### 判据的四个漏洞（K3 2026-10-20 咨询指出，已采纳）
+122 这个数字**不可当结论用**，判据本身有系统性误判：
+1. **一次性基建被判死**：`factor_census_base.npz`(222MB)、`similarity_features.npz`(446MB) 这类底座的生产者可能半年不跑，
+   但产物天天被读。判据缺"产物仍被消费"这一腿——它们不是死代码，是**已完成的基建**。
+2. **动态调用逃逸静态 grep**：subprocess 拼 f-string 脚本名、`importlib`/`getattr` 插件式加载、
+   cron 的 agent 型 job 在 prompt 里用自然语言点名脚本——都不留 import 痕迹。
+3. **跨仓库引用**：`/opt/data/skills/`（fenjue-screening 线）、`verify.sh`、`plan_lint.py` 的引用在 engine/ 内 grep 不到。
+4. **产物命名无规律**被反向冤枉：输出名不带固定前缀的脚本，"近期产物"匹配不上就算死——而这恰好更可能是老脚本。
+
+**结论**：核实死代码时必须加"产物被读"和"跨库字符串引用"两条复核腿，否则登记表本身会变成新的假账。
 
 ## 四、危险清单（改之前必看）
 
 | 项 | 风险 |
 |---|---|
-| `/opt/data/scripts/` **不在本仓库** | 生产脚本改坏了 git 救不回来，改前必须 `.bak` |
+| `/opt/data/scripts/` **不在本仓库** | **2026-10-20 已建独立 git 仓库**（115 文件入库，仅本地不推远端）。改前仍建议先 commit |
 | `check_unadj_fresh.py`、`rebuild_unadj.py` 未跟踪但**正在生产用** | 已纳入版本控制（2026-10-20） |
+| 判"死代码"的判据本身有系统性误判 | 见下方"判据的四个漏洞" |
 | `lt_limitup_signal.py` **有 SyntaxError 却仍在生产引用列表里** | 已判死（#317），cron 已 disable；确认没有其它入口调它 |
 | `k4_deep_v2.py` / `k3_deep_low_v2.py` 未跟踪 | 深档生产脚本无版本历史，改动前 `.bak` |
 | `k4_panel.py` / `data/big_kcache/` | 禁止碰（序列污染源，见 AGENTS #330） |

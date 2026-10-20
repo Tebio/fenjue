@@ -55,7 +55,9 @@ DISABLE_FLAG = DATA / "breaker_disabled.flag"
 # ── 三类语义（R1 裁决，写死；EXEMPT 尤其不许改由注册表驱动）──
 WRITE_BLOCK = {"权威时间轴", "X规则线", "影子盘"}
 DEGRADE_MARK = {"作战单9:25", "面板20:40", "日度状态包", "深档名单", "周期仪"}
-EXEMPT_WRITERS = {"盘前自检", "晨报", "line_health", "data_health", "回测族"}
+# 2026-10-20：移除"晨报"——从未实现的下游（注册表登记了依赖，但 cron 无作业、line_health_report 零引用）。
+# 留一个不存在的名字会让豁免表看起来比实际更宽。
+EXEMPT_WRITERS = {"盘前自检", "line_health", "data_health", "回测族"}
 KNOWN_WRITERS = WRITE_BLOCK | DEGRADE_MARK | EXEMPT_WRITERS
 
 
