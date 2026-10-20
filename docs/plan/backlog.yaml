@@ -402,7 +402,7 @@ items:
     effort_days: 1.5
     evidence: null
   - id: DATA-02
-    title: 盘前数据完备性自检（扩展 cron_health_check）
+    title: 盘前数据完备性自检（扩展 cron_health_check）— 时效已由 DATA-06 覆盖，本条只做存在性/日期一致性交叉校验 + 收编 build_daily_state 24 处 freshness + 交易日历口径统一
     area: DATA
     priority: P1
     gate: G1
@@ -441,7 +441,7 @@ items:
     effort_days: 1
     evidence: null
   - id: DATA-05
-    title: 退市股幸存者偏差量化
+    title: 退市股幸存者偏差量化（前置产物：退市/停牌白名单，让覆盖率闸有真基准——现行 3377 只里 186 只退市，天花板 94.4%）
     area: DATA
     priority: P2
     gate: G2
@@ -755,3 +755,50 @@ not_doing:
       big_kcache/emotion_series 差异=bds 无调用点（正是本卡补的洞）；
       ops_briefing 三态冒烟全过（无 fatal 无行/有 fatal 渲染/文件缺失静默跳过）。
       遗留：每日生成端挂哪个既有班未接（需用户裁决，未动 cron）。
+
+  - id: DATA-07
+    title: 熔断泛化（数据不合格 → 下游拒写，而非只告警）+ SEAM-FIX 指标化
+    area: DATA
+    priority: P1
+    status: todo
+    gate: G1
+    depends_on: [DATA-06]
+    ledger_ref: 332
+    inputs:
+      - docs/plan/specs/DATA-07-circuit-breaker.md
+      - data/data_health.json（DATA-06 产物）
+      - data/datasets_registry.yaml 的 blocks 字段
+    outputs:
+      - engine/breaker.py（allow(writer, ref_date)）
+      - data/breaker_events.jsonl
+      - data_health.json 新增 metrics.seam
+    acceptance:
+      - 伪造 big_kcache fatal → 深档/影子入口 allow() 返回 False 且不写盘
+      - 删除 data_health.json → 全部 allow()=True（fail-open）且事件记录"health 未知"
+      - regime 现有覆盖率闸与熔断对同一缺口判决一致或差异逐条解释
+      - metrics.seam 数值 == 当日 SEAM-FIX 计数
+    effort_days: 1.0
+    evidence: ''
+
+  - id: DATA-08
+    title: 血缘表 + DATA_STALE 联动（影响半径与"数据不可信不推断策略失效"）
+    area: DATA
+    priority: P1
+    status: todo
+    gate: G1
+    depends_on: [DATA-06]
+    ledger_ref: 332
+    inputs:
+      - docs/plan/specs/DATA-08-lineage.md
+      - data/datasets_registry.yaml / data/claims_registry.yaml
+    outputs:
+      - data/lineage.yaml
+      - engine/lineage.py（impact / stale_claims）
+      - line_health.json 每条线新增 data_stale 字段
+    acceptance:
+      - impact("big_kcache") 列出深档/影子盘/周期仪/权威时间轴/X规则线，且与 blocks 一致
+      - lineage.yaml 引用不存在的数据集/产物 → 加载即 raise
+      - 伪造 big_kcache fatal → stale_claims() 非空、line_health 标 data_stale 并单列
+      - golden 血缘一致性 case（dataset.blocks == lineage.direct）
+    effort_days: 1.5
+    evidence: ''

@@ -2,12 +2,12 @@
  "_meta": {
   "version": "data_health/1.0 (2026-10-20, DATA-01)",
   "date": "2026-10-20",
-  "generated_at": "2026-10-20T12:27:52+08:00",
+  "generated_at": "2026-10-20T12:37:25+08:00",
   "registry_version": "1.0 (2026-10-20, DATA-01)",
   "ref_date": "2026-10-19",
-  "ref_source": "auto(最近已收盘交易日)",
+  "ref_source": "--ref-date",
   "discipline": "read-only + 落盘 + 提案；不自动补数/重跑（#278 同纪律）",
-  "elapsed_s": 0.34
+  "elapsed_s": 0.26
  },
  "items": {
   "big_kcache": {
@@ -127,10 +127,10 @@
   "xrules_state": {
    "key": "xrules_state",
    "path": "data/xrules_state.json",
-   "date": "2026-10-16",
-   "status": "stale",
+   "date": "2026-10-19",
+   "status": "ok",
    "severity": "warn",
-   "lag": 1,
+   "lag": 0,
    "cadence": "daily",
    "max_lag": 0,
    "blocks": [
@@ -138,7 +138,7 @@
     "面板20:40"
    ],
    "owner": "engine/xrules_daily.py",
-   "reason": "滞后 1 交易日 > max_lag 0（末端 2026-10-16，基准 2026-10-19）"
+   "reason": ""
   },
   "line_health": {
    "key": "line_health",
@@ -174,8 +174,8 @@
   }
  },
  "summary": {
-  "ok": 9,
-  "stale": 1,
+  "ok": 10,
+  "stale": 0,
   "fatal_lag": 0,
   "missing": 0,
   "unregistered": 0,

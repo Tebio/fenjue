@@ -1412,3 +1412,29 @@ ORDER 的内容与顺序由 golden oracle 冻结（case 输出含 order 列表�
 
 **结果：`bash scripts/verify.sh --fast` 首次全绿** —— plan_lint 绿 / py_compile 294 files 0 fail / pytest 18 passed / golden 绿。
 在此之前总闸一直红（factor_census），等于形同虚设。
+
+
+**333. 监控机首日闭环：xrules_state 补跑 + P1 立项（2026-10-20）**
+
+**A. `xrules_state` 滞后已补**：DATA-06 上岗首日抓到它 `date` 停在 2026-10-16（`lag=1, stale`）。
+查证 cron `036130e2e17b`「焚诀X规则线日判（20:15BJT）」是 **enabled=true 且照常跑**——10-19 晚它确实跑了，
+但 kcache 停在 10-16，于是它按用户给定/推算的旧日期判了一遍并静默覆盖 state（#330 的第三种形态：
+不是"没跑"，是"跑了但用旧数据"，比没跑更难发现）。
+`engine/xrules_daily.py` 支持 `argv[1]` 指定日期，其覆盖率闸判的是「末 bar == 指定日」——**补数前不可能跑通 10-19，补数后即可**。
+已补跑：`xrules_state.date=2026-10-19, regime=妖股期, ldc=28, gap_cluster=7, panic_cluster=3, streak=0, entry_day=None, rules=3`，
+与 regime 时间轴同日的妖股期/跌停 28 完全对齐。补后 `data_health` **10/10 ok**（零 stale）。
+教训：**覆盖率闸只看"够不够"，不看"是哪一天"，就会让脚本用隔日数据静默补写**。DATA-07 的熔断要把这一点覆盖。
+
+**B. P1/P2 清单立项（避免与既有条目撞车，先查了 DATA-02~05）**：
+- 新增 **DATA-07 熔断泛化**（P1，1.0 人日，spec 已写）：`freshness_core.is_blocking` 命中的 fatal 数据集
+  按注册表 `blocks` 让下游拒写；fail-open（health 未知则放行并记 event，不许监控机自己挂了全线停摆）；
+  含 **SEAM-FIX 指标化**（复权漂移重装进 `metrics.seam`，不再只打日志）。
+- 新增 **DATA-08 血缘表 + DATA_STALE 联动**（P1，1.5 人日，spec 已写）：`impact(dataset)` 算影响半径、
+  `stale_claims()` 给 `line_health` 打 `data_stale`（治"数据缺失被误判成策略衰减"）。
+- 收窄既有条目避免重复建设：DATA-02「盘前完备性」去掉时效部分（已由 DATA-06 覆盖），只留存在性/日期一致性
+  + 收编 `build_daily_state` 24 处 `freshness` + 交易日历口径统一；DATA-05「退市幸存者偏差」加前置产物
+  退市/停牌白名单（让覆盖率闸有真基准，现行 3377 只里 186 只退市、天花板 94.4%）。
+- `plan_lint` 仍不查重复 ID（今日已因它撞出 DATA-01 重号）——欠账，未立项，改动小但优先级低。
+
+**C. 总闸现状**：`bash scripts/verify.sh --fast` 全绿；`plan_lint: items=49 not_doing=11 specs=11`，
+仅 OPT-02/DOC-01 两条既有 P2 缺 spec 警告。

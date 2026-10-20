@@ -1,15 +1,15 @@
 {
- "date": "2026-10-15",
- "regime": "恐慌期",
- "ldc": 36,
- "gap_cluster": 139,
- "panic_cluster": 6,
- "streak": 1,
+ "date": "2026-10-19",
+ "regime": "妖股期",
+ "ldc": 28,
+ "gap_cluster": 7,
+ "panic_cluster": 3,
+ "streak": 0,
  "entry_day": null,
  "rules": {
   "T1-MEGA": {
    "fired": false,
-   "why": "簇139<20"
+   "why": "簇7<20"
   },
   "X2": {
    "fired": false,
@@ -18,7 +18,7 @@
   },
   "X3": {
    "fired": false,
-   "why": "恐慌streak<2（第2天才接）"
+   "why": "非恐慌期"
   }
  },
  "shadow": {

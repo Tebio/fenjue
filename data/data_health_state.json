@@ -102,9 +102,9 @@
    "history": [
     {
      "date": "2026-10-20",
-     "status": "stale",
+     "status": "ok",
      "sev": "warn",
-     "lag": 1,
+     "lag": 0,
      "ref": "2026-10-19"
     }
    ],
@@ -141,6 +141,6 @@
    "fatal_active": false
   }
  },
- "updated_at": "2026-10-20T12:27:52+08:00",
+ "updated_at": "2026-10-20T12:37:25+08:00",
  "date": "2026-10-20"
 }
