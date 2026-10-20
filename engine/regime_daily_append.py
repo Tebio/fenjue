@@ -23,6 +23,11 @@ sys.path.insert(0, str(Path(__file__).parent))
 from regime_backtest_hcap import cap_at, load_sectors   # 复用 PIT 市值与行业映射（铁律：抄现成）
 
 ROOT = Path("/opt/data/fenjue")
+sys.path.insert(0, str(ROOT))
+from engine.regime_core import (  # noqa: E402
+    classify as core_classify,
+    pct_limit_down_from_series,
+)
 KCACHE = ROOT / "data" / "big_kcache"
 TIMELINE = ROOT / "data" / "regime_timeline_hcap.json"
 RLOG = ROOT / "data" / "regime_log.jsonl"
@@ -83,14 +88,17 @@ def day_stats(day: str) -> dict | None:
             ip = (float(idx[i]["close"]) / float(idx[i - 1]["close"]) - 1) * 100
             break
     nd = len(downs)
-    if n >= 60 and conc >= 0.22:
-        regime = "主线期"
-    elif n >= 40 and small_ratio >= 0.65 and conc < 0.22:
-        regime = "妖股期"
-    elif nd >= 20 or (n < 30 and ip < -1.0):
-        regime = "恐慌期"
-    else:
-        regime = "平淡期"
+    # 2026-10-20：判定统一委托 engine/regime_core.py（唯一出处）。
+    # 腿一 = 滚动250日分位（合计口径）；绝对门槛 ≥20 已废（真序列下开火率 36.3%，是噪音）。
+    # 分位用「尾窗含当日虚拟 append」算，因为当日的 emotion_series 行还没由 cron 写入。
+    regime, _advice = core_classify(
+        limit_ups=n,
+        index_pct=ip,
+        small_cap_ratio=small_ratio,
+        top_sector_conc=conc,
+        limit_downs_abs=nd,
+        pct_limit_down=pct_limit_down_from_series(nd, day),
+    )
     return {"date": day, "regime": regime, "boards_n": n, "downs": nd,
             "small%": round(small_ratio, 2), "conc": round(conc, 2), "idx": round(ip, 2),
             "boards": boards, "top_sectors": secs.most_common(5)}

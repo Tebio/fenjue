@@ -8,10 +8,13 @@ cap_hist（baostock 换手率反推的当日流通市值），不再是 2026-09-
 from __future__ import annotations
 
 import json
+import sys
 from collections import Counter
 from pathlib import Path
 
 ROOT = Path("/opt/data/fenjue")
+sys.path.insert(0, str(ROOT))
+from engine.regime_core import classify as core_classify, load_pct_series  # noqa: E402
 KCACHE = ROOT / "data" / "big_kcache"
 CAPDIR = ROOT / "data" / "cap_hist"
 FULL_N = 3194
@@ -64,6 +67,7 @@ def main() -> None:
         return sec
 
     timeline = []
+    pct_series = load_pct_series()  # 分位序列（同 regime_meter 用的那一份）
     for d in sorted(day_boards):
         if d < "2019-01-01":
             continue
@@ -76,14 +80,17 @@ def main() -> None:
         conc = max(known.values()) / n if known else 0
         ip = idx_pct.get(d, 0)
         nd = len(day_downs.get(d, []))
-        if n >= 60 and conc >= 0.22:
-            regime = "主线期"
-        elif n >= 40 and small_ratio >= 0.65 and conc < 0.22:
-            regime = "妖股期"
-        elif nd >= 20 or (n < 30 and ip < -1.0):
-            regime = "恐慌期"
-        else:
-            regime = "平淡期"
+        # 2026-10-20：判定统一委托 engine/regime_core.py（唯一出处）。
+        # 腿一用滚动 250 日分位（合计口径，来自 emotion_series.jsonl），
+        # 不再用 `nd >= 20` 这种跨年不可比的绝对门槛。
+        regime, _advice = core_classify(
+            limit_ups=n,
+            index_pct=ip,
+            small_cap_ratio=small_ratio,
+            top_sector_conc=conc,
+            limit_downs_abs=nd,
+            pct_limit_down=pct_series.get(d),
+        )
         timeline.append({"date": d, "regime": regime, "boards": n, "downs": nd,
                          "small%": round(small_ratio, 2), "conc": round(conc, 2), "idx": round(ip, 2)})
 

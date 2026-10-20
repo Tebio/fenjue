@@ -1,0 +1,175 @@
+{
+ "_meta": {
+  "as_of": "2026-10-15",
+  "drift_pp": 0.1,
+  "generated_at": "2026-10-20T10:01:47+08:00",
+  "golden": "regime_meter_classify",
+  "repo": "/opt/data/fenjue",
+  "slice_stride": 28
+ },
+ "cases": {
+  "主线_阈值上": {
+   "advice": "涨停集中在主线产业链——用板块操作台/焚诀主线打法（反转开盘买、追高只允许尾盘买）",
+   "regime": "主线期",
+   "stats": {
+    "index_pct": 0.0,
+    "limit_downs": 0,
+    "limit_ups": 60,
+    "small_cap_board_ratio": 0.65,
+    "top_sector_concentration": 0.22
+   }
+  },
+  "主线_阈值下": {
+   "advice": "无量能无主线——观望，红利宇宙建仓窗口",
+   "regime": "平淡期",
+   "stats": {
+    "index_pct": 0.0,
+    "limit_downs": 0,
+    "limit_ups": 59,
+    "small_cap_board_ratio": 0.65,
+    "top_sector_concentration": 0.3
+   }
+  },
+  "主线_集中度差1": {
+   "advice": "无量能无主线——观望，红利宇宙建仓窗口",
+   "regime": "平淡期",
+   "stats": {
+    "index_pct": 0.0,
+    "limit_downs": 0,
+    "limit_ups": 120,
+    "small_cap_board_ratio": 0.61,
+    "top_sector_concentration": 0.21
+   }
+  },
+  "妖股_小市值差1": {
+   "advice": "无量能无主线——观望，红利宇宙建仓窗口",
+   "regime": "平淡期",
+   "stats": {
+    "index_pct": 0.0,
+    "limit_downs": 0,
+    "limit_ups": 60,
+    "small_cap_board_ratio": 0.64,
+    "top_sector_concentration": 0.05
+   }
+  },
+  "妖股_阈值上": {
+   "advice": "涨停全是小市值散票无主线——默认不参与；个股不可预测",
+   "regime": "妖股期",
+   "stats": {
+    "index_pct": 0.0,
+    "limit_downs": 0,
+    "limit_ups": 40,
+    "small_cap_board_ratio": 0.65,
+    "top_sector_concentration": 0.05
+   }
+  },
+  "平淡_兜底": {
+   "advice": "无量能无主线——观望，红利宇宙建仓窗口",
+   "regime": "平淡期",
+   "stats": {
+    "index_pct": 0.5,
+    "limit_downs": 5,
+    "limit_ups": 20,
+    "small_cap_board_ratio": 0.3,
+    "top_sector_concentration": 0.1
+   }
+  },
+  "恐慌_兜底37阈下": {
+   "advice": "无量能无主线——观望，红利宇宙建仓窗口",
+   "regime": "平淡期",
+   "stats": {
+    "index_pct": 0.0,
+    "limit_downs": 37,
+    "limit_ups": 10,
+    "small_cap_board_ratio": 0.0,
+    "top_sector_concentration": 0.0
+   }
+  },
+  "恐慌_兜底38阈上": {
+   "advice": "跌停潮（合计口径分位≥0.95）——历史上这种投降式抛售之后是反弹窗口：前瞻5日指数 +1.36%(t=4.09)、前瞻最大回撤反而比平时更浅。与策略B 对齐，分批建指数仓，不要空仓躲",
+   "regime": "恐慌期",
+   "stats": {
+    "index_pct": 0.0,
+    "limit_downs": 38,
+    "limit_ups": 10,
+    "small_cap_board_ratio": 0.0,
+    "top_sector_concentration": 0.0
+   }
+  },
+  "恐慌_分位阈上": {
+   "advice": "跌停潮（合计口径分位≥0.95）——历史上这种投降式抛售之后是反弹窗口：前瞻5日指数 +1.36%(t=4.09)、前瞻最大回撤反而比平时更浅。与策略B 对齐，分批建指数仓，不要空仓躲",
+   "regime": "恐慌期",
+   "stats": {
+    "index_pct": 0.0,
+    "limit_downs": 28,
+    "limit_ups": 10,
+    "pct_limit_down": 0.95,
+    "small_cap_board_ratio": 0.0,
+    "top_sector_concentration": 0.0
+   }
+  },
+  "恐慌_分位阈下": {
+   "advice": "无量能无主线——观望，红利宇宙建仓窗口",
+   "regime": "平淡期",
+   "stats": {
+    "index_pct": 0.0,
+    "limit_downs": 28,
+    "limit_ups": 10,
+    "pct_limit_down": 0.94,
+    "small_cap_board_ratio": 0.0,
+    "top_sector_concentration": 0.0
+   }
+  },
+  "恐慌_分位高但绝对少": {
+   "advice": "跌停潮（合计口径分位≥0.95）——历史上这种投降式抛售之后是反弹窗口：前瞻5日指数 +1.36%(t=4.09)、前瞻最大回撤反而比平时更浅。与策略B 对齐，分批建指数仓，不要空仓躲",
+   "regime": "恐慌期",
+   "stats": {
+    "index_pct": 0.0,
+    "limit_downs": 6,
+    "limit_ups": 10,
+    "pct_limit_down": 0.99,
+    "small_cap_board_ratio": 0.0,
+    "top_sector_concentration": 0.0
+   }
+  },
+  "恐慌_指数差0.01": {
+   "advice": "无量能无主线——观望，红利宇宙建仓窗口",
+   "regime": "平淡期",
+   "stats": {
+    "index_pct": -1.0,
+    "limit_downs": 19,
+    "limit_ups": 29,
+    "small_cap_board_ratio": 0.0,
+    "top_sector_concentration": 0.0
+   }
+  },
+  "恐慌_涨停差1": {
+   "advice": "无量能无主线——观望，红利宇宙建仓窗口",
+   "regime": "平淡期",
+   "stats": {
+    "index_pct": -1.5,
+    "limit_downs": 19,
+    "limit_ups": 30,
+    "small_cap_board_ratio": 0.0,
+    "top_sector_concentration": 0.0
+   }
+  },
+  "恐慌_涨停枯竭+指数": {
+   "advice": "涨停枯竭+指数大跌——趋势延续型弱势（独立信息弱，前瞻5日 -0.07%，t=-0.84 不显著）：降低进攻频率，不新开追高仓",
+   "regime": "恐慌期",
+   "stats": {
+    "index_pct": -1.01,
+    "limit_downs": 19,
+    "limit_ups": 29,
+    "small_cap_board_ratio": 0.0,
+    "top_sector_concentration": 0.0
+   }
+  }
+ },
+ "thresholds": {
+  "主线": "涨停≥60 且 链集中≥22%",
+  "妖股": "涨停≥40 且 小市值≥65% 且 链分散<22%",
+  "平淡": "其余",
+  "恐慌": "跌停家数滚动250日分位(q95,合计口径≥0.95) 或 (涨停<30 且 指数<-1.0%)；分位缺失时退回绝对 38 家并告警"
+ }
+}
