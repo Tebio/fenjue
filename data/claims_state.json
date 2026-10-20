@@ -1,55 +1,10 @@
 {
  "CANDLE_UPPER_LOW": {
   "status": "DEAD",
-  "consecutive_fails": 11,
+  "consecutive_fails": 13,
   "history": [
    {
     "date": "2026-09-11",
-    "verdicts": {
-     "5": [
-      -0.86,
-      0.0,
-      false
-     ],
-     "20": [
-      -1.26,
-      0.5,
-      false
-     ]
-    }
-   },
-   {
-    "date": "2026-09-11",
-    "verdicts": {
-     "5": [
-      -0.92,
-      0.0,
-      false
-     ],
-     "20": [
-      -1.51,
-      0.5,
-      false
-     ]
-    }
-   },
-   {
-    "date": "2026-09-11",
-    "verdicts": {
-     "5": [
-      -0.92,
-      0.0,
-      false
-     ],
-     "20": [
-      -1.51,
-      0.5,
-      false
-     ]
-    }
-   },
-   {
-    "date": "2026-09-13",
     "verdicts": {
      "5": [
       -0.92,
@@ -167,60 +122,30 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.75,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.61,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CANDLE_LOWER_LOW": {
   "status": "DEAD",
-  "consecutive_fails": 11,
+  "consecutive_fails": 13,
   "history": [
    {
     "date": "2026-09-11",
-    "verdicts": {
-     "5": [
-      -0.65,
-      0.0,
-      false
-     ],
-     "20": [
-      0.16,
-      0.5,
-      false
-     ]
-    }
-   },
-   {
-    "date": "2026-09-11",
-    "verdicts": {
-     "5": [
-      -0.69,
-      0.0,
-      false
-     ],
-     "20": [
-      -0.22,
-      0.5,
-      false
-     ]
-    }
-   },
-   {
-    "date": "2026-09-11",
-    "verdicts": {
-     "5": [
-      -0.69,
-      0.0,
-      false
-     ],
-     "20": [
-      -0.22,
-      0.5,
-      false
-     ]
-    }
-   },
-   {
-    "date": "2026-09-13",
     "verdicts": {
      "5": [
       -0.69,
@@ -338,60 +263,30 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.69,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.09,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "TD9_BUY": {
   "status": "DEAD",
-  "consecutive_fails": 11,
+  "consecutive_fails": 13,
   "history": [
    {
     "date": "2026-09-11",
-    "verdicts": {
-     "5": [
-      -0.41,
-      0.0,
-      false
-     ],
-     "20": [
-      -1.04,
-      0.0,
-      false
-     ]
-    }
-   },
-   {
-    "date": "2026-09-11",
-    "verdicts": {
-     "5": [
-      -0.44,
-      0.0,
-      false
-     ],
-     "20": [
-      -1.2,
-      0.0,
-      false
-     ]
-    }
-   },
-   {
-    "date": "2026-09-11",
-    "verdicts": {
-     "5": [
-      -0.44,
-      0.0,
-      false
-     ],
-     "20": [
-      -1.2,
-      0.0,
-      false
-     ]
-    }
-   },
-   {
-    "date": "2026-09-13",
     "verdicts": {
      "5": [
       -0.44,
@@ -509,6 +404,21 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.51,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.25,
+      0.0,
+      false
+     ]
+    }
    }
   ]
  },
@@ -518,36 +428,6 @@
   "history": [
    {
     "date": "2026-09-11",
-    "verdicts": {
-     "20": [
-      -2.14,
-      0.2,
-      true
-     ]
-    }
-   },
-   {
-    "date": "2026-09-11",
-    "verdicts": {
-     "20": [
-      -2.71,
-      0.2,
-      true
-     ]
-    }
-   },
-   {
-    "date": "2026-09-11",
-    "verdicts": {
-     "20": [
-      -2.71,
-      0.2,
-      true
-     ]
-    }
-   },
-   {
-    "date": "2026-09-13",
     "verdicts": {
      "20": [
       -2.71,
@@ -625,6 +505,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "20": [
+      -2.85,
+      0.2,
+      true
+     ]
+    }
    }
   ]
  },
@@ -632,16 +522,6 @@
   "status": "CANDIDATE",
   "consecutive_fails": 0,
   "history": [
-   {
-    "date": "2026-09-13",
-    "verdicts": {
-     "1": [
-      0.02,
-      0.0,
-      true
-     ]
-    }
-   },
    {
     "date": "2026-09-13",
     "verdicts": {
@@ -711,6 +591,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "1": [
+      0.02,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -718,16 +608,6 @@
   "status": "CANDIDATE",
   "consecutive_fails": 0,
   "history": [
-   {
-    "date": "2026-09-13",
-    "verdicts": {
-     "1": [
-      0.1,
-      0.0,
-      true
-     ]
-    }
-   },
    {
     "date": "2026-09-13",
     "verdicts": {
@@ -797,6 +677,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "1": [
+      0.14,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -814,16 +704,6 @@
   "status": "CANDIDATE",
   "consecutive_fails": 0,
   "history": [
-   {
-    "date": "2026-09-13",
-    "verdicts": {
-     "1": [
-      0.29,
-      0.0,
-      true
-     ]
-    }
-   },
    {
     "date": "2026-09-13",
     "verdicts": {
@@ -893,6 +773,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "1": [
+      0.28,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -900,21 +790,6 @@
   "status": "CANDIDATE",
   "consecutive_fails": 0,
   "history": [
-   {
-    "date": "2026-09-13",
-    "verdicts": {
-     "1": [
-      1.2,
-      0.0,
-      true
-     ],
-     "5": [
-      0.72,
-      0.0,
-      true
-     ]
-    }
-   },
    {
     "date": "2026-09-13",
     "verdicts": {
@@ -1019,6 +894,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "1": [
+      0.98,
+      0.0,
+      true
+     ],
+     "5": [
+      0.63,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -1026,21 +916,6 @@
   "status": "CANDIDATE",
   "consecutive_fails": 0,
   "history": [
-   {
-    "date": "2026-09-13",
-    "verdicts": {
-     "1": [
-      0.68,
-      0.0,
-      true
-     ],
-     "5": [
-      0.44,
-      0.0,
-      true
-     ]
-    }
-   },
    {
     "date": "2026-09-13",
     "verdicts": {
@@ -1145,6 +1020,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "1": [
+      1.0,
+      0.0,
+      true
+     ],
+     "5": [
+      0.3,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -1152,16 +1042,6 @@
   "status": "CANDIDATE",
   "consecutive_fails": 0,
   "history": [
-   {
-    "date": "2026-09-13",
-    "verdicts": {
-     "1": [
-      6.7,
-      0.0,
-      true
-     ]
-    }
-   },
    {
     "date": "2026-09-13",
     "verdicts": {
@@ -1231,6 +1111,16 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "1": [
+      7.3,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
@@ -1241,7 +1131,7 @@
  },
  "LIMITDOWN_LOW_MA60": {
   "status": "DEAD",
-  "consecutive_fails": 6,
+  "consecutive_fails": 8,
   "history": [
    {
     "date": "2026-09-19",
@@ -1332,12 +1222,27 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -1.5,
+      0.0,
+      false
+     ],
+     "20": [
+      2.54,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
  "FRONTRUN_LOW_MA60": {
   "status": "DEAD",
-  "consecutive_fails": 6,
+  "consecutive_fails": 8,
   "history": [
    {
     "date": "2026-09-19",
@@ -1428,6 +1333,21 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -1.9,
+      0.3,
+      false
+     ],
+     "20": [
+      -4.07,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
@@ -1512,6 +1432,21 @@
    },
    {
     "date": "2026-10-17",
+    "verdicts": {
+     "5": [
+      0.59,
+      0.0,
+      true
+     ],
+     "20": [
+      0.86,
+      0.5,
+      true
+     ]
+    }
+   },
+   {
+    "date": "2026-10-20",
     "verdicts": {
      "5": [
       0.59,
@@ -1620,6 +1555,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      0.17,
+      0.0,
+      true
+     ],
+     "20": [
+      1.6,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
@@ -1716,12 +1666,27 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      1.73,
+      0.0,
+      true
+     ],
+     "20": [
+      8.83,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
  "COMP_DIPBUY_LOW_BULLISH": {
   "status": "DEAD",
-  "consecutive_fails": 6,
+  "consecutive_fails": 8,
   "history": [
    {
     "date": "2026-09-19",
@@ -1812,6 +1777,21 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.73,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.93,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
@@ -1878,12 +1858,22 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      0.47,
+      0.0,
+      true
+     ]
+    }
    }
   ]
  },
  "COMP_REVERSAL_X_BIGUPPER_LOW": {
   "status": "DEAD",
-  "consecutive_fails": 6,
+  "consecutive_fails": 8,
   "history": [
    {
     "date": "2026-09-19",
@@ -1944,12 +1934,22 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.52,
+      0.0,
+      false
+     ]
+    }
    }
   ]
  },
  "COMP_LIMITDOWN_LOW_BIGUPPER": {
   "status": "DEAD",
-  "consecutive_fails": 6,
+  "consecutive_fails": 8,
   "history": [
    {
     "date": "2026-09-19",
@@ -2040,12 +2040,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -1.28,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.75,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "COMP_LIMITDOWN_LOW_SHRINK_XFUND": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -2121,12 +2136,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -5.34,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.82,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "COMP_LIMITDOWN_LOW_LOSER250_OS20_SHRINK": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -2202,12 +2232,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "COMP_LIMITDOWN_LOW_3DOWN_SHRINK": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -2283,12 +2328,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -3.27,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.41,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "COMP_LIMITDOWN_LOW_BIGUPPER_SHRINK": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -2364,12 +2424,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "COMP_LIMITDOWN_LOW_LOSER250_OS20_XFUND": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -2445,12 +2520,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.5,
+      0.0,
+      false
+     ],
+     "20": [
+      -2.16,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "COMP_LIMITDOWN_LOW_TD9": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -2526,12 +2616,27 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.58,
+      0.0,
+      false
+     ],
+     "20": [
+      11.64,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
  "COMP_LIMITDOWN_LOW_LOSER250_OS20_TD9": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -2595,6 +2700,21 @@
    },
    {
     "date": "2026-10-17",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
+   },
+   {
+    "date": "2026-10-20",
     "verdicts": {
      "5": [
       null,
@@ -2612,7 +2732,7 @@
  },
  "CROSS_LOW_SHRINK_BIGUPPER": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -2688,12 +2808,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CROSS_LOW_SHRINK_XFUND": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -2769,12 +2904,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -5.34,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.82,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CROSS_LOW_SHRINK_GAPDOWN": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -2838,6 +2988,21 @@
    },
    {
     "date": "2026-10-17",
+    "verdicts": {
+     "5": [
+      -2.7,
+      0.0,
+      false
+     ],
+     "20": [
+      0.58,
+      0.5,
+      true
+     ]
+    }
+   },
+   {
+    "date": "2026-10-20",
     "verdicts": {
      "5": [
       -2.7,
@@ -2931,6 +3096,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      0.87,
+      0.0,
+      true
+     ],
+     "20": [
+      4.07,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
@@ -3012,12 +3192,27 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      1.5,
+      0.0,
+      true
+     ],
+     "20": [
+      9.63,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
  "CROSS_LOW_LOSER250_BIGUPPER": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -3093,12 +3288,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CROSS_LOW_TD9_GAPDOWN": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -3172,6 +3382,21 @@
       0.41,
       0.5,
       false
+     ]
+    }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -5.9,
+      0.0,
+      false
+     ],
+     "20": [
+      0.98,
+      0.5,
+      true
      ]
     }
    }
@@ -3251,6 +3476,21 @@
      ],
      "20": [
       12.54,
+      0.5,
+      true
+     ]
+    }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      3.25,
+      0.0,
+      true
+     ],
+     "20": [
+      12.64,
       0.5,
       true
      ]
@@ -3336,6 +3576,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      2.93,
+      0.0,
+      true
+     ],
+     "20": [
+      15.78,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
@@ -3417,12 +3672,27 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      4.87,
+      0.0,
+      true
+     ],
+     "20": [
+      18.91,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
  "CROSS_GAPLOW_3DOWN_BIGUPPER": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -3494,6 +3764,21 @@
      ],
      "20": [
       -1.76,
+      0.5,
+      false
+     ]
+    }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      0.93,
+      0.0,
+      true
+     ],
+     "20": [
+      -1.65,
       0.5,
       false
      ]
@@ -3579,12 +3864,27 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      2.57,
+      0.0,
+      true
+     ],
+     "20": [
+      4.26,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
  "CROSS_GAPLOW_3DOWN_XFUND": {
   "status": "DEAD",
-  "consecutive_fails": 2,
+  "consecutive_fails": 4,
   "history": [
    {
     "date": "2026-09-21",
@@ -3660,12 +3960,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      1.53,
+      0.0,
+      true
+     ],
+     "20": [
+      0.2,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CROSS_GAPLOW_LOSER250_XFUND": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -3741,12 +4056,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.42,
+      0.0,
+      false
+     ],
+     "20": [
+      -2.46,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CROSS_GAPLOW_BIGUPPER_TD9": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -3822,12 +4152,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      1.31,
+      0.0,
+      true
+     ],
+     "20": [
+      -2.02,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CROSS_GAPLOW_BIGUPPER_XFUND": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -3903,12 +4248,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -1.17,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.76,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "CROSS_GAPLOW_TD9_XFUND": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -3984,6 +4344,21 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.7,
+      0.0,
+      false
+     ],
+     "20": [
+      -0.21,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
@@ -3999,7 +4374,7 @@
  },
  "COMP_GAPLOW_BULLISH_NO_MON": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -4075,12 +4450,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.69,
+      0.0,
+      false
+     ],
+     "20": [
+      -1.16,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "COMP_LIMITDOWN_TD9_LOSER250": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -4156,12 +4546,27 @@
       false
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      null,
+      0.0,
+      false
+     ],
+     "20": [
+      null,
+      0.5,
+      false
+     ]
+    }
    }
   ]
  },
  "COMP_LIMITDOWN_TD9_OS20": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -4237,12 +4642,27 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.38,
+      0.0,
+      false
+     ],
+     "20": [
+      11.99,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
  "COMP_GAPLOW_XFUND_OS20_LOSER250": {
   "status": "DEAD",
-  "consecutive_fails": 5,
+  "consecutive_fails": 7,
   "history": [
    {
     "date": "2026-09-21",
@@ -4306,6 +4726,21 @@
    },
    {
     "date": "2026-10-17",
+    "verdicts": {
+     "5": [
+      -0.14,
+      0.0,
+      false
+     ],
+     "20": [
+      1.3,
+      0.5,
+      true
+     ]
+    }
+   },
+   {
+    "date": "2026-10-20",
     "verdicts": {
      "5": [
       -0.14,
@@ -4399,6 +4834,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      3.54,
+      0.0,
+      true
+     ],
+     "20": [
+      7.7,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
@@ -4468,6 +4918,21 @@
    },
    {
     "date": "2026-10-17",
+    "verdicts": {
+     "5": [
+      0.57,
+      0.0,
+      true
+     ],
+     "20": [
+      3.56,
+      0.5,
+      true
+     ]
+    }
+   },
+   {
+    "date": "2026-10-20",
     "verdicts": {
      "5": [
       0.57,
@@ -4561,6 +5026,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      0.71,
+      0.0,
+      true
+     ],
+     "20": [
+      1.68,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
@@ -4601,7 +5081,7 @@
  },
  "THREE_DOWN_GOLD": {
   "status": "DEAD",
-  "consecutive_fails": 3,
+  "consecutive_fails": 5,
   "history": [
    {
     "date": "2026-10-03",
@@ -4628,6 +5108,16 @@
     "verdicts": {
      "20": [
       0.39,
+      1.5,
+      false
+     ]
+    }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "20": [
+      0.04,
       1.5,
       false
      ]
@@ -4678,6 +5168,21 @@
       true
      ]
     }
+   },
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      1.54,
+      0.0,
+      true
+     ],
+     "20": [
+      4.81,
+      0.5,
+      true
+     ]
+    }
    }
   ]
  },
@@ -4685,5 +5190,26 @@
   "status": "CANDIDATE",
   "consecutive_fails": 0,
   "history": []
+ },
+ "AVOID_CLIMAX_QUAKE": {
+  "status": "CANDIDATE",
+  "consecutive_fails": 0,
+  "history": [
+   {
+    "date": "2026-10-20",
+    "verdicts": {
+     "5": [
+      -0.51,
+      0.0,
+      true
+     ],
+     "20": [
+      -3.12,
+      0.0,
+      true
+     ]
+    }
+   }
+  ]
  }
 }

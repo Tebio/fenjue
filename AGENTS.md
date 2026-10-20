@@ -1052,3 +1052,27 @@ K3 做法正确且克制：`law_pipeline.REGISTRY` 新增 `高位剧震` → `_q
 
 **遗留**：`position_matched_high` 是新分支，历史主张是否有人该改用高位口径尚未逐条复查（K3 说逐条核过无人踩雷，未附证据）；
 `claims_audit` 无 golden case，空判决修复靠代码审查而非测试钉住——属小而真实的债。
+
+
+**338. claims_audit 两处幂等/假绿灯修复（2026-10-20，RES-11 复核顺手挖出）**
+
+复核 RES-11 时对 `data/claims_state.json` 做前后对比（68 条主张、状态零翻转），却看出两个机制层病灶：
+
+**A. `history` 同日重跑无条件追加 → 审计账本被自己冲掉**
+原实现 `s["history"].append({...})` 无条件追加，再切 `[-52:]`。同一天手动重跑一次就多一条完全相同的记录。
+实测清理时发现**几乎所有主张都有重复**：`CANDLE_UPPER_LOW` 13→9 条、`TD9_BUY` 13→9、
+多数 `10→8`、`COMP_*_SHRINK` 系列 `7→6`，涉及 39 条主张。
+后果不是"多条日志"这么轻——`history` 只留最近 52 条，重复条目会把**真正跨日的历史挤出去**，
+任何基于 history 的趋势/转换史分析都会失真。
+已修：抽出 `append_history()`，**同日覆盖不追加**（同日按 BJT 日期串判等），并加 golden 断言
+`test_claims_audit_history_idempotent`（同日覆盖 / 跨日追加 / 52 条截断，三条都钉）；已有重复数据按"同日留最后一条"清理。
+注意 `consecutive_fails` 是独立字段，未受此 bug 影响，状态机判决一直是对的。
+
+**B. 空 verdicts 判 True → 假绿灯**（同 #337）
+`ok_all = all(v[2] for v in verdicts.values()) if verdicts else True`：一个窗口都没算出来时判**通过**。
+已改为不动状态机、不写 history、显式打印 ⚠️「本轮未审计（不是通过）」。
+注：本次全量复跑无主张命中该分支（REGISTRY 内 detector 都产出了 verdicts），所以这条修复当前是"防未来"，
+不是"修正在错"——别把它当成有实测证据的修复。
+
+**复核口径留痕**：全量 `claims_audit --report` 退出 0，68 条主张状态分布前后完全一致（36 CANDIDATE / 32 DEAD，零翻转），
+`AVOID_CLIMAX_QUAKE` 两次独立运行数字逐位相同（T+5 -0.51 / T+20 -3.12），幂等成立。

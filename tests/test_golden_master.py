@@ -83,6 +83,30 @@ def test_factor_census_registry_frozen():
     assert fc.FEE == 0.0015
 
 
+def test_claims_audit_history_idempotent():
+    """claims_audit.append_history：同日重跑覆盖不追加、跨日追加、超 52 条截断。
+
+    动机：原实现无条件 append，同日重跑会把审计账本灌满重复条目，把跨日历史挤出 52 条窗口。
+    """
+    import importlib.util
+    from pathlib import Path
+    p = Path(__file__).resolve().parent.parent / "engine" / "claims_audit.py"
+    spec = importlib.util.spec_from_file_location("_claims_audit_probe", p)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+
+    s = {}
+    m.append_history(s, "2026-10-20", {5: (-0.5, 0.0, True)})
+    m.append_history(s, "2026-10-20", {5: (-0.9, 0.0, True)})   # 同日重跑
+    assert len(s["history"]) == 1, "同日重跑必须覆盖，不许追加"
+    assert s["history"][-1]["verdicts"]["5"][0] == -0.9, "同日应留最后一次的结果"
+    m.append_history(s, "2026-10-21", {5: (-0.9, 0.0, True)})   # 跨日
+    assert len(s["history"]) == 2 and s["history"][-1]["date"] == "2026-10-21"
+    for d in range(22, 90):                                      # 灌 68 天，验证截断
+        m.append_history(s, f"2026-12-{d:02d}" if d <= 31 else "2027-01-01", {5: (-1.0, 0.0, True)})
+    assert len(s["history"]) <= 52, f"history 必须截断到 52 条，实际 {len(s['history'])}"
+
+
 def test_regime_thresholds_positive():
     """四态分类在边界上不得出现「同一 stats 两个标签」或异常。"""
     got = C.case_regime_meter_classify()

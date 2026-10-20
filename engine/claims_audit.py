@@ -121,6 +121,23 @@ def marginals(det, stocks, control, horizons, entry="next_open"):
             marginals_ex(det, stocks, control, horizons, entry).items()}
 
 
+def append_history(s, today_bjt, verdicts):
+    """写 history，**同日重跑覆盖不追加**。
+
+    2026-10-20 修：原来是 `s["history"].append(...)` 无条件追加——同一天手动重跑或 cron 重试
+    就会塞进内容完全相同的多条，把真正有信息量的跨日历史挤出 52 条窗口，等于审计账本被自己冲掉。
+    同日的定义用 BJT 日期串相等（审计按日粒度，"同一天跑两次"本就该只留最后一次的结果）。
+    """
+    rec = {"date": today_bjt, "verdicts": {str(h): v[:3] for h, v in verdicts.items()}}
+    hist = s.setdefault("history", [])
+    if hist and hist[-1].get("date") == today_bjt:
+        hist[-1] = rec
+    else:
+        hist.append(rec)
+    s["history"] = hist[-52:]
+    return s
+
+
 def transit(state, verdict):
     """状态机。verdict: True=过kill线 False=跌破"""
     prev = state.get("status", "CANDIDATE")
@@ -183,8 +200,7 @@ def main():
         new, fails, prev = transit(s, ok_all)
         s.update(status=new, consecutive_fails=fails)
         today_bjt = (datetime.now(timezone.utc) + timedelta(hours=8)).date().isoformat()
-        s["history"].append({"date": today_bjt, "verdicts": {str(h): v[:3] for h, v in verdicts.items()}})
-        s["history"] = s["history"][-52:]
+        append_history(s, today_bjt, verdicts)
         state[cid] = s
         line = f"[{cid}] {prev}→{new} | " + " ".join(
             f"T+{h}: 滚动{v[0]}pp vs kill {v[1]}pp {'✅' if v[2] else '❌'}(n={v[3]})" for h, v in verdicts.items())
