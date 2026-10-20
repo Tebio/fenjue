@@ -2,15 +2,16 @@
 """engine/claims_shadow.py — 存活主张的影子前向记录（L5 毕业条件的数据源）
 
 每日收盘后（kcache 刷新后）跑：
-1. 扫描今日信号：REVERSAL（跌≥3%）/ LIMITDOWN（跌≤-9.5%，剔一字）/ PANIC_DEPTH 四档
+1. 扫描期望登记日信号：REVERSAL（跌≥3%）/ LIMITDOWN（跌≤-9.5%，剔一字）/ PANIC_DEPTH 四档
 2. 登记 shadow 单：{signal_date, claim, code, tier}
 3. 回填历史单：次日开盘价（entry）、T+1/T+5/T+20 收盘收益
 4. 汇总各主张的滚动影子表现 → data/claims_shadow_summary.json 供 claims_audit 读 L5
 
 设计约束：只用 big_kcache（前复权日K），无新增数据依赖；净口径 -0.15%。
+退出码契约（DATA-10）：0=正常/[SKIP] 非交易日（官方日历）；2=交易日但 kcache
+未就绪 [NOT-READY]；1=DATA-07 熔断拒写。详见 CUTOFF_HHMM 上方 DATA-10 注释块。
 """
 import json
-from datetime import date
 from pathlib import Path
 
 ROOT = Path("/opt/data/fenjue")
@@ -66,6 +67,85 @@ REGISTRY_SHADOW_CLAIMS = {
     "CROSS_GAPLOW_BIGUPPER_XFUND": "交叉_缺口低开低_避雷针低_剔亏ST",
     "CROSS_GAPLOW_TD9_XFUND": "交叉_缺口低开低_TD9买入_剔亏ST",
 }
+
+# ── DATA-10（2026-10-20）：假绿灯修复 + 漏跑自愈 ─────────────────────────────
+# 旧版把三类情况共用「[SILENT] → return → exit 0」：真非交易日 / 交易日但数据
+# 未就绪 / 正常。「数据没准备好」被伪装成「成功」（2026-10-19 零产出而 cron 报 ok
+# 事故：kcache 班 numpy ABI 故障整日无 bar，[SILENT] 兜底成绿灯）。
+# 退出码契约（本文件唯一口径，wrapper 透传）：
+#   0 = 正常处理，或 [SKIP] 非交易日（官方交易日历判定，严禁靠「有没有数据」反推）
+#   2 = 期望登记日是交易日但 kcache 未就绪（上游刷新未完成/失败，非本脚本可自愈）
+#   1 = DATA-07 熔断拒写（既有）
+# 期望登记日（无 SHADOW_DATE 时）：BJT 今天是交易日且已过 15:30 → 今天；
+# 否则 → 今天之前最近一个交易日（容器是 UTC，严禁 date.today()）。
+# 漏跑自愈：除期望日外回看 WALKBACK_DAYS 个交易日，已就绪且零登记的日子一并
+# 补登记；幂等由既有去重键 (signal_date, claim, code) 保证。
+# 交易日历：freshness_core 本地缓存 data/trade_calendar/<year>.json（baostock
+# 官方日历落盘副本，含未来日期），只读不联网；缓存缺失 → CalendarUnavailable
+# 上浮（基建错误，不许猜节假日）。
+CUTOFF_HHMM = (15, 30)   # BJT 收盘 15:00 + 30min 余量，此后「今天」才算到期
+WALKBACK_DAYS = 5        # 自愈回看窗口（交易日）：覆盖一周漏跑；更长缺口用 SHADOW_DATE 显式回填
+
+
+def _fc():
+    import freshness_core as fc
+    return fc
+
+
+def _bjt_now():
+    import datetime as _dt
+    return _dt.datetime.now(_dt.timezone(_dt.timedelta(hours=8)))
+
+
+def _expected_day(now):
+    """期望登记日：今天(BJT)是交易日且已过 cutoff → 今天；否则前一交易日。"""
+    fc = _fc()
+    d = now.date().isoformat()
+    if fc.is_trading_day(d) and (now.hour, now.minute) >= CUTOFF_HHMM:
+        return d
+    return fc.prev_trading_day(d)
+
+
+def _candidate_days(expected, n=WALKBACK_DAYS):
+    """期望日 + 回看 n 个交易日（新→旧）。"""
+    fc = _fc()
+    days, d = [expected], expected
+    for _ in range(n):
+        d = fc.prev_trading_day(d)
+        days.append(d)
+    return days
+
+
+def _cs_coverage(stocks, day, lookback):
+    """cs 宇宙里有当日 bar 的票数。lookback=None 全序列扫（显式回填较老日期）。"""
+    n = 0
+    for ks in stocks.values():
+        lo = -1 if lookback is None else max(-1, len(ks) - 1 - lookback)
+        for j in range(len(ks) - 1, lo, -1):
+            if ks[j]["date"] == day:
+                n += 1
+                break
+    return n
+
+
+def _load_existing():
+    """→ (existing, dates_any, dates_bridge)：一次性读账本。
+    existing=(signal_date,claim,code) 去重键（既有语义）；dates_any=有任何登记的
+    日期集合（主流程自愈判据）；dates_bridge=有桥登记的日期集合（桥自愈判据）。
+    注意：「当日零信号」的合法空日会被判为未登记而重扫——重扫幂等无副作用，
+    代价是窗口内多扫几天，可接受。"""
+    existing, dates_any, dates_bridge = set(), set(), set()
+    if SHADOW.exists():
+        for line in SHADOW.read_text().splitlines():
+            if not line.strip():
+                continue
+            r = json.loads(line)
+            existing.add((r["signal_date"], r["claim"], r["code"]))
+            dates_any.add(r["signal_date"])
+            if r["claim"] in REGISTRY_SHADOW_CLAIMS:
+                dates_bridge.add(r["signal_date"])
+    return existing, dates_any, dates_bridge
+
 
 _LP_CACHE = None
 
@@ -214,111 +294,129 @@ def detect(code, ks, i, ladder=None):
     return hits
 
 
-def bridge_only(today):
+def bridge_only(sd):
     """BRIDGE_ONLY 模式（2026-09-27，OOM 修复）：只跑注册表桥扫描，不载 cs 宇宙。
 
     根因：主流程 load_stocks()（全量 dict 列表）+ _lp_universe()（lp 数组宇宙+横截面）
     双宇宙同驻 → 15GB 机器 OOM（exit=137），桥自 9/19 起在 cron 里从没活过。
     拆成两个进程顺序跑（wrapper 第二步 BRIDGE_ONLY=1），峰值内存减半。
-    登记的去重键与主流程一致（signal_date/claim/code），entry 由次日回填照常补。"""
-    import os
+    登记的去重键与主流程一致（signal_date/claim/code），entry 由次日回填照常补。
+
+    DATA-10：与主流程同一退出码契约（[SKIP] 非交易日=0 / [NOT-READY]=2 / 正常=0），
+    自愈判据用「该日有无桥登记」（dates_bridge）——桥与主流程是两套登记族，
+    不能用主流程的 dates_any 判（主流程有登记不代表桥跑过）。"""
+    import bisect as _bis
+    fc = _fc()
     lp, lp_stocks, lp_idx = _lp_universe()
-    if os.environ.get("SHADOW_DATE"):
-        import bisect as _bis
-        n_has = sum(1 for s in lp_stocks.values()
-                    if 0 <= _bis.bisect_left(s["date"], today) < s["n"]
-                    and s["date"][_bis.bisect_left(s["date"], today)] == today)
-        if n_has < 0.5 * len(lp_stocks):
-            print(f"[SILENT] bridge: {today} 不在 kcache（{n_has}/{len(lp_stocks)}）")
-            return
-    existing = set()
-    if SHADOW.exists():
-        for line in SHADOW.read_text().splitlines():
-            r = json.loads(line)
-            existing.add((r["signal_date"], r["claim"], r["code"]))
-    new = 0
-    with SHADOW.open("a") as f:
-        for code, d in lp_stocks.items():
-            j = lp_idx.get(code, {}).get(today)
-            if j is None:
-                continue
-            for claim, detname in REGISTRY_SHADOW_CLAIMS.items():
-                if (today, claim, code) in existing:
-                    continue
-                try:
-                    if lp.REGISTRY[detname](d, j):
-                        f.write(json.dumps({"signal_date": today, "claim": claim, "code": code,
-                                            "tier": None, "entry": None,
-                                            "r1": None, "r5": None, "r10": None, "r20": None},
-                                           ensure_ascii=False) + "\n")
-                        new += 1
-                except KeyError:
-                    print(f"[WARN] 桥检测器不存在: {detname}")
-                except Exception as _e:
-                    print(f"[WARN] 桥 {claim}@{code} 异常: {_e}")
-    print(f"bridge_only {today}: 新登记 {new} 条")
+    explicit = bool(sd)
+    if explicit:
+        if not fc.is_trading_day(sd):
+            print(f"[SKIP] bridge: {sd} 非交易日（官方交易日历），无需登记")
+            return 0
+        expected, candidates = sd, [sd]
+    else:
+        now = _bjt_now()
+        if not fc.is_trading_day(now.date().isoformat()):
+            print(f"[SKIP] bridge: 今天 {now.date().isoformat()} 非交易日（官方交易日历）")
+            return 0
+        expected = _expected_day(now)
+        candidates = _candidate_days(expected)
+
+    def _lp_cov(day):
+        n = 0
+        for s in lp_stocks.values():
+            p = _bis.bisect_left(s["date"], day)
+            if 0 <= p < s["n"] and s["date"][p] == day:
+                n += 1
+        return n
+
+    total = len(lp_stocks)
+    cov = {d: _lp_cov(d) for d in candidates}
+    existing, _dates_any, dates_bridge = _load_existing()
+
+    def _register(days):
+        out = {}
+        for day in sorted(days):
+            new = 0
+            with SHADOW.open("a") as f:
+                for code, d in lp_stocks.items():
+                    j = lp_idx.get(code, {}).get(day)
+                    if j is None:
+                        continue
+                    for claim, detname in REGISTRY_SHADOW_CLAIMS.items():
+                        key = (day, claim, code)
+                        if key in existing:
+                            continue
+                        try:
+                            hit = lp.REGISTRY[detname](d, j)
+                        except KeyError:
+                            print(f"[WARN] 桥检测器不存在: {detname}")
+                            continue
+                        except Exception as _e:
+                            print(f"[WARN] 桥 {claim}@{code} 异常: {_e}")
+                            continue
+                        if hit:
+                            existing.add(key)
+                            f.write(json.dumps({"signal_date": day, "claim": claim, "code": code,
+                                                "tier": None, "entry": None,
+                                                "r1": None, "r5": None, "r10": None, "r20": None},
+                                               ensure_ascii=False) + "\n")
+                            new += 1
+            out[day] = new
+        return out
+
+    if cov[expected] < 0.5 * total:
+        heal = [d for d in candidates if d != expected and cov[d] >= 0.5 * total and d not in dates_bridge]
+        if heal:
+            print(f"[HEAL] bridge 补登记 {_register(heal)}")
+        print(f"[NOT-READY] bridge: 期望登记日 {expected} 是交易日，但 lp 宇宙仅 "
+              f"{cov[expected]}/{total} 票有当日 bar——上游 kcache 未就绪，非桥可自愈")
+        return 2
+    todo = [expected] + [d for d in candidates
+                         if d != expected and cov[d] >= 0.5 * total and d not in dates_bridge]
+    r = _register(todo)
+    print(f"bridge_only: 登记 {r}")
+    return 0
 
 
-def main():
-    import os
-    # DATA-07 熔断（R1-①追加型拒写）：影子台账写错直接污染胜率统计。
-    # 在任何写盘（SHADOW append/重写、SUMMARY）之前判定；默认路径用体检基准日。
-    import breaker
-    _sd = os.environ.get("SHADOW_DATE")
-    _ok, _why = breaker.allow("影子盘", _sd if _sd else None)
-    if not _ok:
-        print(f"🚨 熔断拒写（DATA-07）：{_why}")
-        _sys.exit(1)
-    if os.environ.get("BRIDGE_ONLY"):
-        bridge_only(os.environ.get("SHADOW_DATE") or date.today().isoformat())
-        return
-    stocks = load_stocks()
-    today = os.environ.get("SHADOW_DATE") or date.today().isoformat()  # SHADOW_DATE 供测试回填历史日
-    last_max = max(ks[-1]["date"] for ks in stocks.values())
-    if os.environ.get("SHADOW_DATE"):
-        # 显式回填历史日：只要求该日在数据里真实存在（多数票有当日 bar），
-        # 不能用「等于最新交易日」当守卫——那会让所有补登记日一律 [SILENT]（2026-09-18 修）
-        import bisect as _bis
-        n_has = sum(1 for ks in stocks.values()
-                    if ks and 0 <= _bis.bisect_left([k["date"] for k in ks], today) < len(ks)
-                    and ks[_bis.bisect_left([k["date"] for k in ks], today)]["date"] == today)  # 红队M17：回填超6天历史日不再误判
-        if n_has < 0.5 * len(stocks):
-            print(f"[SILENT] SHADOW_DATE={today} 在 kcache 中不存在（{n_has}/{len(stocks)} 票有当日 bar）")
-            return
-    elif today not in {ks[-1]["date"] for ks in stocks.values()}:
-        print(f"[SILENT] kcache 最新 {last_max}，今日 {today} 无数据（非交易日或未刷新）")
-        return
-
-    # 1. 登记今日信号（先算今日行业梯队，供 FRONTRUN 检测）
-    ladder = {}
-    for code, ks in stocks.items():
-        j = len(ks) - 1
-        if ks[j]["date"] != today or j < 1 or ks[j - 1]["close"] <= 0:
-            continue
-        if ks[j]["close"] / ks[j - 1]["close"] - 1 >= 0.098:
-            ind = industry_map().get(code, {}).get("industry") or "?"
-            ladder[ind] = ladder.get(ind, 0) + 1
-    existing = set()
-    if SHADOW.exists():
-        for line in SHADOW.read_text().splitlines():
-            r = json.loads(line)
-            existing.add((r["signal_date"], r["claim"], r["code"]))
-    new = 0
-    with SHADOW.open("a") as f:
+def _register_days_cs(stocks, days, existing):
+    """主流程逐日登记（行业梯队按日重算，detect 口径与旧版逐字一致）。
+    返回 {day: new}。幂等：去重键已存在即跳过（旧版同款 guard）。"""
+    out = {}
+    for day in sorted(days):
+        idx_map = {}
+        ladder = {}
         for code, ks in stocks.items():
-            idx = next((j for j in range(len(ks) - 1, -1, -1) if ks[j]["date"] == today), None)
+            idx = next((j for j in range(len(ks) - 1, -1, -1) if ks[j]["date"] == day), None)
             if idx is None:
                 continue
-            for claim, tier in detect(code, ks, idx, ladder):
-                key = (today, claim, code)
-                if key not in existing:
-                    f.write(json.dumps({"signal_date": today, "claim": claim, "code": code,
-                                        "tier": tier, "entry": None, "r1": None, "r5": None, "r10": None, "r20": None},
+            idx_map[code] = idx
+            if idx >= 1 and ks[idx - 1]["close"] > 0 \
+                    and ks[idx]["close"] / ks[idx - 1]["close"] - 1 >= 0.098:
+                ind = industry_map().get(code, {}).get("industry") or "?"
+                ladder[ind] = ladder.get(ind, 0) + 1
+        new = 0
+        with SHADOW.open("a") as f:
+            for code, idx in idx_map.items():
+                for claim, tier in detect(code, stocks[code], idx, ladder):
+                    key = (day, claim, code)
+                    if key in existing:
+                        continue
+                    existing.add(key)
+                    f.write(json.dumps({"signal_date": day, "claim": claim, "code": code,
+                                        "tier": tier, "entry": None,
+                                        "r1": None, "r5": None, "r10": None, "r20": None},
                                        ensure_ascii=False) + "\n")
                     new += 1
+        out[day] = new
+    return out
 
-    # 2. 回填（重写整个 jsonl——单文件量级可控：每日几百条×数月）
-    lines = [json.loads(x) for x in SHADOW.read_text().splitlines()]
+
+def _backfill_summary(stocks):
+    """回填（entry/r1/r5/r10/r20，整文件重写）+ 汇总落 SUMMARY。口径与旧版逐字一致。
+    返回 (filled, 累计单数)。本步与「当日是否就绪」无关——kcache 增长多少补多少，
+    故 [NOT-READY] 路径也照跑。"""
+    lines = [json.loads(x) for x in SHADOW.read_text().splitlines() if x.strip()]
     filled = 0
     for r in lines:
         ks = stocks.get(r["code"])
@@ -358,8 +456,6 @@ def main():
         if r.get("entry"):
             e = r.get("entry")
             # T+1 时序硬断言（2026-09-18 修）：出场日必须严格晚于入场日。
-            # 旧实现用 off 从信号日 si 起算，open-entry 族（反转/跌停接）变成
-            # 「当日开盘买 → 当日收盘卖」= T+0，物理不可能成交（A股 T+1）。
             # 现改为从入场日 ei 起算：ei=si（收盘入场）/ei=si+1（次日开盘入场）。
             ei = si if r["claim"] in CLOSE_ENTRY_CLAIMS else si + 1
             for tag, off in [("r1", 1), ("r5", 5), ("r10", 10), ("r20", 20)]:
@@ -387,7 +483,72 @@ def main():
             "n": len(vs), "win%": round(100 * sum(x > 0 for x in vs) / len(vs), 1),
             "mean%": round(100 * st.mean(vs), 2)}
     SUMMARY.write_text(json.dumps(out, ensure_ascii=False, indent=1))
-    print(f"shadow: 新登记 {new}，回填 {filled}，累计 {len(lines)} 单")
+    return filled, len(lines)
+
+
+def run_daily(sd):
+    """主流程（cs 宇宙）。返回退出码：0 正常/[SKIP]，2 [NOT-READY]。
+
+    DATA-10 语义：
+    - 显式 SHADOW_DATE：非交易日 → [SKIP] 0；交易日但未就绪 → [NOT-READY] 2；
+      就绪 → 只登记该日（保留旧回填语义，不做 walk-back）。
+    - 默认：BJT 非交易日 → [SKIP] 0；期望日=今天(过 15:30)或前一交易日。
+      期望日就绪 → 登记期望日 + 窗口内零登记的已就绪旧日（自愈）；
+      期望日未就绪 → 先自愈能补的旧日 + 照常回填，再 [NOT-READY] 退出 2。"""
+    stocks = load_stocks()
+    fc = _fc()
+    last_max = max(ks[-1]["date"] for ks in stocks.values())
+    explicit = bool(sd)
+    if explicit:
+        if not fc.is_trading_day(sd):
+            print(f"[SKIP] {sd} 非交易日（官方交易日历），无需登记")
+            return 0
+        expected, candidates = sd, [sd]
+    else:
+        now = _bjt_now()
+        if not fc.is_trading_day(now.date().isoformat()):
+            print(f"[SKIP] 今天 {now.date().isoformat()} 非交易日（官方交易日历）")
+            return 0
+        expected = _expected_day(now)
+        candidates = _candidate_days(expected)
+    total = len(stocks)
+    # 自动路径的候选日都贴近 kcache 尾部（≤ 期望日，期望日≤今天），只看末 15 根足够；
+    # 显式回填可能指向更老的日期，全序列扫。
+    cov = {d: _cs_coverage(stocks, d, None if explicit else 15) for d in candidates}
+    existing, dates_any, _dates_bridge = _load_existing()
+    holes = [d for d in candidates if d != expected and cov[d] < 0.5 * total]
+    if cov[expected] < 0.5 * total:
+        heal = [d for d in candidates if d != expected and cov[d] >= 0.5 * total and d not in dates_any]
+        if heal:
+            print(f"[HEAL] 补登记 {_register_days_cs(stocks, heal, existing)}")
+        filled, n_lines = _backfill_summary(stocks)
+        print(f"[NOT-READY] 期望登记日 {expected} 是交易日，但 kcache 仅 {cov[expected]}/{total} 票 "
+              f"有当日 bar（kcache 末 bar={last_max}）——上游 kcache 刷新未完成或失败，"
+              f"非本脚本可自愈；回填照常（本次回填 {filled}，累计 {n_lines} 单）")
+        return 2
+    todo = [expected] + [d for d in candidates
+                         if d != expected and cov[d] >= 0.5 * total and d not in dates_any]
+    reg = _register_days_cs(stocks, todo, existing)
+    filled, n_lines = _backfill_summary(stocks)
+    new_total = sum(reg.values())
+    extra = f"，注意窗口内有 kcache 空洞日 {holes}" if holes else ""
+    print(f"shadow: 新登记 {new_total}（{reg}），回填 {filled}，累计 {n_lines} 单{extra}")
+    return 0
+
+
+def main():
+    import os
+    # DATA-07 熔断（R1-①追加型拒写）：影子台账写错直接污染胜率统计。
+    # 在任何写盘（SHADOW append/重写、SUMMARY）之前判定；默认路径用体检基准日。
+    import breaker
+    _sd = os.environ.get("SHADOW_DATE")
+    _ok, _why = breaker.allow("影子盘", _sd if _sd else None)
+    if not _ok:
+        print(f"🚨 熔断拒写（DATA-07）：{_why}")
+        _sys.exit(1)
+    if os.environ.get("BRIDGE_ONLY"):
+        _sys.exit(bridge_only(_sd))
+    _sys.exit(run_daily(_sd))
 
 
 if __name__ == "__main__":

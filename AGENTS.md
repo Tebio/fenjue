@@ -1350,3 +1350,20 @@ golden oracle 与最初版本对比，**只剩 `line_health.blocks` 去掉 `晨�
 - 补 fund_cache / cap_hist 的日更管道（新任务，性质是「建管道」不是「修 bug」）
 - `claims_shadow` 10-19 / 10-20 漏跑原因未查（本任务只纳管不修生产者，范围正确）
 - `industry_map` 的真实生产者待回填 owner
+
+**348. DATA-10·影子盘假绿灯修复 + 漏跑自愈 + 10-19 回填 + 零产出守卫（2026-10-20，施工方实跑账）**
+
+**根因对账（修正任务书段 3）**：10-19 零产出的直接导火索**不是**「cron 比 kcache 就绪早 8 小时」——kcache 日常班表是 18:30/19:00/21:00 BJT 三班（cron list 实据），X规则线 20:15/regime 20:10 天天依赖同一时序。真凶两段：①**kcache 三班 10-19 全灭**（numpy ABI：/opt/data/python-libs 的 numpy 是 cpython-313 编译，被 python3.14 加载即 ImportError，三班 last_error 同traceback；wrapper 已由主 agent 当天修好，10-20 上午 02:49~03:13 UTC 落盘的 10-19 bar 是**人工补跑**，不是日常时序）；②`claims_shadow.py` 的 `[SILENT]` 分支把「交易日但无数据」一律 return → **exit 0 假绿灯**，熔断也因复用 10-16 体检缓存结论（fast path）放行。任务书「早 8 小时」的观察对象其实是人工补跑的 mtime，按守则第 12 条如实更正。
+
+**三处改动**：
+1. `engine/claims_shadow.py`（.bak_data10）：退出码契约 **0=正常/[SKIP] 非交易日（官方日历 data/trade_calendar/<year>.json，freshness_core 本地缓存口径，不靠数据反推）· 2=[NOT-READY] 交易日但 kcache 未就绪 · 1=DATA-07 熔断**；期望登记日=BJT 今天(过 15:30)或前一交易日（容器 UTC，废 date.today()）；**walk-back 自愈**：回看 5 个交易日，已就绪且零登记的日子补登记（幂等=既有 (signal_date,claim,code) 去重键，实测同数据重跑 0 新增）；主流程与 BRIDGE_ONLY 桥同一契约（桥用 dates_bridge 判据，与主流程登记族分开）。
+2. cron 班 `82e54a0a812f`：**`0 11 * * 1-5` → `30 13 * * 1-5`（19:00→21:30 BJT）**。依据：kcache 分片 18:30/19:00 + 兜底 21:00，旧 19:00 与分片 1/2 同时点火=竞速（10-16 就是在竞速中按部分宇宙只登记了 108 条，本次重跑补齐到 329）；21:30 在三班之后且与 regime/X规则线（20:10/20:15 实证依赖）同窗口。lineage 快照断言只查 job id 不查 schedule，不受影响。
+3. 守卫（2.4）**不造新体系**：DATA-09 已把 claims_shadow 纳进注册表（max_lag=1，warn），即「连续 **2** 个交易日无新增 → data_health ⚠️ stale」（滞后按交易日口径，周末/节假日不贡献滞后，无需放宽；单日零信号是合法空日，2 日才报）。牙齿实测：`--ref-date 2026-10-22` → stale lag=3。叠加本任务的 exit 2（cron 即日报红）+ 熔断 exit 1，共三层独立通道。
+
+**回填结果**（先备份 `data/claims_shadow.jsonl.bak_data10`）：**10-19 登记 623 条**（主流程 593 + 桥 30，17 个 claim：REVERSAL 276 / PANIC_DEPTH 276 / LIMITDOWN 28 / 桥组合 30 等）；10-16 竞速残缺补齐 108→329（5 claim）；全库 12028 行**重复键 0**；10-19 的 entry 全 None（等 10-20 bar 次日开盘回填，正确）。10-20 截至交付时无数据（kcache 班今晚才跑），由今晚 21:30 班登记或次日自愈兜底。
+
+**牙齿测试实跑**：非交易日（周六 10-17 / 国庆 10-02）→ `[SKIP]` exit 0 且账本 md5 不变；交易日无数据（SHADOW_DATE=10-20/10-21）→ 熔断先拦 exit 1（big_kcache fatal_lag）；熔断回滚开关下 → 自身 `[NOT-READY]` **exit 2**（0/3377 票有 bar，信息写清上游时序）；默认路径同 → exit 2 且零写入。生产 wrapper（/opt/data/scripts/stock_claims_shadow.py，另一仓库）**零改动**——它本来就透传 rc（两子进程都 0 才 exit 0），新契约直接生效。
+
+**今晚 19:00 会不会再漏**：不会——班已挪 21:30 BJT。两种结局：kcache 三班正常 → 21:30 登记 10-20（exit 0）；三班再灭 → exit 1（熔断）或 2（[NOT-READY]）cron 报红，且次日 run 自愈补登记。假绿灯通道已封死。
+
+**遗留**：①kcache 三班 wrapper 的 numpy 修复未经一次完整成功运行验证，今晚是首次大考；②竞速期（10-16 及更早）登记的 entry/r* 回填口径一致（用登记后 kcache），但**信号面是部分宇宙**——10-16 已补，更早日子若有同样残缺未逐日审计（代价：walk-back 只回看 5 日，更老缺口须 SHADOW_DATE 显式回填）；③合法零信号空日会被自愈判据当作「未登记」每天重扫一次（幂等无害，成本=窗口内多扫几天）。

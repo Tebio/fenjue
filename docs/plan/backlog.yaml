@@ -858,6 +858,40 @@ items:
     effort_days: 1.0
     evidence: ''
 
+  - id: DATA-10
+    title: 影子盘假绿灯修复（[SILENT] 三分支退出码）+ 漏跑自愈 + 10-19 回填 + 零产出守卫
+    area: DATA
+    priority: P1
+    status: done
+    gate: G1
+    depends_on: [DATA-09]
+    ledger_ref: 348
+    rationale: >-
+      claims_shadow.py 的 [SILENT] 分支把「交易日但 kcache 未就绪」伪装成成功（return → exit 0），
+      10-19 kcache 三班 numpy ABI 全灭时整日零产出而 cron 报 ok。退出码必须区分
+      非交易日(0) / 交易日未就绪(2) / 正常(0)，并把 cron 从 19:00 BJT（与 kcache 分片竞速）
+      挪到 21:30 BJT（三班之后），再加 walk-back 自愈兜住漏跑。
+    inputs:
+      - engine/claims_shadow.py（[SILENT] 分支、bridge_only、main）
+      - data/trade_calendar/<year>.json（官方日历本地缓存，freshness_core 口径）
+      - cron 班 82e54a0a812f（stock_claims_shadow.py）
+    outputs:
+      - claims_shadow 退出码契约 0/1/2 + BJT 期望登记日 + 5 交易日 walk-back 自愈
+      - cron 82e54a0a812f 改 30 13 * * 1-5 UTC（21:30 BJT）
+      - 10-19 回填 623 条（主 593 + 桥 30），10-16 竞速残缺补齐 108→329
+    acceptance:
+      - 牙齿：交易日无数据 exit 非 0（熔断 1 / 自身 [NOT-READY] 2 均实测）；非交易日 [SKIP] exit 0
+      - 幂等：同数据重跑新登记 0；全库 (signal_date,claim,code) 重复键 0
+      - 守卫：注册表 claims_shadow max_lag=1（=连续 2 交易日无新增报警），ref=10-22 实测 stale
+    note: >-
+      2026-10-20 完成。遗留一：10-20 数据今晚 kcache 班产出，21:30 班登记或次日自愈。
+      遗留二：10-16 当晚在分片竞速中按部分宇宙登记（108 条），本次补齐到 329——
+      竞速期登记的 entry/r* 口径与全量一致（回填用登记后 kcache），但信号面是残缺的，
+      已挪 cron 根除。遗留三：kcache 三班 wrapper 的 numpy 修复（10-19 主 agent 已修）
+      未经一次完整成功运行验证，今晚三班是首次大考。
+    effort_days: 0.5
+    evidence: ''
+
   - id: RES-10
     title: 高位剧震回避黑名单（AVOID）终审与注册 — 分年验尸 + 三口径 + 位置匹配
     area: RES
