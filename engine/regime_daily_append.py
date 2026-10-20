@@ -25,7 +25,7 @@ from regime_backtest_hcap import cap_at, load_sectors   # 复用 PIT 市值与�
 ROOT = Path("/opt/data/fenjue")
 sys.path.insert(0, str(ROOT))
 from engine.regime_core import (  # noqa: E402
-    classify as core_classify,
+    classify_ex as core_classify_ex,
     pct_limit_down_from_series,
 )
 KCACHE = ROOT / "data" / "big_kcache"
@@ -91,15 +91,19 @@ def day_stats(day: str) -> dict | None:
     # 2026-10-20：判定统一委托 engine/regime_core.py（唯一出处）。
     # 腿一 = 滚动250日分位（合计口径）；绝对门槛 ≥20 已废（真序列下开火率 36.3%，是噪音）。
     # 分位用「尾窗含当日虚拟 append」算，因为当日的 emotion_series 行还没由 cron 写入。
-    regime, _advice = core_classify(
+    pct = pct_limit_down_from_series(nd, day)
+    v = core_classify_ex(
         limit_ups=n,
         index_pct=ip,
         small_cap_ratio=small_ratio,
         top_sector_conc=conc,
         limit_downs_abs=nd,
-        pct_limit_down=pct_limit_down_from_series(nd, day),
+        pct_limit_down=pct,
     )
-    return {"date": day, "regime": regime, "boards_n": n, "downs": nd,
+    return {"date": day, "regime": v["state"], "advice": v["advice"],
+            "leg1": v["leg1"], "leg2": v["leg2"], "gap": v["gap"], "basis": v["basis"],
+            "pct_limit_down": pct,
+            "boards_n": n, "downs": nd,
             "small%": round(small_ratio, 2), "conc": round(conc, 2), "idx": round(ip, 2),
             "boards": boards, "top_sectors": secs.most_common(5)}
 
@@ -126,9 +130,14 @@ def upsert_timeline(entry: dict) -> str:
 def upsert_log(entry: dict) -> str:
     lines = [json.loads(x) for x in RLOG.read_text().splitlines() if x.strip()]
     rec = {"date": entry["date"], "regime": entry["regime"],
+           # 2026-10-20：advice/gap 随盘点落盘，面板直接渲染 regime_core 的分腿建议
+           # （旧版把 advice 丢掉，面板另写一句硬编码，等于判定统一了、文案没统一）。
+           "advice": entry.get("advice"), "gap": bool(entry.get("gap")),
+           "basis": entry.get("basis"), "leg1": entry.get("leg1"), "leg2": entry.get("leg2"),
            "stats": {"limit_ups": entry["boards_n"], "limit_downs": entry["downs"],
                      "small_cap_board_ratio": entry["small%"],
                      "top_sector_concentration": entry["conc"], "index_pct": entry["idx"],
+                     "pct_limit_down": entry.get("pct_limit_down"),
                      "top_sectors": entry["top_sectors"]},
            "boards": entry["boards"],
            "source": "regime_daily_append(kcache离线全量)", "corrected": True}
@@ -178,10 +187,19 @@ def _intended_day() -> str:
         return last
     if coverage(today) >= 0.8:
         return today
-    gap = (_date.fromisoformat(today) - _date.fromisoformat(last)).days
-    if coverage(last) >= 0.8 and gap <= 4:
-        return last  # 假日
-    return today  # 交易日但数据不全 → 闸会报
+    # 2026-10-20 修：旧版只凭「今天覆盖率不够 + 昨天够 + 相隔≤4天」就判假日，把
+    # 「数据断供」静默翻译成「今天休市」——2026-10-19（周一，官方交易日）因此被当成
+    # 假日，脚本回头把 10-16 重刷一遍就退出 0，cron 报 ok，面板徽标停 10-16。
+    # 现在必须以官方交易日历裁决：只有日历确认非交易日才允许回退。
+    try:
+        from engine.trade_calendar import is_trading_day as _cal_td
+        real_trading = _cal_td(today)
+    except Exception as e:  # 日历不可用 → 不许猜，按「交易日数据不全」让闸报
+        print(f"[REGIME][WARN] 交易日历不可用（{e}），无法区分假日与数据断供——按数据不全处理")
+        return today
+    if not real_trading:
+        return last  # 官方日历确认非交易日 → 回退上一交易日
+    return today  # 交易日但 kcache 没更到 → 交由覆盖率闸报错，禁止静默回退
 
 
 def main():
@@ -200,9 +218,12 @@ def main():
             continue
         a1 = upsert_timeline(st)
         a2 = upsert_log(st)
+        gap_note = " ⚠️分位缺失(绝对兜底)" if st.get("gap") else ""
         print(f"{day}: {st['regime']} | 涨停{st['boards_n']} 跌停{st['downs']} "
-              f"小市值{st['small%']:.0%} 链集中{st['conc']:.2f} 指数{st['idx']:+.2f}% "
-              f"| timeline:{a1} log:{a2}")
+              f"分位{st.get('pct_limit_down')} 小市值{st['small%']:.0%} "
+              f"链集中{st['conc']:.2f} 指数{st['idx']:+.2f}% "
+              f"| timeline:{a1} log:{a2}{gap_note}")
+        print(f"  → {st['advice']}")
 
 
 if __name__ == "__main__":

@@ -7,7 +7,9 @@
 四类状态（盘后全市场扫描判定）：
   主线期：涨停多 + 涨停集中在少数主线板块 + 主线板块强度灯亮 → 用焚诀/板块操作台
   妖股期：涨停不少但高度分散在小市值无关联票（无主线承接）→ 不打主线牌，要么不做要么纯接力纪律
-  恐慌期：涨停稀少 + 跌停多 + 指数弱 → 空仓/只做高股息防御
+  恐慌期：腿一=跌停潮(合计口径滚动分位≥q95) → 反弹窗口，分批建指数仓不要空仓躲；
+          腿二=涨停枯竭+指数跌 → 趋势弱势，降进攻频率。**两腿建议相反，禁止共用一句**
+          （2026-10-20 实测：腿一前瞻5日 +1.356% t=4.09、回撤更浅；腿二 -0.067% t=-0.84）
   平淡期：介于之间 → 观望为主
 
 数据：腾讯全主板批量行情（~5400 票，90 个分批请求）。无未来函数（当日收盘数据）。
@@ -35,6 +37,7 @@ sys.path.insert(0, str(ROOT))
 from engine.console import tencent_quotes, clear_proxy, kline_sina  # noqa: E402
 from engine.regime_core import (  # noqa: E402
     classify as _core_classify,
+    classify_ex as _core_classify_ex,
     PANIC_PCT_Q,
     LEG2_LU_MAX,
     LEG2_IDX_PCT,
@@ -238,7 +241,17 @@ def scan() -> dict:
              "pct_limit_down": limit_down_percentile(limit_downs, date.today().isoformat()),
              "top_sectors": sec_counter.most_common(5)}
     regime, advice = classify(stats)
+    # 2026-10-20：腿标志与缺口标志一并上浮，写进 regime_log 供面板显示（stderr 告警
+    # 在 cron 里没人看，见 AGENTS #329 遗留②/#330-B）。
+    _v = _core_classify_ex(
+        limit_ups=stats["limit_ups"], index_pct=stats["index_pct"],
+        small_cap_ratio=stats["small_cap_board_ratio"],
+        top_sector_conc=stats["top_sector_concentration"],
+        limit_downs_abs=stats.get("limit_downs"),
+        pct_limit_down=stats.get("pct_limit_down"),
+    )
     return {"date": date.today().isoformat(), "regime": regime, "advice": advice,
+            "gap": _v["gap"], "basis": _v["basis"], "leg1": _v["leg1"], "leg2": _v["leg2"],
             "stats": stats, "boards": boards}  # 2026-09-07: 不再截断40只——截断导致连板梯队漏票（中国出版2板被切掉）
 
 
@@ -303,8 +316,10 @@ if __name__ == "__main__":
         raise SystemExit(0)
     r = scan()
     log = ROOT / "data" / "regime_log.jsonl"
-    entry = json.dumps({"date": r["date"], "regime": r["regime"], "stats": r["stats"],
-                        "boards": r["boards"]}, ensure_ascii=False)
+    entry = json.dumps({"date": r["date"], "regime": r["regime"], "advice": r.get("advice"),
+                        "gap": r.get("gap"), "basis": r.get("basis"),
+                        "leg1": r.get("leg1"), "leg2": r.get("leg2"),
+                        "stats": r["stats"], "boards": r["boards"]}, ensure_ascii=False)
     lines = [l for l in log.read_text().splitlines() if l.strip()] if log.exists() else []
     if lines and json.loads(lines[-1])["date"] == r["date"]:
         lines[-1] = entry  # 同日重跑=覆盖，不堆重复行（打板接力按行序读，重复行会算出假昨日）

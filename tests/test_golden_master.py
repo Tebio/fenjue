@@ -100,6 +100,18 @@ def test_regime_thresholds_positive():
     # 两腿的建议动作必须不同（腿一=反弹窗口，腿二=降进攻频率）
     assert c["恐慌_分位阈上"]["advice"] != c["恐慌_涨停枯竭+指数"]["advice"], \
         "腿一与腿二的恐慌建议必须分开给——腿一是反弹窗口，腿二是趋势弱势，共用一句会反向操作"
+    # 缺口标志（2026-10-20）：分位缺失必须能被下游看见，禁止把数据断供当正常判定
+    m = got["meta"]
+    assert m["恐慌_分位阈上"]["gap"] is False and m["恐慌_分位阈上"]["basis"] == "pct"
+    assert m["恐慌_兜底38阈上"]["gap"] is True, "无分位字段时必须标 gap，面板才能显示数据缺口"
+    assert m["恐慌_兜底38阈上"]["basis"] == "abs_fallback", "兜底判定的 basis 必须写实，不许伪装成 pct"
+    assert m["恐慌_兜底37阈下"]["gap"] is True
+    assert m["恐慌_兜底38阈上"]["leg1"] is True and m["恐慌_分位阈上"]["leg1"] is True
+    assert m["恐慌_涨停枯竭+指数"]["leg1"] is False and m["恐慌_涨停枯竭+指数"]["leg2"] is True
+    assert m["恐慌_分位阈上"]["leg2"] is False
+    # 元信息视图与二元组视图不得分歧（同一判定两处出标签=老病灶）
+    for name, v in m.items():
+        assert v["state"] == c[name]["regime"], f"{name}：classify_ex 与 classify 标签不一致"
 
 
 def test_console_bands_monotonic():

@@ -64,6 +64,12 @@ def _warn_once(msg: str) -> None:
         print(f"[REGIME][WARN] {msg}", file=sys.stderr)
 
 
+def _verdict(state: str, advice: str, leg1: bool, leg2: bool, gap: bool,
+             basis: str = "pct") -> dict:
+    return {"state": state, "advice": advice, "leg1": bool(leg1), "leg2": bool(leg2),
+            "gap": bool(gap), "basis": basis}
+
+
 def classify(
     limit_ups: int,
     index_pct: float,
@@ -80,33 +86,55 @@ def classify(
     ⚠️ 调用方必须保证 pct_limit_down 的窗口与 limit_downs_abs 是**同一口径**
     （合计 = 纯10%档 + 真ST5%档）。分子用纯 10%、窗口用合计，会让腿一系统性偏钝。
     """
-    # 主线 / 妖股（原逻辑不动）
-    if limit_ups >= 60 and top_sector_conc >= 0.22:
-        return "主线期", ADVICE_MAINLINE
-    if limit_ups >= 40 and small_cap_ratio >= 0.65 and top_sector_conc < 0.22:
-        return "妖股期", ADVICE_HOTMONEY
+    v = classify_ex(limit_ups=limit_ups, index_pct=index_pct,
+                    small_cap_ratio=small_cap_ratio, top_sector_conc=top_sector_conc,
+                    limit_downs_abs=limit_downs_abs, pct_limit_down=pct_limit_down)
+    return v["state"], v["advice"]
 
-    # 腿一：滚动分位
-    if pct_limit_down is not None:
-        leg1 = pct_limit_down >= PANIC_PCT_Q
-    else:
+
+def classify_ex(
+    limit_ups: int,
+    index_pct: float,
+    small_cap_ratio: float,
+    top_sector_conc: float,
+    limit_downs_abs: int | None = None,
+    pct_limit_down: float | None = None,
+) -> dict:
+    """classify() 的元信息视图：多返回腿标志、缺口标志与判定依据。
+
+    `gap=True` = 腿一退回了绝对家数兜底（分位序列缺失）。调用方**必须**把缺口
+    显示给用户，禁止当成正常判定——2026-10-19 实锤：kcache 断供 → 分位算不出 →
+    权威时间轴静默把交易日当假日、跳过不写盘，cron 还报 ok，面板徽标停在 10-16。
+    「数据断供」不许被翻译成「今天没事」，这与 ABS_FALLBACK 不用 20 是同一条纪律。
+    """
+    # 主线 / 妖股（原逻辑不动，不依赖跌停腿）
+    if limit_ups >= 60 and top_sector_conc >= 0.22:
+        return _verdict("主线期", ADVICE_MAINLINE, False, False, False, "n/a")
+    if limit_ups >= 40 and small_cap_ratio >= 0.65 and top_sector_conc < 0.22:
+        return _verdict("妖股期", ADVICE_HOTMONEY, False, False, False, "n/a")
+
+    # 腿一：滚动分位；缺失→绝对兜底并告警（gap 上浮给调用方）
+    gap = pct_limit_down is None
+    if gap:
         leg1 = (limit_downs_abs or 0) >= ABS_FALLBACK
-        if leg1:
-            _warn_once(
-                f"pct_limit_down 缺失，腿一退回绝对家数 {ABS_FALLBACK} 备案值——"
-                f"若这是数据管线断供，本次判定不可信，请查 emotion_series.jsonl"
-            )
+        _warn_once(
+            f"pct_limit_down 缺失，腿一退回绝对家数 {ABS_FALLBACK} 备案值——"
+            f"若这是数据管线断供，本次判定不可信，请查 emotion_series.jsonl"
+        )
+    else:
+        leg1 = pct_limit_down >= PANIC_PCT_Q
+    basis = "abs_fallback" if gap else "pct"
 
     # 腿二：涨停枯竭 + 指数大跌
     leg2 = (limit_ups < LEG2_LU_MAX) and (index_pct < LEG2_IDX_PCT)
 
     if leg1 and leg2:
-        return "恐慌期", ADVICE_PANIC_BOTH
+        return _verdict("恐慌期", ADVICE_PANIC_BOTH, leg1, leg2, gap, basis)
     if leg1:
-        return "恐慌期", ADVICE_PANIC_LEG1
+        return _verdict("恐慌期", ADVICE_PANIC_LEG1, leg1, leg2, gap, basis)
     if leg2:
-        return "恐慌期", ADVICE_PANIC_LEG2
-    return "平淡期", ADVICE_FLAT
+        return _verdict("恐慌期", ADVICE_PANIC_LEG2, leg1, leg2, gap, basis)
+    return _verdict("平淡期", ADVICE_FLAT, leg1, leg2, gap, basis)
 
 
 def classify_stats(stats: dict) -> tuple[str, str]:

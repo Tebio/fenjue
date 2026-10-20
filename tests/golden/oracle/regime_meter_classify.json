@@ -2,7 +2,7 @@
  "_meta": {
   "as_of": "2026-10-15",
   "drift_pp": 0.1,
-  "generated_at": "2026-10-20T10:01:47+08:00",
+  "generated_at": "2026-10-20T10:56:22+08:00",
   "golden": "regime_meter_classify",
   "repo": "/opt/data/fenjue",
   "slice_stride": 28
@@ -166,10 +166,110 @@
    }
   }
  },
+ "meta": {
+  "主线_阈值上": {
+   "basis": "n/a",
+   "gap": false,
+   "leg1": false,
+   "leg2": false,
+   "state": "主线期"
+  },
+  "主线_阈值下": {
+   "basis": "abs_fallback",
+   "gap": true,
+   "leg1": false,
+   "leg2": false,
+   "state": "平淡期"
+  },
+  "主线_集中度差1": {
+   "basis": "abs_fallback",
+   "gap": true,
+   "leg1": false,
+   "leg2": false,
+   "state": "平淡期"
+  },
+  "妖股_小市值差1": {
+   "basis": "abs_fallback",
+   "gap": true,
+   "leg1": false,
+   "leg2": false,
+   "state": "平淡期"
+  },
+  "妖股_阈值上": {
+   "basis": "n/a",
+   "gap": false,
+   "leg1": false,
+   "leg2": false,
+   "state": "妖股期"
+  },
+  "平淡_兜底": {
+   "basis": "abs_fallback",
+   "gap": true,
+   "leg1": false,
+   "leg2": false,
+   "state": "平淡期"
+  },
+  "恐慌_兜底37阈下": {
+   "basis": "abs_fallback",
+   "gap": true,
+   "leg1": false,
+   "leg2": false,
+   "state": "平淡期"
+  },
+  "恐慌_兜底38阈上": {
+   "basis": "abs_fallback",
+   "gap": true,
+   "leg1": true,
+   "leg2": false,
+   "state": "恐慌期"
+  },
+  "恐慌_分位阈上": {
+   "basis": "pct",
+   "gap": false,
+   "leg1": true,
+   "leg2": false,
+   "state": "恐慌期"
+  },
+  "恐慌_分位阈下": {
+   "basis": "pct",
+   "gap": false,
+   "leg1": false,
+   "leg2": false,
+   "state": "平淡期"
+  },
+  "恐慌_分位高但绝对少": {
+   "basis": "pct",
+   "gap": false,
+   "leg1": true,
+   "leg2": false,
+   "state": "恐慌期"
+  },
+  "恐慌_指数差0.01": {
+   "basis": "abs_fallback",
+   "gap": true,
+   "leg1": false,
+   "leg2": false,
+   "state": "平淡期"
+  },
+  "恐慌_涨停差1": {
+   "basis": "abs_fallback",
+   "gap": true,
+   "leg1": false,
+   "leg2": false,
+   "state": "平淡期"
+  },
+  "恐慌_涨停枯竭+指数": {
+   "basis": "abs_fallback",
+   "gap": true,
+   "leg1": false,
+   "leg2": true,
+   "state": "恐慌期"
+  }
+ },
  "thresholds": {
   "主线": "涨停≥60 且 链集中≥22%",
   "妖股": "涨停≥40 且 小市值≥65% 且 链分散<22%",
   "平淡": "其余",
-  "恐慌": "跌停家数滚动250日分位(q95,合计口径≥0.95) 或 (涨停<30 且 指数<-1.0%)；分位缺失时退回绝对 38 家并告警"
+  "恐慌": "跌停家数滚动250日分位(q95,合计口径≥0.95) 或 (涨停<30 且 指数<-1.0%)；分位缺失时退回绝对 38 家并告警且 gap=True"
  }
 }

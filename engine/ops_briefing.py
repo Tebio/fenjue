@@ -92,6 +92,12 @@ def main():
     L = []
     L.append(f'📋 作战单 · 执行日 {fmt(today)}')
     L.append(f'数据截至 {fmt(sig_date) if sig_date else "?"}收盘 · {regime} · 涨停{lu}/跌停{ld}{boost}')
+    # 周期仪的分腿建议（2026-10-20 接线：advice 由 regime_core 唯一出处给出，
+    # 腿一跌停潮=反弹窗口、腿二涨停枯竭=降进攻频率，两腿不得共用一句）
+    if reg.get("gap"):
+        L.append("🚨 分位序列缺失，本次腿一退回绝对家数兜底——判定不可信，先查数据")
+    if reg.get("advice"):
+        L.append(f'🧭 {reg["advice"]}')
     # 环境快照行（2026-09-27 全面升级：段龄+下阶段概率+三门+四象限+节日窗）
     try:
         from env_state import env_state, fmt_brief

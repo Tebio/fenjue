@@ -683,14 +683,26 @@ def main():
             _env_html = f'<div style="margin-top:8px;padding:7px 10px;background:#f7f6f3;border-radius:6px">🌡️ {esc(_fmt_brief(_env_fn(reg["date"])))}</div>'
         except Exception:
             pass
+        _adv = reg.get("advice") or ""
+        # 缺口态必须在面板可见（2026-10-20）：腿一走绝对兜底=判定不可信，不许静默
+        _gap_html = (
+            '<div style="margin-top:8px;padding:7px 10px;background:#fdecea;'
+            'border-left:3px solid #c0392b;border-radius:6px">🚨 分位序列缺失，本次腿一'
+            '退回绝对家数兜底（38 家）——判定不可信，查 <code>data/emotion_series.jsonl</code>'
+            ' 与 kcache 覆盖率</div>' if reg.get("gap") else "")
+        _adv_html = (
+            f'<div style="margin-top:8px;padding:7px 10px;background:#f7f6f3;border-radius:6px">'
+            f'🧭 {esc(_adv)}</div>' if _adv else "")
         S["今日"].append(card(f"市场状态 · {fmt_d(reg['date'])}", f"""
 <div class="statrow"><div><div class="big">{badge_regime(reg['regime'])}</div>
 <div class="muted">周期仪 · {esc(reg['date'])}</div></div>
 <div class="stat"><div class="num">{st['limit_ups']}<span class="muted"> / {st['limit_downs']}</span></div><div class="muted">涨停 / 跌停</div></div>
 <div class="stat"><div class="num">{pct(st['index_pct'])}</div><div class="muted">指数</div></div></div>
 {_env_html}
-<div class="muted" style="margin-top:10px">主线板块：{"".join(f"{esc(n)}({c})" for n, c in st["top_sectors"][:4])} · 周期仪是油门不是方向盘：恐慌期=打板fill黄金期，主线期=红利拿稳别手痒</div>""",
-                              "每日 15:40 盘后扫描", tab="今日"))
+{_adv_html}
+{_gap_html}
+<div class="muted" style="margin-top:10px">主线板块：{"".join(f"{esc(n)}({c})" for n, c in st["top_sectors"][:4])} · 周期仪是油门不是方向盘</div>""",
+                              "权威轴 20:10 盘后算定（kcache 离线全量）· 15:40 直播为盘中参考", tab="今日"))
 
     # 🥇 金股组合卡（2026-09-27 接线：data/gold_current.json 由 gold_monthly 每日 08:35 更新）
     try:
@@ -1483,7 +1495,9 @@ def main():
         "built_at": stamp,
         "sig_date": sig_date, "buy_day": buy_day, "sell_day": sell_day,
         "regime": reg and {"date": reg["date"], "regime": reg["regime"], "limit_ups": reg["stats"]["limit_ups"],
-                            "limit_downs": reg["stats"]["limit_downs"]},
+                            "limit_downs": reg["stats"]["limit_downs"],
+                            # 2026-10-20：advice/gap 进人机共用事实源，作战单直接引用
+                            "advice": reg.get("advice"), "gap": bool(reg.get("gap"))},
         "deep_low": [{"code": c, "name": nm, "pct": round(p, 2)} for c, p, nm in _deep[:5]],
         "focus": [{"src": "🎯观察池临启动", "target": f'{e["name"]}({e["code"]})',
                    "info": f'第{e["days"]}天 · 量比{e["volratio"]}x' + (" · 缩量持稳" if e.get("shrink") else ""),

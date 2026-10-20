@@ -165,12 +165,25 @@ def case_regime_meter_classify() -> dict:
     for name, stats in cases:
         reg, advice = classify(dict(stats))
         out[name] = {"stats": stats, "regime": reg, "advice": advice}
+    # 元信息视图（2026-10-20 加）：gap=腿一走绝对兜底（分位序列缺失）必须能被调用方
+    # 看到并显示到面板，禁止把「数据断供」当成正常判定。leg1/leg2 分开记录，
+    # 防止日后有人把两腿合并成一句建议。
+    from regime_core import classify_ex
+    meta = {}
+    for name, stats in cases:
+        v = classify_ex(limit_ups=stats["limit_ups"], index_pct=stats["index_pct"],
+                        small_cap_ratio=stats["small_cap_board_ratio"],
+                        top_sector_conc=stats["top_sector_concentration"],
+                        limit_downs_abs=stats["limit_downs"],
+                        pct_limit_down=stats.get("pct_limit_down"))
+        meta[name] = {"state": v["state"], "gap": v["gap"], "basis": v["basis"],
+                      "leg1": v["leg1"], "leg2": v["leg2"]}
     return {"thresholds": {"主线": "涨停≥60 且 链集中≥22%",
                            "妖股": "涨停≥40 且 小市值≥65% 且 链分散<22%",
                            "恐慌": "跌停家数滚动250日分位(q95,合计口径≥0.95) 或 (涨停<30 且 指数<-1.0%)；"
-                                   "分位缺失时退回绝对 38 家并告警",
+                                   "分位缺失时退回绝对 38 家并告警且 gap=True",
                            "平淡": "其余"},
-            "cases": out}
+            "cases": out, "meta": meta}
 
 
 # ---------------------------------------------------------------------------

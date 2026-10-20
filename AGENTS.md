@@ -1313,3 +1313,25 @@ regime 时间轴重建（恐慌期 232→136 天）后，事件在 regime 分段
 与策略A「恐慌潮集中度现象而非选股 alpha」的结论同源。**它的 regime 稳健性是假稳健**——离开恐慌期几乎没有 edge，且妖股期/平淡期的正值极薄（+0.39%/+0.28%），任何口径小幅收紧都会打回 ❌。引用时必须带「edge 全在恐慌期」这个限定。
 
 漂移记录见 `docs/golden-master-20261016.md`。oracle 已按纪律刷新。
+
+**330. 前复权库停更事故 + 「数据断供被翻译成休市」+ advice 接线（2026-10-20 白天）**
+
+**A. 事故：`big_kcache` 冻在 10-16，10-19 三个 kcache job 全挂**
+根因是解释器 ABI：`/opt/data/python-libs` 的 numpy 是 **cp313** 编译，而 cron runner 默认 `python3` = `/usr/local/bin/python3` = Hermes 自带 **3.14.7**（其 site-packages 为空，纯 Python 的 yaml 走 `/opt/data/lazy-packages` 才通），`import baostock → import pandas → import numpy` 直接 `ImportError: No module named 'numpy._core._multiarray_umath'`。
+**判据速查**：能 `import yaml` 但 import numpy 炸 = 跑在 3.14 上；要 numpy/pandas/baostock 的脚本必须 exec 进 `/opt/data/fenjue/.venv/bin/python`（3.13.5，numpy 2.4.4 可用）。
+wrapper 已于 10-19 事后改成 `exec venv python`（`stock_kcache_shard0/1.sh`、`stock_kcache_update.py` 的 os.execv 头），但**没人验证、也没人补数据** —— 10-20 白天用生产同款 wrapper 实跑补齐，串行两分片（baostock 禁双进程），并见 `SEAM-FIX`（前复权锚漂移全量重拉）正常工作。
+
+**B. 更隐蔽的一条：`regime_daily_append._intended_day()` 把交易日当假日**
+10-19（周一，官方交易日）该 job 报 **ok**、实际什么都没写。旧逻辑：`今天覆盖率<0.8` + `昨天覆盖率够` + `相隔≤4天` → 判为假日 → 回退重刷 10-16 → 退出 0。于是面板徽标、权威时间轴、regime_log 三处全部停在 10-16。
+**修法**：以 `engine/trade_calendar.is_trading_day()`（官方日历）裁决，只有日历确认非交易日才允许回退；日历不可用则按「交易日数据不全」让覆盖率闸 `exit 1`，禁止猜。**这是「数据断供不许翻译成今天没事」纪律在 regime 链路上的第二处**（第一处是 ABS_FALLBACK 不用 20）。
+
+**C. advice 接线（把 #329 的半成品收尾）**
+#329 统一了「判定」，但 `advice` 在 `regime_daily_append.py:94` 被 `_advice` 丢弃，面板 `dashboard_build.py:692` 另写一句硬编码「恐慌期=打板fill黄金期」——判定统一了、文案没统一。
+现：`regime_core.classify_ex()` 返回 `{state, advice, leg1, leg2, gap, basis}`；`regime_daily_append` 把 `advice/gap/legs/basis/pct_limit_down` 落进 `regime_log.jsonl`；面板直接渲染该 advice（行动层，放在仪表条下方），`gap=True` 时另加红色缺口横幅。
+**同时关掉 #329 遗留②**（cron 吞 stderr 导致告警无效）——缺口态现在在面板可见，不再只靠 stderr。
+
+**D. 纪律增补**
+1. **修完必须回头补数据**：wrapper 修好≠数据恢复。事故当天补跑要做「覆盖率×末端日期」双查，补完再重建下游（时间轴/log/面板/影子）。
+2. **cron 报 ok 不等于产出成功**：no_agent 脚本的「跳过并退出 0」是最危险的静默态（本次跳过语句还是 `print` 一句就 continue）。凡「覆盖率不足/无数据」分支，除真假日外一律 `exit 1`。
+3. **读 kcache 的重活不要与 kcache 写入并发**：写入非原子，并发读会读到半截文件被 `except` 吞掉 → 横截面静默欠采样。
+4. **AGENTS.md 体积已 296KB，远超 #271 定的 100KB** —— 261 之后的条目需成段搬进 `docs/agents-archive-*.md`（只搬不改，主干留导航 + 指针）。这条本身就是欠账。

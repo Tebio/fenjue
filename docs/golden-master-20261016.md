@@ -86,3 +86,33 @@
 
 **脆弱性提示**：妖股期/平淡期只有 +0.39%/+0.28%，任何口径小幅收紧都可能把它打回 ❌。
 引用此策略时必须带「edge 全在恐慌期」这个限定。
+
+---
+
+## 2026-10-20（第二轮）· `regime_meter_classify`（元信息视图 + 缺口标志）
+
+**触发**：把 `advice` 与数据缺口态接进下游。第一轮只统一了「判定」，`advice` 仍被
+`regime_daily_append.py` 用下划线丢弃，面板另写一句硬编码——判定统一了、文案没统一，
+是同一类病的最后一处。
+
+**变更**：
+
+| 项 | 旧 | 新 |
+|---|---|---|
+| `engine/regime_core.py` | 只有 `classify() -> (state, advice)` | 新增 `classify_ex() -> dict`（加 `leg1`/`leg2`/`gap`/`basis`），`classify` 改为它的二元组视图 |
+| `thresholds.恐慌` 文案 | 「…分位缺失时退回绝对 38 家并告警」 | 追加「**且 gap=True**」 |
+| oracle 新增键 | — | `.meta`（每个 case 的 state/gap/basis/leg1/leg2） |
+
+**为什么加 `gap`**：2026-10-19 实锤——kcache 断供 → 分位算不出 → `regime_daily_append`
+的 `_intended_day()` 只凭「今天覆盖率不够 + 昨天够 + 相隔≤4天」就把**交易日当假日**，
+回头重刷 10-16 后退出 0，cron 报 ok，面板徽标停在 10-16 两天。数据断供被静默翻译成
+「今天没事」，与「兜底不用 20」是同一条纪律。现在 `gap=True` 会被面板渲染成红色缺口横幅。
+
+**漂移值**：所有案件 `state` 零漂移；仅 `thresholds.恐慌` 文字与新增 `.meta` 键。
+
+**新增断言**（`test_regime_thresholds_positive` 追加 7 条）：
+`gap` 在无分位字段时必须为 True；`leg1`/`leg2` 分别可观测且不得混同；
+`classify_ex` 与 `classify` 的标签必须逐一相等（防两处出标签的老病灶复发）。
+
+**回归**：`pytest tests/test_golden_master.py` → 9 passed / 1 failed，
+唯一失败是既有 `factor_census`（stage1 25 vs 断言 24，`knn_vote` 早先扩充所致，非本次引入）。
