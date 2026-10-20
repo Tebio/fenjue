@@ -26,6 +26,8 @@ consumers:
   - 作战单9:25      # ops_briefing（每日必发）
   - 面板20:40       # dashboard_build（含徽标）
   - 日度状态包      # build_daily_state → data/daily_state/（注意：当前零调用方，属预留）
+  - 晨报            # 虚拟下游：line_health_report.md 的读者是人/agent，**无脚本生产者、无 cron**。
+                    # 保留仅为记录该消费路径；breaker 不认它（无脚本调 allow("晨报")，登记到 EXEMPT 是死分支）
   - line_health     # 信号线监控机（算滚动 edge 的输入面）
   - 盘前自检        # preflight.py
   - 回测族          # regime_backtest_hcap 等读权威时间轴的回测
@@ -112,11 +114,11 @@ datasets:
     cadence: daily
     max_lag: 0
     severity: warn
-    # 2026-10-20 清口（K3 咨询实证 + 主 agent 复核）：原写 [晨报, 日度状态包]，两个都是幽灵下游——
-    # 「晨报」cron 里已搜不到任何作业（唯一相关的 a562be774d76 是一次性 cat，早已跑完），
-    # line_health_report 全库零引用；「日度状态包」的 build_daily_state.py 零调用方。
-    # 真实消费者是 ops_briefing（作战单内嵌数据面段落 + data_stale 告警，见 ops_briefing.py:103-105）。
-    blocks: [作战单9:25]
+    # 2026-10-20 清口，**含一次自我纠错**：先按"作战单9:25"改，实测发现 ops_briefing.py 根本不读 line_health（grep 零命中），
+    # 那是我未经核实就采信咨询结论造成的新假账，已回滚。实测唯一读 line_health.json 的脚本是 build_daily_state.py:228，
+    # 即「日度状态包」——它是**经代码验证**的真实消费者（虽然该脚本当前零 cron 调用方，仍是唯一实现）。
+    # 「晨报」无脚本消费（report.md 的读者是人/agent），已从 blocks 摘除、保留在 consumers 里标注虚拟下游。
+    blocks: [日度状态包]
     owner: engine/line_health.py
 
   watch_pool:                       # 观察池（状态制；updated 不保证每个交易日都动）
