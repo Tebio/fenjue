@@ -34,6 +34,28 @@ except ImportError:
     sys.exit(2)
 
 
+def check_section_format(doc):
+    """段-格式一致性：items 条目必须有 status，not_doing 条目必须有 reason 且无 status。
+
+    2026-10-20 加：实测 not_doing 段里躺着 DATA-06/07/08/08b、RES-10/11 六个**已完成或待办**的条目——
+    原因是多个会话都往文件末尾 append，而文件末尾恰好是 not_doing。旧检查器按 id 查、不看段，
+    全部判绿，错位无人发现。这类"数据在错的地方、检查器却绿"正是本项目反复踩的坑，
+    所以把段-格式匹配做成硬断言。
+    """
+    errs = []
+    for t in doc.get("items") or []:
+        if not t.get("status"):
+            errs.append(f"items 条目缺 status: {t.get('id')}")
+        if t.get("reason") and not t.get("status"):
+            errs.append(f"items 条目用了 not_doing 格式（只有 reason）: {t.get('id')}")
+    for t in doc.get("not_doing") or []:
+        if t.get("status") or t.get("priority"):
+            errs.append(f"not_doing 条目带了 status/priority（应属 items，疑似 append 错位）: {t.get('id')}")
+        if not t.get("reason"):
+            errs.append(f"not_doing 条目缺 reason: {t.get('id')}")
+    return errs
+
+
 def main() -> int:
     verbose = any(a in ("-v", "--verbose") for a in sys.argv)
     strict = "--strict" in sys.argv
@@ -46,6 +68,9 @@ def main() -> int:
     cur_rank = GATE_ORDER.index(current) if current in GATE_ORDER else 0
 
     errors, warns, infos = [], [], []
+
+    # L0 段-格式一致性（2026-10-20 加，抓"条目在错段落却全绿"）
+    errors.extend(f"[L0] {e}" for e in check_section_format(data))
 
     # L1 悬空引用
     docs = [p for p in PLAN.rglob("*.md")] + [p for p in (PLAN / "tools").glob("*.py")] + [ROOT / "AGENTS.md", BACKLOG]

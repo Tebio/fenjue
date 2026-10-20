@@ -683,33 +683,6 @@ items:
     evidence: null
 
 # ── 明确不做（T3，避免为了像机构而浪费） ─────────────────────────────
-not_doing:
-  - id: NT-01
-    title: Barra 式因子风险模型 / 组合优化器 / 约束求解
-    reason: 资金规模几十万级加手工执行，ROI 为负（#263-C）
-  - id: NT-02
-    title: TWAP/VWAP 执行算法与平方根冲击成本模型
-    reason: 单笔金额小，滑点主要来自竞价与涨跌停，算法执行无收益（#263-C 与 #263⑦）
-  - id: NT-03
-    title: 做空/融券费率与可得性建模、杠杆与资金成本
-    reason: 不做空不加杠杆（#263-C）
-  - id: NT-04
-    title: 高频微结构 / 期权 / 跨市场套利
-    reason: 不在数据圈与能力圈（#263-C）
-  - id: NT-05
-    title: ML 挖技术因子
-    reason: 自家数据已反复证伪（单指标全平 #231、技术过滤全平 #241四件套②）
-  - id: NT-06
-    title: 整体搬迁到 Qlib/QuantConnect/聚宽/米筐
-    reason: 要重做数据层与 PIT 管线，仅换一个报告视图，ROI 为负（#264-D）
-  - id: NT-07
-    title: 机构式部门 / 例会 / 委员会 / 日报邮件
-    reason: >-
-      个人量化的瓶颈是注意力不是人力：部门与例会只带来机构的弊端（代理问题、委员会稀释 alpha、
-      流程惰性），拿不到机构资源。用「断言 + 限额 + 一页周报」替代，见 README §7（#267）
-  - id: NT-08
-    title: 杠杆 / 对冲掉自己的 beta
-    reason: 不用杠杆是天然免疫（LTCM/Archegos 式强制平仓）；beta 敞口用回撤预算与 regime 闸门管理，不用对冲工具（#267）
 
   - id: DATA-06
     title: 数据面监控机 data_health（注册表驱动 + 三输出 + 缺口可见 + golden 自检）
@@ -756,6 +729,7 @@ not_doing:
       ops_briefing 三态冒烟全过（无 fatal 无行/有 fatal 渲染/文件缺失静默跳过）。
       遗留：每日生成端挂哪个既有班未接（需用户裁决，未动 cron）。
 
+
   - id: DATA-07
     title: 熔断泛化（数据不合格 → 下游拒写，而非只告警）+ SEAM-FIX 指标化
     area: DATA
@@ -801,6 +775,7 @@ not_doing:
       big_kcache 降 stale（沙盒实测）。回归：pytest golden 14 passed，verify.sh --fast 全绿
       （plan_lint 绿 / py_compile 296 文件 0 败 / pytest 20 passed）。未 git commit，未动 cron。
 
+
   - id: DATA-08
     title: 血缘表 + DATA_STALE 联动（影响半径与"数据不可信不推断策略失效"）
     area: DATA
@@ -813,16 +788,40 @@ not_doing:
       - docs/plan/specs/DATA-08-lineage.md
       - data/datasets_registry.yaml / data/claims_registry.yaml
     outputs:
-      - data/lineage.yaml
-      - engine/lineage.py（impact / stale_claims）
-      - line_health.json 每条线新增 data_stale 字段
+      - data/lineage.yaml（dataset → direct 下游 → artifacts/glob → reports）
+      - engine/lineage.py（一期只做 impact；stale_claims 二期，见 DATA-08b）
     acceptance:
-      - impact("big_kcache") 列出深档/影子盘/周期仪/权威时间轴/X规则线，且与 blocks 一致
+      - impact("big_kcache").direct == 注册表 blocks（实测 ['深档名单','影子盘','周期仪','权威时间轴','X规则线']）
       - lineage.yaml 引用不存在的数据集/产物 → 加载即 raise
-      - 伪造 big_kcache fatal → stale_claims() 非空、line_health 标 data_stale 并单列
-      - golden 血缘一致性 case（dataset.blocks == lineage.direct）
+      - 机械断言三条：每个下游绑定真实脚本 Path.exists()；每个产物 glob 命中≥1 真实文件；
+        trigger 写 cron id 须能在 hermes cron list 查到，写 manual 须指向记载该命令的文档:行号
+      - golden 新增血缘一致性 case（dataset.blocks == lineage.direct）
+    note: 2026-10-20 派单前自检把原 spec 的二期项拆出——stale_claims() 依赖 claims_registry 的
+      inputs 字段，实测该字段不存在（grep 0 处），故二期阻塞在 DATA-08b。详见 spec 的「自检修订 R1」。
     effort_days: 1.5
     evidence: ''
+
+
+  - id: DATA-08b
+    title: 给 claims_registry 补 inputs（每条主张声明依赖的数据集）
+    area: DATA
+    priority: P1
+    status: todo
+    gate: G1
+    depends_on: [DATA-06]
+    ledger_ref: 342
+    rationale: DATA-08 二期的硬前置。2026-10-20 自检实测 claims_registry.yaml 里 inputs 出现 0 次，
+      stale_claims() 因此没有数据源；不补这个字段，DATA_STALE 联动永远做不了。
+    inputs:
+      - data/claims_registry.yaml（68 条主张）
+      - engine/law_pipeline.py（REGISTRY 各 detector 函数体，用于推断数据引用）
+    outputs:
+      - data/claims_registry.yaml 每条主张新增 inputs 列表（必须都是 datasets_registry 里存在的 key）
+    acceptance:
+      - 68 条主张全部有 inputs，且每个 key 都在 datasets_registry 里存在（否则加载 raise）
+      - 半自动生成候选：扫 detector 函数体内的数据引用 -> 落候选文件 -> 人工逐条确认后才写回 registry
+      - 禁止用"全部主张都依赖 big_kcache"这类粗粒度兜底（会让 DATA_STALE 失去分辨力）
+    note: 完成后解除 DATA-08 二期阻塞。
 
   - id: RES-10
     title: 高位剧震回避黑名单（AVOID）终审与注册 — 分年验尸 + 三口径 + 位置匹配
@@ -857,6 +856,7 @@ not_doing:
       全量数字 data/r4_final_20261020.json，报告 research/R4_final.md（含作废条件4条）。
       遗留：退市股幸存者偏差（DATA-05）、静态行业快照、T+1边际≈0（黑名单管持续失血不管次日）。
 
+
   - id: RES-11
     title: 「高位剧震」detector 接入 REGISTRY — 让 AVOID_CLIMAX_QUAKE 进 claims_audit 自动复验
     area: RES
@@ -885,3 +885,31 @@ not_doing:
       ③全量 T+20 边际：审计口径 -3.13pp vs RES-10 -2.71pp，差 -0.42pp 已逐因子分解闭合（tmp/res11_decompose.py 全池 2×2×2 矩阵）：一字跌停剔除 +0.23（rq.fwd 剔 audit 不剔，主因）、对照抽样方案 +0.13、扫描窗口 +0.04、出场 bar +0.02。审计口径更负=对负向主张偏保守，kill 语义安全。
       ④pytest tests/test_golden_master.py：13 passed，law_pipeline_three 零漂移，未刷新任何既有 oracle。
       施工面：law_pipeline.py REGISTRY+「高位剧震」（_quake_high，惰性 import r4_yearbreak.is_quake，禁重写）；claims_audit.py 新增 position_matched_high 分支（发现：原 position_matched 只取 MA60 下方日，高位信号挂它零事件空转=假绿灯，FRONTRUN note 记过同款坑）；claims_registry 该条 control 改指新分支。既有文件均先 .bak_res11。详见 AGENTS 第336条。
+not_doing:
+  - id: NT-01
+    title: Barra 式因子风险模型 / 组合优化器 / 约束求解
+    reason: 资金规模几十万级加手工执行，ROI 为负（#263-C）
+  - id: NT-02
+    title: TWAP/VWAP 执行算法与平方根冲击成本模型
+    reason: 单笔金额小，滑点主要来自竞价与涨跌停，算法执行无收益（#263-C 与 #263⑦）
+  - id: NT-03
+    title: 做空/融券费率与可得性建模、杠杆与资金成本
+    reason: 不做空不加杠杆（#263-C）
+  - id: NT-04
+    title: 高频微结构 / 期权 / 跨市场套利
+    reason: 不在数据圈与能力圈（#263-C）
+  - id: NT-05
+    title: ML 挖技术因子
+    reason: 自家数据已反复证伪（单指标全平 #231、技术过滤全平 #241四件套②）
+  - id: NT-06
+    title: 整体搬迁到 Qlib/QuantConnect/聚宽/米筐
+    reason: 要重做数据层与 PIT 管线，仅换一个报告视图，ROI 为负（#264-D）
+  - id: NT-07
+    title: 机构式部门 / 例会 / 委员会 / 日报邮件
+    reason: >-
+      个人量化的瓶颈是注意力不是人力：部门与例会只带来机构的弊端（代理问题、委员会稀释 alpha、
+      流程惰性），拿不到机构资源。用「断言 + 限额 + 一页周报」替代，见 README §7（#267）
+  - id: NT-08
+    title: 杠杆 / 对冲掉自己的 beta
+    reason: 不用杠杆是天然免疫（LTCM/Archegos 式强制平仓）；beta 敞口用回撤预算与 regime 闸门管理，不用对冲工具（#267）
+
