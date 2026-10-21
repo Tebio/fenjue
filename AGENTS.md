@@ -1062,3 +1062,22 @@ kcache 无 10-19 bar → `[SILENT]` → exit 0 → cron 报 ok。**假绿灯只�
 **B5 半路板班（4ce84d817a97）张力结案**：10-19 被暂停且台账无记录，用户定性——「看了没用，看不出哪只票的强度和形态是最好的，只是一摞子半路板扔了出来」。维持暂停；**复活条件=输出增加强度/形态排序**（能看出哪只最强才值得推）。9/14 推送红线裁决中「首选排序 B5>抢跑>观察池临启动」相应挂起，待 B5 改造后再议。
 
 **附带发现（待查，未处理）**：X 规则班 036130e2e17b 今日 00:57 跑批 last_status=error——「注册表内容指纹不一致（体检产物 49d34ea4… vs 当前 552282cf…）」，exit -9。疑与 10-21 fix5 改注册表后体检班未重跑有关；若今晚 20:22 班复现则需人工看。
+
+
+**359. PORT-01 统一组合账本落地 + pead_pool replay 对照揭出 sim 静默透支（2026-10-21，K3 施工单，TDD 全程先红后绿）**
+
+**落地**：`engine/portfolio/ledger.py`（376 行）——Fill/Ledger(apply/mark/cash/positions/nav_series/contributions/assert_conservation)/load_line_fills/combine，字段对齐 INTERFACES I1/I2。零业务规则（C6.3），费用只经 `engine/costs.py`：Fill.fee/tax 是输出字段（apply 经 costs.py 计算回填），外部传非零 fee/tax 直接 FeeInjectionError——结构上杜绝第二套费用口径。守恒式三分支齐备（买入扣 cash+fee / 卖出加 cash-fee-tax / 分红加 cash-tax），assert_conservation 误差≥0.01 元即 raise；透支 OverdraftError、重复 (line,code,day,side) DuplicateFillError、shares 非 100 整数倍 ValueError，三反例测试齐。**路径漂移修正**：spec/backlog TAX-01 outputs/D-07 写的 `engine/taxfee/` 是旧计划名，TAX-01 实际落地为单文件 `engine/costs.py`（见其 evidence），账本按实际真源接线，不建 taxfee/ 目录；D-07 文字待用户裁决是否同步修订。
+
+**测试**：tests/test_ledger.py 21 个 + test_ledger_replay.py 1 个（合计 22 新增，全套 47 passed 含原 25）；fixture tests/fixtures/pead_pool_sample.json（3 笔真实 trades+价格截取，重建 ret 误差 2e-16）。
+
+**replay 对照（验收正例 2）**：pead_pool 8 年（1880 交易日，411 笔）replay 终值 **188688.92 vs sim 197042.00，Δ=-8353.08（-4.24%），超 ±0.5% 容差**——差异台账 `data/portfolio/replay_diff_pead_20261021.json` 逐笔分解**残差 0.00 元**（每一元有归属，未调参）：
+| 项 | 金额 | 说明 |
+|---|---|---|
+| 费口径 | **+3868.42** | sim 平口径 0.15% 双边卖出时一次性扣 vs costs.py 真实费目（2 万档往返 ≈0.102%，最低佣金生效），账本费更低→净值偏高 |
+| 整手取整 | -1407.68 | sim 分数股 vs 账本 I1 强制整手 |
+| 透支减手 | **-8367.08** | 78 笔买入可用现金不足，账本 OverdraftError 拦下后减手到可负担（真实账户行为） |
+| 期末幻影子仓 | -2446.74 | trades.json 只记已平仓，sim 期末 3 笔 2026-09 买入未平仓无买入记录，replay 无法重建；由 sim 现金恒等式反推精确记账 |
+
+**重大发现（以守恒成立方为准，如实记录）**：**pead_pool_sim 有 #249 同族账房缺陷——买入虽扣现金但无透支检查（`cash -= SLOT` 盲扣）**。用 trades+收盘价逐日重建其现金轨迹（与 sim 净值曲线 1862/1880 天逐分吻合）：**现金最低 -18621.95 元（2021-01-08，抱团崩盘前夜满仓+回撤），负现金 330 天**——sim 的 +97.0% 含最高 ~18.6% 静默杠杆成分，账本口径 +88.7% 才是无杠杆可执行结果。#249 修了一半：扣了现金，没查够不够。含义：①pead_pool 历史净值以账本 replay（data/portfolio_nav.json）为准；②其余 13 个自写模拟脚本（spec 现状证据清单）大概率同病，接入账本时逐一对照；③sim 产物缺陷：trades 不落未平仓买入，若要用 trades 做归因需补 dump。
+
+**遗留**：4 线合并 replay 待各线模拟产物统一落 I1 jsonl（PORT-02 前置）；div 分红分支仅合成测试覆盖（无真实分红 replay）；I2 规范的全系统 nav 路径是 `data/portfolio/nav.json`，本单验收产物按施工单落 `data/portfolio_nav.json`（单线 replay），多线生产时须迁 I2 路径。

@@ -177,14 +177,14 @@ items:
     area: PORT
     priority: P0
     gate: G1
-    status: todo
+    status: done
     depends_on: [TAX-01]
     ledger_ref: "262①"
     inputs: ["data/*_ledger.jsonl", "影子账本", "模拟脚本输出（pead_pool_sim 等）"]
     outputs: ["engine/portfolio/ledger.py", "data/portfolio_nav.json", "tests/test_ledger.py"]
     acceptance: "逐笔现金守恒断言通过（买入扣现金、卖出加现金、费用与税费走 taxfee）；4 线历史模拟可合并输出净值/逐年贡献/资金占用"
     effort_days: 3
-    evidence: null
+    evidence: "AGENTS#359（2026-10-21 K3 施工单）：ledger.py 376行+test_ledger.py 21测+test_ledger_replay.py；全套 47 passed（原25+新增22）+verify.sh exit 0；守恒三反例 raise+费对拍逐分相等；pead_pool 8年 replay 终值 188688.92 vs sim 197042.00（Δ-4.24% 超容差，差异台账 data/portfolio/replay_diff_pead_20261021.json 分解残差 0.00：费口径+3868.42/整手-1407.68/透支减手78笔-8367.08/期末幻影子仓-2446.74）；揭出 sim 静默透支（现金 min -18621.95@2021-01-08，负现金330天）= #249 同族账房缺陷，以账本守恒口径为准；遗留=4线合并待各线 I1 jsonl 化+div 分支仅合成测试"
   - id: PFX-01
     title: 前复权口径修正（低价层判定改不复权价）
     area: PORT

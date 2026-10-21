@@ -1,0 +1,502 @@
+{
+ "sim_final": 197042.0,
+ "ledger_final": 188688.92,
+ "delta_yuan": -8353.08,
+ "delta_pct": -0.042392,
+ "tolerance_pct": 0.005,
+ "within_tolerance": false,
+ "decomposition": {
+  "d_fee_caliber": 3868.42,
+  "d_lot_total": -9774.76,
+  "d_lot_rounding_only": -1407.68,
+  "d_lot_overdraft_cap": -8367.08,
+  "d_phantom_open_positions": -2446.74,
+  "residual_yuan": 0.0
+ },
+ "capped_trades": [
+  {
+   "code": "002420",
+   "day": "2019-05-08",
+   "shares_from": 6400,
+   "shares_to": 4800
+  },
+  {
+   "code": "002333",
+   "day": "2019-05-13",
+   "shares_from": 4500,
+   "shares_to": 4100
+  },
+  {
+   "code": "000422",
+   "day": "2019-05-16",
+   "shares_from": 6100,
+   "shares_to": 5800
+  },
+  {
+   "code": "000737",
+   "day": "2019-05-28",
+   "shares_from": 6400,
+   "shares_to": 5400
+  },
+  {
+   "code": "000859",
+   "day": "2019-06-06",
+   "shares_from": 4100,
+   "shares_to": 3000
+  },
+  {
+   "code": "002333",
+   "day": "2019-06-12",
+   "shares_from": 4600,
+   "shares_to": 4100
+  },
+  {
+   "code": "002420",
+   "day": "2019-06-17",
+   "shares_from": 6700,
+   "shares_to": 5700
+  },
+  {
+   "code": "002164",
+   "day": "2019-06-27",
+   "shares_from": 4400,
+   "shares_to": 4000
+  },
+  {
+   "code": "002162",
+   "day": "2019-07-08",
+   "shares_from": 5700,
+   "shares_to": 4500
+  },
+  {
+   "code": "603966",
+   "day": "2019-07-11",
+   "shares_from": 4700,
+   "shares_to": 4500
+  },
+  {
+   "code": "002676",
+   "day": "2019-07-16",
+   "shares_from": 5900,
+   "shares_to": 5200
+  },
+  {
+   "code": "001896",
+   "day": "2019-07-19",
+   "shares_from": 5500,
+   "shares_to": 4500
+  },
+  {
+   "code": "002052",
+   "day": "2019-07-25",
+   "shares_from": 4600,
+   "shares_to": 4500
+  },
+  {
+   "code": "000850",
+   "day": "2019-07-26",
+   "shares_from": 5800,
+   "shares_to": 4800
+  },
+  {
+   "code": "600794",
+   "day": "2019-08-09",
+   "shares_from": 5400,
+   "shares_to": 4700
+  },
+  {
+   "code": "002522",
+   "day": "2019-08-14",
+   "shares_from": 4000,
+   "shares_to": 3100
+  },
+  {
+   "code": "001896",
+   "day": "2019-08-19",
+   "shares_from": 6000,
+   "shares_to": 4500
+  },
+  {
+   "code": "002515",
+   "day": "2019-08-26",
+   "shares_from": 4200,
+   "shares_to": 3900
+  },
+  {
+   "code": "603258",
+   "day": "2019-09-09",
+   "shares_from": 900,
+   "shares_to": 800
+  },
+  {
+   "code": "002278",
+   "day": "2019-09-12",
+   "shares_from": 3300,
+   "shares_to": 3100
+  },
+  {
+   "code": "002674",
+   "day": "2019-09-18",
+   "shares_from": 2000,
+   "shares_to": 1700
+  },
+  {
+   "code": "000655",
+   "day": "2019-10-16",
+   "shares_from": 4100,
+   "shares_to": 3900
+  },
+  {
+   "code": "000533",
+   "day": "2019-10-21",
+   "shares_from": 6800,
+   "shares_to": 5800
+  },
+  {
+   "code": "002939",
+   "day": "2019-10-24",
+   "shares_from": 1800,
+   "shares_to": 1400
+  },
+  {
+   "code": "002073",
+   "day": "2019-10-31",
+   "shares_from": 4500,
+   "shares_to": 4000
+  },
+  {
+   "code": "002676",
+   "day": "2019-11-14",
+   "shares_from": 6500,
+   "shares_to": 5900
+  },
+  {
+   "code": "000533",
+   "day": "2019-11-19",
+   "shares_from": 7200,
+   "shares_to": 5800
+  },
+  {
+   "code": "002560",
+   "day": "2019-11-22",
+   "shares_from": 5300,
+   "shares_to": 4000
+  },
+  {
+   "code": "002073",
+   "day": "2019-11-29",
+   "shares_from": 4900,
+   "shares_to": 4000
+  },
+  {
+   "code": "000715",
+   "day": "2019-12-12",
+   "shares_from": 4700,
+   "shares_to": 4400
+  },
+  {
+   "code": "002103",
+   "day": "2019-12-18",
+   "shares_from": 4400,
+   "shares_to": 3600
+  },
+  {
+   "code": "002199",
+   "day": "2019-12-23",
+   "shares_from": 2100,
+   "shares_to": 1600
+  },
+  {
+   "code": "002548",
+   "day": "2020-01-22",
+   "shares_from": 3000,
+   "shares_to": 2300
+  },
+  {
+   "code": "603778",
+   "day": "2020-02-05",
+   "shares_from": 6000,
+   "shares_to": 4600
+  },
+  {
+   "code": "000958",
+   "day": "2020-02-06",
+   "shares_from": 4800,
+   "shares_to": 4100
+  },
+  {
+   "code": "600866",
+   "day": "2020-02-19",
+   "shares_from": 4200,
+   "shares_to": 3700
+  },
+  {
+   "code": "002021",
+   "day": "2020-02-26",
+   "shares_from": 12900,
+   "shares_to": 12200
+  },
+  {
+   "code": "600281",
+   "day": "2020-02-28",
+   "shares_from": 5200,
+   "shares_to": 4000
+  },
+  {
+   "code": "002721",
+   "day": "2020-03-02",
+   "shares_from": 4400,
+   "shares_to": 3700
+  },
+  {
+   "code": "600715",
+   "day": "2020-03-05",
+   "shares_from": 7400,
+   "shares_to": 6800
+  },
+  {
+   "code": "002160",
+   "day": "2020-03-17",
+   "shares_from": 4300,
+   "shares_to": 3500
+  },
+  {
+   "code": "002721",
+   "day": "2020-03-18",
+   "shares_from": 4400,
+   "shares_to": 3900
+  },
+  {
+   "code": "002766",
+   "day": "2020-03-26",
+   "shares_from": 4900,
+   "shares_to": 4800
+  },
+  {
+   "code": "002668",
+   "day": "2020-03-30",
+   "shares_from": 4400,
+   "shares_to": 3400
+  },
+  {
+   "code": "002072",
+   "day": "2020-04-03",
+   "shares_from": 4200,
+   "shares_to": 3400
+  },
+  {
+   "code": "002623",
+   "day": "2020-04-16",
+   "shares_from": 700,
+   "shares_to": 600
+  },
+  {
+   "code": "002662",
+   "day": "2020-04-17",
+   "shares_from": 8000,
+   "shares_to": 7300
+  },
+  {
+   "code": "000518",
+   "day": "2020-04-27",
+   "shares_from": 4400,
+   "shares_to": 4200
+  },
+  {
+   "code": "002086",
+   "day": "2020-04-29",
+   "shares_from": 9500,
+   "shares_to": 7700
+  },
+  {
+   "code": "002086",
+   "day": "2020-06-02",
+   "shares_from": 11700,
+   "shares_to": 10000
+  },
+  {
+   "code": "002188",
+   "day": "2020-09-14",
+   "shares_from": 5900,
+   "shares_to": 5300
+  },
+  {
+   "code": "600610",
+   "day": "2020-10-15",
+   "shares_from": 4000,
+   "shares_to": 3600
+  },
+  {
+   "code": "002890",
+   "day": "2020-10-20",
+   "shares_from": 1600,
+   "shares_to": 1500
+  },
+  {
+   "code": "000037",
+   "day": "2020-10-21",
+   "shares_from": 1400,
+   "shares_to": 1200
+  },
+  {
+   "code": "000886",
+   "day": "2020-11-13",
+   "shares_from": 4200,
+   "shares_to": 2900
+  },
+  {
+   "code": "002890",
+   "day": "2020-11-18",
+   "shares_from": 1900,
+   "shares_to": 1300
+  },
+  {
+   "code": "603507",
+   "day": "2020-11-19",
+   "shares_from": 1600,
+   "shares_to": 1100
+  },
+  {
+   "code": "000570",
+   "day": "2020-12-11",
+   "shares_from": 4100,
+   "shares_to": 3200
+  },
+  {
+   "code": "002284",
+   "day": "2021-01-08",
+   "shares_from": 3400,
+   "shares_to": 800
+  },
+  {
+   "code": "601798",
+   "day": "2021-02-08",
+   "shares_from": 4000,
+   "shares_to": 1200
+  },
+  {
+   "code": "002370",
+   "day": "2021-02-10",
+   "shares_from": 6200,
+   "shares_to": 5300
+  },
+  {
+   "code": "002765",
+   "day": "2021-02-23",
+   "shares_from": 4300,
+   "shares_to": 4100
+  },
+  {
+   "code": "600257",
+   "day": "2021-03-10",
+   "shares_from": 4200,
+   "shares_to": 1500
+  },
+  {
+   "code": "002571",
+   "day": "2021-04-09",
+   "shares_from": 2100,
+   "shares_to": 1300
+  },
+  {
+   "code": "000816",
+   "day": "2021-04-23",
+   "shares_from": 6300,
+   "shares_to": 4600
+  },
+  {
+   "code": "000889",
+   "day": "2021-05-27",
+   "shares_from": 4200,
+   "shares_to": 3500
+  },
+  {
+   "code": "000525",
+   "day": "2021-06-02",
+   "shares_from": 5600,
+   "shares_to": 4400
+  },
+  {
+   "code": "002571",
+   "day": "2021-06-28",
+   "shares_from": 2800,
+   "shares_to": 2500
+  },
+  {
+   "code": "002536",
+   "day": "2021-07-02",
+   "shares_from": 2800,
+   "shares_to": 2200
+  },
+  {
+   "code": "002609",
+   "day": "2021-07-07",
+   "shares_from": 2200,
+   "shares_to": 2100
+  },
+  {
+   "code": "003028",
+   "day": "2021-07-08",
+   "shares_from": 600,
+   "shares_to": 500
+  },
+  {
+   "code": "002622",
+   "day": "2021-07-29",
+   "shares_from": 4200,
+   "shares_to": 3300
+  },
+  {
+   "code": "002235",
+   "day": "2021-08-06",
+   "shares_from": 4400,
+   "shares_to": 3900
+  },
+  {
+   "code": "002354",
+   "day": "2021-08-24",
+   "shares_from": 6300,
+   "shares_to": 6200
+  },
+  {
+   "code": "000526",
+   "day": "2021-08-27",
+   "shares_from": 1000,
+   "shares_to": 800
+  },
+  {
+   "code": "002235",
+   "day": "2021-09-06",
+   "shares_from": 4300,
+   "shares_to": 4200
+  },
+  {
+   "code": "002418",
+   "day": "2021-11-05",
+   "shares_from": 6300,
+   "shares_to": 6200
+  },
+  {
+   "code": "002094",
+   "day": "2021-11-09",
+   "shares_from": 5100,
+   "shares_to": 5000
+  }
+ ],
+ "sim_overdraft_evidence": {
+  "cash_min": -18621.95,
+  "cash_min_day": "2021-01-08",
+  "negative_cash_days": 330,
+  "note": "pead_pool_sim 无透支检查：5 槽×2万 满仓遇净值回撤即静默杠杆"
+ },
+ "phantom_note": "trades.json 只记已平仓；期末 3 笔未平仓买入无记录，pnl 由 sim 现金恒等式反推（精确到分）",
+ "max_daily_rel_diff": {
+  "pct": 0.075077,
+  "day": "2021-03-05"
+ },
+ "_meta": {
+  "generated_at": "2026-10-21T14:06:30+08:00",
+  "code_version": "PORT-01",
+  "ref": "AGENTS #359 / spec PORT-01 验收正例 2"
+ }
+}
