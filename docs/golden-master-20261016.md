@@ -150,3 +150,41 @@ unknown_date + freshness_unknown=True 且不得编造 date/lag。另新增
 
 **回归**：`pytest tests/test_golden_master.py -q` → 18 passed；
 `bash scripts/verify.sh --fast` → 24 passed 全绿。背景见 AGENTS.md #346。
+
+## 2026-10-20（夜班第三单）· 刷新 `data_health_snapshot`（emotion_series 注册表修复，#352）
+
+**刷新原因**：emotion_series 此前**没有任何 daily producer**——注册表 owner 写的
+「15:40 周期仪班」已 10 次跑完自终止且从未跑过它（#350 坑②）；它读的不复权库
+22:30/23:10 BJT 才更新完，物理上晚于 20:10 权威时间轴班。修复对（两件一起上）：
+① 新建 23:55 BJT 生产者班 `a41b47086fa5`（wrapper `stock_emotion_series.py`，
+execv 进 venv + `--rebuild`）；② 注册表 `max_lag: 0 → 1`（消费契约只需 T-1，
+regime append 本就虚拟 append 当日行）。
+
+**漂移值**（前后 oracle 逐键 diff，仅两处 + generated_at）：
+- `datasets.emotion_series.max_lag`: 0 → 1
+- `datasets.emotion_series.owner`: 「（15:40 周期仪班）」→「（23:55 班 a41b47086fa5；旧注已自终止）」
+
+**人确认**：用户已授权「继续」放行重录；前后 oracle 备份与 diff 存
+`research/golden-evidence-352/`（oracle_data_health_before.json / after.json / diff.txt）。
+
+**回归**：改前先跑确认漂移恰为上述两处（1 failed / 17 passed）；
+重录后 `pytest -q tests` → **24 passed**（与 #350 基线一致，零新增失败）。
+
+## 2026-10-21（夜班第五单）· 刷新 `data_health_snapshot`（三源生产者声明对齐现实，#354）
+
+**刷新原因**：fund_cache / cap_hist / kcache 三源的注册表声明（cadence: daily）与现状不符——
+三者**从未有过自动生产者**（「停更」实为「声明撒谎」）。#354 决策：fund_cache 走路线 A
+自动化（新建增量日更两班 39217e893ed1/730473253554，00:45/01:50 BJT，`--update` 模式）；
+cap_hist 走低频路线 A（增量周更两班 525e9eb40955/35fbb0e3cca2，周六，cadence→weekly）；
+kcache 走路线 B 改声明（cadence→ondemand，max_lag 0→10，owner 注明无班随取随更）。
+明细与实测证据见 `research/K3-night-fix5_20261021.md`。
+
+**漂移值**（前后 oracle 逐键 diff，证据 `research/golden-evidence-354/`：
+data_health_snapshot.before.json + diff.txt）：
+- `registry_version`: 1.1 → "1.2 (2026-10-21, #354 三源生产者接线)"
+- `datasets.fund_cache.owner`: 手动分片无 cron → --update 两班（cron id 见值）
+- `datasets.cap_hist.cadence`: daily → weekly；`owner` 同步改为 --update 周更两班
+- `datasets.kcache.cadence`: daily → ondemand；`max_lag`: 0 → 10；`owner` 注明无班
+
+**回归**：改前先跑确认漂移恰为 data_health_snapshot 一处（1 failed / 24 passed）；
+重录后 `pytest -q tests` → 25 passed（基线一致，零新增失败）。

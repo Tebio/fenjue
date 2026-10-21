@@ -1,17 +1,17 @@
 {
  "version": 2,
- "built_at": "2026-10-20 12:41",
+ "built_at": "2026-10-21 01:41",
  "sig_date": "2026-10-20",
  "buy_day": "2026-10-21",
  "sell_day": "2026-10-22",
  "data_stale": false,
  "stale_datasets": [],
  "regime": {
-  "date": "2026-10-19",
-  "regime": "妖股期",
-  "limit_ups": 42,
-  "limit_downs": 27,
-  "advice": "涨停全是小市值散票无主线——默认不参与；个股不可预测",
+  "date": "2026-10-20",
+  "regime": "平淡期",
+  "limit_ups": 48,
+  "limit_downs": 7,
+  "advice": "无量能无主线——观望，红利宇宙建仓窗口",
   "gap": false
  },
  "deep_low": [],
