@@ -2,7 +2,7 @@
  "_meta": {
   "purpose": "DATA-08 血缘表 trigger=cron 的离线比对源（测试不依赖 hermes 运行时）",
   "source": "/opt/hermes/bin/hermes cron list（profile: default）",
-  "captured_at": "2026-10-20T15:51:32+08:00",
+  "captured_at": "2026-10-21T09:00:34+08:00",
   "discipline": "cron 增删作业后必须重录本快照，否则 lineage validate 会误报/漏报"
  },
  "jobs": [
@@ -45,8 +45,7 @@
   {
    "id": "f73337b23268",
    "status": "active",
-   "name": "焚诀主张周审计",
-   "script": ""
+   "name": "焚诀主张周审计"
   },
   {
    "id": "54d7e5d8d67f",
@@ -213,7 +212,7 @@
   {
    "id": "036130e2e17b",
    "status": "active",
-   "name": "焚诀X规则线日判（20:15BJT）",
+   "name": "焚诀X规则线日判（20:22BJT，错开regime班防OOM #354）",
    "script": "stock_xrules_daily.py"
   },
   {
@@ -345,14 +344,12 @@
   {
    "id": "43ad61eb27bb",
    "status": "active",
-   "name": "指数调样抢跑作战单2026H2",
-   "script": ""
+   "name": "指数调样抢跑作战单2026H2"
   },
   {
    "id": "22fc8ff5061b",
    "status": "active",
-   "name": "指数调样抢跑作战单2026H2备份班",
-   "script": ""
+   "name": "指数调样抢跑作战单2026H2备份班"
   },
   {
    "id": "44257e8355cf",
@@ -425,6 +422,36 @@
    "status": "active",
    "name": "数据面健康体检（DATA-01）",
    "script": "stock_data_health.sh"
+  },
+  {
+   "id": "a41b47086fa5",
+   "status": "active",
+   "name": "焚诀情绪序列日更（23:55BJT，接23:50不复权因子班后）",
+   "script": "stock_emotion_series.py"
+  },
+  {
+   "id": "39217e893ed1",
+   "status": "active",
+   "name": "焚诀基本面缓存增量日更·片0/2（00:45BJT）",
+   "script": "stock_fund_update0.sh"
+  },
+  {
+   "id": "730473253554",
+   "status": "active",
+   "name": "焚诀基本面缓存增量日更·片1/2（01:50BJT）",
+   "script": "stock_fund_update1.sh"
+  },
+  {
+   "id": "525e9eb40955",
+   "status": "active",
+   "name": "焚诀流通市值历史增量周更·片0/2（周六09:30BJT）",
+   "script": "stock_cap_update0.sh"
+  },
+  {
+   "id": "35fbb0e3cca2",
+   "status": "active",
+   "name": "焚诀流通市值历史增量周更·片1/2（周六10:40BJT）",
+   "script": "stock_cap_update1.sh"
   }
  ]
 }

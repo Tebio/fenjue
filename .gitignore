@@ -53,3 +53,4 @@ data/guba_sentiment_events_20261016.npz
 
 # Private assets (broker trades, reconcile reports, real holdings — INTERFACES I7)
 data/private/
+.ua/

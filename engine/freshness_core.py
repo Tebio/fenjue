@@ -38,11 +38,13 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path("/opt/data/fenjue")
 CAL_DIR = ROOT / "data" / "trade_calendar"
 REGISTRY_YAML = ROOT / "data" / "datasets_registry.yaml"
+WHITELIST_YAML = ROOT / "data" / "stale_whitelist.yaml"
 
 STATUSES = ("ok", "stale", "fatal_lag", "missing", "unregistered", "unknown_date")
 # 参与退出码 1 的状态（cron 报红）；stale/unknown_date 只进报告与状态机
@@ -63,8 +65,15 @@ def is_blocking(status: str, severity: str | None = None) -> bool:
     return status == "unknown_date" and severity == "fatal"
 SEVERITIES = ("fatal", "warn", "info")
 REQUIRED_FIELDS = ("path", "date_expr", "cadence", "max_lag", "severity", "blocks", "owner")
-DIR_SAMPLE = 25          # 目录模式最多读的近期文件数（体检 <60s/<300MB 纪律）
-DIR_SCAN_CAP = 200       # dir:last_bar[N] 跳过空/坏文件时的总读取上限（fund_cache 实测 71 空文件顶头）
+DIR_SAMPLE = 300        # 目录模式最多读的近期文件数（体检 <60s/<300MB 纪律）。
+                        # 25 → 300（2026-10-20 #332/P0）：兜底班曾把 188 只退市股文件白刷
+                        # mtime（内容零变化），25 采样全落在僵尸文件上 → big_kcache 假 fatal_lag。
+                        # 根修在 update_kcache 零变化不写盘；此处加采样余量防任何批量触写
+                        # 再吃光样本。300 × ~130KB ≈ 40MB / ~1s，预算内。
+DIR_SCAN_CAP = 5000      # dir:last_bar[N] 跳过空/坏文件时的总读取上限（fund_cache 实测 71 空文件顶头）。
+                         # 200 → 5000（2026-10-20 #332/P0）：硬不变量 DIR_SAMPLE ≤ DIR_SCAN_CAP
+                         # （golden 空文件挨饿用例实抓：采样 300 而总读 200 时有效文件永远读不到）。
+                         # 5000 ≥ fund_cache 全量文件数（3377），兜底全扫也在秒级。
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _IDX_RE = re.compile(r"^\[-1\]\[(\d+)\]$")          # "[-1][0]" 单文件 list-of-list
 _DIR_IDX_RE = re.compile(r"^last_bar\[(\d+)\]$")    # "dir:last_bar[0]" 目录 list-of-list
@@ -266,8 +275,25 @@ def extract_date(path: Path, date_expr: str):
 # 注册表加载与配置校验（配置错误 → RegistryError → exit 2）
 # ---------------------------------------------------------------------------
 
+def _yaml():
+    """PyYAML 加载（含 3.14 无 yaml 的兜底）。load_registry 与本模块白名单共用。"""
+    try:
+        import yaml
+        return yaml
+    except ModuleNotFoundError:
+        # 2026-10-20 #332/P0：cron runner 的 python3.14 无 PyYAML（四个生产班因此全灭）。
+        # 主修复在 wrapper 层（exec venv python，同 #330-A 判据）；此处兜底是为监控机/
+        # 熔断器自身的健壮性——freshness_core 是 breaker 与 data_health 的公共依赖，
+        # 它崩 = 熔断器崩 = 下游全灭。/opt/data/lazy-packages 有纯 Python PyYAML 6.0.3
+        # （其 _yaml C 扩展是 cp313 编译，PyYAML 会自动退回纯 Python 解析，功能无损）。
+        import sys as _sys
+        _sys.path.insert(0, "/opt/data/lazy-packages")
+        import yaml  # noqa: E402
+        return yaml
+
+
 def load_registry(path: str | Path | None = None) -> dict:
-    import yaml
+    yaml = _yaml()
     fp = Path(path) if path else REGISTRY_YAML
     doc = yaml.safe_load(fp.read_text())
     if not isinstance(doc, dict) or not isinstance(doc.get("datasets"), dict):
@@ -350,3 +376,156 @@ def assess(key: str, spec: dict, ref_date: str, root: Path = ROOT) -> dict:
         if date > ref_date:
             rec["reason"] = f"末端 {date} 超前于基准 {ref_date}（次日执行件/预写，正常）"
     return rec
+
+# ---------------------------------------------------------------------------
+# 退市/停牌白名单 + 目录级覆盖率（DATA-06 补，AGENTS #353）
+# ---------------------------------------------------------------------------
+# 三类语义（与 data/stale_whitelist.yaml 头注释同源，改一边必须改另一边）：
+#   退市股   永远停更，从覆盖率分母剔除（停在退市日是对的）；
+#   停牌股   还会复牌，留在分母，滞后单列 suspended（仍要报，不许静默豁免）；
+#   其余停更 数据源/生产者事故，计入 stale_active，阈值降级由 data_health 执行。
+# ---------------------------------------------------------------------------
+
+def load_whitelist(path: str | Path | None = None) -> dict:
+    """→ {"delisted": set[str], "suspended": {code: info}}。
+
+    文件缺失/损坏 → 空集（白名单是分母修正的优化，不是闸：没了它覆盖率只是变保守，
+    不许让体检崩）。delisted = source 名单 − exclude（锚点误伤）∪ additions（基准日后新退市）。
+    """
+    fp = Path(path) if path else WHITELIST_YAML
+    try:
+        doc = _yaml().safe_load(fp.read_text()) or {}
+        dl = doc.get("delisted") or {}
+        src = Path(dl.get("source") or "")
+        if not src.is_absolute():
+            src = ROOT / src
+        codes = set()
+        if src.exists():
+            raw = _json_load_silent(src) or {}
+            codes = set(raw.get("codes") or [])
+        codes -= set(dl.get("exclude") or [])
+        codes |= set((dl.get("additions") or {}).keys())
+        susp = doc.get("suspended") or {}
+        return {"delisted": codes, "suspended": susp if isinstance(susp, dict) else {}}
+    except Exception:
+        return {"delisted": set(), "suspended": {}}
+
+
+def _json_load_silent(path: Path):
+    try:
+        return json.loads(Path(path).read_text())
+    except Exception:
+        return None
+
+
+_CODE_RE = re.compile(r"(\d{6})")
+_TAIL_BYTES = 1024  # 单文件末 bar ~150B，1KB 覆盖约 5 根 bar（目录文件均为单行 JSON，实测）
+
+
+def _stem_code(stem: str) -> str:
+    """文件名 → 6 位代码：big_kcache/fund_cache 用裸代码，kcache 用 sh600176 前缀。"""
+    m = _CODE_RE.search(stem)
+    return m.group(1) if m else stem
+
+
+def _tail_last_date(fp: Path, field: str | None):
+    """读文件尾 1KB 取最后一个 YYYY-MM-DD（field 指定时要求 "field": "date" 形态）。
+
+    不整文件 json.loads：big_kcache 3377 文件 ×130KB ≈ 440MB，超体检 60s/300MB 纪律；
+    单行 JSON 的末 bar 必在尾部，正则末匹配即可。空数组/坏文件 → None（计入 empty）。
+    """
+    try:
+        with fp.open("rb") as f:
+            f.seek(0, 2)
+            size = f.tell()
+            f.seek(max(0, size - _TAIL_BYTES))
+            tail = f.read().decode("utf-8", errors="ignore")
+    except Exception:
+        return None
+    if field:
+        hits = re.findall(r'"%s"\s*:\s*"(\d{4}-\d{2}-\d{2})"' % re.escape(field), tail)
+    else:
+        hits = re.findall(r"\d{4}-\d{2}-\d{2}", tail)
+    return hits[-1] if hits else None
+
+
+def dir_coverage(path: Path, date_expr: str, ref_date: str, max_lag: int,
+                 whitelist: dict | None = None) -> dict:
+    """目录类数据集的逐文件覆盖率（只看末端日期，与 dir:last_bar 同口径）。
+
+    → {total, empty, delisted_excluded, active, current, suspended, stale_active,
+       coverage_pct}；suspended/stale_active 是 code 列表（stale_active 截断 50 防爆）。
+    日历不可用 → trading_days_between raise（与 assess 同纪律，上浮 exit 2，不许猜）。
+    """
+    wl = whitelist or {"delisted": set(), "suspended": {}}
+    delisted, suspended = set(wl.get("delisted") or set()), dict(wl.get("suspended") or {})
+    # date_expr 形态 → 末 bar 日期字段（dict-bar 目录用字段名；list-of-list 用裸日期）
+    field = None
+    if date_expr.startswith("dir:"):
+        parts = date_expr.split(":")
+        if len(parts) > 2 and parts[2] and not _DIR_IDX_RE.match(parts[2]):
+            field = parts[2]
+    res = {"total": 0, "empty": 0, "delisted_excluded": 0, "active": 0, "current": 0,
+           "suspended": [], "stale_active": [], "stale_active_total": 0, "coverage_pct": None}
+    if not path.is_dir():
+        return res
+    for fp in sorted(path.glob("*.json")):
+        res["total"] += 1
+        code = _stem_code(fp.stem)
+        d = _tail_last_date(fp, field)
+        if d is None:
+            res["empty"] += 1
+            continue
+        if code in delisted:
+            res["delisted_excluded"] += 1     # 退市股：停在退市日是对的，不进分母
+            continue
+        res["active"] += 1
+        if trading_days_between(d, ref_date) <= max_lag:
+            res["current"] += 1
+        elif code in suspended:
+            res["suspended"].append(code)     # 停牌股：滞后仍要报，单列不豁免
+        else:
+            res["stale_active_total"] += 1
+            if len(res["stale_active"]) < 50:
+                res["stale_active"].append(code)
+    if res["active"]:
+        res["coverage_pct"] = round(res["current"] / res["active"] * 100, 1)
+    return res
+
+
+# ---------------------------------------------------------------------------
+# 展示级新鲜度（build_daily_state 收编，2026-10-20 #332/P2）
+# 这是 bds 的**旧展示口径**：字符串比日期、无交易日概念、无 severity，产物契约是
+# {file, mtime, date_field, date, status}（status ∈ ok/stale/missing/unknown_date），
+# 供日度状态包/面板做「逐源清单」展示。它与 assess() 的治理口径（交易日滞后 × severity
+# × blocks）**刻意并存**：前者是展示，后者是熔断/告警判决。收编只把判定出处收到本模块
+# （单一定义原则），口径一字未改（纯重构纪律：同输入输出逐字节一致）。
+# 新代码禁止再引这套展示口径——治理判定一律走 assess()/is_blocking()。
+# ---------------------------------------------------------------------------
+
+def legacy_fresh_status(date_value, ref_date) -> str:
+    """bds 旧判定：无日期 → unknown_date；有 ref_date 则字符串比较 ok/stale；无 ref → ok。"""
+    if not date_value:
+        return "unknown_date"
+    if ref_date:
+        return "ok" if date_value >= ref_date else "stale"
+    return "ok"
+
+
+def mtime_bjt(path) -> str:
+    """文件 mtime 的 BJT「YYYY-MM-DD HH:MM」；读不到 → "unknown"。"""
+    try:
+        return datetime.fromtimestamp(Path(path).stat().st_mtime,
+                                      timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M")
+    except Exception:
+        return "unknown"
+
+
+def legacy_fresh_entry(root, rel, date_field, date_value, ref_date) -> dict:
+    """bds 新鲜度条目（产物契约见本节头注释）；路径不存在 → status=missing。"""
+    p = Path(root) / rel
+    if not p.exists():
+        return {"file": rel, "mtime": "unknown", "date_field": date_field,
+                "date": None, "status": "missing"}
+    return {"file": rel, "mtime": mtime_bjt(p), "date_field": date_field,
+            "date": date_value, "status": legacy_fresh_status(date_value, ref_date)}

@@ -1,0 +1,430 @@
+{
+ "_meta": {
+  "purpose": "DATA-08 血缘表 trigger=cron 的离线比对源（测试不依赖 hermes 运行时）",
+  "source": "/opt/hermes/bin/hermes cron list（profile: default）",
+  "captured_at": "2026-10-20T15:51:32+08:00",
+  "discipline": "cron 增删作业后必须重录本快照，否则 lineage validate 会误报/漏报"
+ },
+ "jobs": [
+  {
+   "id": "5482451e38b3",
+   "status": "active",
+   "name": "reqable-tunnel-watchdog",
+   "script": "reqable-tunnel-watchdog.sh"
+  },
+  {
+   "id": "9577ef090244",
+   "status": "paused",
+   "name": "焚诀盘中转折触发器（4周，静默看门狗）",
+   "script": "stock_regime_intraday.py"
+  },
+  {
+   "id": "0399910274bd",
+   "status": "active",
+   "name": "反转族收盘清单（每交易日15:35）",
+   "script": "reversal_daily.py"
+  },
+  {
+   "id": "31639d177e46",
+   "status": "active",
+   "name": "反转族竞价确认（每交易日9:32）",
+   "script": "reversal_confirm.py"
+  },
+  {
+   "id": "04eaea679975",
+   "status": "paused",
+   "name": "焚诀盘中雷达-上午（10:30）",
+   "script": "stock_radar.py"
+  },
+  {
+   "id": "cea2df34a3a8",
+   "status": "active",
+   "name": "焚诀盘中雷达-尾盘（14:45）",
+   "script": "stock_radar.py"
+  },
+  {
+   "id": "f73337b23268",
+   "status": "active",
+   "name": "焚诀主张周审计",
+   "script": ""
+  },
+  {
+   "id": "54d7e5d8d67f",
+   "status": "active",
+   "name": "焚诀kcache日增量刷新·主班（18:30BJT，片0/2）",
+   "script": "stock_kcache_shard0.sh"
+  },
+  {
+   "id": "e8e00d20a70b",
+   "status": "active",
+   "name": "焚诀m60日增量刷新",
+   "script": "stock_m60_update.py"
+  },
+  {
+   "id": "82e54a0a812f",
+   "status": "active",
+   "name": "焚诀主张影子盘日更",
+   "script": "stock_claims_shadow.py"
+  },
+  {
+   "id": "2ced2427a56e",
+   "status": "active",
+   "name": "HiThink日更落盘（池子+龙虎榜）",
+   "script": "stock_hithink_daily.py"
+  },
+  {
+   "id": "27dd2482fa75",
+   "status": "active",
+   "name": "席位口味滚动跟踪",
+   "script": "stock_seat_taste.py"
+  },
+  {
+   "id": "1b8a05361333",
+   "status": "active",
+   "name": "银行股操作台明日委托单",
+   "script": "stock_bank_console.py"
+  },
+  {
+   "id": "e171568c0a1f",
+   "status": "active",
+   "name": "操作台面板每日构建",
+   "script": "stock_dashboard_build.py"
+  },
+  {
+   "id": "f61eb2652ffd",
+   "status": "active",
+   "name": "焚诀盘中雷达-午间（11:30）",
+   "script": "stock_radar.py"
+  },
+  {
+   "id": "215f0c7d1dfa",
+   "status": "active",
+   "name": "放量异动观察池日更",
+   "script": "stock_watch_pool.py"
+  },
+  {
+   "id": "4ce84d817a97",
+   "status": "paused",
+   "name": "B5半路板信号日更（19:40BJT）",
+   "script": "stock_banlu_daily.py"
+  },
+  {
+   "id": "a8b63ac75a6f",
+   "status": "active",
+   "name": "HiThink板块成分周更",
+   "script": "stock_hithink_sectors.py"
+  },
+  {
+   "id": "c73023823b3e",
+   "status": "active",
+   "name": "炸板浅炸规则影子盘日更",
+   "script": "stock_zhaban_daily.py"
+  },
+  {
+   "id": "9d6c6abac0f4",
+   "status": "active",
+   "name": "HiThink板块指数历史周更",
+   "script": "stock_hithink_index_history.py"
+  },
+  {
+   "id": "87feab2d6a9a",
+   "status": "active",
+   "name": "操作台重建-竞价后09:40BJT",
+   "script": "stock_dashboard_build.py"
+  },
+  {
+   "id": "f6a25dcb0cc9",
+   "status": "active",
+   "name": "操作台重建-上午10:40BJT",
+   "script": "stock_dashboard_build.py"
+  },
+  {
+   "id": "6dca1be275e6",
+   "status": "active",
+   "name": "操作台重建-午后13:35BJT",
+   "script": "stock_dashboard_build.py"
+  },
+  {
+   "id": "c26c9fe53eab",
+   "status": "active",
+   "name": "操作台重建-尾盘14:50BJT",
+   "script": "stock_dashboard_build.py"
+  },
+  {
+   "id": "fec6ebe7a195",
+   "status": "active",
+   "name": "操作台重建-收盘后15:50BJT",
+   "script": "stock_dashboard_build.py"
+  },
+  {
+   "id": "02ef64d83cee",
+   "status": "active",
+   "name": "操作台重建-晚间20:40BJT",
+   "script": "stock_dashboard_build.py"
+  },
+  {
+   "id": "9d7a9f2fb360",
+   "status": "active",
+   "name": "操作台重建-委托单后16:15BJT",
+   "script": "stock_dashboard_build.py"
+  },
+  {
+   "id": "d6b2fa63d011",
+   "status": "active",
+   "name": "收盘快报覆盖层15:10BJT",
+   "script": "stock_fast_close.py"
+  },
+  {
+   "id": "e259d261c326",
+   "status": "active",
+   "name": "观察池收盘重建15:13BJT",
+   "script": "stock_watch_pool.py"
+  },
+  {
+   "id": "a0545e048897",
+   "status": "active",
+   "name": "操作台重建-收盘快报15:20BJT",
+   "script": "stock_dashboard_build.py"
+  },
+  {
+   "id": "04e0574ba458",
+   "status": "active",
+   "name": "转债5m攒数20:45BJT",
+   "script": "stock_cb_m5.py"
+  },
+  {
+   "id": "024e14d44009",
+   "status": "active",
+   "name": "盘前作战单（每交易日9:25）",
+   "script": "stock_ops_briefing.py"
+  },
+  {
+   "id": "92d5324dec80",
+   "status": "active",
+   "name": "焚诀事件驱动推送",
+   "script": "stock_radar_event.sh"
+  },
+  {
+   "id": "475cdafce644",
+   "status": "active",
+   "name": "焚诀regime权威轴日更（20:10BJT）",
+   "script": "stock_regime_append.py"
+  },
+  {
+   "id": "036130e2e17b",
+   "status": "active",
+   "name": "焚诀X规则线日判（20:15BJT）",
+   "script": "stock_xrules_daily.py"
+  },
+  {
+   "id": "e907bb56e619",
+   "status": "active",
+   "name": "盘前cron健康自检（9:20BJT）",
+   "script": "cron_health_check.py"
+  },
+  {
+   "id": "538bb3b943bd",
+   "status": "active",
+   "name": "X门距追踪-10:30（盘中）",
+   "script": "xgate_tracker.py"
+  },
+  {
+   "id": "e33c27f7a8e7",
+   "status": "active",
+   "name": "X门距追踪-13:30（盘中）",
+   "script": "xgate_tracker.py"
+  },
+  {
+   "id": "36149125aa74",
+   "status": "active",
+   "name": "焚诀kcache次班（19:00BJT，片1/2）",
+   "script": "stock_kcache_shard1.sh"
+  },
+  {
+   "id": "01efafdbe0a5",
+   "status": "active",
+   "name": "竞价快照采集（9:26BJT）",
+   "script": "auction_snapshot.py"
+  },
+  {
+   "id": "c8fe09cd643f",
+   "status": "active",
+   "name": "商品期货日更（17:35BJT）",
+   "script": "commodity_daily.sh"
+  },
+  {
+   "id": "c2cbb77ffb2d",
+   "status": "active",
+   "name": "业绩预告+一致预期快照（18:30BJT）",
+   "script": "consensus_daily.sh"
+  },
+  {
+   "id": "d6e64b88a050",
+   "status": "active",
+   "name": "妖段段龄派生（20:14BJT）",
+   "script": "regime_age_daily.sh"
+  },
+  {
+   "id": "25ce9a0ce327",
+   "status": "active",
+   "name": "转债日更+低价债池（16:05BJT）",
+   "script": "cb_daily.sh"
+  },
+  {
+   "id": "de841e0d32a3",
+   "status": "active",
+   "name": "RESEAL影子采样-午前11:35",
+   "script": "reseal_shadow.py"
+  },
+  {
+   "id": "86cd1d01072f",
+   "status": "active",
+   "name": "RESEAL影子采样-午后14:05",
+   "script": "reseal_shadow.py"
+  },
+  {
+   "id": "b78d0ec0447b",
+   "status": "active",
+   "name": "两融日更（20:40BJT）",
+   "script": "margin_daily.sh"
+  },
+  {
+   "id": "42b3b65d9aa3",
+   "status": "paused",
+   "name": "金股配额每日探测续跑",
+   "script": "gold_stock_resume2.sh"
+  },
+  {
+   "id": "7abc005bd04e",
+   "status": "active",
+   "name": "RESEAL影子结算（15:10BJT）",
+   "script": "reseal_settle.py"
+  },
+  {
+   "id": "7e438d522f15",
+   "status": "active",
+   "name": "金股月度管线（每日重试）",
+   "script": "gold_monthly.sh"
+  },
+  {
+   "id": "acb0d4e9a8ac",
+   "status": "active",
+   "name": "焚诀9:45合并班（影子+雷达）",
+   "script": "stock_0945_merged.sh"
+  },
+  {
+   "id": "99302288dc5e",
+   "status": "active",
+   "name": "期指基差日更（16:20）",
+   "script": "stock_futures_basis.py"
+  },
+  {
+   "id": "6d8ede69ac87",
+   "status": "active",
+   "name": "个股两融明细日更（21:00）",
+   "script": "stock_margin_stock.py"
+  },
+  {
+   "id": "0666e55c077c",
+   "status": "active",
+   "name": "市场温度日更（18:55）",
+   "script": "stock_breadth.py"
+  },
+  {
+   "id": "132304f8879b",
+   "status": "active",
+   "name": "预增事件库日更",
+   "script": "stock_fetch_pead.py"
+  },
+  {
+   "id": "3a067aaf9142",
+   "status": "active",
+   "name": "预增低位池组合账本影子",
+   "script": "stock_pead_pool.py"
+  },
+  {
+   "id": "43ad61eb27bb",
+   "status": "active",
+   "name": "指数调样抢跑作战单2026H2",
+   "script": ""
+  },
+  {
+   "id": "22fc8ff5061b",
+   "status": "active",
+   "name": "指数调样抢跑作战单2026H2备份班",
+   "script": ""
+  },
+  {
+   "id": "44257e8355cf",
+   "status": "active",
+   "name": "焚诀kcache收尾扫描（21:00BJT 全量兜漏）",
+   "script": "stock_kcache_update.py"
+  },
+  {
+   "id": "229ac27d2ab8",
+   "status": "active",
+   "name": "网易云登录心跳",
+   "script": "netease_cookie_heartbeat.sh"
+  },
+  {
+   "id": "33424644b835",
+   "status": "active",
+   "name": "kanban-daemon-watchdog",
+   "script": "kanban-daemon-watchdog.sh"
+  },
+  {
+   "id": "da8a6f94e6ab",
+   "status": "active",
+   "name": "焚诀股吧人气采集（23:20BJT）",
+   "script": "stock_guba_sentiment_daily.sh"
+  },
+  {
+   "id": "e0f48d0aeb18",
+   "status": "active",
+   "name": "金股排行影子日结",
+   "script": "gold_shadow_track.sh"
+  },
+  {
+   "id": "af865422c1e3",
+   "status": "paused",
+   "name": "低换手打板信号（14:30BJT）",
+   "script": "lt_limitup_push.sh"
+  },
+  {
+   "id": "9b440d4eeaad",
+   "status": "active",
+   "name": "崩盘抄底信号（15:20BJT）",
+   "script": "crash_dip_push.sh"
+  },
+  {
+   "id": "e6ec207b8cfe",
+   "status": "active",
+   "name": "焚诀不复权库日更·抓取0/2（22:30BJT）",
+   "script": "stock_unadj_fetch.sh"
+  },
+  {
+   "id": "cbf93552f114",
+   "status": "active",
+   "name": "焚诀不复权库日更·抓取1/2（23:10BJT）",
+   "script": "stock_unadj_fetch1.sh"
+  },
+  {
+   "id": "710da3f47b04",
+   "status": "active",
+   "name": "焚诀不复权因子日更（23:50BJT）",
+   "script": "stock_unadj_factor.sh"
+  },
+  {
+   "id": "f62aca73bb5e",
+   "status": "active",
+   "name": "焚诀不复权库新鲜度断言（00:20BJT）",
+   "script": "stock_unadj_check.sh"
+  },
+  {
+   "id": "21befa1e52b7",
+   "status": "active",
+   "name": "数据面健康体检（DATA-01）",
+   "script": "stock_data_health.sh"
+  }
+ ]
+}

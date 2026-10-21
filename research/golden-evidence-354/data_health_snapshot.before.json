@@ -1,0 +1,280 @@
+{
+ "_meta": {
+  "as_of": "2026-10-15",
+  "drift_pp": 0.1,
+  "generated_at": "2026-10-21T01:17:11+08:00",
+  "golden": "data_health_snapshot",
+  "repo": "/opt/data/fenjue",
+  "slice_stride": 28
+ },
+ "consumers": [
+  "X规则线",
+  "line_health",
+  "作战单9:25",
+  "周期仪",
+  "回测族",
+  "影子盘",
+  "日度状态包",
+  "晨报",
+  "权威时间轴",
+  "深档名单",
+  "盘前自检",
+  "面板20:40"
+ ],
+ "datasets": {
+  "big_kcache": {
+   "blocks": [
+    "X规则线",
+    "周期仪",
+    "影子盘",
+    "权威时间轴",
+    "深档名单"
+   ],
+   "cadence": "daily",
+   "date_expr": "dir:last_bar",
+   "max_lag": 0,
+   "owner": "engine/update_kcache.py（18:30/19:00 分片 + 21:00 兜漏）",
+   "path": "data/big_kcache",
+   "severity": "fatal"
+  },
+  "cap_hist": {
+   "blocks": [
+    "line_health",
+    "影子盘"
+   ],
+   "cadence": "daily",
+   "date_expr": "dir:last_bar[0]",
+   "max_lag": 5,
+   "owner": "engine/fetch_cap_history.py（手动抓取，无 cron）",
+   "path": "data/cap_hist",
+   "severity": "warn"
+  },
+  "claims_shadow": {
+   "blocks": [
+    "影子盘"
+   ],
+   "cadence": "daily",
+   "date_expr": "[-1].signal_date|jsonl",
+   "max_lag": 1,
+   "owner": "engine/claims_shadow.py（stock_claims_shadow.py 班 82e54a0a812f）",
+   "path": "data/claims_shadow.jsonl",
+   "severity": "warn"
+  },
+  "emotion_series": {
+   "blocks": [
+    "周期仪",
+    "权威时间轴"
+   ],
+   "cadence": "daily",
+   "date_expr": "[-1].date|jsonl",
+   "max_lag": 1,
+   "owner": "engine/emotion_series.py（23:55 班 a41b47086fa5；旧注「15:40 周期仪班」已自终止，从未跑过它，#350 坑②）",
+   "path": "data/emotion_series.jsonl",
+   "severity": "fatal"
+  },
+  "fund_cache": {
+   "blocks": [
+    "line_health",
+    "影子盘"
+   ],
+   "cadence": "daily",
+   "date_expr": "dir:last_bar[0]",
+   "max_lag": 1,
+   "owner": "engine/fetch_fundamentals.py（手动分片抓取，无 cron；最近一批 2026-09-18，tmp/launch_fund.sh）",
+   "path": "data/fund_cache",
+   "severity": "warn"
+  },
+  "index_sh000001": {
+   "blocks": [
+    "周期仪",
+    "权威时间轴"
+   ],
+   "cadence": "daily",
+   "date_expr": "[-1].date",
+   "max_lag": 0,
+   "owner": "engine/update_kcache.py（update_index 段）",
+   "path": "data/index_sh000001.json",
+   "severity": "fatal"
+  },
+  "industry_map": {
+   "blocks": [],
+   "cadence": "static",
+   "date_expr": "none",
+   "max_lag": 0,
+   "owner": "内部维护（人工；engine/scripts 无自动生产者，2026-10-20 实测 grep 零命中）",
+   "path": "data/industry_map.json",
+   "severity": "info"
+  },
+  "kcache": {
+   "blocks": [
+    "影子盘"
+   ],
+   "cadence": "daily",
+   "date_expr": "dir:last_bar:day",
+   "max_lag": 0,
+   "owner": "fen_shadow.py（线1影子随取随更）",
+   "path": "data/kcache",
+   "severity": "warn"
+  },
+  "line_health": {
+   "blocks": [
+    "日度状态包"
+   ],
+   "cadence": "daily",
+   "date_expr": "_meta.date",
+   "max_lag": 0,
+   "owner": "engine/line_health.py",
+   "path": "data/line_health.json",
+   "severity": "warn"
+  },
+  "ops_state": {
+   "blocks": [
+    "作战单9:25",
+    "盘前自检"
+   ],
+   "cadence": "daily",
+   "date_expr": "sig_date",
+   "max_lag": 0,
+   "owner": "engine/dashboard_build.py（20:40 面板班写出）",
+   "path": "docs/ops-state.json",
+   "severity": "fatal"
+  },
+  "regime_log": {
+   "blocks": [
+    "面板20:40"
+   ],
+   "cadence": "daily",
+   "date_expr": "[-1].date|jsonl",
+   "max_lag": 0,
+   "owner": "engine/regime_daily_append.py（18:35 班）",
+   "path": "data/regime_log.jsonl",
+   "severity": "warn"
+  },
+  "regime_timeline_hcap": {
+   "blocks": [
+    "回测族",
+    "日度状态包",
+    "面板20:40"
+   ],
+   "cadence": "daily",
+   "date_expr": "[-1].date",
+   "max_lag": 0,
+   "owner": "engine/regime_daily_append.py（18:35 班）",
+   "path": "data/regime_timeline_hcap.json",
+   "severity": "fatal"
+  },
+  "watch_pool": {
+   "blocks": [
+    "日度状态包",
+    "面板20:40"
+   ],
+   "cadence": "daily",
+   "date_expr": "updated",
+   "max_lag": 1,
+   "owner": "engine/watch_pool.py",
+   "path": "data/watch_pool.json",
+   "severity": "info"
+  },
+  "xrules_state": {
+   "blocks": [
+    "作战单9:25",
+    "面板20:40"
+   ],
+   "cadence": "daily",
+   "date_expr": "date",
+   "max_lag": 0,
+   "owner": "engine/xrules_daily.py",
+   "path": "data/xrules_state.json",
+   "severity": "warn"
+  }
+ },
+ "invariants": {
+  "a2_none_assess": {
+   "industry_map": {
+    "date_is_none": true,
+    "freshness_unknown": true,
+    "lag_is_none": true,
+    "status": "unknown_date"
+   }
+  },
+  "a_date_parseable": {
+   "big_kcache": true,
+   "cap_hist": true,
+   "claims_shadow": true,
+   "emotion_series": true,
+   "fund_cache": true,
+   "index_sh000001": true,
+   "industry_map": false,
+   "kcache": true,
+   "line_health": true,
+   "ops_state": true,
+   "regime_log": true,
+   "regime_timeline_hcap": true,
+   "watch_pool": true,
+   "xrules_state": true
+  },
+  "a_explicit_unchecked": {
+   "big_kcache": false,
+   "cap_hist": false,
+   "claims_shadow": false,
+   "emotion_series": false,
+   "fund_cache": false,
+   "index_sh000001": false,
+   "industry_map": true,
+   "kcache": false,
+   "line_health": false,
+   "ops_state": false,
+   "regime_log": false,
+   "regime_timeline_hcap": false,
+   "watch_pool": false,
+   "xrules_state": false
+  },
+  "b_fatal_has_blocks": {
+   "big_kcache": true,
+   "cap_hist": true,
+   "claims_shadow": true,
+   "emotion_series": true,
+   "fund_cache": true,
+   "index_sh000001": true,
+   "industry_map": true,
+   "kcache": true,
+   "line_health": true,
+   "ops_state": true,
+   "regime_log": true,
+   "regime_timeline_hcap": true,
+   "watch_pool": true,
+   "xrules_state": true
+  },
+  "c_blocks_known_consumers": {
+   "big_kcache": true,
+   "cap_hist": true,
+   "claims_shadow": true,
+   "emotion_series": true,
+   "fund_cache": true,
+   "index_sh000001": true,
+   "industry_map": true,
+   "kcache": true,
+   "line_health": true,
+   "ops_state": true,
+   "regime_log": true,
+   "regime_timeline_hcap": true,
+   "watch_pool": true,
+   "xrules_state": true
+  },
+  "d_mandatory_registered": {
+   "big_kcache": true,
+   "emotion_series": true,
+   "kcache": true,
+   "ops_state": true,
+   "regime_timeline_hcap": true
+  }
+ },
+ "mandatory": [
+  "big_kcache",
+  "emotion_series",
+  "regime_timeline_hcap",
+  "ops_state",
+  "kcache"
+ ],
+ "registry_version": "1.1 (2026-10-20, DATA-09)"
+}

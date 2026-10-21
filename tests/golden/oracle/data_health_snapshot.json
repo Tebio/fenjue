@@ -2,7 +2,7 @@
  "_meta": {
   "as_of": "2026-10-15",
   "drift_pp": 0.1,
-  "generated_at": "2026-10-20T16:51:37+08:00",
+  "generated_at": "2026-10-21T08:33:31+08:00",
   "golden": "data_health_snapshot",
   "repo": "/opt/data/fenjue",
   "slice_stride": 28
@@ -42,10 +42,10 @@
     "line_health",
     "影子盘"
    ],
-   "cadence": "daily",
+   "cadence": "weekly",
    "date_expr": "dir:last_bar[0]",
    "max_lag": 5,
-   "owner": "engine/fetch_cap_history.py（手动抓取，无 cron）",
+   "owner": "engine/fetch_cap_history.py --update（增量周更两班：片0 cron 525e9eb40955 周六09:30BJT、 片1 35fbb0e3cca2 周六10:40BJT；#354 接线）",
    "path": "data/cap_hist",
    "severity": "warn"
   },
@@ -67,8 +67,8 @@
    ],
    "cadence": "daily",
    "date_expr": "[-1].date|jsonl",
-   "max_lag": 0,
-   "owner": "engine/emotion_series.py（15:40 周期仪班）",
+   "max_lag": 1,
+   "owner": "engine/emotion_series.py（23:55 班 a41b47086fa5；旧注「15:40 周期仪班」已自终止，从未跑过它，#350 坑②）",
    "path": "data/emotion_series.jsonl",
    "severity": "fatal"
   },
@@ -80,7 +80,7 @@
    "cadence": "daily",
    "date_expr": "dir:last_bar[0]",
    "max_lag": 1,
-   "owner": "engine/fetch_fundamentals.py（手动分片抓取，无 cron；最近一批 2026-09-18，tmp/launch_fund.sh）",
+   "owner": "engine/fetch_fundamentals.py --update（增量日更两班：片0 cron 39217e893ed1 00:45BJT、 片1 730473253554 01:50BJT；2026-10-21",
    "path": "data/fund_cache",
    "severity": "warn"
   },
@@ -109,10 +109,10 @@
    "blocks": [
     "影子盘"
    ],
-   "cadence": "daily",
+   "cadence": "ondemand",
    "date_expr": "dir:last_bar:day",
-   "max_lag": 0,
-   "owner": "fen_shadow.py（线1影子随取随更）",
+   "max_lag": 10,
+   "owner": "fen_shadow.py（线1影子随取随更，无班；超 max_lag 报 stale 提示「该跑影子了」）",
    "path": "data/kcache",
    "severity": "warn"
   },
@@ -276,5 +276,5 @@
   "ops_state",
   "kcache"
  ],
- "registry_version": "1.1 (2026-10-20, DATA-09)"
+ "registry_version": "1.2 (2026-10-21, #354 三源生产者接线)"
 }

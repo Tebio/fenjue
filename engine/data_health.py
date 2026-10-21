@@ -41,6 +41,9 @@ VERSION = "data_health/1.0 (2026-10-20, DATA-01)"
 DATA = ROOT / "data"
 SEAM_SIDE = DATA / "seam_metrics.json"  # DATA-07：update_kcache 的 SEAM-FIX 指标化侧车
 SEAM_ABNORMAL_STREAK_DEMOTE = 2  # 连续 N 个记录日 seam_err>0 → big_kcache 降为 stale
+STALE_ACTIVE_DEMOTE = 5  # 目录覆盖率中「非退市非停牌却停更」≥N 只 → 由 ok 降为 stale（#353）
+                         # 阈值理由：每晚零星几只抓数失败是常态（update_kcache 的 ERR 计数），
+                         # 降级是 warn 级可见性不是 fatal；≥5 只才算「数据源出事」的形状。
 
 
 def load_seam_metrics() -> dict | None:
@@ -125,6 +128,27 @@ def check_all(ref_date: str | None = None, only: list[str] | None = None,
             bk["reason"] = (bk["reason"] + "；" if bk["reason"] else "") + \
                 (f"SEAM 连续 {seam['abnormal_streak_days']} 个记录日重拉失败"
                  f"（seam_err>0，见 data/seam_metrics.json）→ 降级 stale")
+    # 目录级覆盖率（#353）：dir: 类数据集逐文件末端日期体检，退市股剔除分母、
+    # 停牌股单列仍报、其余停更计 stale_active。白名单缺失 → 空集（覆盖率变保守，不崩）。
+    whitelist = fc.load_whitelist()
+    for key, spec in (doc.get("datasets") or {}).items():
+        it = items.get(key)
+        if not it or not str(spec.get("date_expr") or "").startswith("dir:"):
+            continue
+        if not (ROOT / spec["path"]).is_dir():
+            continue
+        cov = fc.dir_coverage(ROOT / spec["path"], spec["date_expr"], ref,
+                              spec["max_lag"], whitelist)
+        it["coverage"] = cov
+        # 「非退市非停牌却停更」≥阈值 → 由 ok 降为 stale（warn 级可见，不阻断）。
+        # 只降不升：已 stale/fatal/unknown 的不动（与 SEAM 降级同纪律）。
+        if cov["stale_active_total"] >= STALE_ACTIVE_DEMOTE and it["status"] == "ok":
+            it["status"] = "stale"
+            it["reason"] = (it["reason"] + "；" if it["reason"] else "") + \
+                (f"覆盖率 {cov['coverage_pct']}%（{cov['current']}/{cov['active']}，"
+                 f"退市剔除 {cov['delisted_excluded']}）：{cov['stale_active_total']} 只在册股票停更"
+                 f"（{', '.join(cov['stale_active'][:5])}{'…' if cov['stale_active_total'] > 5 else ''}）"
+                 f"→ 降级 stale")
     summary = {s: 0 for s in fc.STATUSES}
     for it in items.values():
         summary[it["status"]] += 1
@@ -229,7 +253,29 @@ def render_report(result: dict, state: dict) -> str:
             L.append(f"- **{it['key']}** `{it['status']}`：{it['reason']} ｜ owner：{it['owner']}")
     else:
         L.append("（无）")
-    L += ["", "## 明细", "",
+    L.append("")
+    cov_items = [(k, it["coverage"]) for k, it in sorted(items.items()) if it.get("coverage")]
+    if cov_items:
+        L.append(f"## 覆盖率（目录类数据集，分母已剔除退市股；{len(cov_items)} 项）")
+        L.append("")
+        L.append("| key | 覆盖率 | current/active | 退市剔除 | 停牌 | 异常停更 |")
+        L.append("|---|---|---|---|---|---|")
+        for k, c in cov_items:
+            pct = "—" if c["coverage_pct"] is None else f"{c['coverage_pct']}%"
+            L.append(f"| {k} | {pct} | {c['current']}/{c['active']} | "
+                     f"{c['delisted_excluded']} | {len(c['suspended'])} | {c['stale_active_total']} |")
+        for k, c in cov_items:
+            if c["suspended"]:
+                L.append(f"- {k} 停牌中（滞后仍报，不豁免）：{', '.join(c['suspended'])}")
+            if c["stale_active"]:
+                if c["stale_active_total"] > 100:
+                    L.append(f"- {k} 异常停更 {c['stale_active_total']} 只（整源停更形状，"
+                             f"与 ⚠️ 段 status 一致；名单截断见 data_health.json）")
+                else:
+                    L.append(f"- {k} 异常停更（非退市非停牌）：{', '.join(c['stale_active'])}"
+                             f"{'…' if c['stale_active_total'] > len(c['stale_active']) else ''}")
+        L.append("")
+    L += ["## 明细", "",
           "| key | status | severity | 末端日期 | lag(交易日) | max_lag | owner |",
           "|---|---|---|---|---|---|---|"]
     for key in sorted(items):

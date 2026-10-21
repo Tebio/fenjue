@@ -46,6 +46,11 @@ SRC_FILES = {
     "watchlist": "config/watchlist.json",
 }
 
+# 时效判定唯一出处（#332/P2：本文件 18 处展示级新鲜度调用全部指向 freshness_core，
+# 旧局部 freshness()/mtime_str() 判定口径已删除，mtime_str 只剩薄壳兼容 watchlist 段）
+sys.path.insert(0, str(ROOT / "engine")) if str(ROOT / "engine") not in sys.path else None
+import freshness_core as fc  # noqa: E402
+
 
 # ---------------- 基础工具 ----------------
 
@@ -65,25 +70,8 @@ def git_sha():
 
 
 def mtime_str(rel):
-    try:
-        return datetime.fromtimestamp((ROOT / rel).stat().st_mtime, BJT).strftime("%Y-%m-%d %H:%M")
-    except Exception:
-        return "unknown"
-
-
-def freshness(rel, date_field, date_value, ref_date, kind="daily"):
-    """{file, mtime, date_field, date, status}；status ∈ ok/stale/missing。"""
-    p = ROOT / rel
-    if not p.exists():
-        return {"file": rel, "mtime": "unknown", "date_field": date_field, "date": None, "status": "missing"}
-    st = "ok"
-    if date_value and ref_date:
-        cmp_date = date_value if kind == "daily" else date_value
-        st = "ok" if cmp_date >= ref_date else "stale"
-    elif not date_value:
-        st = "unknown_date"
-    return {"file": rel, "mtime": mtime_str(rel), "date_field": date_field,
-            "date": date_value, "status": st}
+    """薄壳：实现已收编 freshness_core.mtime_bjt（#332/P2）。"""
+    return fc.mtime_bjt(ROOT / rel)
 
 
 # ---------------- 各段 ----------------
@@ -96,20 +84,20 @@ def build_regime(day, fresh, unknown):
         axis = {"date": last.get("date"), "regime": last.get("regime"),
                 "boards": last.get("boards"), "downs": last.get("downs"),
                 "small_pct": last.get("small%"), "conc": last.get("conc"), "idx": last.get("idx")}
-        fresh["regime_axis"] = freshness("data/regime_timeline_hcap.json", "date", axis["date"], day)
+        fresh["regime_axis"] = fc.legacy_fresh_entry(ROOT, "data/regime_timeline_hcap.json", "date", axis["date"], day)
     else:
         unknown.append("regime_timeline_hcap.json 缺失/空")
-        fresh["regime_axis"] = freshness("data/regime_timeline_hcap.json", "date", None, day)
+        fresh["regime_axis"] = fc.legacy_fresh_entry(ROOT, "data/regime_timeline_hcap.json", "date", None, day)
 
     age_entry = None
     age = jload("data/regime_age.json")
     if isinstance(age, dict):
         cur = (age.get("ages") or {}).get(age.get("latest")) or age.get("today") or {}
         age_entry = {"regime": cur.get("regime"), "age": cur.get("age"), "latest": age.get("latest")}
-        fresh["regime_age"] = freshness("data/regime_age.json", "latest", age.get("latest"), day)
+        fresh["regime_age"] = fc.legacy_fresh_entry(ROOT, "data/regime_age.json", "latest", age.get("latest"), day)
     else:
         unknown.append("regime_age.json 缺失")
-        fresh["regime_age"] = freshness("data/regime_age.json", "latest", None, day)
+        fresh["regime_age"] = fc.legacy_fresh_entry(ROOT, "data/regime_age.json", "latest", None, day)
 
     env = None
     try:
@@ -137,7 +125,7 @@ def build_lines(day, fresh, unknown):
 
     ops = jload("docs/ops-state.json")
     if isinstance(ops, dict):
-        fresh["ops_state"] = freshness("docs/ops-state.json", "sig_date", ops.get("sig_date"), day)
+        fresh["ops_state"] = fc.legacy_fresh_entry(ROOT, "docs/ops-state.json", "sig_date", ops.get("sig_date"), day)
         trig["ops_state"] = {
             "sig_date": ops.get("sig_date"), "buy_day": ops.get("buy_day"), "sell_day": ops.get("sell_day"),
             "deep_low": _compact(ops.get("deep_low"), ["code", "name", "pct"]),
@@ -146,14 +134,14 @@ def build_lines(day, fresh, unknown):
         }
     else:
         unknown.append("docs/ops-state.json 缺失")
-        fresh["ops_state"] = freshness("docs/ops-state.json", "sig_date", None, day)
+        fresh["ops_state"] = fc.legacy_fresh_entry(ROOT, "docs/ops-state.json", "sig_date", None, day)
         trig["ops_state"] = {"deep_low": [], "b5": {}, "focus": []}
 
     rev = jload("data/reversal_confirmed.json")
     if isinstance(rev, dict):
         rdate = rev.get("date")
         # 9:32 竞价确认名单=次日执行件：新鲜度判据为「≥ 包日」
-        fresh["reversal_confirmed"] = freshness("data/reversal_confirmed.json", "date", rdate, day)
+        fresh["reversal_confirmed"] = fc.legacy_fresh_entry(ROOT, "data/reversal_confirmed.json", "date", rdate, day)
         if rdate and day and rdate < day:
             fresh["reversal_confirmed"]["status"] = "stale"
         trig["reversal_confirmed"] = {
@@ -164,26 +152,26 @@ def build_lines(day, fresh, unknown):
         }
     else:
         unknown.append("data/reversal_confirmed.json 缺失")
-        fresh["reversal_confirmed"] = freshness("data/reversal_confirmed.json", "date", None, day)
+        fresh["reversal_confirmed"] = fc.legacy_fresh_entry(ROOT, "data/reversal_confirmed.json", "date", None, day)
         trig["reversal_confirmed"] = {"rows": [], "fields": ["code", "name", "close_chg", "open_chg", "ladder"]}
 
     wp = jload("data/watch_pool.json")
     if isinstance(wp, dict):
-        fresh["watch_pool"] = freshness("data/watch_pool.json", "updated", wp.get("updated"), day)
+        fresh["watch_pool"] = fc.legacy_fresh_entry(ROOT, "data/watch_pool.json", "updated", wp.get("updated"), day)
         trig["watch_pool"] = {"updated": wp.get("updated"), "variant": wp.get("variant"),
                               "fields": ["code", "name", "status", "entry_date", "entry_close", "days"],
                               "rows": _compact(wp.get("pool"),
                                                ["code", "name", "status", "entry_date", "entry_close", "days"])}
     else:
         unknown.append("data/watch_pool.json 缺失")
-        fresh["watch_pool"] = freshness("data/watch_pool.json", "updated", None, day)
+        fresh["watch_pool"] = fc.legacy_fresh_entry(ROOT, "data/watch_pool.json", "updated", None, day)
         trig["watch_pool"] = {"rows": []}
 
     ps = jload("data/pead_pool_state.json")
     if isinstance(ps, dict):
         pdates = ps.get("processed_dates") or []
         last = pdates[-1] if pdates else None
-        fresh["pead_pool_state"] = freshness("data/pead_pool_state.json", "processed_dates[-1]", last, day)
+        fresh["pead_pool_state"] = fc.legacy_fresh_entry(ROOT, "data/pead_pool_state.json", "processed_dates[-1]", last, day)
         trig["pead_pool_state"] = {"processed_last": last,
                                    "fields": ["code", "name"],
                                    "holdings": _compact(ps.get("holdings"), ["code", "name"]),
@@ -193,7 +181,7 @@ def build_lines(day, fresh, unknown):
 
     gold = jload("data/gold_current.json")
     if isinstance(gold, dict):
-        fresh["gold_current"] = freshness("data/gold_current.json", "entry_day", gold.get("entry_day"), day)
+        fresh["gold_current"] = fc.legacy_fresh_entry(ROOT, "data/gold_current.json", "entry_day", gold.get("entry_day"), day)
         trig["gold_current"] = {"month": gold.get("month"), "entry_day": gold.get("entry_day"),
                                 "total": gold.get("total"),
                                 "solo_fresh": _compact(gold.get("solo_fresh"), ["code", "name"])}
@@ -228,7 +216,7 @@ def build_lines(day, fresh, unknown):
     lh = jload("data/line_health.json")
     if isinstance(lh, dict):
         lmeta = lh.get("_meta") or {}
-        fresh["line_health"] = freshness("data/line_health.json", "_meta.date", lmeta.get("date"), day)
+        fresh["line_health"] = fc.legacy_fresh_entry(ROOT, "data/line_health.json", "_meta.date", lmeta.get("date"), day)
         llines = lh.get("lines") or {}
         health = {
             "date": lmeta.get("date"), "version": lmeta.get("version"), "built_at": lmeta.get("built_at"),
@@ -251,7 +239,7 @@ def build_lines(day, fresh, unknown):
     else:
         unknown.append("data/line_health.json 缺失")
         health = {"n_lines": 0, "grade_counts": {}, "critical_weak": [], "lines": {}, "threats": [], "n_proposals": 0}
-        fresh["line_health"] = freshness("data/line_health.json", "_meta.date", None, day)
+        fresh["line_health"] = fc.legacy_fresh_entry(ROOT, "data/line_health.json", "_meta.date", None, day)
 
     return {"health": health,
             "triggers": trig,
@@ -262,11 +250,10 @@ def build_knn(day, triggers, fresh, unknown):
     fp = D / f"similarity_daily_{day.replace('-', '')}.json"
     if not fp.exists():
         unknown.append(f"similarity_daily_{day.replace('-', '')}.json 缺失（KNN 未落盘）")
-        fresh["similarity_daily"] = {"file": str(fp.relative_to(ROOT)), "mtime": "unknown",
-                                     "date_field": "date", "date": None, "status": "missing"}
+        fresh["similarity_daily"] = fc.legacy_fresh_entry(ROOT, str(fp.relative_to(ROOT)), "date", None, day)
         return {"date": day, "status": "missing", "scores": [], "trigger_codes": []}
     j = json.loads(fp.read_text(encoding="utf-8"))
-    fresh["similarity_daily"] = freshness(str(fp.relative_to(ROOT)), "date", j.get("date"), day)
+    fresh["similarity_daily"] = fc.legacy_fresh_entry(ROOT, str(fp.relative_to(ROOT)), "date", j.get("date"), day)
     # 只嵌入当日触发名单内的票（全量仍在原产物，包内控体积）
     trig_codes = set()
     for r in triggers["ops_state"]["deep_low"]:
@@ -306,14 +293,14 @@ def build_cluster(day, triggers, fresh, unknown):
     xr = jload("data/xrules_state.json")
     out = {"deep_low_n": len(triggers["ops_state"]["deep_low"]), "cluster_gate": CLUSTER_GATE}
     if isinstance(xr, dict):
-        fresh["xrules_state"] = freshness("data/xrules_state.json", "date", xr.get("date"), day)
+        fresh["xrules_state"] = fc.legacy_fresh_entry(ROOT, "data/xrules_state.json", "date", xr.get("date"), day)
         out["xrules"] = {"date": xr.get("date"), "regime": xr.get("regime"), "ldc": xr.get("ldc"),
                          "gap_cluster": xr.get("gap_cluster"), "panic_cluster": xr.get("panic_cluster"),
                          "streak": xr.get("streak"), "entry_day": xr.get("entry_day"),
                          "rules": xr.get("rules") or {}, "shadow": xr.get("shadow") or {}}
     else:
         unknown.append("data/xrules_state.json 缺失")
-        fresh["xrules_state"] = freshness("data/xrules_state.json", "date", None, day)
+        fresh["xrules_state"] = fc.legacy_fresh_entry(ROOT, "data/xrules_state.json", "date", None, day)
         out["xrules"] = None
     out["pass"] = out["deep_low_n"] >= CLUSTER_GATE
     return out
@@ -442,7 +429,7 @@ def build(day=None):
         pass
     fresh, unknown = {}, []
 
-    fresh["index_sh000001"] = freshness("data/index_sh000001.json", "date", latest, day)
+    fresh["index_sh000001"] = fc.legacy_fresh_entry(ROOT, "data/index_sh000001.json", "date", latest, day)
 
     reg = build_regime(day, fresh, unknown)
     lines = build_lines(day, fresh, unknown)

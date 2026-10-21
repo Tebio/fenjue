@@ -9,12 +9,17 @@
 纪律：单进程（baostock 禁双进程）；失败退避重试；与 big_kcache 对账行数防截断。
 
 用法：
-    python3 engine/fetch_fundamentals.py            # 全量（断点续跑）
+    python3 engine/fetch_fundamentals.py            # 全量（断点续跑，只补缺文件）
     python3 engine/fetch_fundamentals.py 000001     # 单票
+    python3 engine/fetch_fundamentals.py --update [分片清单]   # 增量日更（2026-10-21 #354）：
+        已有文件从末 bar 续抓到今天（重叠一天去重合并），空占位文件跳过，
+        big_kcache 新增票全量补抓；末端已是最新交易日的票跳过（幂等，重跑零请求）。
 """
 import json
+import os
 import sys
 import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, "/opt/data/python-libs")
@@ -28,8 +33,177 @@ END = "2026-09-18"
 
 FIELDS = "date,close,turn,tradestatus,pctChg,peTTM,pbMRQ,psTTM,isST"
 
+BJT = timezone(timedelta(hours=8))
+
+
+def _today_bjt() -> str:
+    return datetime.now(BJT).strftime("%Y-%m-%d")
+
+
+def _latest_trading_day(today: str) -> str:
+    """只读本地官方日历缓存（data/trade_calendar/<year>.json），找 <= today 的最近交易日。
+    日历缺失 → 返回 today 本身（不短路，每票照样查，宁多抓不猜）。#330-B 纪律。"""
+    cal = ROOT / "data/trade_calendar" / f"{today[:4]}.json"
+    try:
+        days = json.loads(cal.read_text())
+    except Exception:
+        return today
+    past = [d for d in days if d <= today]
+    return past[-1] if past else today
+
+
+def _fetch_rows(bs_code: str, start: str, end: str) -> list:
+    """三次退避重试，返回规范化行列表（失败也返回已抓到的部分/空）。"""
+    rows = []
+    for attempt in range(3):
+        try:
+            rs = bs.query_history_k_data_plus(
+                bs_code, FIELDS, start_date=start, end_date=end,
+                frequency="d", adjustflag="3")
+            if rs.error_code != "0":
+                time.sleep(2 ** attempt)
+                continue
+            rows = []
+            while rs.next():
+                r = rs.get_row_data()
+                if not r[0] or not r[1]:
+                    continue
+                # date, close, turn, tradestatus, pctChg, peTTM, pbMRQ, psTTM, isST
+                rows.append([
+                    r[0],
+                    float(r[1]) if r[1] else None,
+                    float(r[2]) if r[2] else None,
+                    r[3],
+                    float(r[4]) if r[4] else None,
+                    float(r[5]) if r[5] else None,   # peTTM
+                    float(r[6]) if r[6] else None,   # pbMRQ
+                    float(r[7]) if r[7] else None,   # psTTM
+                    r[8],
+                ])
+            break
+        except Exception as e:
+            time.sleep(2 ** attempt)
+            if attempt == 2:
+                print(f"  ERR {bs_code}: {e}")
+    return rows
+
+
+def _write_atomic(fp: Path, rows: list) -> None:
+    tmp = fp.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(rows))
+    os.replace(tmp, fp)
+
+
+def _tail_last_date(fp: Path) -> str | None:
+    """单行 JSON 尾读取末 bar 日期（ freshness_core._tail_last_date 同款思路）：
+    3377 文件全量 json.loads ≈ 580MB 白读，尾读 300B 零成本。"""
+    import re
+    try:
+        with open(fp, "rb") as f:
+            f.seek(0, 2)
+            size = f.tell()
+            if size <= 2:
+                return ""            # "[]" 空占位
+            f.seek(max(0, size - 300))
+            tail = f.read().decode("utf-8", "ignore")
+    except Exception:
+        return None
+    m = re.findall(r'"(\d{4}-\d{2}-\d{2})"', tail)
+    return m[-1] if m else None
+
+
+def update(limit: int | None = None, shard: str | None = None) -> int:
+    """增量日更：只抓每票末 bar 之后的缺口。limit=试抓上限（派单验收用）；
+    shard='k/N' 分片（cron 3600s 墙钟上限纪律，照 stock_unadj_fetch.sh 两片模式）。"""
+    DST.mkdir(parents=True, exist_ok=True)
+    today = _today_bjt()
+    latest_td = _latest_trading_day(today)
+    codes = sorted(Path(fp).stem for fp in KC.glob("*.json"))
+    if shard:
+        k, n = (int(x) for x in shard.split("/"))
+        codes = codes[k::n]
+
+    todo = []       # (code, start_date)
+    skipped_fresh = skipped_empty = 0
+    for c in codes:
+        fp = DST / f"{c}.json"
+        if fp.exists():
+            last = _tail_last_date(fp)
+            if last == "":
+                skipped_empty += 1   # 空占位=该票无数据（全量抓时已确认），不重试
+                continue
+            if last is None:
+                todo.append((c, START))   # 尾读解析不出=文件损坏 → 全量重抓
+            elif last >= latest_td:
+                skipped_fresh += 1
+            else:
+                todo.append((c, last))    # 从末 bar 当天重抓，去重合并愈合半截末日
+        else:
+            todo.append((c, START))       # 新票全量
+
+    print(f"update mode: today={today} latest_td={latest_td} shard={shard or '-'} "
+          f"universe={len(codes)} todo={len(todo)} fresh_skip={skipped_fresh} "
+          f"empty_skip={skipped_empty}", flush=True)
+    if limit:
+        todo = todo[:limit]
+        print(f"  probe limit={limit} → todo={len(todo)}", flush=True)
+    if not todo:
+        print("done ok=0 fail=0 (all fresh)")
+        return 0
+
+    lg = bs.login()
+    if lg.error_code != "0":
+        print("login failed", lg.error_msg)
+        return 1
+
+    ok = fail = 0
+    for idx, (code, start) in enumerate(todo, 1):
+        bs_code = ("sh." if code.startswith("6") else "sz.") + code
+        new_rows = _fetch_rows(bs_code, start, today)
+        fp = DST / f"{code}.json"
+        if not fp.exists() or start == START:
+            if new_rows:
+                # 全量补抓：与 big_kcache 行数对账防限流截断
+                try:
+                    kc = json.loads((KC / f"{code}.json").read_text())
+                    if len(new_rows) < len(kc) * 0.6:
+                        print(f"  WARN {code}: rows {len(new_rows)} vs kcache {len(kc)}, 疑似截断，仍落盘（重跑可覆盖）")
+                except Exception:
+                    pass
+                _write_atomic(fp, new_rows)
+                ok += 1
+            else:
+                fail += 1
+                fp.write_text("[]")  # 占位防重试
+        else:
+            if new_rows:
+                old = json.loads(fp.read_text())
+                merged = {r[0]: r for r in old}
+                for r in new_rows:
+                    merged[r[0]] = r
+                _write_atomic(fp, [merged[d] for d in sorted(merged)])
+                ok += 1
+            else:
+                fail += 1   # 旧文件保留不动，明晚再续
+                print(f"  ERR {code}: 增量 0 行（start={start}），保留旧文件")
+        if idx % 200 == 0:
+            print(f"  {idx}/{len(todo)} ok={ok} fail={fail}", flush=True)
+        time.sleep(0.35)
+
+    bs.logout()
+    print(f"done ok={ok} fail={fail}")
+    return 0
+
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "--update":
+        shard = limit = None
+        for a in sys.argv[2:]:
+            if "/" in a:
+                shard = a
+            else:
+                limit = int(a)
+        return update(limit, shard)
     only = sys.argv[1] if len(sys.argv) > 1 else None
     shard = sys.argv[2] if len(sys.argv) > 2 else None
     DST.mkdir(parents=True, exist_ok=True)

@@ -10,10 +10,13 @@ FAST=0; [ "${1:-}" = "--fast" ] && FAST=1
 PY=""
 # 2026-10-20：加 fenjue .venv —— 原候选都不含它，容器里 python3 是 3.14 无 yaml，
 # 导致本闸长期跑不起来（#330 ABI 环境同源问题）。
-for cand in /opt/hermes/.venv/bin/python "$PWD/.venv/bin/python" python3; do
+# 2026-10-21（#353）：fenjue .venv 提为首选——本闸测的是 fenjue 代码，需要 fenjue 的
+# numpy ABI（cp313）；/opt/hermes/.venv 哪天装了 yaml 但 numpy ABI 不对时会选出
+# 「能 import yaml 却跑不动测试」的解释器。候选探测只验 yaml 不验 numpy，顺序就是防线。
+for cand in "$PWD/.venv/bin/python" /opt/hermes/.venv/bin/python python3; do
   if command -v "$cand" >/dev/null 2>&1 && "$cand" -c "import yaml" >/dev/null 2>&1; then PY="$cand"; break; fi
 done
-[ -z "$PY" ] && { echo "❌ 找不到带 pyyaml 的 python（试过 /opt/hermes/.venv/bin/python, python3）"; exit 1; }
+[ -z "$PY" ] && { echo "❌ 找不到带 pyyaml 的 python（试过 .venv/bin/python, /opt/hermes/.venv/bin/python, python3）"; exit 1; }
 echo "使用解释器: $PY"
 
 FAIL=0

@@ -52,7 +52,10 @@ VERSION = "line_health/1.0 (2026-10-15, t_6f42f1a1)"
 
 
 def bjt_now():
-    return datetime.now(timezone.utc) + timedelta(hours=8)
+    # 2026-10-21 #353：datetime.now(utc)+8h 是可变时区把戏（钟点移了 tz 标签还是 +00:00，
+    # built_at 的 isoformat 会谎报时区，违反 INTERFACES I0）——与 data_health.py 同款修法。
+    # .date() 口径不变（同一面钟），仅时间戳标签修正。
+    return datetime.now(timezone(timedelta(hours=8)))
 
 
 def load_universe_lean():

@@ -1,0 +1,24 @@
+._meta.generated_at:
+  before='2026-10-21T01:17:11+08:00'
+  after='2026-10-21T08:33:31+08:00'
+.datasets.cap_hist.cadence:
+  before='daily'
+  after='weekly'
+.datasets.cap_hist.owner:
+  before='engine/fetch_cap_history.py（手动抓取，无 cron）'
+  after='engine/fetch_cap_history.py --update（增量周更两班：片0 cron 525e9eb40955 周六09:30BJT、 片1 35fbb0e3cca2 周六10:40BJT；#354 接线）'
+.datasets.fund_cache.owner:
+  before='engine/fetch_fundamentals.py（手动分片抓取，无 cron；最近一批 2026-09-18，tmp/launch_fund.sh）'
+  after='engine/fetch_fundamentals.py --update（增量日更两班：片0 cron 39217e893ed1 00:45BJT、 片1 730473253554 01:50BJT；2026-10-21'
+.datasets.kcache.cadence:
+  before='daily'
+  after='ondemand'
+.datasets.kcache.max_lag:
+  before=0
+  after=10
+.datasets.kcache.owner:
+  before='fen_shadow.py（线1影子随取随更）'
+  after='fen_shadow.py（线1影子随取随更，无班；超 max_lag 报 stale 提示「该跑影子了」）'
+.registry_version:
+  before='1.1 (2026-10-20, DATA-09)'
+  after='1.2 (2026-10-21, #354 三源生产者接线)'

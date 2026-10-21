@@ -129,7 +129,7 @@ def main():
         print(f"shard {_j}/{_n}: 本轮覆盖 {len(files)} 只", flush=True)
     lg = bs.login()
     assert lg.error_code == "0", lg.error_msg
-    updated = upto = seams = seam_errs = errors = 0
+    updated = upto = seams = seam_errs = errors = nochg = 0
     fail_streak = 0  # 连续查询失败连击：>20 判定会话级故障，退出码1让 cron 报警（防静默"成功"）
     t0 = time.time()
     for idx, fp in enumerate(files):
@@ -179,7 +179,16 @@ def main():
                 time.sleep(0.12)
                 continue
             seen = set(old_by_date)
-            rows.extend(r for r in new if r["date"] not in seen)
+            add = [r for r in new if r["date"] not in seen]
+            if not add:
+                # 查询有响应但重叠窗只返回旧尾行（退市/停牌股天天如此）——内容零变化不写盘。
+                # 2026-10-20 #332/P0 实锤：旧代码此处无条件 write_text，188 只退市股每晚被
+                # 兜底班白刷 mtime，data_health 的 dir:last_bar 按 mtime 取最新 25 个样本
+                # 全采到僵尸文件 → big_kcache 假 fatal_lag（末端被读成 10-16），熔断连锁
+                # 误拦权威时间轴/X规则线/影子盘。mtime 只在内容变化时才许前进。
+                nochg += 1
+                continue
+            rows.extend(add)
             rows.sort(key=lambda r: r["date"])
             fp.write_text(json.dumps(rows))
             updated += 1
@@ -187,11 +196,11 @@ def main():
             errors += 1
             print(f"ERR {code}: {e}", flush=True)
         if idx % 200 == 0:
-            print(f"[{idx}/{len(files)}] updated={updated} upto={upto} seam={seams} err={errors} {time.time()-t0:.0f}s", flush=True)
+            print(f"[{idx}/{len(files)}] updated={updated} upto={upto} nochg={nochg} seam={seams} err={errors} {time.time()-t0:.0f}s", flush=True)
         time.sleep(0.12)  # 限流纪律
     update_index(end)
     bs.logout()
-    print(f"DONE updated={updated} already_current={upto} seam_fixed={seams} errors={errors} elapsed={time.time()-t0:.0f}s")
+    print(f"DONE updated={updated} already_current={upto} no_change={nochg} seam_fixed={seams} errors={errors} elapsed={time.time()-t0:.0f}s")
     record_seam_metrics(seams, seam_errs, updated, upto, errors, time.time() - t0)  # DATA-07
 
 

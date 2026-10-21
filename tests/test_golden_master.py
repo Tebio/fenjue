@@ -275,3 +275,84 @@ def test_data_health_protocol():
                                   "blocks": [], "owner": "t"}}}
     errs = fc.validate_registry(bad)
     assert any("blocks" in e for e in errs), "fatal 无 blocks 必须被配置校验抓住（exit 2 语义）"
+
+
+def test_coverage_whitelist_semantics(tmp_path):
+    """#353：退市/停牌白名单 + 目录覆盖率的语义断言（非 oracle，钉三类语义防回退）。
+
+    三类语义：退市剔除分母 / 停牌留分母单列仍报 / 其余停更计 stale_active；
+    以及 data_health 的降级规则：stale_active≥阈值 且 status=ok → 降为 stale（只降不升）。
+    """
+    import importlib.util
+    import json as _json
+    from pathlib import Path
+    eng = Path(__file__).resolve().parent.parent / "engine"
+
+    def load(name, file):
+        spec = importlib.util.spec_from_file_location(name, eng / file)
+        m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
+    fc = load("_fc_cov", "freshness_core.py")
+    dh = load("_dh_cov", "data_health.py")
+
+    REF = "2026-10-20"
+    d = tmp_path / "kc"
+    d.mkdir()
+
+    def mk(code, day, field="date"):
+        (d / f"{code}.json").write_text(_json.dumps([{field: day, "close": 1.0}]))
+
+    for c in ("600001", "600002", "600003", "600004"):
+        mk(c, REF)                          # 4 只在期
+    mk("600005", "2026-10-13")              # 退市股（白名单剔除分母）
+    mk("600006", "2026-10-13")              # 停牌股（留分母、单列）
+    mk("600007", "2026-10-13")              # 异常停更（计 stale_active）
+    wl = {"delisted": {"600005"}, "suspended": {"600006": {"name": "测试"}}}
+    cov = fc.dir_coverage(d, "dir:last_bar", REF, 0, wl)
+    assert cov["total"] == 7 and cov["delisted_excluded"] == 1, f"退市股必须剔除分母：{cov}"
+    assert cov["active"] == 6 and cov["current"] == 4 and cov["coverage_pct"] == 66.7
+    assert cov["suspended"] == ["600006"], f"停牌股必须单列仍报：{cov}"
+    assert cov["stale_active"] == ["600007"] and cov["stale_active_total"] == 1
+
+    # 尾部读取与整文件解析一致性（单行 JSON 目录文件的口径锚）
+    mk("600008", "2026-10-19")
+    assert fc._tail_last_date(d / "600008.json", "date") == "2026-10-19"
+    assert fc._tail_last_date(d / "600008.json", "day") is None, "字段不匹配必须取不到"
+    (d / "600009.json").write_text("[]")
+    assert fc._tail_last_date(d / "600009.json", "date") is None, "空数组必须返回 None"
+
+    # 白名单加载：缺失文件 → 空集（分母修正没了只是变保守，不许崩）
+    empty_wl = fc.load_whitelist(tmp_path / "nope.yaml")
+    assert empty_wl == {"delisted": set(), "suspended": {}}
+    # 现役白名单：additions 并入、exclude 剔除（601059/601198 已 10-19 摘牌，600825 锚点误伤）
+    real_wl = fc.load_whitelist()
+    assert "601059" in real_wl["delisted"] and "601198" in real_wl["delisted"], \
+        "10-19 摘牌的中金吸并两券商必须在退市集（additions）"
+    assert "600825" not in real_wl["delisted"], "锚点误伤名单必须从退市集剔除（exclude）"
+
+    # data_health 降级规则：合成注册表，6 只异常停更 + 1 只在期，warn 级目录数据集
+    d2 = tmp_path / "kc2"
+    d2.mkdir()
+    for i in range(6):
+        (d2 / f"60001{i}.json").write_text(_json.dumps([{"date": "2026-10-13", "close": 1.0}]))
+    (d2 / "600020.json").write_text(_json.dumps([{"date": REF, "close": 1.0}]))
+    reg = tmp_path / "reg.yaml"
+    reg.write_text(
+        "registry_version: t\nconsumers: [影子盘]\nmandatory: []\n"
+        "datasets:\n  tdir:\n"
+        f"    path: {d2}\n    date_expr: \"dir:last_bar\"\n    cadence: daily\n"
+        "    max_lag: 0\n    severity: warn\n    blocks: [影子盘]\n    owner: t\n")
+    res = dh.check_all(REF, None, str(reg))
+    it = res["items"]["tdir"]
+    assert it["status"] == "stale", f"stale_active≥{dh.STALE_ACTIVE_DEMOTE} 且原为 ok 必须降级：{it['status']}"
+    assert "覆盖率" in it["reason"] and it["coverage"]["stale_active_total"] == 6
+    # 阈值以下不降级（4 只 < 5）
+    d3 = tmp_path / "kc3"
+    d3.mkdir()
+    for i in range(4):
+        (d3 / f"60003{i}.json").write_text(_json.dumps([{"date": "2026-10-13", "close": 1.0}]))
+    (d3 / "600040.json").write_text(_json.dumps([{"date": REF, "close": 1.0}]))
+    reg.write_text(reg.read_text().replace(str(d2), str(d3)))
+    res3 = dh.check_all(REF, None, str(reg))
+    it3 = res3["items"]["tdir"]
+    assert it3["status"] == "ok", f"stale_active<{dh.STALE_ACTIVE_DEMOTE} 不许误伤降级：{it3['status']}"
+    assert it3["coverage"]["stale_active_total"] == 4, "不降级但覆盖率必须如实可见"
