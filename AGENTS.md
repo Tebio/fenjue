@@ -986,3 +986,21 @@ kcache 无 10-19 bar → `[SILENT]` → exit 0 → cron 报 ok。**假绿灯只�
 **验收**：pytest 25 passed 零新增失败；verify.sh 全量（含 golden 8 项）exit 0；fenjue 仓未 commit；scripts/ 仓 commit 92a153f（四件 wrapper）。**观察项**：发现 10-19 残留的 fetch_m5_sample.py（baostock）孤跑 41h+，与抓取班并发违单进程纪律，未擅杀（非本单资产），留用户裁决。
 
 **明晚验收点**：九班 builtin 排程——20:10 regime / **20:22 xrules（新时刻）** / 20:35 体检 / 21:30 影子盘 / 23:50 因子 / 23:55 emotion / **00:45+01:50 fund 两片（新班首日）**；体检班应见 kcache 不再 stale、fund_cache lag≤1、cap_hist 走 weekly 口径；周六 10-24 cap 两片首排程。
+
+
+**355. 架构图谱首建 + V3 冻结线生产触面审计：「插着线但没通电」；R4「零引用」断言更正为审查漏检（2026-10-21，图谱+K3 审计单，明细 research/V3-prod-touch-audit-20261021.md）**
+
+**图谱首建**：understand-anything 开源管线（Egonex-AI，非自建）全量分析落成 `.ua/knowledge-graph.json`——1734 节点 / 2972 边 / 10 层 / 14 步中文导览；`meta.json`+`fingerprints.json` 基线支持增量更新（大改动后手动跑 /understand，不必每次全量）。623 文件入选，`tmp/`、`releases/`、`data/`、`*.bak*`、`*.pkl` 已入 `.ua/.understandignore`。图谱是结构索引，决策史仍以本台账+docs/plan/ 为准。fenjue-dev skill 同步建成（superpowers 流程强制挂钩+运行时事实+验收纪律）。
+
+**审计缘起**：图谱发现 scheduler/cron.py import 了 V3 冻结线三模块（event_registry/feedback/macro_industry）、api/app.py import engine/regime/market.py——「冻结别碰」的线其实接着生产。
+
+**审计结论（K3 施工，主 agent 抽查 3 处行号+数据库实证全部属实）**：
+- **触面休眠 ~2.5 个月，当前对每日生产输出影响为零**：scheduler_jobs 空表（调度从未持久化）、daily_score 停 2026-08-11、scores/feedback 最新文件 2026-08-11、api 容器未运行（8001 端口被另一服务占用）、全仓无人 import scheduler 包。每日真正跑的策略 A/B、kcache、体检、影子盘与 V3 零数据通路。
+- **R4「market_data/feedback/event_registry 三模块全仓零引用」落笔时即不成立**：三处引用全部存在于 2026-07-07 的 V1 提交（market_data→console/routes/dashboard.py:359 commit d3b14c0a4；feedback/event_registry→scheduler/cron.py:23-25 commit f6e8f765d），早于 R4（09-06）两个月。**系 R4 审查漏检（疑似只 grep 了 engine/），不存在 R4 后偷接线、无解冻流程被绕过**。但断言精神部分成立：这三模块及其唯一引用者 cron.py 都不在 V2 短线线/研究线/REGISTRY 注册线之内。
+- R4 已录 7 条缺陷全部复核成立，另两条新发现：**N1** cron.py:599-612 `_get_quote_data` 是 stub（恒返 turnover 6.0/pct_20d 0.0）→ 评分六维中三维是模板值，2026-07-07~08-11 期间全部 scores/daily_score/feedback 产物受此影响；**N2** /regime 的 tier_counts 取自 daily_score 最新日期（停在 08-11），服务重启则返回两个月前数据且无新鲜度告警。缺陷⑦比 R4 记录的更糟：todays_registry 每天把 3.5 个月前的事件以满权重当「今日宏观」输出（age≈0→decay≈1→tick 永不剔除）。
+
+**处置（冻结期裁决）**：
+1. **禁止复跑标注**：解冻投票前，不得把 `run_score_snapshot` / `verify_30d_predictions` 挂回任何调度（hermes cron / 系统 cron / 容器入口）；作废条件=任何人提出重启评分 job → 必须先走解冻流程，解冻清单第一项=修缺陷⑦与 N1。
+2. api/app.py 维持不跑；若重启容器需先解决 8001 端口冲突与 N2，并接受/声明「crisis 永不可达」；作废条件=/regime 输出被任何自动化消费 → 缺陷①升级为生产风险。
+3. 缺陷②③⑤维持 R4 结论进解冻投票材料；④随解冻一并修（修法：breakdown 带 direction，map() 用带符号 score）；⑥解冻时直接删。
+4. 本条即 R4「零引用」的台账更正（只增不改纪律，旧条目不動）。
