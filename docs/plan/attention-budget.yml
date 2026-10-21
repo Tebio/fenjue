@@ -1,0 +1,897 @@
+meta:
+  generated: '2026-10-21'
+  source:
+  - opt01_inventory.json
+  - opt01_depmap.json
+  jobs_total: 80
+  jobs_classified: 80
+  口径: 班数按现状80(70 scheduled+5 paused+5 completed一次性);spec写的63已滞后(fix5新增4班+情绪班等)
+  depmap_note: 静态边含import闭包保守高估(生产者列表偏宽),暂停判定因此偏保守=安全方向;cb_low_price/data_health/env四文件关键边已人工实证复核
+jobs:
+- id: 5482451e38b3
+  name: reqable-tunnel-watchdog
+  schedule: every 5m
+  state: scheduled
+  deliver: local
+  exec_30d: 50
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: reqable-tunnel-watchdog：平台隧道看门狗
+- id: 3997b3f358ee
+  name: 博客夜间打磨（每小时）
+  schedule: 0 * * * *
+  state: completed
+  deliver: origin
+  exec_30d: 0
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 一次性
+  action: 已完结
+  reason: 博客夜间打磨:O-05/D-19已裁决不恢复(completed),不重复分析
+- id: 1484112123cf
+  name: 焚诀盘后周期仪（10天升级六态分类器）
+  schedule: 40 7 * * 1-5
+  state: completed
+  deliver: origin
+  exec_30d: 0
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 一次性
+  action: 已完结
+  reason: 盘后周期仪:10天到期自终止(completed),O-05/D-19已裁决不恢复
+- id: 9577ef090244
+  name: 焚诀盘中转折触发器（4周，静默看门狗）
+  schedule: 30 2,6 * * 1-5
+  state: paused
+  deliver: origin
+  exec_30d: 0
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 重复装饰
+  action: 维持暂停
+  reason: 盘中转折触发器:O-05/D-19已裁决不恢复(2026-10-21),回滚保险保留
+- id: 0399910274bd
+  name: 反转族收盘清单（每交易日15:35）
+  schedule: 35 7 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 钱相关
+  action: 保留
+  reason: 反转族收盘清单15:35=信号链上游(产出待确认名单供9:32确认)；反转族ICU中不主动推但链条数据不能断
+- id: 31639d177e46
+  name: 反转族竞价确认（每交易日9:32）
+  schedule: 32 1 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 钱相关
+  action: 保留
+  reason: 反转族竞价确认9:32=反转族信号链执行环节(9:32竞价确认剔除一字跌停)；产出reversal_confirmed.json被9面板班消费
+- id: 04eaea679975
+  name: 焚诀盘中雷达-上午（10:30）
+  schedule: 30 2 * * 1-5
+  state: paused
+  deliver: origin
+  exec_30d: 0
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 重复装饰
+  action: 维持暂停
+  reason: 盘中雷达上午10:30:被9:45合并班取代,O-05/D-19已裁决不恢复
+- id: cea2df34a3a8
+  name: 焚诀盘中雷达-尾盘（14:45）
+  schedule: 45 6 * * 1-5
+  state: scheduled
+  deliver: origin
+  exec_30d: 22
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 钱相关
+  action: 保留
+  reason: 盘中雷达尾盘14:45，output目录每日有推送内容(10-16/19/20实见)；db滚动窗无样本故push_30d=-1待判，按每日推送计。每日需人参与#2
+- id: f73337b23268
+  name: 焚诀主张周审计
+  schedule: 0 2 * * 6
+  state: scheduled
+  deliver: local
+  exec_30d: 4
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 研究相关
+  action: 保留
+  reason: 主张周审计：已周频(ex30=4),审计链承重(claims_registry被7班消费)
+- id: 54d7e5d8d67f
+  name: 焚诀kcache日增量刷新·主班（18:30BJT，片0/2）
+  schedule: 30 10 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: kcache日增量主班18:30：big_kcache被45班消费，数据面地基
+- id: e8e00d20a70b
+  name: 焚诀m60日增量刷新
+  schedule: 40 10 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 研究相关
+  action: 降频(周频)
+  reason: m60日增量刷新：主消费者B5班已暂停(10-19),depmap无在职班级消费者;临时研究脚本仍可读周频m60
+- id: 82e54a0a812f
+  name: 焚诀主张影子盘日更
+  schedule: 30 13 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 23
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 研究相关
+  action: 保留
+  reason: 主张影子盘日更21:30=影子验证核心,claims_shadow.jsonl被15班消费(作战单/面板/审计);影子连续性=验证效力,不停不降
+- id: 2ced2427a56e
+  name: HiThink日更落盘（池子+龙虎榜）
+  schedule: 30 12 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: HiThink日更落盘(池子+龙虎榜)：hithink被13班消费
+- id: 27dd2482fa75
+  name: 席位口味滚动跟踪
+  schedule: 0 2 * * 6
+  state: scheduled
+  deliver: local
+  exec_30d: 4
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 研究相关
+  action: 保留
+  reason: 席位口味滚动跟踪：已周频(ex30=4),seat_gene_rolling.json被11班消费
+- id: 1b8a05361333
+  name: 银行股操作台明日委托单
+  schedule: 5 8 * * 1-5
+  state: scheduled
+  deliver: origin
+  exec_30d: 22
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 钱相关
+  action: 保留
+  reason: 银行股明日委托单=盘后委托决策依据；16:05BJT每日产出(output目录实见10-16/19/20)；产出bank_console_latest.txt被作战单+9面板班消费。每日需人参与#3
+- id: e171568c0a1f
+  name: 操作台面板每日构建
+  schedule: 20 11 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 重复装饰
+  action: 暂停候选
+  reason: 9班同脚本(stock_dashboard_build.py)同输出(dashboard.json+git push Pages)deliver=local;depmap证实dashboard.json/docs/index.html无任何班级消费者(浏览器直读,非cron);保留09:40/15:20/20:40三班覆盖盘前/收盘/晚间
+  pause_impact: 每日构建19:20与20:40晚间班同脚本同输出(dashboard.json+Pages推送);暂停后Pages晚间更新由20:40班承担,间隔仅80分钟
+- id: f61eb2652ffd
+  name: 焚诀盘中雷达-午间（11:30）
+  schedule: 30 3 * * 1-5
+  state: scheduled
+  deliver: origin
+  exec_30d: 22
+  push_30d: 22
+  push_30d_basis: db窗口送达率外推
+  category: 钱相关
+  action: 保留
+  reason: 盘中雷达午间11:30，推送22/22(db窗口外推)。每日需人参与#2
+- id: 215f0c7d1dfa
+  name: 放量异动观察池日更
+  schedule: 50 10 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 钱相关
+  action: 保留
+  reason: 放量异动观察池日更18:50：与15:13班互补(盘中vs收盘重建)，同产出watch_pool.json被16班消费
+- id: 4ce84d817a97
+  name: B5半路板信号日更（19:40BJT）
+  schedule: 12 12 * * 1-5
+  state: paused
+  deliver: origin
+  exec_30d: 22
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 钱相关
+  action: 维持暂停
+  reason: B5半路板信号(推送红线9/14裁决首选排序第一)2026-10-19被暂停且paused_reason为空、台账无记录——与9/14裁决存在张力，需用户确认暂停是否有意；本单不改状态
+- id: a8b63ac75a6f
+  name: HiThink板块成分周更
+  schedule: 30 2 * * 6
+  state: scheduled
+  deliver: local
+  exec_30d: 4
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: HiThink板块成分周更：hithink数据面
+- id: c73023823b3e
+  name: 炸板浅炸规则影子盘日更
+  schedule: 10 12 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 23
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 研究相关
+  action: 暂停候选
+  reason: 炸板浅炸规则影子盘日更：打板线2026-10-04永久封档(#258),影子验证对象已不存在;depmap证实zhaban_*四产物零消费者(C0)
+  pause_impact: 暂停后zhaban_shadow.jsonl断更;若未来复活打板线,影子样本缺口不可回补——但#258为永久封档,复活需重新立项
+- id: 9d6c6abac0f4
+  name: HiThink板块指数历史周更
+  schedule: 0 3 * * 6
+  state: scheduled
+  deliver: local
+  exec_30d: 4
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: HiThink板块指数历史周更：hithink被13班消费
+- id: 87feab2d6a9a
+  name: 操作台重建-竞价后09:40BJT
+  schedule: 40 1 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 钱相关
+  action: 保留
+  reason: 操作台重建09:40(竞价后)=保留三班之一:盘前数据齐后首刷,用户开盘前看盘
+- id: f6a25dcb0cc9
+  name: 操作台重建-上午10:40BJT
+  schedule: 40 2 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 重复装饰
+  action: 暂停候选
+  reason: 9班同脚本(stock_dashboard_build.py)同输出(dashboard.json+git push Pages)deliver=local;depmap证实dashboard.json/docs/index.html无任何班级消费者(浏览器直读,非cron);保留09:40/15:20/20:40三班覆盖盘前/收盘/晚间
+  pause_impact: 暂停后09:40→15:20之间面板不刷新;盘中信息由雷达三班推送覆盖(9:45/11:30/14:45),面板非唯一来源
+- id: 6dca1be275e6
+  name: 操作台重建-午后13:35BJT
+  schedule: 35 5 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 重复装饰
+  action: 暂停候选
+  reason: 9班同脚本(stock_dashboard_build.py)同输出(dashboard.json+git push Pages)deliver=local;depmap证实dashboard.json/docs/index.html无任何班级消费者(浏览器直读,非cron);保留09:40/15:20/20:40三班覆盖盘前/收盘/晚间
+  pause_impact: 同上(午后档);雷达午间11:30/尾盘14:45覆盖
+- id: c26c9fe53eab
+  name: 操作台重建-尾盘14:50BJT
+  schedule: 50 6 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 重复装饰
+  action: 暂停候选
+  reason: 9班同脚本(stock_dashboard_build.py)同输出(dashboard.json+git push Pages)deliver=local;depmap证实dashboard.json/docs/index.html无任何班级消费者(浏览器直读,非cron);保留09:40/15:20/20:40三班覆盖盘前/收盘/晚间
+  pause_impact: 暂停后尾盘14:50刷新点消失;14:45雷达尾盘推送+15:20收盘快报班覆盖
+- id: fec6ebe7a195
+  name: 操作台重建-收盘后15:50BJT
+  schedule: 50 7 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 重复装饰
+  action: 暂停候选
+  reason: 9班同脚本(stock_dashboard_build.py)同输出(dashboard.json+git push Pages)deliver=local;depmap证实dashboard.json/docs/index.html无任何班级消费者(浏览器直读,非cron);保留09:40/15:20/20:40三班覆盖盘前/收盘/晚间
+  pause_impact: 暂停后15:50刷新点消失;15:20收盘快报班已覆盖收盘数据
+- id: 02ef64d83cee
+  name: 操作台重建-晚间20:40BJT
+  schedule: 40 12 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 钱相关
+  action: 保留
+  reason: 操作台重建20:40(晚间)=保留三班之一:体检(20:35)+委托单后全天数据终刷,承担Pages晚间推送
+- id: 9d7a9f2fb360
+  name: 操作台重建-委托单后16:15BJT
+  schedule: 15 8 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 重复装饰
+  action: 暂停候选
+  reason: 9班同脚本(stock_dashboard_build.py)同输出(dashboard.json+git push Pages)deliver=local;depmap证实dashboard.json/docs/index.html无任何班级消费者(浏览器直读,非cron);保留09:40/15:20/20:40三班覆盖盘前/收盘/晚间
+  pause_impact: 暂停后委托单(16:05)后面板不即时反映委托单内容;下一刷新点=20:40晚间班(含全天数据),委托单本身有独立推送(1b8a05361333)
+- id: d6b2fa63d011
+  name: 收盘快报覆盖层15:10BJT
+  schedule: 10 7 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: 收盘快报覆盖层15:10：kcache_today_overlay.json被16班消费
+- id: e259d261c326
+  name: 观察池收盘重建15:13BJT
+  schedule: 13 7 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 钱相关
+  action: 保留
+  reason: 观察池收盘重建15:13：watch_pool.json被16班消费(雷达×3/作战单/事件推送)；观察池临启动在推送首选排序内(9/14裁决)
+- id: a0545e048897
+  name: 操作台重建-收盘快报15:20BJT
+  schedule: 20 7 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 钱相关
+  action: 保留
+  reason: 操作台重建15:20(收盘快报)=保留三班之一:收盘数据首刷
+- id: 04e0574ba458
+  name: 转债5m攒数20:45BJT
+  schedule: 45 12 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: 转债5m攒数20:45：5m数据攒数类，断档不可回补，资源消耗低
+- id: 024e14d44009
+  name: 盘前作战单（每交易日9:25）
+  schedule: 25 1 * * 1-5
+  state: scheduled
+  deliver: qqbot:BAC4F4E267EF75BDEFBF8DD6BF8B7E1D
+  exec_30d: 22
+  push_30d: 22
+  push_30d_basis: db窗口送达率外推
+  category: 钱相关
+  action: 保留
+  reason: 盘前作战单=每日下单决策入口；推送22/22(qqbot)；消费cb_low_price/data_health/env四文件等21项产出，是 depmap 最大消费者之一。每日需人参与#1
+- id: 92d5324dec80
+  name: 焚诀事件驱动推送
+  schedule: '*/5 1-7 * * 1-5'
+  state: scheduled
+  deliver: origin
+  exec_30d: 50
+  push_30d: 1
+  push_30d_basis: db窗口送达率外推
+  category: 钱相关
+  action: 保留
+  reason: '事件驱动推送(每5分钟盘中哨兵,stock_radar_event.sh)；50次执行仅1次推送=设计静默看门狗(Review Focus #5)，触发即异常'
+- id: 475cdafce644
+  name: 焚诀regime权威轴日更（20:10BJT）
+  schedule: 10 12 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 27
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: regime权威轴日更20:10：regime_timeline_hcap.json被20班消费,承重
+- id: 036130e2e17b
+  name: '焚诀X规则线日判（20:22BJT，错开regime班防OOM #354）'
+  schedule: 22 12 * * 1-5
+  state: scheduled
+  deliver: origin
+  exec_30d: 28
+  push_30d: 14
+  push_30d_basis: db窗口送达率外推
+  category: 钱相关
+  action: 保留
+  reason: X规则线日判20:22，推送14/28；主张影子盘的X门信号面。注:last_status=error需另查(不属本单)。推送性质=影子验证期观察，不强制响应(见边界说明)
+- id: e907bb56e619
+  name: 盘前cron健康自检（9:20BJT）
+  schedule: 20 1 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: 盘前cron健康自检9:20：自检看门狗,静默设计
+- id: 538bb3b943bd
+  name: X门距追踪-10:30（盘中）
+  schedule: 30 2 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 钱相关
+  action: 保留
+  reason: X门距追踪10:30：xgate_intraday.json被9面板班+作战单消费(depmap实证),=执行层距离表
+- id: e33c27f7a8e7
+  name: X门距追踪-13:30（盘中）
+  schedule: 30 5 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 22
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 钱相关
+  action: 保留
+  reason: X门距追踪13:30：同上,午后档
+- id: 36149125aa74
+  name: 焚诀kcache次班（19:00BJT，片1/2）
+  schedule: 0 11 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 20
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: kcache次班19:00片1/2：同上
+- id: 01efafdbe0a5
+  name: 竞价快照采集（9:26BJT）
+  schedule: 26 1 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 21
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: 竞价快照采集9:26：竞价快照被14班消费
+- id: c8fe09cd643f
+  name: 商品期货日更（17:35BJT）
+  schedule: 35 9 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 19
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 研究相关
+  action: 降频(周频)
+  reason: 商品期货日更17:35：depmap证实无班级消费者(C0),不与A股信号链同日节奏;降周频保留序列连续
+- id: c2cbb77ffb2d
+  name: 业绩预告+一致预期快照（18:30BJT）
+  schedule: 30 10 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 20
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: 业绩预告+一致预期快照18:30：pead/yjbb被9班消费
+- id: d6e64b88a050
+  name: 妖段段龄派生（20:14BJT）
+  schedule: 14 12 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 18
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: 妖段段龄派生20:14：regime_age.json被11班消费(env_state)
+- id: 25ce9a0ce327
+  name: 转债日更+低价债池（16:05BJT）
+  schedule: 5 8 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 17
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: 转债日更+低价债池16:05：cb_low_price.json被盘前作战单消费(depmap实证)→不可停
+- id: de841e0d32a3
+  name: RESEAL影子采样-午前11:35
+  schedule: 35 3 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 18
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 研究相关
+  action: 保留
+  reason: RESEAL影子采样午前11:35：同上
+- id: 86cd1d01072f
+  name: RESEAL影子采样-午后14:05
+  schedule: 5 6 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 17
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 研究相关
+  action: 保留
+  reason: RESEAL影子采样午后14:05：同上
+- id: b78d0ec0447b
+  name: 两融日更（20:40BJT）
+  schedule: 40 12 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 17
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: 两融日更20:40：margin_history.json被11班消费(env_state杠杆门)
+- id: 42b3b65d9aa3
+  name: 金股配额每日探测续跑
+  schedule: 30 0 * * *
+  state: paused
+  deliver: local
+  exec_30d: 21
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 研究相关
+  action: 维持暂停
+  reason: 金股配额每日探测续跑：2026-10-18暂停,原因未记录;金股线O-04暂缓期,维持暂停待用户确认
+- id: 7abc005bd04e
+  name: RESEAL影子结算（15:10BJT）
+  schedule: 10 7 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 17
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 研究相关
+  action: 保留
+  reason: RESEAL影子结算15:10：影子链内部消费(采样→结算),连续性要求
+- id: 7e438d522f15
+  name: 金股月度管线（每日重试）
+  schedule: 35 0 * * *
+  state: scheduled
+  deliver: local
+  exec_30d: 24
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 研究相关
+  action: 保留
+  reason: 金股月度管线每日重试：月度语义+每日重试=幂等抓取设计;gold_current.json被12班消费(作战单/面板)→不可停
+- id: acb0d4e9a8ac
+  name: 焚诀9:45合并班（影子+雷达）
+  schedule: 45 1 * * 1-5
+  state: scheduled
+  deliver: origin
+  exec_30d: 16
+  push_30d: 16
+  push_30d_basis: db窗口送达率外推
+  category: 钱相关
+  action: 保留
+  reason: 9:45合并班(影子+雷达)，推送16/16；雷达上午班的继任者(O-05)。每日需人参与#2(雷达合并看)
+- id: 99302288dc5e
+  name: 期指基差日更（16:20）
+  schedule: 20 8 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 15
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: 期指基差日更16:20：futures_basis.json被11班消费(env_state)
+- id: 6d8ede69ac87
+  name: 个股两融明细日更（21:00）
+  schedule: 0 13 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 16
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: 个股两融明细日更21:00：margin_stock.db攒数(V11强平观察名单用)，无班级消费者但研究攒数断档不可回补
+- id: 0666e55c077c
+  name: 市场温度日更（18:55）
+  schedule: 55 10 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 15
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: 市场温度日更18:55：breadth_daily.json被11班消费(env_state)
+- id: 132304f8879b
+  name: 预增事件库日更
+  schedule: 35 10 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 12
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: 预增事件库日更：pead_events.json被9班消费(预增池线上游)
+- id: 3a067aaf9142
+  name: 预增低位池组合账本影子
+  schedule: 35 11 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 12
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 研究相关
+  action: 保留
+  reason: 预增低位池组合账本影子：预增池线(O-04暂缓但影子攒样本继续)
+- id: 43ad61eb27bb
+  name: 指数调样抢跑作战单2026H2
+  schedule: once at 2026-11-27 11:30
+  state: scheduled
+  deliver: qqbot
+  exec_30d: 0
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 钱相关
+  action: 保留(一次性)
+  reason: 指数调样抢跑作战单2026H2=12月指数调样事件作战单，一次性未来班，到期自完
+- id: 22fc8ff5061b
+  name: 指数调样抢跑作战单2026H2备份班
+  schedule: once at 2026-11-28 04:00
+  state: scheduled
+  deliver: qqbot
+  exec_30d: 0
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 钱相关
+  action: 保留(一次性)
+  reason: 上调样作战单备份班，一次性，到期自完
+- id: 44257e8355cf
+  name: 焚诀kcache收尾扫描（21:00BJT 全量兜漏）
+  schedule: 0 13 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 8
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: kcache收尾扫描21:00全量兜漏：同上
+- id: 229ac27d2ab8
+  name: 网易云登录心跳
+  schedule: 20 3 * * *
+  state: scheduled
+  deliver: local
+  exec_30d: 9
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: 网易云登录心跳：音乐服务保活,与焚诀无关
+- id: 33424644b835
+  name: kanban-daemon-watchdog
+  schedule: '* * * * *'
+  state: scheduled
+  deliver: local
+  exec_30d: 50
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: kanban-daemon-watchdog：Hermes平台看门狗
+- id: 9221092d9916
+  name: 唤醒竞价欠账卡t_2bcb8552
+  schedule: once at 2026-10-16 16:10
+  state: completed
+  deliver: local
+  exec_30d: 1
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 一次性
+  action: 已完结
+  reason: 唤醒竞价欠账卡(一次性,已执行)
+- id: ba24e5bf1403
+  name: 日历普查结论推送（一次性）
+  schedule: once in 3m
+  state: completed
+  deliver: qqbot:BAC4F4E267EF75BDEFBF8DD6BF8B7E1D
+  exec_30d: 1
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 一次性
+  action: 已完结
+  reason: 日历普查结论推送(一次性,已送达)
+- id: da8a6f94e6ab
+  name: 焚诀股吧人气采集（23:20BJT）
+  schedule: 20 15 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 4
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 研究相关
+  action: 降频(周频)
+  reason: 股吧人气采集23:20：guba_sentiment无班级消费者(depmap C0);ex30=4/30;降周频,断档风险=人气序列粒度变粗(情绪研究素材)
+- id: a562be774d76
+  name: 第三波晨报推送（一次性）
+  schedule: once in 2m
+  state: completed
+  deliver: qqbot:BAC4F4E267EF75BDEFBF8DD6BF8B7E1D
+  exec_30d: 1
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 一次性
+  action: 已完结
+  reason: 第三波晨报推送(一次性,已送达)
+- id: e0f48d0aeb18
+  name: 金股排行影子日结
+  schedule: 45 0 * * 2-6
+  state: scheduled
+  deliver: origin
+  exec_30d: 2
+  push_30d: 2
+  push_30d_basis: db窗口送达率外推
+  category: 研究相关
+  action: 保留
+  reason: 金股排行影子日结：看门狗式(有结算才输出),金股线影子样本积累
+- id: af865422c1e3
+  name: 低换手打板信号（14:30BJT）
+  schedule: 30 6 * * 1-5
+  state: paused
+  deliver: origin
+  exec_30d: 1
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 研究相关
+  action: 维持暂停
+  reason: 低换手打板信号：打板线封档(#258/archive#317判死),10-19上线当天即停,维持暂停
+- id: 9b440d4eeaad
+  name: 崩盘抄底信号（15:20BJT）
+  schedule: 20 7 * * 1-5
+  state: scheduled
+  deliver: origin
+  exec_30d: 2
+  push_30d: -1
+  push_30d_basis: 窗口无样本-待判
+  category: 钱相关
+  action: 保留
+  reason: 崩盘抄底信号=策略B触发班(K4定稿生产信号，分位≥95买上证ETF)；30天仅2次执行=信号稀有，触发即大钱；设计静默
+- id: e6ec207b8cfe
+  name: 焚诀不复权库日更·抓取0/2（22:30BJT）
+  schedule: 30 14 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 2
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: 不复权库抓取0/2 22:30：判涨跌停地基(#300/#324)，被消费
+- id: cbf93552f114
+  name: 焚诀不复权库日更·抓取1/2（23:10BJT）
+  schedule: 10 15 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 2
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: 不复权库抓取1/2 23:10：同上
+- id: 710da3f47b04
+  name: 焚诀不复权因子日更（23:50BJT）
+  schedule: 50 15 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 2
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: 不复权因子日更23:50：因子=前复权÷不复权(#300口径)
+- id: f62aca73bb5e
+  name: 焚诀不复权库新鲜度断言（00:20BJT）
+  schedule: 20 16 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 2
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: 不复权库新鲜度断言00:20：数据面断言班
+- id: 21befa1e52b7
+  name: 数据面健康体检（DATA-01）
+  schedule: 35 12 * * 1-5
+  state: scheduled
+  deliver: origin
+  exec_30d: 3
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: 数据面健康体检20:35(DATA-01)：data_health.json被20班消费(breaker熔断依赖,depmap实证)→绝对不可停
+- id: a41b47086fa5
+  name: 焚诀情绪序列日更（23:55BJT，接23:50不复权因子班后）
+  schedule: 55 15 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 1
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: 情绪序列日更23:55：emotion_series.jsonl被2班消费(#354补录班)
+- id: 39217e893ed1
+  name: 焚诀基本面缓存增量日更·片0/2（00:45BJT）
+  schedule: 45 16 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 1
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: fund基本面缓存片0/2 00:45：fix5新上(#354)，fund_cache被8班消费，归运维不进候选
+- id: '730473253554'
+  name: 焚诀基本面缓存增量日更·片1/2（01:50BJT）
+  schedule: 50 17 * * 1-5
+  state: scheduled
+  deliver: local
+  exec_30d: 0
+  push_30d: 0
+  push_30d_basis: db窗口送达率外推
+  category: 运维
+  action: 保留
+  reason: fund基本面缓存片1/2 01:50：同上
+- id: 525e9eb40955
+  name: 焚诀流通市值历史增量周更·片0/2（周六09:30BJT）
+  schedule: 30 1 * * 6
+  state: scheduled
+  deliver: local
+  exec_30d: 0
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: cap流通市值周更片0/2 周六09:30：fix5新上(#354 weekly口径)，归运维
+- id: 35fbb0e3cca2
+  name: 焚诀流通市值历史增量周更·片1/2（周六10:40BJT）
+  schedule: 40 2 * * 6
+  state: scheduled
+  deliver: local
+  exec_30d: 0
+  push_30d: 0
+  push_30d_basis: local/无推送
+  category: 运维
+  action: 保留
+  reason: cap流通市值周更片1/2 周六10:40：同上
