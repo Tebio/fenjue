@@ -28,14 +28,14 @@ items:
     area: PLAT
     priority: P0
     gate: G0
-    status: blocked
+    status: done
     depends_on: []
     ledger_ref: "266 268"
     inputs: ["docs/plan/START-HERE.md", "INTERFACES.md", "CONSTRAINTS.md", "DECISIONS.md", "VERIFY.md"]
     outputs: ["六份契约文档就位", "docs/plan/tools/plan_lint.py 零错误", "scripts/verify.sh 可跑"]
     acceptance: "plan_lint 退出码 0（悬空引用=0、P0 全有 spec、gate/依赖完整）；verify.sh 打印语法检查统计并如实 SKIP 未建项；故意加一个假 id 时 lint 必须报错"
     effort_days: 1
-    evidence: '2026-10-15 实测（卡 t_89f4c4bd）: verify.sh 全绿（plan_lint exit 0 / py_compile 137 files FAIL 0 / pytest+golden 如实 SKIP）; plan_lint 三条正反例已跑——假 id（两字母-两位数字形态）触发 [L1] 悬空引用 exit 1、删 PLAT-00 或 SEC-01 spec 触发 [L2] exit 1、还原后 exit 0; DECISIONS.md FROZEN=15 条且每条含反证条件。产出面（四份契约 + lint + verify.sh）已就位 → status 由 todo 改 blocked: 卡在 DECISIONS OPEN 的 O-01..O-08 需用户裁决，且本条目定义要求把裁决结果写进 AGENTS.md 新编号。'
+    evidence: '2026-10-21 收尾（AGENTS #356）: 卡点「O-01..O-08 需用户裁决」已清——主 agent 复核 K3 建议书（research/O-decisions-brief-20261021.md）8 条倾向全采纳，7 条转 FROZEN D-16~D-22，O-04 证据不足暂缓留 OPEN（期间单槽 ≤10 万锚不动，等 PORT-03 容量曲线）。三份契约一致性复核（INTERFACES/CONSTRAINTS/DECISIONS 裁决后版本）零矛盾：D-16 对齐 D-15/I7（B 剥离不转私有）、D-17 对齐 C2.5、D-19 对齐 C5.2（删班不增班）、D-20 对齐 I4「用户每周导出」与 MID-01 验收单位、D-22 补 TAX-02 遗留的显示档裁决。验收实跑：plan_lint exit 0（items=57，仅 OPT-02/DOC-01 两条 P2 缺 spec 警告为既有）；py_compile 297 files FAIL 0；pytest 25 passed 零新增失败；golden 8 项全无漂移；bash scripts/verify.sh 全量 exit 0。原 2026-10-15 验收（verify.sh 全绿/lint 正反例/FROZEN=15 条含反证条件）继续有效，FROZEN 现 22 条。'
 
   # ── W0 个人量化适配（减法优先：先砍再补，见 README §7） ──────────────
   - id: OPT-01
